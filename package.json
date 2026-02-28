@@ -1,0 +1,29 @@
+{
+  "name": "ai-feature-contracts",
+  "version": "1.0.0",
+  "description": "Token-efficient feature contract system for AI-assisted development",
+  "main": "bin/index.cjs",
+  "bin": {
+    "ai-feature": "bin/index.cjs",
+    "afc": "bin/index.cjs"
+  },
+  "scripts": {
+    "test": "echo \"No tests yet\""
+  },
+  "keywords": [
+    "ai",
+    "cline",
+    "claude",
+    "feature-contracts",
+    "development",
+    "automation"
+  ],
+  "author": "jesse",
+  "license": "MIT",
+  "dependencies": {
+    "yaml": "^2.3.4"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
