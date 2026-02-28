@@ -1,0 +1,95 @@
+name: create-contract
+description: Interview-driven contract creation
+agent: contract-architect
+
+steps:
+  - file: steps/step-01-interview.md
+    goal: Understand feature requirements
+    prompts:
+      - id: feature_name
+        question: "What is the name of this feature?"
+        type: text
+        required: true
+      - id: objective
+        question: "In 1-2 sentences, what does this feature do?"
+        type: text
+        required: true
+      - id: scope_items
+        question: "What are the main things this feature needs to do? (comma-separated)"
+        type: text
+        required: true
+      - id: non_goals
+        question: "What is explicitly OUT of scope? (comma-separated, or 'none')"
+        type: text
+        required: false
+
+  - file: steps/step-02-scope.md
+    goal: Define boundaries and constraints
+    prompts:
+      - id: directories
+        question: "Which directories will this feature touch? (comma-separated)"
+        type: text
+        default: "src/components/, src/hooks/"
+      - id: files
+        question: "List files to create/modify (format: action:path, e.g., create:src/hooks/useFeature.ts)"
+        type: text
+        required: true
+      - id: dependencies
+        question: "Any new dependencies needed? (comma-separated, or 'none')"
+        type: text
+        default: "none"
+
+  - file: steps/step-03-finalize.md
+    goal: Generate contract file
+    prompts:
+      - id: done_criteria
+        question: "What conditions must be true when this is done? (comma-separated)"
+        type: text
+        default: "Feature works as specified, Tests pass, Lint passes, Build succeeds"
+      - id: testing
+        question: "What tests are needed? (e.g., unit:src/tests/feature.test.ts)"
+        type: text
+        required: false
+      - id: confirm
+        question: "Generate the contract? (yes/no)"
+        type: confirm
+        required: true
+
+output:
+  type: contract
+  path: "contracts/{slug}.fc.md"
+  template: |
+    # FC: {feature_name}
+    **ID:** {id} | **Status:** draft
+
+    ## Objective
+    {objective}
+
+    ## Scope
+    {scope_items_formatted}
+
+    ## Non-Goals
+    {non_goals_formatted}
+
+    ## Directories
+    **Allowed:** {directories}
+    **Restricted:** `backend/`, `node_modules/`, `.env*`
+
+    ## Files
+    | Action | Path | Reason |
+    |--------|------|--------|
+    {files_formatted}
+
+    ## Dependencies
+    - Allowed: {dependencies}
+    - Banned: moment, lodash, jquery
+
+    ## Done When
+    {done_criteria_formatted}
+
+    ## Testing
+    {testing_formatted}
+
+    ## Context Refs
+    - ARCH_INDEX_v1
+    - RULESET_CORE_v1

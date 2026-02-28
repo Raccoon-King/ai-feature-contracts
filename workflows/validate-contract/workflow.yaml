@@ -1,0 +1,76 @@
+name: validate-contract
+description: Full contract validation with recommendations
+agent: scope-validator
+
+input:
+  - id: contract_file
+    question: "Which contract to validate?"
+    type: file
+    pattern: "*.fc.md"
+    required: true
+
+steps:
+  - file: steps/step-01-structure.md
+    goal: Validate contract structure and required sections
+
+  - file: steps/step-02-scope.md
+    goal: Analyze scope boundaries and risks
+
+  - file: steps/step-03-report.md
+    goal: Generate validation report
+
+checks:
+  structure:
+    - section: Objective
+      required: true
+      validation: "Must be 1-2 sentences, concrete and measurable"
+    - section: Scope
+      required: true
+      validation: "Must have at least one in-scope item"
+    - section: Non-Goals
+      required: false
+      validation: "Recommended for boundary clarity"
+    - section: Directories
+      required: true
+      validation: "Must specify allowed and restricted"
+    - section: Files
+      required: true
+      validation: "Must have action, path, and reason columns"
+    - section: Dependencies
+      required: true
+      validation: "Must not include banned packages"
+    - section: Done When
+      required: true
+      validation: "Must have verifiable criteria"
+    - section: Testing
+      required: false
+      validation: "Recommended for quality assurance"
+    - section: Context Refs
+      required: false
+      validation: "Recommended for AI context"
+
+  risks:
+    - check: restricted_directories
+      severity: error
+      message: "Files in restricted directories"
+    - check: banned_dependencies
+      severity: error
+      message: "Banned dependencies detected"
+    - check: missing_tests
+      severity: warning
+      message: "No testing section defined"
+    - check: vague_objective
+      severity: warning
+      message: "Objective may be too vague"
+    - check: unbounded_scope
+      severity: warning
+      message: "Scope items may be unbounded"
+
+output:
+  type: report
+  format: markdown
+  sections:
+    - summary
+    - errors
+    - warnings
+    - recommendations

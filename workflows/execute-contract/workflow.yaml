@@ -1,0 +1,57 @@
+name: execute-contract
+description: Execute approved contract with Dev agent persona
+agent: dev-agent
+
+input:
+  - id: contract_file
+    question: "Which contract to execute?"
+    type: file
+    pattern: "*.fc.md"
+    required: true
+
+preconditions:
+  - check: status_approved
+    message: "Contract must be approved before execution"
+  - check: plan_exists
+    message: "Plan must exist (run: afc plan {contract})"
+
+steps:
+  - file: steps/step-01-prepare.md
+    goal: Load contract and plan, verify preconditions
+
+  - file: steps/step-02-execute.md
+    goal: Execute files in specified order
+
+  - file: steps/step-03-verify.md
+    goal: Verify implementation against done-when criteria
+
+execution:
+  mode: sequential
+  file_order: plan
+  checkpoints: true
+
+  on_file_complete:
+    - log: "Completed: {file.path}"
+    - verify: lint
+
+  on_error:
+    - pause: true
+    - prompt: "Error encountered. [R]etry / [S]kip / [A]bort?"
+
+output:
+  type: execution_log
+  path: "contracts/{slug}.execution.md"
+  format: |
+    # Execution Log: {contract_name}
+
+    **Started:** {start_time}
+    **Status:** {status}
+
+    ## Files Completed
+    {file_log}
+
+    ## Done-When Status
+    {done_when_status}
+
+    ## Notes
+    {notes}
