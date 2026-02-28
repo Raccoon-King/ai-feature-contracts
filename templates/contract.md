@@ -25,18 +25,37 @@
 ## Dependencies
 - Allowed: existing packages only
 - Banned: moment, lodash, jquery
+- Security: Run `npm audit` before adding packages
+
+## Security Considerations
+- [ ] Input validation implemented
+- [ ] No secrets in code
+- [ ] Dependencies CVE-free (`npm audit`)
+- [ ] Error messages don't leak sensitive info
+- [ ] Auth/authz checks where needed
+
+## Code Quality
+- [ ] TypeScript strict mode (no `any`)
+- [ ] ESLint passes (no warnings)
+- [ ] No console.log/debugger statements
+- [ ] Error handling complete
+- [ ] Functions < 50 lines
 
 ## Done When
 - [ ] Feature works as specified
 - [ ] Tests pass (80%+ coverage)
 - [ ] Lint passes
 - [ ] Build succeeds
+- [ ] Security checklist complete
+- [ ] Code quality checklist complete
 
 ## Testing
 - Unit: `src/tests/[feature].test.ts`
-- E2E: `e2e/[feature].spec.ts`
+- Coverage: 80%+ lines, branches, functions
+- E2E: `e2e/[feature].spec.ts` (if applicable)
 
 ## Context Refs
 - ARCH_INDEX_v1 §frontend
 - RULESET_CORE_v1 §hooks §typescript
-- ENV_STACK_v1
+- SECURITY_v1 §input-validation
+- BEST_PRACTICES_v1 §testing

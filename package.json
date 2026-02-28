@@ -8,7 +8,10 @@
     "afc": "bin/index.cjs"
   },
   "scripts": {
-    "test": "echo \"No tests yet\""
+    "test": "jest --coverage",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage --coverageThreshold='{\"global\":{\"lines\":80,\"branches\":80,\"functions\":80}}'",
+    "lint": "echo 'No lint configured yet'"
   },
   "keywords": [
     "ai",
@@ -22,6 +25,29 @@
   "license": "MIT",
   "dependencies": {
     "yaml": "^2.3.4"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "coverageDirectory": "coverage",
+    "collectCoverageFrom": [
+      "lib/**/*.cjs",
+      "!**/node_modules/**"
+    ],
+    "coverageThreshold": {
+      "global": {
+        "lines": 80,
+        "branches": 70,
+        "functions": 80,
+        "statements": 80
+      }
+    },
+    "testMatch": [
+      "**/tests/**/*.test.js"
+    ],
+    "verbose": true
   },
   "engines": {
     "node": ">=18.0.0"

@@ -1,0 +1,37 @@
+name: generate-plan
+description: Generate optimized execution plan from contract
+agent: plan-strategist
+
+input:
+  - id: contract_file
+    question: "Which contract to plan?"
+    type: file
+    pattern: "*.fc.md"
+    required: true
+
+steps:
+  - file: steps/step-01-analyze.md
+    goal: Analyze contract and extract file dependencies
+
+  - file: steps/step-02-sequence.md
+    goal: Determine optimal file implementation order
+
+  - file: steps/step-03-generate.md
+    goal: Generate and save execution plan
+
+analysis:
+  extract:
+    - files: "## Files table"
+    - dependencies: "## Dependencies section"
+    - context: "## Context Refs"
+    - done_when: "## Done When criteria"
+
+  dependency_rules:
+    - types_before_implementations: true
+    - hooks_before_components: true
+    - utils_before_consumers: true
+    - tests_after_implementations: true
+
+output:
+  type: plan
+  path: "contracts/{slug}.plan.yaml"

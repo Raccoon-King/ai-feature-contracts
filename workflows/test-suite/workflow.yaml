@@ -1,0 +1,13 @@
+name: test-suite
+description: Generate test plan and test files for contract
+agent: dev-agent
+
+steps:
+  - file: steps/step-01-analyze.md
+    goal: Analyze contract for testable components
+  - file: steps/step-02-generate.md
+    goal: Generate test file templates
+
+output:
+  type: tests
+  path: "src/tests/{feature}.test.ts"

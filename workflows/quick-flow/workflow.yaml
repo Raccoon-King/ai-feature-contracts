@@ -1,0 +1,18 @@
+name: quick-flow
+description: Fast-track workflow for small, bounded changes
+agent: quick-flow
+
+constraints:
+  max_files: 3
+  max_scope_items: 3
+  skip_full_validation: true
+
+steps:
+  - file: steps/step-01-quick-spec.md
+    goal: Rapidly capture change requirements
+  - file: steps/step-02-confirm.md
+    goal: Confirm scope is bounded and proceed
+
+output:
+  type: quick-contract
+  path: "contracts/{slug}.quick.md"

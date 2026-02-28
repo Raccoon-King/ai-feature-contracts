@@ -1,0 +1,21 @@
+name: risk-check
+description: Deep dive risk analysis for contracts
+agent: scope-validator
+
+steps:
+  - file: steps/step-01-analyze.md
+    goal: Analyze contract for potential risks
+  - file: steps/step-02-report.md
+    goal: Generate risk report with mitigations
+
+output:
+  type: report
+  path: "contracts/{slug}.risks.md"
+
+risk_categories:
+  - scope_creep: "Unbounded or vague requirements"
+  - dependencies: "External package risks"
+  - complexity: "High coupling or complexity"
+  - testing: "Insufficient test coverage plan"
+  - security: "Potential security concerns"
+  - performance: "Performance implications"

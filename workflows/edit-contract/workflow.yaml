@@ -1,0 +1,15 @@
+name: edit-contract
+description: Guided editing of existing contracts
+agent: contract-architect
+
+steps:
+  - file: steps/step-01-select.md
+    goal: Select contract and section to edit
+  - file: steps/step-02-edit.md
+    goal: Make guided edits
+  - file: steps/step-03-save.md
+    goal: Save and re-validate
+
+output:
+  type: contract
+  path: "contracts/{slug}.fc.md"

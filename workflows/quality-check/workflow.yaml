@@ -1,0 +1,13 @@
+name: quality-check
+description: Deep quality and code analysis
+agent: auditor
+
+steps:
+  - file: steps/step-01-analyze.md
+    goal: Analyze code quality metrics
+  - file: steps/step-02-report.md
+    goal: Generate quality report
+
+output:
+  type: report
+  path: "contracts/{slug}.quality.md"

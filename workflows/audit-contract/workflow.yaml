@@ -1,0 +1,24 @@
+name: audit-contract
+description: Post-execution compliance and quality review
+agent: auditor
+
+steps:
+  - file: steps/step-01-verify-files.md
+    goal: Verify all specified files were created/modified
+  - file: steps/step-02-run-checks.md
+    goal: Run lint, build, and test checks
+  - file: steps/step-03-report.md
+    goal: Generate audit report with findings
+
+output:
+  type: report
+  path: "contracts/{slug}.audit.md"
+
+checklist:
+  - All files from contract exist
+  - No extra files created outside scope
+  - Lint passes
+  - Build succeeds
+  - Tests pass with coverage threshold
+  - No restricted directory violations
+  - Done-when criteria met
