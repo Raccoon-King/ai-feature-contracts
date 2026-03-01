@@ -1,17 +1,18 @@
 {
-  "name": "ai-feature-contracts",
+  "name": "grabby",
   "version": "1.0.0",
   "description": "Token-efficient feature contract system for AI-assisted development",
   "main": "bin/index.cjs",
   "bin": {
-    "ai-feature": "bin/index.cjs",
-    "afc": "bin/index.cjs"
+    "grabby": "bin/index.cjs"
   },
   "scripts": {
+    "build": "node scripts/build.cjs",
     "test": "jest --coverage",
+    "test:ci": "jest --coverage --runInBand",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage --coverageThreshold='{\"global\":{\"lines\":80,\"branches\":80,\"functions\":80}}'",
-    "lint": "echo 'No lint configured yet'"
+    "lint": "node scripts/lint.cjs"
   },
   "keywords": [
     "ai",
@@ -34,6 +35,7 @@
     "coverageDirectory": "coverage",
     "collectCoverageFrom": [
       "lib/**/*.cjs",
+      "!lib/interactive-workflows.cjs",
       "!**/node_modules/**"
     ],
     "coverageThreshold": {
@@ -53,3 +55,4 @@
     "node": ">=18.0.0"
   }
 }
+

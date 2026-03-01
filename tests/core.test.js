@@ -1,5 +1,5 @@
 /**
- * AI Feature Contracts - Core Library Tests
+ * Grabby - Core Library Tests
  * Coverage target: 80%+
  */
 
@@ -18,7 +18,7 @@ const WORKFLOWS_DIR = path.join(PKG_ROOT, 'workflows');
 let tempDir;
 
 beforeEach(() => {
-  tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'afc-test-'));
+  tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'grabby-test-'));
 });
 
 afterEach(() => {

@@ -1,16 +1,16 @@
-# AI Feature Contracts
+# Grabby
 
-Token-efficient feature contract system for AI-assisted development with Cline/Claude.
+Token-efficient feature contract system for AI-assisted development with persona-led CLI workflows.
 
 ## Installation
 
 ```bash
 # Global install
-npm install -g ai-feature-contracts
+npm install -g grabby
 
 # Or link locally for development
-git clone https://github.com/yourusername/ai-feature-contracts.git
-cd ai-feature-contracts
+git clone https://github.com/yourusername/grabby.git
+cd grabby
 npm link
 ```
 
@@ -19,42 +19,109 @@ npm link
 ```bash
 # Initialize in your project
 cd your-project
-afc init
+grabby init
 
-# Create a feature contract
-afc create "user-authentication"
+# Let Grabby interview you and prefill a contract
+grabby task "create a unit test"
 
-# Edit the contract
-code contracts/user-authentication.fc.md
+# Or run the full Archie -> Sage -> Dev -> Iris handoff
+grabby orchestrate "fix login redirect bug"
+
+# Or create a contract directly
+grabby create "user-authentication"
 
 # Validate
-afc validate user-authentication.fc.md
+grabby validate user-authentication.fc.md
 
 # Generate plan (Phase 1)
-afc plan user-authentication.fc.md
+grabby plan user-authentication.fc.md
 
 # Approve
-afc approve user-authentication.fc.md
+grabby approve user-authentication.fc.md
 
 # Execute with Cline/Claude (Phase 2)
-afc execute user-authentication.fc.md
+grabby execute user-authentication.fc.md
 
 # Post-execution audit
-afc audit user-authentication.fc.md
+grabby audit user-authentication.fc.md
 ```
 
 ## Commands
 
 | Command | Description |
 |---------|-------------|
-| `afc init` | Initialize in current project |
-| `afc create <name>` | Create new contract |
-| `afc validate <file>` | Validate contract |
-| `afc plan <file>` | Generate plan (Phase 1) |
-| `afc approve <file>` | Approve for execution |
-| `afc execute <file>` | Show execution instructions (Phase 2) |
-| `afc audit <file>` | Post-execution audit |
-| `afc list` | List all contracts |
+| `grabby init` | Initialize in current project |
+| `grabby create <name>` | Create new contract |
+| `grabby task <request>` | Interview-driven task breakdown with persona selection |
+| `grabby orchestrate <request>` | Full persona handoff in one CLI session |
+| `grabby validate <file>` | Validate contract |
+| `grabby plan <file>` | Generate plan (Phase 1) |
+| `grabby backlog <file>` | Generate Agile epic/task/subtask backlog |
+| `grabby prompt <file>` | Render an LLM instruction bundle |
+| `grabby session <file>` | Inspect or regenerate session artifacts |
+| `grabby approve <file>` | Approve for execution |
+| `grabby execute <file>` | Show execution instructions (Phase 2) |
+| `grabby audit <file>` | Post-execution audit |
+| `grabby list` | List all contracts |
+
+## Persona Workflow
+
+Grabby uses BMAD-style personalities in the CLI:
+- `Archie`: contract shaping and clarification
+- `Sage`: planning and backlog decomposition
+- `Dev`: execution handoff preparation
+- `Iris`: audit preparation and verification
+- `Flash`: quick bounded work
+- `Conductor`: orchestrates the full handoff
+
+## Generated Artifacts
+
+`grabby task` generates:
+- `contracts/<name>.fc.md` - populated feature contract
+- `contracts/<name>.brief.md` - developer-facing task brief
+- optional `contracts/<name>.session.json|yaml` - machine-readable session summary
+
+`grabby orchestrate` additionally generates:
+- `contracts/<name>.plan.yaml`
+- `contracts/<name>.backlog.yaml`
+- `contracts/<name>.execute.md`
+- `contracts/<name>.audit.md`
+
+## Non-Interactive Automation
+
+Use flags when `grabby task` or `grabby orchestrate` should run without prompts:
+
+```bash
+grabby task "create a unit test" \
+  --task-name "login unit test" \
+  --objective "Add focused login test coverage." \
+  --scope "add a login unit test,avoid production code changes" \
+  --done-when "tests pass,lint passes" \
+  --testing "Unit: tests/login-unit-test.test.ts" \
+  --session-format json \
+  --yes
+```
+
+Useful flags:
+- `--task-name`
+- `--objective`
+- `--scope`
+- `--non-goals`
+- `--directories`
+- `--constraints`
+- `--dependencies`
+- `--done-when`
+- `--testing`
+- `--yes` or `--non-interactive`
+- `--session-format json|yaml`
+- `--session-output <path>`
+
+CI/session validation:
+```bash
+grabby session login-unit-test.fc.md --check
+grabby session --check-all
+grabby session login-unit-test.fc.md --regenerate --format yaml
+```
 
 ## Two-Phase Execution
 
@@ -112,12 +179,27 @@ This system reduces token usage by:
 
 ## Reference Documents
 
-After `afc init`, your project will have:
+After `grabby init`, your project will have:
 - `docs/ARCHITECTURE_INDEX.md` - Module map
 - `docs/RULESET_CORE.md` - Coding rules
 - `docs/ENV_STACK.md` - Environment config
 - `docs/EXECUTION_PROTOCOL.md` - Workflow
+- `.grabbyignore` - paths Grabby should ignore for artifact inspection/reporting
+
+`.grabbyignore` supports glob-style patterns such as:
+- `**/*.session.json`
+- `tmp/*.log`
+- `coverage/`
+- `!contracts/keep.session.json`
+
+## Recommended Flow
+
+1. Run `grabby task "<request>"` when the task still needs clarification.
+2. Run `grabby orchestrate "<request>"` when you want the full multi-persona handoff.
+3. Review `contracts/*.fc.md`, `*.brief.md`, and orchestration artifacts before coding.
+4. Use `grabby execute <file>` and `grabby audit <file>` during implementation and verification.
 
 ## License
 
 MIT
+

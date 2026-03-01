@@ -1,707 +1,417 @@
 /**
- * AI Feature Contracts - CLI Tests
- * Coverage target: 80%+
+ * Grabby - CLI integration tests
  */
 
 const fs = require('fs');
+const os = require('os');
 const path = require('path');
 const yaml = require('yaml');
 
-// Test helpers
 const PKG_ROOT = path.join(__dirname, '..');
-const TEMPLATES_DIR = path.join(PKG_ROOT, 'templates');
-const AGENTS_DIR = path.join(PKG_ROOT, 'agents');
-const WORKFLOWS_DIR = path.join(PKG_ROOT, 'workflows');
+const CLI_PATH = path.join(PKG_ROOT, 'bin', 'index.cjs');
 
-// Import functions to test (we'll need to refactor index.cjs to export these)
-// For now, we'll test by re-implementing the logic here
-
-// ============================================================================
-// UTILITY FUNCTIONS (mirror from index.cjs)
-// ============================================================================
-
-const genId = () => `FC-${Date.now()}`;
-const slug = (s) => s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
-const timestamp = () => new Date().toISOString();
-
-// ============================================================================
-// VALIDATION FUNCTION (mirror from index.cjs for testing)
-// ============================================================================
-
-function validateContract(content) {
-  const errors = [];
-  const warnings = [];
-  const suggestions = [];
-
-  // Check required sections
-  const required = ['Objective', 'Scope', 'Directories', 'Files', 'Done When'];
-  required.forEach(s => {
-    if (!content.includes(`## ${s}`)) errors.push(`Missing section: ${s}`);
-  });
-
-  // Check restricted directories in Files section
-  const restricted = ['backend/', 'node_modules/', '.env'];
-  const filesSection = content.match(/## Files[\s\S]*?(?=##|$)/)?.[0] || '';
-  restricted.forEach(r => {
-    if (filesSection.includes(r) && !filesSection.includes('Restricted')) {
-      errors.push(`Restricted directory in files: ${r}`);
-    }
-  });
-
-  // Check for banned dependencies
-  const banned = ['moment', 'lodash', 'jquery'];
-  const allowedLine = content.match(/- Allowed:.*$/m)?.[0] || '';
-  banned.forEach(b => {
-    if (allowedLine.toLowerCase().includes(b)) {
-      errors.push(`Banned dependency: ${b}`);
-    }
-  });
-
-  // Check for vague terms
-  const vagueTerms = ['improve', 'optimize', 'enhance', 'better', 'faster'];
-  const objectiveSection = content.match(/## Objective[\s\S]*?(?=##|$)/)?.[0] || '';
-  const scopeSection = content.match(/## Scope[\s\S]*?(?=##|$)/)?.[0] || '';
-
-  vagueTerms.forEach(term => {
-    if (objectiveSection.toLowerCase().includes(term)) {
-      warnings.push(`Vague term in Objective: "${term}" - add specific metrics`);
-    }
-  });
-
-  // Check scope size
-  const scopeItems = (scopeSection.match(/^- .+$/gm) || []).length;
-  if (scopeItems > 7) {
-    errors.push(`Scope too large (${scopeItems} items) - max 7 recommended`);
+class ExitError extends Error {
+  constructor(code) {
+    super(`Exited with code ${code}`);
+    this.code = code;
   }
+}
 
-  // Check file count
-  const fileRows = (filesSection.match(/^\|[^|]+\|/gm) || []).length - 2;
+function stripAnsi(value) {
+  return value.replace(/\x1B\[[0-9;]*m/g, '');
+}
 
-  // Check for test files
-  if (!filesSection.includes('test')) {
-    warnings.push('No test files in Files section');
-  }
+function runCli(args, cwd) {
+  const originalArgv = process.argv;
+  const originalCwd = process.cwd();
+  const originalExit = process.exit;
+  const originalLog = console.log;
+  const originalError = console.error;
+  const modulePath = require.resolve(CLI_PATH);
 
-  // Check Done When section
-  const doneWhenSection = content.match(/## Done When[\s\S]*?(?=##|$)/)?.[0] || '';
-  const checkboxCount = (doneWhenSection.match(/- \[ \]/g) || []).length;
+  let stdout = '';
+  let stderr = '';
+  let status = 0;
 
-  // Check testing section
-  if (!content.includes('## Testing')) {
-    warnings.push('No testing section defined');
-  }
+  console.log = (...values) => {
+    stdout += `${values.join(' ')}\n`;
+  };
+  console.error = (...values) => {
+    stderr += `${values.join(' ')}\n`;
+  };
+  process.exit = (code) => {
+    throw new ExitError(code || 0);
+  };
 
-  // Check placeholders
-  const placeholders = ['[NAME]', '[ID]', '[TODO]', '[TBD]', '[FILL]'];
-  placeholders.forEach(p => {
-    if (content.includes(p)) {
-      errors.push(`Placeholder not filled: ${p}`);
+  jest.resetModules();
+
+  try {
+    process.argv = [process.execPath, CLI_PATH, ...args];
+    process.chdir(cwd);
+    require(modulePath);
+  } catch (error) {
+    if (error instanceof ExitError) {
+      status = error.code;
+    } else {
+      status = 1;
+      stderr += `${error.stack || error.message}\n`;
     }
-  });
-
-  // Security checks
-  const hasSecuritySection = content.includes('## Security Considerations');
-  if (!hasSecuritySection) {
-    warnings.push('Missing Security Considerations section');
-  }
-
-  // Check for 80% coverage
-  const has80Coverage = doneWhenSection.includes('80%');
-  if (!has80Coverage) {
-    warnings.push('Done When should include 80%+ coverage requirement');
+  } finally {
+    jest.resetModules();
+    process.argv = originalArgv;
+    process.chdir(originalCwd);
+    process.exit = originalExit;
+    console.log = originalLog;
+    console.error = originalError;
   }
 
   return {
-    valid: errors.length === 0,
-    errors,
-    warnings,
-    suggestions,
-    stats: {
-      scopeItems,
-      fileCount: fileRows,
-      checkboxCount,
-      hasSecuritySection
-    }
+    status,
+    stdout: stripAnsi(stdout),
+    stderr: stripAnsi(stderr),
   };
 }
 
-// ============================================================================
-// TESTS
-// ============================================================================
+function writeValidContract(cwd, name = 'valid-feature.fc.md') {
+  const contractsDir = path.join(cwd, 'contracts');
+  fs.mkdirSync(contractsDir, { recursive: true });
+  const contractPath = path.join(contractsDir, name);
 
-describe('Utility Functions', () => {
-  describe('genId', () => {
-    it('should generate unique IDs with FC- prefix', () => {
-      const id = genId();
-      expect(id).toMatch(/^FC-\d+$/);
-    });
+  fs.writeFileSync(contractPath, `# FC: Valid Feature
+**ID:** FC-123 | **Status:** draft
 
-    it('should generate different IDs on each call', () => {
-      const id1 = genId();
-      const id2 = genId();
-      // IDs might be same if called too fast, but format should be correct
-      expect(id1).toMatch(/^FC-\d+$/);
-      expect(id2).toMatch(/^FC-\d+$/);
-    });
-  });
-
-  describe('slug', () => {
-    it('should convert to lowercase', () => {
-      expect(slug('HelloWorld')).toBe('helloworld');
-    });
-
-    it('should replace spaces with hyphens', () => {
-      expect(slug('hello world')).toBe('hello-world');
-    });
-
-    it('should remove special characters', () => {
-      expect(slug('hello@world!')).toBe('hello-world');
-    });
-
-    it('should handle multiple spaces/special chars', () => {
-      expect(slug('hello   world!!!')).toBe('hello-world');
-    });
-
-    it('should trim leading/trailing hyphens', () => {
-      expect(slug('--hello--')).toBe('hello');
-    });
-
-    it('should handle empty string', () => {
-      expect(slug('')).toBe('');
-    });
-  });
-
-  describe('timestamp', () => {
-    it('should return ISO format timestamp', () => {
-      const ts = timestamp();
-      expect(ts).toMatch(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/);
-    });
-  });
-});
-
-describe('Contract Validation', () => {
-  describe('Required Sections', () => {
-    it('should fail when missing required sections', () => {
-      const content = '# FC: Test\n## Objective\nTest';
-      const result = validateContract(content);
-      expect(result.valid).toBe(false);
-      expect(result.errors).toContain('Missing section: Scope');
-      expect(result.errors).toContain('Missing section: Directories');
-      expect(result.errors).toContain('Missing section: Files');
-      expect(result.errors).toContain('Missing section: Done When');
-    });
-
-    it('should pass when all required sections present', () => {
-      const content = `# FC: Test
 ## Objective
-Test objective
+Ship a bounded feature contract workflow.
 
 ## Scope
-- Item 1
+- Create a valid contract
+- Generate a plan
+
+## Non-Goals
+- Backend changes
 
 ## Directories
-**Allowed:** src/
+**Allowed:** \`src/\`, \`tests/\`
+**Restricted:** \`backend/\`, \`node_modules/\`, \`.env*\`
 
 ## Files
 | Action | Path | Reason |
 |--------|------|--------|
-| create | src/test.ts | Test |
+| create | \`src/feature.ts\` | Implementation |
+| create | \`tests/feature.test.ts\` | Tests |
 
-## Done When
-- [ ] Tests pass (80%+ coverage)
+## Dependencies
+- Allowed: existing packages only
+- Banned: moment, lodash, jquery
 
 ## Security Considerations
-- [ ] Input validation
+- [ ] Input validation implemented
+
+## Code Quality
+- [ ] Lint passes
+
+## Done When
+- [ ] Feature works as specified
+- [ ] Tests pass (80%+ coverage)
+- [ ] Lint passes
 
 ## Testing
-- Unit tests`;
+- Unit: \`tests/feature.test.ts\`
 
-      const result = validateContract(content);
-      expect(result.valid).toBe(true);
-      expect(result.errors).toHaveLength(0);
-    });
+## Context Refs
+- ARCH_INDEX_v1
+- RULESET_CORE_v1
+`, 'utf8');
+
+  return contractPath;
+}
+
+describe('CLI integration', () => {
+  let tempDir;
+
+  beforeEach(() => {
+    tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'grabby-cli-'));
   });
 
-  describe('Restricted Directories', () => {
-    it('should fail when using node_modules in files', () => {
-      const content = `## Objective
-Test
-
-## Scope
-- Item
-
-## Directories
-**Allowed:** src/
-
-## Files
-| Action | Path | Reason |
-|--------|------|--------|
-| modify | node_modules/pkg/index.js | Hack |
-
-## Done When
-- [ ] Done`;
-
-      const result = validateContract(content);
-      expect(result.errors).toContain('Restricted directory in files: node_modules/');
-    });
-
-    it('should fail when using .env in files', () => {
-      const content = `## Objective
-Test
-
-## Scope
-- Item
-
-## Directories
-**Allowed:** src/
-
-## Files
-| Action | Path | Reason |
-|--------|------|--------|
-| modify | .env | Add secrets |
-
-## Done When
-- [ ] Done`;
-
-      const result = validateContract(content);
-      expect(result.errors).toContain('Restricted directory in files: .env');
-    });
+  afterEach(() => {
+    fs.rmSync(tempDir, { recursive: true, force: true });
   });
 
-  describe('Banned Dependencies', () => {
-    it('should fail when allowing moment', () => {
-      const content = `## Objective
-Test
+  it('shows help output', () => {
+    const result = runCli(['help'], tempDir);
 
-## Scope
-- Item
-
-## Directories
-**Allowed:** src/
-
-## Files
-| Action | Path | Reason |
-|--------|------|--------|
-| create | src/test.ts | Test |
-
-## Dependencies
-- Allowed: moment, react
-
-## Done When
-- [ ] Done`;
-
-      const result = validateContract(content);
-      expect(result.errors).toContain('Banned dependency: moment');
-    });
-
-    it('should fail when allowing lodash', () => {
-      const content = `## Objective
-Test
-
-## Scope
-- Item
-
-## Directories
-**Allowed:** src/
-
-## Files
-| Action | Path | Reason |
-|--------|------|--------|
-| create | src/test.ts | Test |
-
-## Dependencies
-- Allowed: lodash
-
-## Done When
-- [ ] Done`;
-
-      const result = validateContract(content);
-      expect(result.errors).toContain('Banned dependency: lodash');
-    });
+    expect(result.status).toBe(0);
+    expect(result.stdout).toContain('Grabby - CLI');
+    expect(result.stdout).toContain('grabby init');
+    expect(result.stdout).toContain('grabby create <name>');
+    expect(result.stdout).toContain('grabby task <request>');
+    expect(result.stdout).toContain('grabby orchestrate <request>');
+    expect(result.stdout).toContain('grabby backlog <file>');
+    expect(result.stdout).toContain('grabby prompt <file>');
+    expect(result.stdout).toContain('grabby session <file>');
   });
 
-  describe('Vague Terms Detection', () => {
-    it('should warn about vague terms in objective', () => {
-      const content = `## Objective
-Improve performance and optimize loading
+  it('initializes docs and contracts in the current project', () => {
+    const result = runCli(['init'], tempDir);
 
-## Scope
-- Item
-
-## Directories
-**Allowed:** src/
-
-## Files
-| Action | Path | Reason |
-|--------|------|--------|
-| create | src/test.ts | Test |
-
-## Done When
-- [ ] Done`;
-
-      const result = validateContract(content);
-      expect(result.warnings.some(w => w.includes('Vague term'))).toBe(true);
-    });
+    expect(result.status).toBe(0);
+    expect(fs.existsSync(path.join(tempDir, 'contracts', 'README.md'))).toBe(true);
+    expect(fs.existsSync(path.join(tempDir, 'docs', 'ARCHITECTURE_INDEX.md'))).toBe(true);
+    expect(fs.existsSync(path.join(tempDir, '.grabby', 'config.json'))).toBe(true);
+    expect(fs.existsSync(path.join(tempDir, '.grabbyignore'))).toBe(true);
+    expect(result.stdout).toContain('Initialized');
   });
 
-  describe('Scope Size', () => {
-    it('should error when scope has more than 7 items', () => {
-      const content = `## Objective
-Test
+  it('creates a contract file from the CLI', () => {
+    const result = runCli(['create', 'Test Feature'], tempDir);
+    const contractPath = path.join(tempDir, 'contracts', 'test-feature.fc.md');
 
-## Scope
-- Item 1
-- Item 2
-- Item 3
-- Item 4
-- Item 5
-- Item 6
-- Item 7
-- Item 8
-
-## Directories
-**Allowed:** src/
-
-## Files
-| Action | Path | Reason |
-
-## Done When
-- [ ] Done`;
-
-      const result = validateContract(content);
-      expect(result.errors.some(e => e.includes('Scope too large'))).toBe(true);
-    });
+    expect(result.status).toBe(0);
+    expect(fs.existsSync(contractPath)).toBe(true);
+    expect(fs.readFileSync(contractPath, 'utf8')).toContain('# FC: Test Feature');
+    expect(result.stdout).toContain('Created: contracts/test-feature.fc.md');
   });
 
-  describe('Placeholder Detection', () => {
-    it('should fail when placeholders not filled', () => {
-      const content = `# FC: [NAME]
-## Objective
-[TODO] Add description
+  it('creates a natural-language unit test contract with a cleaned name', () => {
+    const result = runCli(['create', 'a', 'unit', 'test'], tempDir);
+    const contractPath = path.join(tempDir, 'contracts', 'unit-test.fc.md');
 
-## Scope
-- Item
-
-## Directories
-**Allowed:** src/
-
-## Files
-| Action | Path | Reason |
-
-## Done When
-- [ ] Done`;
-
-      const result = validateContract(content);
-      expect(result.errors).toContain('Placeholder not filled: [NAME]');
-      expect(result.errors).toContain('Placeholder not filled: [TODO]');
-    });
+    expect(result.status).toBe(0);
+    expect(fs.existsSync(contractPath)).toBe(true);
+    expect(fs.readFileSync(contractPath, 'utf8')).toContain('# FC: unit test');
+    expect(result.stdout).toContain('Template: contract');
   });
 
-  describe('Security Section', () => {
-    it('should warn when security section missing', () => {
-      const content = `## Objective
-Test
+  it('runs task non-interactively and writes a session artifact', () => {
+    const result = runCli([
+      'task', 'create', 'a', 'unit', 'test',
+      '--task-name', 'login unit test',
+      '--objective', 'Add focused login test coverage.',
+      '--scope', 'add a login unit test,avoid production code changes',
+      '--done-when', 'tests pass,lint passes',
+      '--testing', 'Unit: `tests/login-unit-test.test.ts`',
+      '--session-format', 'json',
+      '--yes',
+    ], tempDir);
 
-## Scope
-- Item
+    const contractPath = path.join(tempDir, 'contracts', 'login-unit-test.fc.md');
+    const briefPath = path.join(tempDir, 'contracts', 'login-unit-test.brief.md');
+    const sessionPath = path.join(tempDir, 'contracts', 'login-unit-test.session.json');
 
-## Directories
-**Allowed:** src/
-
-## Files
-| Action | Path | Reason |
-
-## Done When
-- [ ] Done`;
-
-      const result = validateContract(content);
-      expect(result.warnings).toContain('Missing Security Considerations section');
-    });
-
-    it('should not warn when security section present', () => {
-      const content = `## Objective
-Test
-
-## Scope
-- Item
-
-## Directories
-**Allowed:** src/
-
-## Files
-| Action | Path | Reason |
-
-## Done When
-- [ ] Done
-
-## Security Considerations
-- [ ] Input validation`;
-
-      const result = validateContract(content);
-      expect(result.warnings).not.toContain('Missing Security Considerations section');
-      expect(result.stats.hasSecuritySection).toBe(true);
-    });
+    expect(result.status).toBe(0);
+    expect(fs.existsSync(contractPath)).toBe(true);
+    expect(fs.existsSync(briefPath)).toBe(true);
+    expect(fs.existsSync(sessionPath)).toBe(true);
+    expect(fs.readFileSync(contractPath, 'utf8')).toContain('Add focused login test coverage.');
+    expect(fs.readFileSync(sessionPath, 'utf8')).toContain('"mode": "task"');
   });
 
-  describe('Coverage Requirement', () => {
-    it('should warn when 80% coverage not mentioned', () => {
-      const content = `## Objective
-Test
+  it('runs orchestration non-interactively and writes yaml session output', () => {
+    const result = runCli([
+      'orchestrate', 'fix', 'login', 'redirect', 'bug',
+      '--scope', 'fix redirect logic,add regression coverage',
+      '--non-goals', 'no auth redesign',
+      '--session-format', 'yaml',
+      '--yes',
+    ], tempDir);
 
-## Scope
-- Item
+    const contractPath = path.join(tempDir, 'contracts', 'login-redirect-bug.fc.md');
+    const planPath = path.join(tempDir, 'contracts', 'login-redirect-bug.plan.yaml');
+    const backlogPath = path.join(tempDir, 'contracts', 'login-redirect-bug.backlog.yaml');
+    const executionPath = path.join(tempDir, 'contracts', 'login-redirect-bug.execute.md');
+    const auditPath = path.join(tempDir, 'contracts', 'login-redirect-bug.audit.md');
+    const sessionPath = path.join(tempDir, 'contracts', 'login-redirect-bug.session.yaml');
 
-## Directories
-**Allowed:** src/
-
-## Files
-| Action | Path | Reason |
-
-## Done When
-- [ ] Tests pass`;
-
-      const result = validateContract(content);
-      expect(result.warnings).toContain('Done When should include 80%+ coverage requirement');
-    });
-
-    it('should not warn when 80% coverage is mentioned', () => {
-      const content = `## Objective
-Test
-
-## Scope
-- Item
-
-## Directories
-**Allowed:** src/
-
-## Files
-| Action | Path | Reason |
-
-## Done When
-- [ ] Tests pass (80%+ coverage)`;
-
-      const result = validateContract(content);
-      expect(result.warnings).not.toContain('Done When should include 80%+ coverage requirement');
-    });
+    expect(result.status).toBe(0);
+    expect(fs.existsSync(contractPath)).toBe(true);
+    expect(fs.existsSync(planPath)).toBe(true);
+    expect(fs.existsSync(backlogPath)).toBe(true);
+    expect(fs.existsSync(executionPath)).toBe(true);
+    expect(fs.existsSync(auditPath)).toBe(true);
+    expect(fs.existsSync(sessionPath)).toBe(true);
+    expect(fs.readFileSync(sessionPath, 'utf8')).toContain('mode: orchestrate');
   });
 
-  describe('Test Files Warning', () => {
-    it('should warn when no test files in Files section', () => {
-      const content = `## Objective
-Test
+  it('inspects and regenerates session artifacts from the CLI', () => {
+    runCli([
+      'task', 'create', 'a', 'unit', 'test',
+      '--task-name', 'login unit test',
+      '--objective', 'Add focused login test coverage.',
+      '--session-format', 'json',
+      '--yes',
+    ], tempDir);
 
-## Scope
-- Item
+    const inspect = runCli(['session', 'login-unit-test.fc.md'], tempDir);
+    const regen = runCli(['session', 'login-unit-test.fc.md', '--regenerate', '--format', 'yaml'], tempDir);
 
-## Directories
-**Allowed:** src/
+    expect(inspect.status).toBe(0);
+    expect(inspect.stdout).toContain('Schema: v1 valid');
+    expect(regen.status).toBe(0);
+    expect(fs.existsSync(path.join(tempDir, 'contracts', 'login-unit-test.session.yaml'))).toBe(true);
+  });
 
-## Files
-| Action | Path | Reason |
-|--------|------|--------|
-| create | src/main.ts | Main code |
+  it('supports CI-style session checks from the CLI', () => {
+    runCli([
+      'task', 'create', 'a', 'unit', 'test',
+      '--task-name', 'login unit test',
+      '--objective', 'Add focused login test coverage.',
+      '--session-format', 'json',
+      '--yes',
+    ], tempDir);
 
-## Done When
-- [ ] Done`;
+    const ok = runCli(['session', 'login-unit-test.fc.md', '--check'], tempDir);
+    expect(ok.status).toBe(0);
+    expect(ok.stdout).toContain('OK contracts/login-unit-test.session.json');
 
-      const result = validateContract(content);
-      expect(result.warnings).toContain('No test files in Files section');
-    });
+    fs.writeFileSync(path.join(tempDir, 'contracts', 'broken.session.json'), JSON.stringify({
+      version: 1,
+      mode: 'broken',
+      request: '',
+      persona: {},
+      artifacts: {},
+      generatedAt: 'bad-date',
+    }, null, 2));
 
-    it('should not warn when test files present', () => {
-      const content = `## Objective
-Test
+    const invalid = runCli(['session', 'contracts/broken.session.json', '--check'], tempDir);
+    expect(invalid.status).toBe(1);
+    expect(invalid.stdout).toContain('INVALID contracts/broken.session.json');
+  });
 
-## Scope
-- Item
+  it('supports bulk CI session checks from the CLI', () => {
+    runCli([
+      'task', 'create', 'a', 'unit', 'test',
+      '--task-name', 'login unit test',
+      '--objective', 'Add focused login test coverage.',
+      '--session-format', 'json',
+      '--yes',
+    ], tempDir);
 
-## Directories
-**Allowed:** src/
+    fs.writeFileSync(path.join(tempDir, 'contracts', 'broken.session.json'), JSON.stringify({
+      version: 1,
+      mode: 'broken',
+      request: '',
+      persona: {},
+      artifacts: {},
+      generatedAt: 'bad-date',
+    }, null, 2));
 
-## Files
-| Action | Path | Reason |
-|--------|------|--------|
-| create | src/main.ts | Main code |
-| create | src/test/main.test.ts | Tests |
+    const invalid = runCli(['session', '--check-all'], tempDir);
+    expect(invalid.status).toBe(1);
+    expect(invalid.stdout).toContain('OK contracts/login-unit-test.session.json');
+    expect(invalid.stdout).toContain('INVALID contracts/broken.session.json');
+  });
 
-## Done When
-- [ ] Done`;
+  it('fails validation for an invalid contract file', () => {
+    const contractsDir = path.join(tempDir, 'contracts');
+    fs.mkdirSync(contractsDir, { recursive: true });
+    fs.writeFileSync(path.join(contractsDir, 'invalid.fc.md'), '# FC: Invalid\n## Objective\nIncomplete contract\n', 'utf8');
 
-      const result = validateContract(content);
-      expect(result.warnings).not.toContain('No test files in Files section');
-    });
+    const result = runCli(['validate', 'invalid.fc.md'], tempDir);
+
+    expect(result.status).toBe(1);
+    expect(result.stdout).toContain('Validation failed');
+    expect(result.stdout).toContain('Missing section: Scope');
+  });
+
+  it('validates a complete contract successfully', () => {
+    writeValidContract(tempDir);
+
+    const result = runCli(['validate', 'valid-feature.fc.md'], tempDir);
+
+    expect(result.status).toBe(0);
+    expect(result.stdout).toContain('Validation passed');
+    expect(result.stdout).toContain('Next: grabby plan valid-feature.fc.md');
+  });
+
+  it('generates a plan file for a valid contract', () => {
+    writeValidContract(tempDir);
+
+    const result = runCli(['plan', 'valid-feature.fc.md'], tempDir);
+    const planPath = path.join(tempDir, 'contracts', 'valid-feature.plan.yaml');
+    const plan = yaml.parse(fs.readFileSync(planPath, 'utf8'));
+
+    expect(result.status).toBe(0);
+    expect(fs.existsSync(planPath)).toBe(true);
+    expect(plan.status).toBe('pending_approval');
+    expect(plan.files).toHaveLength(2);
+    expect(result.stdout).toContain('PHASE 1: PLAN');
+  });
+
+  it('generates a backlog file for a valid contract', () => {
+    writeValidContract(tempDir);
+
+    const result = runCli(['backlog', 'valid-feature.fc.md'], tempDir);
+    const backlogPath = path.join(tempDir, 'contracts', 'valid-feature.backlog.yaml');
+    const backlog = yaml.parse(fs.readFileSync(backlogPath, 'utf8'));
+
+    expect(result.status).toBe(0);
+    expect(fs.existsSync(backlogPath)).toBe(true);
+    expect(backlog.epics).toHaveLength(1);
+    expect(result.stdout).toContain('AGILE BACKLOG');
+  });
+
+  it('renders a prompt bundle file for any LLM', () => {
+    writeValidContract(tempDir);
+    runCli(['plan', 'valid-feature.fc.md'], tempDir);
+    runCli(['backlog', 'valid-feature.fc.md'], tempDir);
+
+    const result = runCli(['prompt', 'valid-feature.fc.md'], tempDir);
+    const promptPath = path.join(tempDir, 'contracts', 'valid-feature.prompt.md');
+
+    expect(result.status).toBe(0);
+    expect(fs.existsSync(promptPath)).toBe(true);
+    expect(fs.readFileSync(promptPath, 'utf8')).toContain('Provider profile: generic');
+    expect(fs.readFileSync(promptPath, 'utf8')).toContain('## LLM Instructions');
+  });
+
+  it('approves a contract and updates its plan status', () => {
+    writeValidContract(tempDir);
+    runCli(['plan', 'valid-feature.fc.md'], tempDir);
+
+    const result = runCli(['approve', 'valid-feature.fc.md'], tempDir);
+    const contract = fs.readFileSync(path.join(tempDir, 'contracts', 'valid-feature.fc.md'), 'utf8');
+    const plan = yaml.parse(fs.readFileSync(path.join(tempDir, 'contracts', 'valid-feature.plan.yaml'), 'utf8'));
+
+    expect(result.status).toBe(0);
+    expect(contract).toContain('**Status:** approved');
+    expect(plan.status).toBe('approved');
+    expect(plan.approved_at).toBeDefined();
+  });
+
+  it('blocks execution before approval', () => {
+    writeValidContract(tempDir);
+    runCli(['plan', 'valid-feature.fc.md'], tempDir);
+
+    const result = runCli(['execute', 'valid-feature.fc.md'], tempDir);
+
+    expect(result.status).toBe(1);
+    expect(result.stdout).toContain('Contract not approved');
+  });
+
+  it('executes an approved plan and marks it executing', () => {
+    writeValidContract(tempDir);
+    runCli(['plan', 'valid-feature.fc.md'], tempDir);
+    runCli(['approve', 'valid-feature.fc.md'], tempDir);
+
+    const result = runCli(['execute', 'valid-feature.fc.md'], tempDir);
+    const plan = yaml.parse(fs.readFileSync(path.join(tempDir, 'contracts', 'valid-feature.plan.yaml'), 'utf8'));
+
+    expect(result.status).toBe(0);
+    expect(result.stdout).toContain('PHASE 2: EXECUTE');
+    expect(result.stdout).toContain('@context ARCH_INDEX_v1');
+    expect(plan.status).toBe('executing');
+    expect(plan.executed_at).toBeDefined();
+  });
+
+  it('lists contracts with status metadata', () => {
+    writeValidContract(tempDir);
+
+    const result = runCli(['list'], tempDir);
+
+    expect(result.status).toBe(0);
+    expect(result.stdout).toContain('valid-feature.fc.md');
+    expect(result.stdout).toContain('Status: draft');
+    expect(result.stdout).toContain('ID: FC-123');
   });
 });
 
-describe('File System', () => {
-  describe('Templates', () => {
-    it('should have main contract template', () => {
-      const templatePath = path.join(TEMPLATES_DIR, 'contract.md');
-      expect(fs.existsSync(templatePath)).toBe(true);
-    });
-
-    it('should have all specialized templates', () => {
-      const templates = ['contract.md', 'ui-component.md', 'api-endpoint.md', 'bug-fix.md', 'refactor.md', 'integration.md'];
-      templates.forEach(t => {
-        const templatePath = path.join(TEMPLATES_DIR, t);
-        expect(fs.existsSync(templatePath)).toBe(true);
-      });
-    });
-
-    it('contract template should have security section', () => {
-      const content = fs.readFileSync(path.join(TEMPLATES_DIR, 'contract.md'), 'utf8');
-      expect(content).toContain('## Security Considerations');
-    });
-
-    it('contract template should have code quality section', () => {
-      const content = fs.readFileSync(path.join(TEMPLATES_DIR, 'contract.md'), 'utf8');
-      expect(content).toContain('## Code Quality');
-    });
-
-    it('contract template should require 80% coverage', () => {
-      const content = fs.readFileSync(path.join(TEMPLATES_DIR, 'contract.md'), 'utf8');
-      expect(content).toContain('80%');
-    });
-  });
-
-  describe('Agents', () => {
-    it('should have all 6 agents', () => {
-      const agents = [
-        'contract-architect.agent.yaml',
-        'scope-validator.agent.yaml',
-        'plan-strategist.agent.yaml',
-        'dev-agent.agent.yaml',
-        'auditor.agent.yaml',
-        'quick-flow.agent.yaml'
-      ];
-      agents.forEach(a => {
-        const agentPath = path.join(AGENTS_DIR, a);
-        expect(fs.existsSync(agentPath)).toBe(true);
-      });
-    });
-
-    it('agent files should be valid YAML', () => {
-      const files = fs.readdirSync(AGENTS_DIR).filter(f => f.endsWith('.yaml'));
-      files.forEach(f => {
-        const content = fs.readFileSync(path.join(AGENTS_DIR, f), 'utf8');
-        expect(() => yaml.parse(content)).not.toThrow();
-      });
-    });
-
-    it('agents should have required metadata', () => {
-      const files = fs.readdirSync(AGENTS_DIR).filter(f => f.endsWith('.yaml'));
-      files.forEach(f => {
-        const content = yaml.parse(fs.readFileSync(path.join(AGENTS_DIR, f), 'utf8'));
-        expect(content.agent).toBeDefined();
-        expect(content.agent.metadata).toBeDefined();
-        expect(content.agent.metadata.name).toBeDefined();
-        expect(content.agent.metadata.title).toBeDefined();
-        expect(content.agent.menu).toBeDefined();
-        expect(Array.isArray(content.agent.menu)).toBe(true);
-      });
-    });
-  });
-
-  describe('Workflows', () => {
-    it('should have workflow directories', () => {
-      const workflows = [
-        'create-contract',
-        'validate-contract',
-        'execute-contract',
-        'audit-contract',
-        'generate-plan',
-        'quick-flow'
-      ];
-      workflows.forEach(w => {
-        const workflowDir = path.join(WORKFLOWS_DIR, w);
-        expect(fs.existsSync(workflowDir)).toBe(true);
-      });
-    });
-
-    it('workflows should have workflow.yaml', () => {
-      const workflowDirs = fs.readdirSync(WORKFLOWS_DIR).filter(f =>
-        fs.statSync(path.join(WORKFLOWS_DIR, f)).isDirectory()
-      );
-      workflowDirs.forEach(w => {
-        const workflowFile = path.join(WORKFLOWS_DIR, w, 'workflow.yaml');
-        expect(fs.existsSync(workflowFile)).toBe(true);
-      });
-    });
-
-    it('workflow.yaml files should be valid YAML', () => {
-      const workflowDirs = fs.readdirSync(WORKFLOWS_DIR).filter(f =>
-        fs.statSync(path.join(WORKFLOWS_DIR, f)).isDirectory()
-      );
-      workflowDirs.forEach(w => {
-        const workflowFile = path.join(WORKFLOWS_DIR, w, 'workflow.yaml');
-        if (fs.existsSync(workflowFile)) {
-          const content = fs.readFileSync(workflowFile, 'utf8');
-          expect(() => yaml.parse(content)).not.toThrow();
-        }
-      });
-    });
-  });
-
-  describe('Documentation', () => {
-    it('should have security documentation', () => {
-      const securityDoc = path.join(PKG_ROOT, 'docs', 'SECURITY.md');
-      expect(fs.existsSync(securityDoc)).toBe(true);
-    });
-
-    it('should have best practices documentation', () => {
-      const bestPracticesDoc = path.join(PKG_ROOT, 'docs', 'BEST_PRACTICES.md');
-      expect(fs.existsSync(bestPracticesDoc)).toBe(true);
-    });
-
-    it('security doc should mention OWASP', () => {
-      const content = fs.readFileSync(path.join(PKG_ROOT, 'docs', 'SECURITY.md'), 'utf8');
-      expect(content).toContain('OWASP');
-    });
-
-    it('security doc should mention CVE', () => {
-      const content = fs.readFileSync(path.join(PKG_ROOT, 'docs', 'SECURITY.md'), 'utf8');
-      expect(content).toContain('CVE');
-    });
-
-    it('best practices doc should mention 80% coverage', () => {
-      const content = fs.readFileSync(path.join(PKG_ROOT, 'docs', 'BEST_PRACTICES.md'), 'utf8');
-      expect(content).toContain('80%');
-    });
-  });
-});
-
-describe('Security Patterns', () => {
-  it('should detect security-sensitive features', () => {
-    const content = `## Objective
-Implement user authentication
-
-## Scope
-- Login flow
-- Password handling
-
-## Directories
-**Allowed:** src/
-
-## Files
-| Action | Path | Reason |
-
-## Done When
-- [ ] Done`;
-
-    const result = validateContract(content);
-    // Should have warnings about security section for auth features
-    expect(result.warnings.some(w => w.includes('Security') || w.includes('security'))).toBe(true);
-  });
-
-  it('templates should not contain dangerous patterns', () => {
-    const files = fs.readdirSync(TEMPLATES_DIR).filter(f => f.endsWith('.md'));
-    const dangerous = ['eval(', 'innerHTML', 'dangerouslySetInnerHTML', 'child_process.exec'];
-
-    files.forEach(f => {
-      const content = fs.readFileSync(path.join(TEMPLATES_DIR, f), 'utf8');
-      dangerous.forEach(pattern => {
-        expect(content).not.toContain(pattern);
-      });
-    });
-  });
-});
