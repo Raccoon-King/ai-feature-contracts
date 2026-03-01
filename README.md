@@ -50,6 +50,7 @@ grabby quick
 | `grabby execute <file>` | Show execution instructions (Phase 2) |
 | `grabby audit <file>` | Post-execution audit |
 | `grabby list` | List all contracts |
+| `grabby ruleset create [goal]` | Build rulesets from existing project files |
 
 ## Agent System
 
@@ -167,6 +168,17 @@ grabby task "request" --objective "specific goal"
 grabby task "request" --scope "item1,item2,item3"
 grabby task "request" --directories "src/,tests/"
 ```
+
+
+## Ruleset Builder
+
+You can generate a project ruleset from existing markdown and source files interactively:
+
+```bash
+grabby ruleset create "harden our frontend delivery standards" --from=README.md,docs/ --title=Frontend Rules
+```
+
+If AI keys are configured, Grabby uses your selected provider. Otherwise it falls back to a local template and still includes discovered file references.
 
 ## Token Efficiency
 

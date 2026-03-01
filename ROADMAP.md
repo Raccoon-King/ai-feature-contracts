@@ -96,6 +96,8 @@ module.exports = {
 Set one of these environment variables:
 - `OPENAI_API_KEY` - Uses GPT-4o-mini
 - `ANTHROPIC_API_KEY` - Uses Claude 3 Haiku
+- `GEMINI_API_KEY` - Uses Gemini 1.5 Flash
+- `OLLAMA_HOST` / `OLLAMA_MODEL` - Uses local Ollama API
 
 ---
 
