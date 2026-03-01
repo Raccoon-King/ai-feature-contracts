@@ -21,6 +21,7 @@ const { getWorkspaceContext, findAllContracts, formatWorkspaceInfo } = require('
 const featuresLib = require('../lib/features.cjs');
 const featureChat = require('../lib/feature-chat.cjs');
 const contractLevels = require('../lib/contract-levels.cjs');
+const { interactiveCreateRuleset } = require('../lib/ruleset-builder.cjs');
 
 // ============================================================================
 // TERMINAL COLORS (no dependencies)
@@ -338,8 +339,8 @@ async function ai() {
   const subCommand = args[0];
 
   if (!isAIAvailable()) {
-    console.log(c.warn('\nAI features require an API key.'));
-    console.log(c.dim('Set OPENAI_API_KEY or ANTHROPIC_API_KEY environment variable.\n'));
+    console.log(c.warn('\nAI features require a configured provider.'));
+    console.log(c.dim('Set one of: OPENAI_API_KEY, ANTHROPIC_API_KEY, GEMINI_API_KEY, or OLLAMA_HOST/OLLAMA_MODEL.\n'));
     return;
   }
 
@@ -384,7 +385,7 @@ async function ai() {
       console.log('  grabby ai suggest <file>   Generate suggestions for a contract');
       console.log('  grabby ai status           Check AI configuration');
       console.log('');
-      console.log(c.dim('Requires OPENAI_API_KEY or ANTHROPIC_API_KEY'));
+      console.log(c.dim('Supports: OpenAI, Anthropic, Gemini, and local Ollama'));
   }
 }
 
@@ -479,6 +480,41 @@ function plugin() {
       console.log(c.dim('  --agent      Include sample agent'));
       console.log(c.dim('  --workflow   Include sample workflow'));
       console.log(c.dim('  --command    Include sample command'));
+  }
+}
+
+
+async function ruleset() {
+  const subCommand = args[0];
+
+  switch (subCommand) {
+    case 'create': {
+      const goal = args.slice(1).filter((a) => !a.startsWith('--')).join(' ');
+      const pathsArg = args.find((a) => a.startsWith('--from='));
+      const titleArg = args.find((a) => a.startsWith('--title='));
+
+      try {
+        await interactiveCreateRuleset(CWD, {
+          goal: goal || null,
+          title: titleArg ? titleArg.split('=')[1] : null,
+          pathsCsv: pathsArg ? pathsArg.split('=')[1] : null,
+          logger: console,
+        });
+      } catch (err) {
+        console.log(c.error(`Error: ${err.message}`));
+        process.exit(1);
+      }
+      break;
+    }
+
+    default:
+      console.log(c.heading('\nRuleset Commands'));
+      console.log('─'.repeat(40));
+      console.log('  grabby ruleset create [goal]      Create a ruleset interactively');
+      console.log('');
+      console.log(c.dim('Options:'));
+      console.log(c.dim('  --title=<name>   Override ruleset title'));
+      console.log(c.dim('  --from=<paths>   Comma-separated files/dirs for context'));
   }
 }
 
@@ -839,6 +875,7 @@ const commands = {
   contracts,
   features,
   feature,
+  ruleset,
   agent,
   task,
   orchestrate,
