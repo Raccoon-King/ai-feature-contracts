@@ -72,6 +72,7 @@ grabby audit login-redirect-bug.fc.md
 | `grabby workflow <name>` | View workflow details directly |
 | `grabby party` | Show the full multi-agent handoff flow |
 | `grabby resume` | List saved workflow progress |
+| `grabby ruleset create [goal]` | Build rulesets from existing project files |
 
 ## Persona Workflow
 
@@ -199,6 +200,17 @@ grabby session --check-all
 - RULESET_CORE_v1 section hooks
 ```
 
+
+## Ruleset Builder
+
+You can generate a project ruleset from existing markdown and source files interactively:
+
+```bash
+grabby ruleset create "harden our frontend delivery standards" --from=README.md,docs/ --title=Frontend Rules
+```
+
+If AI keys are configured, Grabby uses your selected provider. Otherwise it falls back to a local template and still includes discovered file references.
+
 ## Token Efficiency
 
 This system reduces token usage by:
@@ -235,3 +247,5 @@ After `grabby init`, your project will have:
 ## License
 
 MIT
+
+
