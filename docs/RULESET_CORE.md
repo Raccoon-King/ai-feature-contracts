@@ -1,5 +1,12 @@
 # RULESET_CORE_v1
 
+## §contracts
+- All features require approved contracts
+- Use `grabby task "feature"` to create
+- Validate before implementation
+- Audit after completion
+- 80%+ test coverage required
+
 ## §typescript
 - strict: true
 - noAny: true

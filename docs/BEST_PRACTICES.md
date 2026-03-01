@@ -282,6 +282,17 @@ document.getElementById('list').appendChild(fragment);
 Types: feat, fix, docs, style, refactor, test, chore
 
 ### Pre-commit Hooks
+
+**Grabby Hooks (Contract Enforcement):**
+```bash
+# Install grabby hooks
+grabby init-hooks
+
+# Enable strict mode
+export GRABBY_STRICT=1
+```
+
+**Husky + lint-staged:**
 ```json
 // package.json
 {

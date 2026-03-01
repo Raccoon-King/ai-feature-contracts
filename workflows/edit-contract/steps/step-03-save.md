@@ -53,8 +53,8 @@ Saving changes...
 ✓ Backup: contracts/.backup/{filename}.{timestamp}
 
 Next:
-  - Validate: afc validate {filename}
-  - Re-approve: afc approve {filename}
+  - Validate: grabby validate {filename}
+  - Re-approve: grabby approve {filename}
 ```
 
 ## Navigation

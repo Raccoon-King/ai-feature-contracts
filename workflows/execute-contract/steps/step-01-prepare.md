@@ -10,21 +10,21 @@ Load contract and plan, verify all preconditions are met.
 Checking: Contract status is 'approved'
 ```
 - Contract must have `**Status:** approved`
-- If not approved, abort with: "Run: afc approve {contract}"
+- If not approved, abort with: "Run: grabby approve {contract}"
 
 ### 2. Plan Exists
 ```
 Checking: Plan file exists
 ```
 - Plan file must exist at `contracts/{slug}.plan.yaml`
-- If missing, abort with: "Run: afc plan {contract}"
+- If missing, abort with: "Run: grabby plan {contract}"
 
 ### 3. Plan Status
 ```
 Checking: Plan status is 'approved'
 ```
 - Plan must have `status: approved`
-- If not approved, abort with: "Run: afc approve {contract}"
+- If not approved, abort with: "Run: grabby approve {contract}"
 
 ## Load Execution Context
 

@@ -119,7 +119,7 @@ These patterns are automatically flagged:
    - Use security linting rules
 
 3. **Post-Implementation**
-   - Run security audit (`afc agent auditor AU`)
+   - Run security audit (`grabby agent auditor AU`)
    - Run npm audit
    - Manual security review for high-risk features
 

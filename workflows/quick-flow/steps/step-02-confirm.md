@@ -63,7 +63,7 @@ Status: approved (auto)
 
 Ready to implement!
 Paste the above to your AI assistant, or run:
-  afc agent quick QD {slug}.quick.md
+  grabby agent quick QD {slug}.quick.md
 ```
 
 ## Navigation

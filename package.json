@@ -1,10 +1,10 @@
 {
-  "name": "ai-feature-contracts",
-  "version": "1.0.0",
+  "name": "grabby",
+  "version": "1.1.0",
   "description": "Token-efficient feature contract system for AI-assisted development",
   "main": "bin/index.cjs",
   "bin": {
-    "ai-feature": "bin/index.cjs",
+    "grabby": "bin/index.cjs",
     "afc": "bin/index.cjs"
   },
   "scripts": {
