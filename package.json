@@ -1,6 +1,6 @@
 {
   "name": "grabby",
-  "version": "1.1.0",
+  "version": "2.0.0",
   "description": "Token-efficient feature contract system for AI-assisted development",
   "main": "bin/index.cjs",
   "bin": {
@@ -24,6 +24,8 @@
   "author": "jesse",
   "license": "MIT",
   "dependencies": {
+    "chokidar": "^5.0.0",
+    "cli-progress": "^3.12.0",
     "yaml": "^2.3.4"
   },
   "devDependencies": {

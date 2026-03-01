@@ -10,7 +10,16 @@
       "Bash(powershell -Command:*)",
       "Bash(npm link:*)",
       "Bash(npm unlink:*)",
-      "Bash(grabby --help:*)"
+      "Bash(grabby --help:*)",
+      "Bash(npx ts-node:*)",
+      "Bash(npm install:*)",
+      "Bash(npm audit:*)",
+      "Bash(npm uninstall:*)",
+      "Bash(node /c/Users/jesse/ai-feature-contracts/bin/index.cjs:*)",
+      "Bash(timeout 5 node:*)",
+      "Bash(npm run dev:*)",
+      "Bash(node tests/features.test.cjs:*)",
+      "Bash(node:*)"
     ]
   }
 }

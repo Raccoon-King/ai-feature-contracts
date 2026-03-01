@@ -1,0 +1,13 @@
+name: test-plugin
+version: 1.0.0
+description: "Custom plugin: test-plugin"
+agents:
+  - name: test-plugin-agent
+    title: test-plugin Agent
+    prompt: Define your agent prompt here
+workflows: []
+hooks: {}
+commands:
+  - name: test-plugin
+    description: Run test-plugin command
+    handler: runCommand

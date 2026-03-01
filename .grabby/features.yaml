@@ -1,0 +1,51 @@
+version: "1.0"
+features:
+  - id: F-001
+    name: Feature Management System
+    description: Add a conversational feature management system to Grabby that
+      allows developers to list, manage, and discuss application features.
+    status: completed
+    contracts:
+      - FC-002
+    tags: []
+    created: 2026-03-01T19:11:10.429Z
+    updated: 2026-03-01T19:16:29.194Z
+    enhancements: []
+    notes: ""
+  - id: F-002
+    name: grabby-v2-enhancements
+    description: Enhance Grabby with AI auto-complete, improved developer experience
+      (watch mode, TUI, better prompts, progress tracking), stricter validation,
+      CI/CD integration, metrics/reports, plugin system, API se
+    status: in-progress
+    contracts:
+      - FC-001
+    tags: []
+    created: 2026-03-01T19:11:10.437Z
+    updated: 2026-03-01T19:11:10.437Z
+    enhancements: []
+    notes: ""
+  - id: F-003
+    name: User Dashboard
+    description: ""
+    status: approved
+    contracts: []
+    tags: []
+    created: 2026-03-01T19:11:25.792Z
+    updated: 2026-03-01T19:11:38.552Z
+    enhancements: []
+    notes: ""
+  - id: F-004
+    name: Contract Level System
+    description: Add support for system-level (global) and project-level contracts,
+      allowing developers to define universal rules that apply across all
+      projects while maintaining project-specific architecture contract
+    status: completed
+    contracts:
+      - FC-003
+    tags: []
+    created: 2026-03-01T19:26:16.106Z
+    updated: 2026-03-01T19:26:16.107Z
+    enhancements: []
+    notes: ""
+lastUpdated: 2026-03-01T19:26:16.107Z

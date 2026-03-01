@@ -1,0 +1,18 @@
+contract: feature-manager.fc.md
+phase: plan
+timestamp: 2026-03-01T19:08:33.924Z
+context:
+  - ARCH_INDEX_v1
+  - RULESET_CORE_v1
+files: []
+rules:
+  - §typescript
+  - §hooks
+  - §testing
+risks:
+  - State synchronization
+  - Type coverage
+  - Edge cases
+status: executing
+approved_at: 2026-03-01T19:08:38.712Z
+executed_at: 2026-03-01T19:08:44.135Z
