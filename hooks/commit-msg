@@ -1,0 +1,46 @@
+#!/bin/sh
+#
+# Grabby Commit-Msg Hook
+# Suggests linking commits to contracts
+#
+# Install: grabby init-hooks
+
+# Colors
+YELLOW='\033[0;33m'
+CYAN='\033[0;36m'
+NC='\033[0m'
+
+COMMIT_MSG_FILE=$1
+COMMIT_MSG=$(cat "$COMMIT_MSG_FILE")
+
+# Check if commit message references a contract
+if echo "$COMMIT_MSG" | grep -qE '\[FC-[0-9]+\]|\[QFC-[0-9]+\]|contracts/'; then
+  exit 0
+fi
+
+# Get active contracts
+if [ -d "contracts" ]; then
+  ACTIVE_CONTRACTS=$(ls contracts/*.fc.md 2>/dev/null | while read contract; do
+    if grep -q '**Status:** approved\|**Status:** executing' "$contract" 2>/dev/null; then
+      # Extract ID
+      ID=$(grep -oE '\*\*ID:\*\* (FC-[0-9]+|QFC-[0-9]+)' "$contract" | head -1 | sed 's/\*\*ID:\*\* //')
+      if [ -n "$ID" ]; then
+        echo "$ID"
+      fi
+    fi
+  done)
+
+  if [ -n "$ACTIVE_CONTRACTS" ]; then
+    echo ""
+    echo "${YELLOW}[grabby] Tip: Reference your contract in the commit message:${NC}"
+    echo ""
+    echo "$ACTIVE_CONTRACTS" | head -3 | while read id; do
+      if [ -n "$id" ]; then
+        echo "  Example: ${CYAN}[$id] $COMMIT_MSG${NC}"
+      fi
+    done
+    echo ""
+  fi
+fi
+
+exit 0

@@ -44,13 +44,7 @@ const c = {
 
 // Paths
 const PKG_ROOT = path.join(__dirname, '..');
-const TEMPLATES_DIR = path.join(PKG_ROOT, 'templates');
-const DOCS_DIR = path.join(PKG_ROOT, 'docs');
-const AGENTS_DIR = path.join(PKG_ROOT, 'agents');
-const WORKFLOWS_DIR = path.join(PKG_ROOT, 'workflows');
 const CWD = process.cwd();
-const CONTRACTS_DIR = path.join(CWD, 'contracts');
-const PROGRESS_DIR = path.join(CWD, '.grabby-progress');
 
 // Output mode from --output flag
 const OUTPUT_MODE = (() => {
@@ -70,6 +64,7 @@ const commandHandlers = createCommandHandlers({
 
 const interactiveHandlers = createInteractiveHandlers({
   c,
+  argv: process.argv,
   outputMode: OUTPUT_MODE,
   pkgRoot: PKG_ROOT,
   cwd: CWD,
@@ -82,6 +77,10 @@ const interactiveHandlers = createInteractiveHandlers({
 
 function init() {
   commandHandlers.init();
+}
+
+function initHooks() {
+  commandHandlers.initHooks();
 }
 
 function create(name) {
@@ -179,6 +178,7 @@ const [cmd, ...args] = process.argv.slice(2);
 
 const commands = {
   init,
+  'init-hooks': initHooks,
   create: () => create(args.join(' ').replace(/--output.*$/, '').trim() || 'new-feature'),
   validate: () => validate(args[0]),
   plan: () => plan(args[0]),
@@ -210,4 +210,3 @@ if (result instanceof Promise) {
     process.exit(1);
   });
 }
-

@@ -13,7 +13,7 @@ preconditions:
   - check: status_approved
     message: "Contract must be approved before execution"
   - check: plan_exists
-    message: "Plan must exist (run: afc plan {contract})"
+    message: "Plan must exist (run: grabby plan {contract})"
 
 steps:
   - file: steps/step-01-prepare.md

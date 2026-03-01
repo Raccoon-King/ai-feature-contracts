@@ -1,6 +1,6 @@
 # Grabby
 
-Token-efficient feature contract system for AI-assisted development with persona-led CLI workflows.
+Token-efficient feature contract system for AI-assisted development with Cline/Claude Code.
 
 ## Installation
 
@@ -21,107 +21,73 @@ npm link
 cd your-project
 grabby init
 
-# Let Grabby interview you and prefill a contract
-grabby task "create a unit test"
+# Install git hooks for auto-enforcement
+grabby init-hooks
 
-# Or run the full Archie -> Sage -> Dev -> Iris handoff
-grabby orchestrate "fix login redirect bug"
+# Create a feature contract (interview-driven)
+grabby task "add user authentication"
 
-# Or create a contract directly
-grabby create "user-authentication"
+# Or use full orchestration (all agents in sequence)
+grabby orchestrate "add user authentication"
 
-# Validate
-grabby validate user-authentication.fc.md
-
-# Generate plan (Phase 1)
-grabby plan user-authentication.fc.md
-
-# Approve
-grabby approve user-authentication.fc.md
-
-# Execute with Cline/Claude (Phase 2)
-grabby execute user-authentication.fc.md
-
-# Post-execution audit
-grabby audit user-authentication.fc.md
+# For quick fixes (< 3 files)
+grabby quick
 ```
 
-## Commands
+## Core Commands
 
 | Command | Description |
 |---------|-------------|
 | `grabby init` | Initialize in current project |
-| `grabby create <name>` | Create new contract |
-| `grabby task <request>` | Interview-driven task breakdown with persona selection |
-| `grabby orchestrate <request>` | Full persona handoff in one CLI session |
+| `grabby init-hooks` | Install git hooks for enforcement |
+| `grabby task <request>` | Interview-driven task breakdown |
+| `grabby orchestrate <request>` | Full persona handoff |
+| `grabby create <name>` | Create contract from template |
 | `grabby validate <file>` | Validate contract |
 | `grabby plan <file>` | Generate plan (Phase 1) |
-| `grabby backlog <file>` | Generate Agile epic/task/subtask backlog |
-| `grabby prompt <file>` | Render an LLM instruction bundle |
-| `grabby session <file>` | Inspect or regenerate session artifacts |
+| `grabby backlog <file>` | Generate Agile backlog |
 | `grabby approve <file>` | Approve for execution |
 | `grabby execute <file>` | Show execution instructions (Phase 2) |
 | `grabby audit <file>` | Post-execution audit |
 | `grabby list` | List all contracts |
 
-## Persona Workflow
+## Agent System
 
-Grabby uses BMAD-style personalities in the CLI:
-- `Archie`: contract shaping and clarification
-- `Sage`: planning and backlog decomposition
-- `Dev`: execution handoff preparation
-- `Iris`: audit preparation and verification
-- `Flash`: quick bounded work
-- `Conductor`: orchestrates the full handoff
+Grabby includes specialized agents with unique personas:
 
-## Generated Artifacts
+| Agent | Persona | Purpose |
+|-------|---------|---------|
+| `grabby agent architect` | Archie | Contract creation |
+| `grabby agent validator` | Val | Validation & risk analysis |
+| `grabby agent strategist` | Sage | Plan generation |
+| `grabby agent dev` | Dev | Contract execution |
+| `grabby agent auditor` | Iris | Post-execution audit |
+| `grabby agent quick` | Flash | Quick flow for small changes |
 
-`grabby task` generates:
-- `contracts/<name>.fc.md` - populated feature contract
-- `contracts/<name>.brief.md` - developer-facing task brief
-- optional `contracts/<name>.session.json|yaml` - machine-readable session summary
-
-`grabby orchestrate` additionally generates:
-- `contracts/<name>.plan.yaml`
-- `contracts/<name>.backlog.yaml`
-- `contracts/<name>.execute.md`
-- `contracts/<name>.audit.md`
-
-## Non-Interactive Automation
-
-Use flags when `grabby task` or `grabby orchestrate` should run without prompts:
+### Agent Commands
 
 ```bash
-grabby task "create a unit test" \
-  --task-name "login unit test" \
-  --objective "Add focused login test coverage." \
-  --scope "add a login unit test,avoid production code changes" \
-  --done-when "tests pass,lint passes" \
-  --testing "Unit: tests/login-unit-test.test.ts" \
-  --session-format json \
-  --yes
+grabby agent list              # List available agents
+grabby agent architect CC      # Create contract interactively
+grabby agent validator VC      # Validate contract
+grabby agent strategist GP     # Generate plan
+grabby agent dev EX            # Execute contract
+grabby agent auditor AU        # Audit implementation
 ```
 
-Useful flags:
-- `--task-name`
-- `--objective`
-- `--scope`
-- `--non-goals`
-- `--directories`
-- `--constraints`
-- `--dependencies`
-- `--done-when`
-- `--testing`
-- `--yes` or `--non-interactive`
-- `--session-format json|yaml`
-- `--session-output <path>`
+## Git Hooks (Auto-Enforcement)
 
-CI/session validation:
 ```bash
-grabby session login-unit-test.fc.md --check
-grabby session --check-all
-grabby session login-unit-test.fc.md --regenerate --format yaml
+# Install git hooks
+grabby init-hooks
+
+# Enable strict mode (block commits without contracts)
+export GRABBY_STRICT=1
 ```
+
+Hooks installed:
+- **pre-commit**: Warns/blocks commits without approved contracts
+- **commit-msg**: Suggests linking commits to contract IDs
 
 ## Two-Phase Execution
 
@@ -159,14 +125,47 @@ grabby session login-unit-test.fc.md --regenerate --format yaml
 |--------|------|--------|
 | create | `src/hooks/useX.ts` | Logic |
 
+## Security Considerations
+- [ ] Input validation implemented
+- [ ] No secrets in code
+- [ ] Dependencies CVE-free
+
+## Code Quality
+- [ ] TypeScript strict mode
+- [ ] No console.log left behind
+- [ ] Error handling matches patterns
+
 ## Done When
 - [ ] Feature works
 - [ ] Tests pass (80%+)
 - [ ] Lint clean
+- [ ] Build succeeds
 
 ## Context Refs
 - ARCH_INDEX_v1 §frontend
 - RULESET_CORE_v1 §hooks
+```
+
+## CLI Options
+
+```bash
+# Output modes
+grabby task "request" --output console    # Console only
+grabby task "request" --output file       # File only
+grabby task "request" --output both       # Both (default)
+
+# Non-interactive mode
+grabby task "request" --yes               # Skip confirmations
+grabby task "request" --non-interactive   # Use defaults
+
+# Session artifacts
+grabby task "request" --session-format json
+grabby task "request" --session-output path/to/session.json
+
+# Override values
+grabby task "request" --objective "specific goal"
+grabby task "request" --scope "item1,item2,item3"
+grabby task "request" --directories "src/,tests/"
 ```
 
 ## Token Efficiency
@@ -176,6 +175,7 @@ This system reduces token usage by:
 - Reference-based context (`@context ARCH_INDEX_v1 §frontend`)
 - Structured plans instead of prose
 - Two-phase separation (plan vs execute)
+- Agile backlog generation for LLM execution
 
 ## Reference Documents
 
@@ -184,22 +184,16 @@ After `grabby init`, your project will have:
 - `docs/RULESET_CORE.md` - Coding rules
 - `docs/ENV_STACK.md` - Environment config
 - `docs/EXECUTION_PROTOCOL.md` - Workflow
-- `.grabbyignore` - paths Grabby should ignore for artifact inspection/reporting
 
-`.grabbyignore` supports glob-style patterns such as:
-- `**/*.session.json`
-- `tmp/*.log`
-- `coverage/`
-- `!contracts/keep.session.json`
+## Security & Quality
 
-## Recommended Flow
-
-1. Run `grabby task "<request>"` when the task still needs clarification.
-2. Run `grabby orchestrate "<request>"` when you want the full multi-persona handoff.
-3. Review `contracts/*.fc.md`, `*.brief.md`, and orchestration artifacts before coding.
-4. Use `grabby execute <file>` and `grabby audit <file>` during implementation and verification.
+All contracts enforce:
+- 80%+ test coverage requirement
+- npm audit for CVE awareness
+- Security checklist for auth/payment features
+- TypeScript strict mode compliance
+- Input validation requirements
 
 ## License
 
 MIT
-

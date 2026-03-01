@@ -46,7 +46,7 @@ Before proceeding, verify:
 If any fail:
 ```
 ⚠ This change may be too large for quick flow.
-Consider: afc agent architect CC
+Consider: grabby agent architect CC
 
 [C] Continue anyway
 [E] Escalate to full contract

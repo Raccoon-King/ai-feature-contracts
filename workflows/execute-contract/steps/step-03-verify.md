@@ -71,7 +71,7 @@ Contract execution complete.
 Updating contract status to 'complete'...
 Done.
 
-Next: afc audit {filename}
+Next: grabby audit {filename}
 ```
 
 ### If Some Fail

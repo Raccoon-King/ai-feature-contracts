@@ -4,6 +4,16 @@
 - Frontend: React + TypeScript + Vite
 - Backend: Go + PostgreSQL
 - Tests: Jest + Playwright
+- Contracts: Grabby CLI
+
+## Contract Management
+```bash
+grabby task "feature"        # Create contract
+grabby validate <file>       # Validate
+grabby plan <file>           # Generate plan
+grabby execute <file>        # Execute
+grabby audit <file>          # Audit
+```
 
 ## Module Map
 

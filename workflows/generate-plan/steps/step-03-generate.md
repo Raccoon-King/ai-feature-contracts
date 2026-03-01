@@ -77,8 +77,8 @@ Plan generated successfully!
 
 Next:
   1. Review: contracts/{slug}.plan.yaml
-  2. Approve: afc approve {filename}
-  3. Execute: afc agent dev EX {filename}
+  2. Approve: grabby approve {filename}
+  3. Execute: grabby agent dev EX {filename}
 ```
 
 ## Navigation

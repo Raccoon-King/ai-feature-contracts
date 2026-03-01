@@ -79,7 +79,7 @@ Before proceeding:
 3. [ ] Consider adding checkpoint after types
 
 After addressing:
-  afc validate {filename}
+  grabby validate {filename}
 ```
 
 ## Navigation
