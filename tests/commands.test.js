@@ -237,7 +237,7 @@ describe('Command handlers', () => {
     fs.mkdirSync(path.join(tempDir, 'src'), { recursive: true });
     fs.writeFileSync(path.join(tempDir, 'src', 'feature.ts'), 'module.exports = {};', 'utf8');
     fs.mkdirSync(path.join(tempDir, 'contracts'), { recursive: true });
-    fs.writeFileSync(path.join(tempDir, 'contracts', 'valid-feature.plan.yaml'), yaml.stringify({
+    fs.writeFileSync(path.join(tempDir, 'contracts', 'FC-123.plan.yaml'), yaml.stringify({
       status: 'executing',
       files: [
         { action: 'create', path: 'src/feature.ts' },
