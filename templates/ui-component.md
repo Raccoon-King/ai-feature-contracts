@@ -1,5 +1,9 @@
 # FC: [NAME]
 **ID:** [ID] | **Status:** draft
+CONTRACT_TYPE: FEATURE_CONTRACT
+ARCH_VERSION: v3
+RULESET_VERSION: v2
+ENV_VERSION: v1
 
 ## Objective
 Create a [NAME] UI component that [purpose].
@@ -45,5 +49,6 @@ Create a [NAME] UI component that [purpose].
 - Visual: Storybook story (optional)
 
 ## Context Refs
-- ARCH_INDEX_v1 §components
-- RULESET_CORE_v1 §react §typescript
+- ARCH: auth-module@v3
+- RULESET: imports@v2
+- ENV: test-runner@v1
