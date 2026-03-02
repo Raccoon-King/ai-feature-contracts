@@ -1,0 +1,197 @@
+# Plan: GRABBY-001 - Comprehensive Test Suite
+# Generated: 2026-03-02
+# Status: pending_approval
+
+contract_ref: contracts/GRABBY-001.fc.md
+
+files_to_modify:
+  # Existing test files requiring enhancement for full coverage
+  - tests/core.test.js
+  - tests/commands.test.js
+  - tests/features.test.js
+  - tests/governance.test.js
+  - tests/contract-levels.test.js
+  - tests/api-server.test.js
+  - tests/jira.test.js
+  - tests/complexity.test.js
+  - tests/dependency-analyzer.test.js
+  - tests/task-artifacts.test.js
+  - tests/multi-repo.test.js
+  - tests/cicd.test.js
+  - tests/smart-prompts.test.js
+  - tests/progress.test.js
+  - tests/tui.test.js
+  - tests/ai-complete.test.js
+  - tests/plugins.test.js
+  - tests/metrics.test.js
+  - tests/interactive-shell.test.js
+  - tests/config.test.js
+  - tests/id-utils.test.js
+  - tests/watcher.test.js
+  - tests/personas.test.js
+  - tests/ruleset-builder.test.js
+  - tests/ignore.test.js
+  - tests/graphql.test.js
+  - tests/cli.test.js
+
+files_to_create:
+  # Missing test files (6 modules without tests)
+  - tests/interactive.test.js
+  - tests/agile.test.js
+  - tests/task-brief.test.js
+  - tests/interactive-workflows.test.js
+  - tests/feature-chat.test.js
+  - tests/governance-runtime.test.js
+  # Integration test suite
+  - tests/integration/contract-workflow.test.js
+  - tests/integration/governance-enforcement.test.js
+  - tests/integration/persona-handoff.test.js
+  # E2E test suite
+  - tests/e2e/cli-commands.test.js
+  - tests/e2e/file-generation.test.js
+
+test_files:
+  unit:
+    - tests/interactive.test.js
+    - tests/agile.test.js
+    - tests/task-brief.test.js
+    - tests/interactive-workflows.test.js
+    - tests/feature-chat.test.js
+    - tests/governance-runtime.test.js
+  integration:
+    - tests/integration/contract-workflow.test.js
+    - tests/integration/governance-enforcement.test.js
+    - tests/integration/persona-handoff.test.js
+  e2e:
+    - tests/e2e/cli-commands.test.js
+    - tests/e2e/file-generation.test.js
+
+steps:
+  # Phase 1: Missing Unit Tests (Priority)
+  - id: 1
+    action: Create tests/interactive-workflows.test.js
+    description: Add unit tests for largest module (73KB) - workflow orchestration
+    priority: high
+
+  - id: 2
+    action: Create tests/governance-runtime.test.js
+    description: Add unit tests for governance enforcement runtime
+    priority: high
+
+  - id: 3
+    action: Create tests/feature-chat.test.js
+    description: Add unit tests for feature chat interface
+    priority: high
+
+  - id: 4
+    action: Create tests/agile.test.js
+    description: Add unit tests for agile methodology helpers
+    priority: medium
+
+  - id: 5
+    action: Create tests/task-brief.test.js
+    description: Add unit tests for task brief generation
+    priority: medium
+
+  - id: 6
+    action: Create tests/interactive.test.js
+    description: Add unit tests for interactive mode stub
+    priority: low
+
+  # Phase 2: Integration Tests
+  - id: 7
+    action: Create tests/integration directory
+    description: Set up integration test structure
+    priority: high
+
+  - id: 8
+    action: Create tests/integration/contract-workflow.test.js
+    description: Test validate → plan → execute flow
+    priority: high
+
+  - id: 9
+    action: Create tests/integration/governance-enforcement.test.js
+    description: Test governance rules across modules
+    priority: high
+
+  - id: 10
+    action: Create tests/integration/persona-handoff.test.js
+    description: Test Archie → Val → Sage → Dev → Iris flow
+    priority: medium
+
+  # Phase 3: E2E Tests
+  - id: 11
+    action: Create tests/e2e directory
+    description: Set up E2E test structure
+    priority: medium
+
+  - id: 12
+    action: Create tests/e2e/cli-commands.test.js
+    description: Test all CLI commands end-to-end
+    priority: high
+
+  - id: 13
+    action: Create tests/e2e/file-generation.test.js
+    description: Test contract/plan file generation
+    priority: medium
+
+  # Phase 4: Coverage Enhancement
+  - id: 14
+    action: Enhance existing unit tests
+    description: Add edge cases, error paths, boundary conditions to all 27 existing test files
+    priority: medium
+
+  # Phase 5: Verification
+  - id: 15
+    action: Run full test suite
+    description: Execute npm test and verify all pass
+    priority: high
+
+  - id: 16
+    action: Generate coverage report
+    description: Run npm test -- --coverage and verify thresholds
+    priority: high
+
+risks:
+  - id: R1
+    description: interactive-workflows.cjs is 73KB with complex state - may require extensive mocking
+    mitigation: Break into smaller test groups, focus on exported API first
+
+  - id: R2
+    description: E2E tests may have filesystem side effects
+    mitigation: Use temp directories, clean up in afterEach
+
+  - id: R3
+    description: Some modules may have external dependencies (Jira, AI APIs)
+    mitigation: Mock all external calls, test contract boundaries only
+
+  - id: R4
+    description: Coverage gaps in branch coverage (70% target vs 80% line target)
+    mitigation: Prioritize conditional logic and switch statements
+
+execution_order:
+  - phase: 1
+    steps: [1, 2, 3, 4, 5, 6]
+    description: Create missing unit test files
+  - phase: 2
+    steps: [7, 8, 9, 10]
+    description: Create integration test suite
+  - phase: 3
+    steps: [11, 12, 13]
+    description: Create E2E test suite
+  - phase: 4
+    steps: [14]
+    description: Enhance existing tests
+  - phase: 5
+    steps: [15, 16]
+    description: Verification and coverage
+
+verification:
+  commands:
+    - npm test
+    - npm test -- --coverage
+  coverage_thresholds:
+    lines: 80
+    branches: 70
+    functions: 80
+    statements: 80
