@@ -1,128 +1,100 @@
-# FC: Comprehensive Test Suite for Grabby
-
-ID: GRABBY-001
-Type: feat
-Status: paused
+# Feature Contract: Comprehensive Test Suite for Grabby
+**ID:** GRABBY-001 | **Status:** paused
+CONTRACT_TYPE: FEATURE_CONTRACT
+ARCH_VERSION: v1
+RULESET_VERSION: v1
+ENV_VERSION: v1
 
 ## Objective
-
-Add comprehensive test coverage across the entire Grabby application, including unit tests, integration tests, and E2E tests for all 31 modules in `/lib`.
-
-## Actors
-
-- AI (primary implementer)
-- Grabby system (test target)
+Add broad automated test coverage for Grabby's current `lib/` surface area, including unit, integration, and E2E coverage for the implemented modules and primary CLI workflows.
 
 ## Scope
-
-- Add/enhance unit tests for all modules in `/lib`
-- Add integration tests for cross-module interactions
-- Add E2E tests for CLI workflows
-- Ensure 80%+ coverage threshold is met across all modules
-- Test all major code paths, edge cases, and failure scenarios
-
-### Modules to Test (31 total)
-
-| Module | Size | Priority |
-|--------|------|----------|
-| `core.cjs` | 17KB | High |
-| `commands.cjs` | 41KB | High |
-| `interactive-workflows.cjs` | 73KB | High |
-| `governance-runtime.cjs` | 12KB | High |
-| `features.cjs` | 10KB | High |
-| `contract-levels.cjs` | 13KB | Medium |
-| `api-server.cjs` | 10KB | Medium |
-| `jira.cjs` | 10KB | Medium |
-| `complexity.cjs` | 7.5KB | Medium |
-| `dependency-analyzer.cjs` | 7.5KB | Medium |
-| `task-artifacts.cjs` | 9.6KB | Medium |
-| `multi-repo.cjs` | 8.2KB | Medium |
-| `cicd.cjs` | 8.4KB | Medium |
-| `smart-prompts.cjs` | 8KB | Medium |
-| `progress.cjs` | 8.5KB | Medium |
-| `tui.cjs` | 9.6KB | Medium |
-| `ai-complete.cjs` | 12KB | Medium |
-| `feature-chat.cjs` | 13KB | Medium |
-| `plugins.cjs` | 8.9KB | Medium |
-| `metrics.cjs` | 8KB | Low |
-| `interactive-shell.cjs` | 10KB | Low |
-| `config.cjs` | 4.4KB | Low |
-| `governance.cjs` | 4KB | Low |
-| `id-utils.cjs` | 2.3KB | Low |
-| `agile.cjs` | 3.2KB | Low |
-| `watcher.cjs` | 4.8KB | Low |
-| `personas.cjs` | 2.8KB | Low |
-| `ruleset-builder.cjs` | 5KB | Low |
-| `ignore.cjs` | 2KB | Low |
-| `graphql.cjs` | 1.4KB | Low |
-| `interactive.cjs` | 0.4KB | Low |
+- Expand unit tests for modules under `lib/`
+- Maintain integration coverage for cross-module workflows
+- Maintain E2E coverage for CLI command flows and file generation
+- Track global coverage progress against repository thresholds
+- Document deferred coverage gaps that block full completion
 
 ## Non-Goals
+- Refactor production code solely to make tests easier to write
+- Add new product functionality unrelated to testability
+- Change dependency versions unless a test blocker requires it
 
-- No refactoring of source code (tests only)
-- No new features or functionality changes
-- No dependency updates unless required for testing
+## Directories
+**Allowed:** `lib/`, `tests/`, `contracts/`, `coverage/`
+**Restricted:** `bin/`, `node_modules/`, `.git/`
 
-## Allowed_Directories
+## Files
+| Action | Path | Reason |
+|--------|------|--------|
+| modify | `tests/*.test.js` | Expand unit coverage for primary CommonJS modules |
+| modify | `tests/*.test.cjs` | Cover legacy fixtures and CommonJS-specific flows |
+| modify | `tests/integration/*.test.js` | Validate cross-module orchestration and governance flows |
+| modify | `tests/e2e/*.test.js` | Validate CLI workflows end to end |
+| generate | `coverage/` | Capture Jest coverage reports for threshold tracking |
+| modify | `contracts/GRABBY-001.fc.md` | Record current status, scope, and deferred gaps |
 
-- `/lib` (read-only for source reference)
-- `/tests` (primary work area)
-- `/contracts` (contract artifacts only)
-- `/coverage` (generated output)
+## Dependencies
+- Existing test runner: `jest@29.7.0`
+- Existing repository command: `npm test`
+- No new runtime dependencies required for this contract
 
-## Restricted_Directories
+## Security Considerations
+- [ ] Test fixtures must not include real secrets, tokens, or credentials
+- [ ] Mocks for filesystem and process execution must avoid unsafe command execution
+- [ ] Coverage and test artifacts must stay within repository-approved directories
 
-- `/bin` (CLI entry points - no modifications)
-- `/node_modules` (dependencies)
-- `/.git` (version control)
-
-## Context Refs
-
-- ARCH: module-map@v1
-- RULESET: coding@v1
-- ENV: local-dev@v1
-
-## Definition of Done
-
-- [x] All 31 modules have corresponding test files
-- [ ] Unit tests cover all exported functions (partial - 52% coverage)
+## Done When
+- [x] All currently implemented modules have corresponding test coverage in `tests/`
+- [ ] Unit tests cover all exported functions across all targeted modules
 - [x] Integration tests verify cross-module workflows
-- [x] E2E tests validate CLI commands
-- [ ] Coverage meets 80% threshold (lines, functions, statements) - DEFERRED
-- [ ] Coverage meets 70% threshold (branches) - DEFERRED
-- [x] All tests pass (`npm test`) - 711 passed, 1 skipped
-- [x] No regressions in existing tests (fixed 5 broken tests)
+- [x] E2E tests validate CLI commands and file generation
+- [ ] Coverage meets repository thresholds: 80% lines, functions, statements and 70% branches
+- [x] `npm test` passes without regressions
+- [ ] `npm run lint` passes or the repository's no-op lint contract is explicitly accepted
+- [ ] `npm audit` shows no new high or critical findings introduced by test-related changes
+- [ ] Deferred gaps are either closed or split into follow-up contracts before this contract is marked complete
 
-## Testing Requirements
+## Testing
 
 ### Unit Tests
-- Test all exported functions per module
-- Test edge cases and boundary conditions
-- Test error handling and failure paths
-- Mock external dependencies appropriately
+- Cover exported functions per module
+- Exercise edge cases, invalid input, and failure paths
+- Mock filesystem, process, and interactive boundaries where required
 
 ### Integration Tests
-- Test contract validation → plan generation → execution flow
-- Test governance enforcement across modules
-- Test persona handoffs in orchestration
+- Validate contract validation -> plan generation -> execution-adjacent workflows
+- Verify governance enforcement and context handling across modules
+- Verify persona and orchestration handoffs where implemented
 
 ### E2E Tests
-- Test CLI commands end-to-end
-- Test file generation workflows
-- Test error reporting and user feedback
+- Validate CLI commands end to end
+- Validate file generation workflows
+- Validate error reporting and user feedback
 
 ## Existing Test Infrastructure
+- Runner: `jest 29.7.0`
+- Pattern: `**/tests/**/*.test.js`
+- Coverage output: `coverage/`
+- Current known result captured in this contract: 711 passed, 1 skipped
 
-- **Runner:** Jest 29.7.0
-- **Pattern:** `**/tests/**/*.test.js`
-- **Config:** package.json jest configuration
-- **Coverage:** `/coverage` directory
-- **Existing tests:** 28 test files
+## Code Quality
+- [ ] Keep tests deterministic and filesystem-safe
+- [ ] Prefer focused fixtures over broad integration setup when unit scope is sufficient
+- [ ] Avoid duplicating implementation logic inside assertions
+
+## Context Refs
+- ARCH: auth-module@v1
+- RULESET: imports@v1
+- ENV: test-runner@v1
 
 ## Risk Assessment
-
 | Risk | Mitigation |
 |------|------------|
-| Large scope (31 modules) | Prioritize by module size/complexity |
-| Mocking complexity | Use existing test patterns as reference |
-| Coverage gaps in branches | Focus on conditional logic paths |
+| Broad module surface area | Prioritize highest-complexity modules first and track the remainder explicitly |
+| Branch coverage remains below threshold | Focus additions on conditional paths and failure handling |
+| Test maintenance cost grows with module count | Reuse helpers and fixtures instead of duplicating setup |
+
+## Status Notes
+- Work is paused because coverage thresholds remain below the repository completion bar.
+- This contract should remain `paused` until the deferred unit and coverage gaps are either finished here or split into smaller follow-up contracts.

@@ -1,7 +1,7 @@
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
-const { initConfig, loadConfig, setConfigValue, validateConfig, resolveEnv } = require('../lib/config.cjs');
+const { initConfig, loadConfig, setConfigValue, validateConfig, resolveEnv, getTrackingMode, getContractsDirectory } = require('../lib/config.cjs');
 
 describe('config', () => {
   let dir;
@@ -30,5 +30,21 @@ describe('config', () => {
   test('resolveEnv resolves variable', () => {
     process.env.TEST_ENV_VAR = 'abc';
     expect(resolveEnv('${TEST_ENV_VAR}')).toBe('abc');
+  });
+
+  test('defaults contract tracking mode to tracked', () => {
+    initConfig(dir);
+    const cfg = loadConfig(dir);
+    expect(getTrackingMode(cfg, dir)).toBe('tracked');
+    expect(getContractsDirectory(dir, cfg)).toBe(path.join(dir, 'contracts'));
+  });
+
+  test('resolves local-only tracking mode to .grabby/contracts', () => {
+    initConfig(dir);
+    const cfg = loadConfig(dir);
+    setConfigValue(cfg, 'contracts.trackingMode', 'local-only');
+    expect(getTrackingMode(cfg, dir)).toBe('local-only');
+    expect(getContractsDirectory(dir, cfg)).toBe(path.join(dir, '.grabby', 'contracts'));
+    expect(validateConfig(cfg).valid).toBe(true);
   });
 });

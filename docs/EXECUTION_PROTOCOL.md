@@ -3,11 +3,13 @@
 ## Persona-Led Entry Points
 
 - `grabby task "<request>"`:
+  - requires a complete ticket (`Who / What / Why / Definition of Done`) before contract generation
   - interviews the developer
   - selects a persona
   - writes a populated contract and a developer brief
   - can optionally emit a machine-readable session artifact
 - `grabby orchestrate "<request>"`:
+  - requires a complete ticket (`Who / What / Why / Definition of Done`) before orchestration continues
   - runs the interview
   - writes the populated contract
   - validates the contract
@@ -18,6 +20,7 @@
 
 For wrappers, CI, or future IDE integrations:
 - pass `--output console|file|both` to control where generated content is written
+- pass ticket fields with `--ticket-id`, `--who`, `--what`, `--why`, and `--dod`
 - pass task inputs with flags such as `--objective`, `--scope`, `--done-when`, and `--testing`
 - use `--yes` or `--non-interactive` to skip prompts
 - use `--session-format json|yaml` to emit a machine-readable session artifact
@@ -60,6 +63,8 @@ For wrappers, CI, or future IDE integrations:
   - Includes ticket ID, contract path, derived plan/audit paths, and Done-When excerpt.
 
 ## Artifact Flow
+
+0. `grabby ticket "<request>"` prints a deterministic markdown ticket draft and does not write a temporary ticket file.
 
 1. `grabby task "<request>"` writes:
    - `contracts/<name>.fc.md`
@@ -126,3 +131,31 @@ OK Build succeeds
 @context RULESET_CORE_v1 section hooks
 @context ENV_STACK_v1
 ```
+
+## Ticket Shape
+
+Canonical intake format:
+
+```markdown
+Who: <actor>
+What: <requested change>
+Why: <business or developer reason>
+
+Definition of Done
+- <criterion>
+- <criterion>
+```
+
+Legacy `What System:` tickets may be mapped forward during intake, but Grabby now treats contracts in `contracts/<ID>.fc.md` as the canonical repo artifact and warns on deprecated standalone ticket markdown such as `TT-123.md`, `JIRA-123.md`, or `tickets/*.md`.
+
+## Contract Tracking Mode
+
+Grabby supports:
+- `contracts.trackingMode=tracked`
+- `contracts.trackingMode=local-only`
+
+Behavior:
+- `tracked`: contract artifacts are written to `contracts/` and are part of canonical repo history
+- `local-only`: working artifacts are written to `.grabby/contracts/`, local activity is logged to `.grabby/feature-log.json`, and canonical repo feature reporting continues to use `contracts/*.fc.md`
+
+Use `local-only` when Jira or another external system is canonical and Grabby should assist locally without duplicating committed tracking artifacts.

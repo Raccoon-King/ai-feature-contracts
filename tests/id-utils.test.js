@@ -15,6 +15,7 @@ describe('id-utils', () => {
   test('parses and normalizes ticket IDs', () => {
     expect(parseWorkItemId('tt-123')).toBe('TT-123');
     expect(parseWorkItemId('JIRA-42')).toBe('JIRA-42');
+    expect(parseWorkItemId('grab-intake-002')).toBe('GRAB-INTAKE-002');
     expect(parseWorkItemId('nope')).toBeNull();
   });
 

@@ -2,6 +2,8 @@ node_modules/
 *.log
 .DS_Store
 .claude/worktrees/
+.grabby/contracts/
+.grabby/feature-log.json
 
 # Environment and config files with secrets
 .env

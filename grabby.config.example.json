@@ -113,6 +113,7 @@
 
   "contracts": {
     "directory": "contracts",
+    "trackingMode": "tracked",
     "templates": ".grabby/templates",
     "autoValidate": true,
     "strictMode": false,

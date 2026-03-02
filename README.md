@@ -21,6 +21,9 @@ grabby init
 # Let Grabby interview you and prefill a contract
 grabby task "create a unit test"
 
+# Or generate a ticket draft first
+grabby ticket "create a unit test"
+
 # Or run the full Archie -> Val -> Sage -> Dev -> Iris handoff
 grabby orchestrate "fix login redirect bug"
 
@@ -55,6 +58,7 @@ grabby audit login-redirect-bug.fc.md
 |---------|-------------|
 | `grabby init` | Initialize in current project |
 | `grabby create <request>` | Create a contract and infer a template from plain language when possible |
+| `grabby ticket <request>` | Generate a deterministic `Who / What / Why / Definition of Done` ticket draft |
 | `grabby task <request>` | Interview-driven task breakdown with persona selection |
 | `grabby orchestrate <request>` | Full persona handoff in one CLI session |
 | `grabby validate <file>` | Validate contract |
@@ -62,6 +66,10 @@ grabby audit login-redirect-bug.fc.md
 | `grabby backlog <file>` | Generate Agile epic/task/subtask backlog |
 | `grabby prompt <file>` | Render an LLM instruction bundle |
 | `grabby session <file>` | Inspect, check, or regenerate a session artifact |
+| `grabby features:list` | List contract-backed features from `contracts/*.fc.md` |
+| `grabby features:status <id>` | Show contract/plan/audit status for one feature |
+| `grabby features:refresh` | Regenerate `.grabby/features.index.json` |
+| `grabby contracts:clean-local` | Remove local-only Grabby artifacts under `.grabby/` |
 | `grabby session --check-all` | Validate all session artifacts under `contracts/` for CI |
 | `grabby approve <file>` | Approve for execution |
 | `grabby start <file> [--type feat\|fix\|chore]` | Create a branch from contract ID/title and write `**Branch:**` |
@@ -146,6 +154,8 @@ Grabby supports work-item IDs in the form `KEY-123` (for example `FC-123`, `TT-1
 
 ## Generated Artifacts
 
+Ticket drafts are emitted as deterministic markdown in stdout. Grabby does not create temporary `.ticket.md` files.
+
 `grabby task` generates:
 - `contracts/<name>.fc.md` - populated feature contract
 - `contracts/<name>.brief.md` - developer-facing task brief
@@ -177,6 +187,11 @@ grabby task "create a unit test" \
 
 Useful flags:
 - `--output console|file|both`
+- `--ticket-id`
+- `--who`
+- `--what`
+- `--why`
+- `--dod`
 - `--task-name`
 - `--objective`
 - `--scope`
@@ -200,6 +215,22 @@ grabby session --check-all
 ```
 
 `grabby session --check-all` scans `contracts/` for `*.session.json` and `*.session.yaml` files and exits non-zero when any artifact is invalid or none are found.
+
+## Ticket Intake Format
+
+Use this shape when pasting a structured ticket:
+
+```markdown
+Who: Developers using Grabby
+What: Add a Ticket Generator wizard
+Why: Developers often start with an idea instead of a full ticket
+
+Definition of Done
+- Required fields are present
+- DoD is a bullet list
+```
+
+Legacy tickets with `What System:` are mapped into the new shape when possible, but new prompts and docs use only `Who / What / Why / Definition of Done`.
 
 ## Two-Phase Execution
 
@@ -284,12 +315,41 @@ After `grabby init`, your project will have:
 
 ## Recommended Flow
 
-1. Run `grabby task "<request>"` when the task still needs clarification.
-2. Run `grabby orchestrate "<request>"` when you want the full multi-persona handoff.
-3. Run `grabby validate <file>`, `grabby plan <file>`, `grabby backlog <file>`, or `grabby prompt <file>` when you want individual artifacts.
-4. Review `contracts/*.fc.md`, `*.brief.md`, `*.plan.yaml`, `*.backlog.yaml`, and `*.prompt.md` before coding.
-5. Use `grabby execute <file>` and `grabby audit <file>` during implementation and verification.
-6. Use `grabby session <file> --check` or `grabby session --check-all` in CI or wrapper scripts.
+1. Run `grabby ticket "<request>"` when you need to turn an idea into a structured ticket first.
+2. Run `grabby task "<request>"` when the task still needs clarification.
+3. Run `grabby orchestrate "<request>"` when you want the full multi-persona handoff.
+4. Run `grabby validate <file>`, `grabby plan <file>`, `grabby backlog <file>`, or `grabby prompt <file>` when you want individual artifacts.
+5. Review `contracts/*.fc.md`, `*.brief.md`, `*.plan.yaml`, `*.backlog.yaml`, and `*.prompt.md` before coding.
+6. Use `grabby execute <file>` and `grabby audit <file>` during implementation and verification.
+7. Use `grabby session <file> --check` or `grabby session --check-all` in CI or wrapper scripts.
+
+## Canonical Artifacts
+
+- `contracts/<ID>.fc.md` is the canonical feature/ticket artifact inside the repo.
+- `contracts/<ID>.plan.yaml` and `contracts/<ID>.audit.md` remain the retained execution artifacts.
+- Standalone ticket markdown such as `TT-123.md`, `JIRA-123.md`, or `tickets/*.md` is deprecated and should be migrated into the feature contract instead of duplicated.
+
+## Contract Tracking Mode
+
+Set `contracts.trackingMode` in `grabby.config.json`:
+
+```json
+{
+  "contracts": {
+    "trackingMode": "tracked"
+  }
+}
+```
+
+Supported values:
+- `tracked`: default behavior, artifacts live under `contracts/` and are part of canonical repo history
+- `local-only`: Grabby writes working artifacts under `.grabby/contracts/` and logs activity in `.grabby/feature-log.json`
+
+In `local-only` mode:
+- Grabby still supports local intake, planning, and audit workflows
+- `grabby features:list` still reports only canonical repo contracts from `contracts/*.fc.md`
+- local-only artifacts are intended to stay out of check-in and are ignored via `.gitignore`
+- `grabby contracts:clean-local` removes `.grabby/contracts/` and `.grabby/feature-log.json`
 
 ## License
 

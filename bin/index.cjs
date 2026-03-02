@@ -21,7 +21,6 @@ const { getWorkspaceContext, findAllContracts, formatWorkspaceInfo } = require('
 const { initConfig, loadConfig, saveConfig, setConfigValue, validateConfig, getConfigPath } = require('../lib/config.cjs');
 const { testConnection, createIssueFromContract, listLinks, linkIssue, unlinkIssue, syncContract, importIssue, importIssuesByJql } = require('../lib/jira.cjs');
 const featuresLib = require('../lib/features.cjs');
-const featureChat = require('../lib/feature-chat.cjs');
 const contractLevels = require('../lib/contract-levels.cjs');
 const { interactiveCreateRuleset } = require('../lib/ruleset-builder.cjs');
 const { extractContractId, parseWorkItemId } = require('../lib/id-utils.cjs');
@@ -217,6 +216,10 @@ async function quick() {
 
 async function task() {
   return interactiveHandlers.task();
+}
+
+async function ticket() {
+  return interactiveHandlers.ticket();
 }
 
 async function orchestrate() {
@@ -808,11 +811,77 @@ async function ruleset() {
 
 // Feature management
 function features() {
-  featureChat.displayFeaturesSummary(CWD);
+  const subCommand = (cmd === 'features:list' ? 'list' : cmd === 'features:status' ? 'status' : cmd === 'features:refresh' ? 'refresh' : args[0]);
+
+  switch (subCommand) {
+    case 'status': {
+      const id = cmd === 'features:status' ? args[0] : args[1];
+      if (!id) {
+        console.log(c.error('Usage: grabby features:status <ID>'));
+        process.exit(1);
+      }
+      const feature = featuresLib.getContractFeatureStatus(id, CWD);
+      if (!feature) {
+        console.log(c.error(`Feature ${String(id).toUpperCase()} not found.`));
+        process.exit(1);
+      }
+      console.log(featuresLib.formatFeatureStatus(feature));
+      break;
+    }
+
+    case 'refresh': {
+      const refreshed = featuresLib.refreshFeatureIndex(CWD);
+      console.log(c.success(`Refreshed ${refreshed.features.length} features`));
+      console.log(c.dim(`Index: ${path.relative(CWD, refreshed.indexPath).replace(/\\/g, '/')}`));
+      break;
+    }
+
+    case 'list':
+    case undefined: {
+      console.log(featuresLib.formatFeatureTable(featuresLib.listContractFeatures(CWD)));
+      break;
+    }
+
+    default:
+      console.log(c.heading('\nFeature Index Commands'));
+      console.log('─'.repeat(50));
+      console.log('  grabby features:list            List features from contracts/*.fc.md');
+      console.log('  grabby features:status <id>     Show contract/plan/audit status for one feature');
+      console.log('  grabby features:refresh         Regenerate .grabby/features.index.json');
+      console.log('');
+      console.log(c.dim('Feature contracts are the canonical source of truth.'));
+  }
 }
 
 async function feature() {
   const subCommand = args[0];
+
+  if (subCommand === 'describe' || subCommand === 'show') {
+    const id = args[1]?.toUpperCase();
+    if (!id) {
+      console.log(c.error('Usage: grabby feature describe <feature-id>'));
+      process.exit(1);
+    }
+
+    const feature = featuresLib.getContractFeatureStatus(id, CWD);
+    if (!feature) {
+      console.log(c.error(`Feature ${id} not found.`));
+      process.exit(1);
+    }
+
+    console.log(featuresLib.formatFeatureStatus(feature));
+    return;
+  }
+
+  console.log(c.heading('\nFeature Commands'));
+  console.log('â”€'.repeat(50));
+  console.log('  grabby features:list            List features from contracts/*.fc.md');
+  console.log('  grabby features:status <id>     Show contract/plan/audit status for one feature');
+  console.log('  grabby features:refresh         Regenerate .grabby/features.index.json');
+  console.log('  grabby feature describe <id>    Alias for features:status <id>');
+  console.log('');
+  console.log(c.dim('Feature contracts are the canonical source of truth.'));
+  return;
 
   switch (subCommand) {
     case 'add': {
@@ -1136,6 +1205,10 @@ function contracts() {
   }
 }
 
+function cleanLocalContracts() {
+  commandHandlers.cleanLocalContracts();
+}
+
 const [cmd, ...args] = process.argv.slice(2);
 
 const commands = {
@@ -1170,11 +1243,16 @@ const commands = {
   workspace,
   system,
   contracts,
+  'contracts:clean-local': cleanLocalContracts,
   features,
+  'features:list': features,
+  'features:status': features,
+  'features:refresh': features,
   feature,
   ruleset,
   agent,
   task,
+  ticket,
   orchestrate,
   quick,
   party,

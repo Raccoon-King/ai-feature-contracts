@@ -443,5 +443,37 @@ describe('Command handlers', () => {
     expect(logger.lines.join('\n')).toContain('INVALID contracts/b.session.json');
     expect(exits).toEqual([1]);
   });
+
+  it('warns about deprecated standalone ticket markdown during validation', () => {
+    const logger = createLogger();
+    const context = createProjectContext({ cwd: tempDir, pkgRoot: PKG_ROOT });
+    const handlers = createCommandHandlers({ context, logger });
+
+    writeValidContract(tempDir);
+    fs.writeFileSync(path.join(tempDir, 'TT-123.md'), '# legacy ticket', 'utf8');
+
+    handlers.validate('valid-feature.fc.md');
+
+    expect(logger.lines.join('\n')).toContain('Standalone ticket markdown is deprecated');
+    expect(logger.lines.join('\n')).toContain('TT-123.md');
+  });
+
+  it('cleans local-only artifacts when requested', () => {
+    const logger = createLogger();
+    const context = createProjectContext({ cwd: tempDir, pkgRoot: PKG_ROOT });
+    const handlers = createCommandHandlers({ context, logger });
+    const localContractsDir = path.join(tempDir, '.grabby', 'contracts');
+    const featureLogPath = path.join(tempDir, '.grabby', 'feature-log.json');
+
+    fs.mkdirSync(localContractsDir, { recursive: true });
+    fs.writeFileSync(path.join(localContractsDir, 'temp.fc.md'), '# temp', 'utf8');
+    fs.writeFileSync(featureLogPath, JSON.stringify({ entries: [] }), 'utf8');
+
+    handlers.cleanLocalContracts();
+
+    expect(fs.existsSync(localContractsDir)).toBe(false);
+    expect(fs.existsSync(featureLogPath)).toBe(false);
+    expect(logger.lines.join('\n')).toContain('Removed local-only Grabby artifacts');
+  });
 });
 
