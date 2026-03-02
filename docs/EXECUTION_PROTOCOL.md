@@ -75,6 +75,13 @@ For wrappers, CI, or future IDE integrations:
 - Follow `RULESET_CORE` patterns
 - Before commit, run `grabby guard <contract.fc.md>` to verify plan/contract scope alignment
 
+
+## Execution Guard and Pre-Commit Enforcement
+
+- `grabby guard <contract.fc.md>` loads the approved plan and checks current git changes against plan files and contract directory scope.
+- `grabby execute <contract.fc.md>` runs execution output, then automatically enforces the same guard before completion.
+- If violations exist, execution exits non-zero and prints actionable remediation steps.
+
 ## Pre-Execution Validation
 ```
 OK Files in allowed directories

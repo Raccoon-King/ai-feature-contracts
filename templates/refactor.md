@@ -1,8 +1,8 @@
 # FC: [NAME]
 **ID:** [ID] | **Status:** draft
 CONTRACT_TYPE: FEATURE_CONTRACT
-ARCH_VERSION: v3
-RULESET_VERSION: v2
+ARCH_VERSION: v1
+RULESET_VERSION: v1
 ENV_VERSION: v1
 
 ## Objective
@@ -51,6 +51,6 @@ Refactor [target] to [improvement goal].
 - Preserve API contracts
 
 ## Context Refs
-- ARCH: auth-module@v3
-- RULESET: imports@v2
+- ARCH: auth-module@v1
+- RULESET: imports@v1
 - ENV: test-runner@v1

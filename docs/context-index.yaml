@@ -1,22 +1,26 @@
-# Central source of truth for contract version pins.
+# Central source of truth for contract version pins and context reference resolution.
 versions:
   latest:
-    ARCH_VERSION: v3
-    RULESET_VERSION: v2
+    # Current architecture context contract version.
+    ARCH_VERSION: v1
+    # Current ruleset context contract version.
+    RULESET_VERSION: v1
+    # Current environment context contract version.
     ENV_VERSION: v1
 
-  # Any pin listed here is treated as an error by version compatibility checks.
   deprecated:
-    ARCH_VERSION:
-      - v1
-    RULESET_VERSION:
-      - v1
+    # No deprecated versions are active right now.
+    ARCH_VERSION: []
+    # No deprecated versions are active right now.
+    RULESET_VERSION: []
+    # No deprecated versions are active right now.
     ENV_VERSION: []
 
 # Context ref keys used in contracts under "## Context Refs".
 references:
   ARCH:
-    auth-module@v3:
+    # Default architecture module map used for planning and execution.
+    auth-module@v1:
       file: ARCHITECTURE_INDEX.md
       section: Module Map
       status: active
@@ -24,7 +28,8 @@ references:
         - plan
         - execute
 
-    stack@v2:
+    # Optional stack overview used during planning.
+    stack@v1:
       file: ARCHITECTURE_INDEX.md
       section: Stack
       status: active
@@ -32,22 +37,25 @@ references:
         - plan
 
   RULESET:
-    imports@v2:
+    # Default implementation rules for TypeScript execution.
+    imports@v1:
       file: RULESET_CORE.md
-      section: §typescript
+      section: TypeScript
       status: active
       phases:
         - plan
         - execute
 
-    testing@v2:
+    # Optional testing ruleset reference for execution detail.
+    testing@v1:
       file: RULESET_CORE.md
-      section: §testing
+      section: Testing
       status: active
       phases:
         - execute
 
   ENV:
+    # Default command/runtime environment used in both phases.
     test-runner@v1:
       file: ENV_STACK.md
       section: Commands
@@ -58,6 +66,6 @@ references:
 
 # Defaults are used when a contract omits a kind.
 defaults:
-  ARCH: auth-module@v3
-  RULESET: imports@v2
+  ARCH: auth-module@v1
+  RULESET: imports@v1
   ENV: test-runner@v1
