@@ -1,25 +1,25 @@
-# RULESET_CORE_v2
+# RULESET_CORE_v1
 
-## §contracts
+## Contracts
 - All features require approved contracts
 - Use `grabby task "feature"` to create
 - Validate before implementation
 - Audit after completion
 - 80%+ test coverage required
 
-## §typescript
+## TypeScript
 - strict: true
 - noAny: true
 - explicitReturnTypes: true
 - noUnusedVars: true
 
-## §react
+## React
 - Functional components only
 - Hooks for state/effects
 - No inline styles
 - Props interface required
 
-## §hooks
+## Hooks
 ```typescript
 export function useX(id: string): UseXResult {
   const [data, setData] = useState<T | null>(null);
@@ -30,7 +30,7 @@ export function useX(id: string): UseXResult {
 }
 ```
 
-## §services
+## Services
 ```typescript
 export const xService = {
   async get(id: string): Promise<T> {
@@ -39,7 +39,7 @@ export const xService = {
 };
 ```
 
-## §errors
+## Errors
 ```typescript
 try {
   const result = await op();
@@ -49,18 +49,18 @@ try {
 }
 ```
 
-## §naming
+## Naming
 - Components: PascalCase
 - Hooks: useX
 - Services: xService
 - Utils: camelCase
 
-## §testing
+## Testing
 - Coverage: 80%+ new code
 - Unit: `*.test.ts`
 - E2E: `*.spec.ts`
 
-## §forbidden
+## Forbidden
 - node_modules/
 - .env*
 - eval()
