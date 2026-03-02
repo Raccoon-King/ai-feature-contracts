@@ -1,0 +1,14 @@
+contract: minimal-feature.fc.md
+phase: plan
+timestamp: 2026-01-01T00:00:00.000Z
+context:
+  - ARCH:auth-module@v3
+  - RULESET:imports@v2
+  - ENV:test-runner@v1
+context_token_usage: 320
+context_token_budget: 1200
+files:
+  - action: create
+    path: src/minimal-helper.js
+    reason: helper
+status: approved

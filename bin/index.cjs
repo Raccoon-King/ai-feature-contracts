@@ -136,6 +136,14 @@ function execute(file) {
   commandHandlers.execute(file);
 }
 
+function resolve(file) {
+  commandHandlers.resolve(file);
+}
+
+function upgradeContract(file) {
+  commandHandlers.upgradeContract(file);
+}
+
 function audit(file) {
   commandHandlers.audit(file);
 }
@@ -215,6 +223,11 @@ function watch() {
 }
 
 function metrics() {
+  if (args[0] === 'summary') {
+    commandHandlers.metricsSummary();
+    return;
+  }
+
   const format = args.includes('--json') ? 'json' : 'text';
   const summaryOnly = args.includes('--summary');
   const save = args.includes('--save');
@@ -1105,6 +1118,8 @@ const commands = {
   plan: () => plan(args[0]),
   approve: () => approve(args[0]),
   execute: () => execute(args[0]),
+  resolve: () => resolve(args[0]),
+  'upgrade-contract': () => upgradeContract(args[0]),
   audit: () => audit(args[0]),
   list,
   backlog: () => backlog(args[0]),

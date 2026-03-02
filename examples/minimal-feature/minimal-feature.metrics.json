@@ -1,0 +1,9 @@
+{
+  "feature": "minimal-feature",
+  "timestamp": "2026-01-01T00:10:00.000Z",
+  "token_usage": { "plan": 320, "execute": 410, "total": 730 },
+  "files_modified": 2,
+  "lines_changed": 44,
+  "rule_violations_detected": 0,
+  "plan_execution_drift": { "out_of_plan_files": [], "drift_count": 0 }
+}
