@@ -1,0 +1,24 @@
+name: Self Governance
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  grabby-self-governance:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run Grabby self-governance session
+        run: npm run grabby:session
