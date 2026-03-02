@@ -1,0 +1,34 @@
+name: Grabby Contract Checks
+
+on:
+  pull_request:
+    branches: [main, master]
+  push:
+    branches: [main, master]
+
+jobs:
+  contracts:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Validate contracts
+        run: npx grabby validate contracts/*.fc.md
+
+      - name: Generate metrics
+        run: npx grabby metrics --json > contract-metrics.json
+
+      - name: Upload metrics
+        uses: actions/upload-artifact@v4
+        with:
+          name: contract-metrics
+          path: contract-metrics.json

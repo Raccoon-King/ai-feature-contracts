@@ -53,6 +53,7 @@ grabby cicd --dry-run     # Preview what would be generated
 - `lib/dependency-analyzer.cjs` - Dependency graph analysis
 - `lib/metrics.cjs` - Metrics collection and reporting
 - `lib/cicd.cjs` - CI/CD template generation
+- `templates/github-actions.yaml` - Default GitHub Actions workflow template
 
 ---
 
@@ -128,10 +129,13 @@ PUT    /api/contracts/:id           # Update contract
 DELETE /api/contracts/:id           # Delete contract
 POST   /api/contracts/:id/validate  # Validate contract
 GET    /api/metrics                 # Get metrics
+POST   /api/graphql                # Execute GraphQL query
 ```
 
 ### New Modules
 - `lib/api-server.cjs` - REST API server (no external dependencies)
+- `lib/graphql.cjs` - GraphQL query execution helper
+- `bin/server.cjs` - Standalone API server entrypoint
 - `lib/multi-repo.cjs` - Monorepo/workspace detection
 
 ### Supported Workspace Types

@@ -18,6 +18,8 @@ const { createTUI } = require('../lib/tui.cjs');
 const { isAIAvailable, getAvailableProvider, completeContract, formatSuggestions } = require('../lib/ai-complete.cjs');
 const { createAPIServer } = require('../lib/api-server.cjs');
 const { getWorkspaceContext, findAllContracts, formatWorkspaceInfo } = require('../lib/multi-repo.cjs');
+const { initConfig, loadConfig, saveConfig, setConfigValue, validateConfig, getConfigPath } = require('../lib/config.cjs');
+const { testConnection, createIssueFromContract, listLinks, linkIssue, unlinkIssue, syncContract, importIssue, importIssuesByJql } = require('../lib/jira.cjs');
 const featuresLib = require('../lib/features.cjs');
 const featureChat = require('../lib/feature-chat.cjs');
 const contractLevels = require('../lib/contract-levels.cjs');
@@ -107,8 +109,27 @@ function plan(file) {
   commandHandlers.plan(file);
 }
 
-function approve(file) {
+async function approve(file) {
   commandHandlers.approve(file);
+
+  const cfg = loadConfig(CWD);
+  if (!cfg?.jira?.enabled || !cfg?.jira?.sync?.autoCreate) return;
+
+  try {
+    const filePath = commandHandlers.resolveContract(file);
+    if (!filePath) return;
+    const content = fs.readFileSync(filePath, 'utf8');
+    const id = content.match(/\*\*ID:\*\*\s*(FC-\d+)/)?.[1];
+    if (!id) return;
+
+    const links = listLinks(CWD);
+    if (!links[id]) {
+      const created = await createIssueFromContract(cfg, projectContext.contractsDir, path.basename(filePath), CWD);
+      console.log(c.success(`Auto-created Jira issue ${created.issueKey} (sync.autoCreate=true)`));
+    }
+  } catch (err) {
+    console.log(c.warn(`Jira auto-create skipped: ${err.message}`));
+  }
 }
 
 function execute(file) {
@@ -300,7 +321,7 @@ function workspace() {
     }
 
     default:
-      console.log(c.heading('\nWorkspace Commands'));
+      console.log(c.heading('\nJira Commands'));
       console.log('─'.repeat(40));
       console.log('  grabby workspace info       Show workspace/monorepo info');
       console.log('  grabby workspace contracts  List all contracts across packages');
@@ -334,6 +355,232 @@ async function serve() {
     process.exit(0);
   });
 }
+
+
+function configCmd() {
+  const subCommand = args[0];
+
+  switch (subCommand) {
+    case 'init': {
+      const result = initConfig(CWD, { force: args.includes('--force') });
+      if (result.created) console.log(c.success(`Created ${result.file}`));
+      else console.log(c.warn(`Config already exists: ${result.file} (use --force to overwrite)`));
+      break;
+    }
+    case 'set': {
+      const key = args[1];
+      const value = args[2];
+      if (!key || value === undefined) {
+        console.log(c.error('Usage: grabby config set <path> <value>'));
+        process.exit(1);
+      }
+      let cfg = loadConfig(CWD);
+      if (!cfg) {
+        initConfig(CWD);
+        cfg = loadConfig(CWD);
+      }
+      setConfigValue(cfg, key, value);
+      saveConfig(cfg, CWD);
+      console.log(c.success(`Updated ${key} in ${getConfigPath(CWD)}`));
+      break;
+    }
+    case 'show': {
+      const cfg = loadConfig(CWD);
+      if (!cfg) {
+        console.log(c.error('Config not found. Run: grabby config init'));
+        process.exit(1);
+      }
+      console.log(JSON.stringify(cfg, null, 2));
+      break;
+    }
+    case 'validate': {
+      const cfg = loadConfig(CWD);
+      if (!cfg) {
+        console.log(c.error('Config not found. Run: grabby config init'));
+        process.exit(1);
+      }
+      const result = validateConfig(cfg);
+      if (result.valid) console.log(c.success('Config is valid.'));
+      else {
+        console.log(c.error('Config validation failed:'));
+        result.errors.forEach(e => console.log(`  - ${e}`));
+        process.exit(1);
+      }
+      if (result.warnings.length) {
+        console.log(c.warn('Warnings:'));
+        result.warnings.forEach(w => console.log(`  - ${w}`));
+      }
+      break;
+    }
+    default:
+      console.log(c.heading('\nConfig Commands'));
+      console.log('─'.repeat(40));
+      console.log('  grabby config init             Create grabby.config.json');
+      console.log('  grabby config set <k> <v>      Set config value');
+      console.log('  grabby config show             Print current config');
+      console.log('  grabby config validate         Validate config');
+  }
+}
+
+async function jira() {
+  const subCommand = args[0];
+  const cfg = loadConfig(CWD);
+  if (!cfg) {
+    console.log(c.error('Config not found. Run: grabby config init'));
+    process.exit(1);
+  }
+
+  switch (subCommand) {
+    case 'setup': {
+      initConfig(CWD);
+      const fresh = loadConfig(CWD);
+      setConfigValue(fresh, 'jira.enabled', 'true');
+      saveConfig(fresh, CWD);
+      console.log(c.success('Initialized config and enabled Jira.'));
+      console.log(c.dim('Next: grabby config set jira.host <url> && grabby config set jira.email <email>'));
+      break;
+    }
+    case 'test': {
+      try {
+        const me = await testConnection(cfg);
+        console.log(c.success(`Connected to Jira as ${me.displayName || me.emailAddress || 'user'}`));
+      } catch (err) {
+        console.log(c.error(`Jira connection failed: ${err.message}`));
+        process.exit(1);
+      }
+      break;
+    }
+    case 'create': {
+      const contract = args[1];
+      if (!contract) {
+        console.log(c.error('Usage: grabby jira create <contract>'));
+        process.exit(1);
+      }
+      try {
+        const result = await createIssueFromContract(cfg, projectContext.contractsDir, contract, CWD);
+        console.log(c.success(`Created Jira issue ${result.issueKey} for ${result.contractId}`));
+      } catch (err) {
+        console.log(c.error(err.message));
+        process.exit(1);
+      }
+      break;
+    }
+    case 'link': {
+      const contractId = args[1];
+      const issueKey = args[2];
+      if (!contractId || !issueKey) {
+        console.log(c.error('Usage: grabby jira link <contract-id> <ISSUE-KEY>'));
+        process.exit(1);
+      }
+      linkIssue(contractId, issueKey, CWD);
+      console.log(c.success(`Linked ${contractId} -> ${issueKey}`));
+      break;
+    }
+    case 'unlink': {
+      const contractId = args[1];
+      if (!contractId) {
+        console.log(c.error('Usage: grabby jira unlink <contract-id>'));
+        process.exit(1);
+      }
+      unlinkIssue(contractId, CWD);
+      console.log(c.success(`Unlinked ${contractId}`));
+      break;
+    }
+    case 'sync': {
+      const dryRun = args.includes('--dry-run');
+      if (args.includes('--all')) {
+        const links = Object.keys(listLinks(CWD));
+        for (const id of links) {
+          const result = await syncContract(cfg, projectContext.contractsDir, id, { dryRun }, CWD);
+          console.log(`${result.contractId} -> ${result.issueKey} [${result.jiraStatus}]${dryRun ? ' (dry-run)' : ''}`);
+        }
+      } else {
+        const contract = args[1];
+        if (!contract) {
+          console.log(c.error('Usage: grabby jira sync <contract> [--dry-run]'));
+          process.exit(1);
+        }
+        const result = await syncContract(cfg, projectContext.contractsDir, contract, { dryRun }, CWD);
+        console.log(`${result.contractId} -> ${result.issueKey} [${result.jiraStatus}]${dryRun ? ' (dry-run)' : ''}`);
+      }
+      break;
+    }
+    case 'import': {
+      const jqlIndex = args.indexOf('--jql');
+      const jql = jqlIndex !== -1 ? args[jqlIndex + 1] : null;
+      try {
+        if (jql) {
+          const imported = await importIssuesByJql(cfg, projectContext.contractsDir, jql);
+          const created = imported.filter(i => !i.skipped).length;
+          const skipped = imported.filter(i => i.skipped).length;
+          console.log(c.success(`JQL import complete: ${created} created, ${skipped} skipped`));
+        } else {
+          const issueKey = args[1];
+          if (!issueKey) {
+            console.log(c.error('Usage: grabby jira import <ISSUE-KEY> | grabby jira import --jql "<JQL>"'));
+            process.exit(1);
+          }
+          const result = await importIssue(cfg, projectContext.contractsDir, issueKey);
+          if (result.skipped) console.log(c.warn(`Skipped ${issueKey}: already imported`));
+          else console.log(c.success(`Imported ${issueKey} -> ${result.file}`));
+        }
+      } catch (err) {
+        console.log(c.error(err.message));
+        process.exit(1);
+      }
+      break;
+    }
+    case 'list': {
+      const links = listLinks(CWD);
+      const rows = Object.entries(links);
+      if (rows.length === 0) console.log(c.dim('No Jira links found.'));
+      else rows.forEach(([id, link]) => console.log(`${id} -> ${link.issueKey} (${link.status || 'unknown'})`));
+      break;
+    }
+    case 'orphans': {
+      const links = listLinks(CWD);
+      const linked = new Set(Object.keys(links));
+      const files = fs.existsSync(projectContext.contractsDir) ? fs.readdirSync(projectContext.contractsDir).filter(f => f.endsWith('.fc.md')) : [];
+      const ids = files.map(f => fs.readFileSync(path.join(projectContext.contractsDir, f), 'utf8').match(/\*\*ID:\*\*\s*(FC-\d+)/)?.[1]).filter(Boolean);
+      const orphans = ids.filter(id => !linked.has(id));
+      if (orphans.length === 0) console.log(c.success('No orphan contracts detected.'));
+      else orphans.forEach(id => console.log(`Orphan contract: ${id}`));
+      break;
+    }
+    case 'status': {
+      const links = listLinks(CWD);
+      const rows = Object.entries(links);
+      try {
+        await testConnection(cfg);
+        console.log(c.success('Jira connection: healthy'));
+      } catch (err) {
+        console.log(c.error(`Jira connection: unhealthy (${err.message})`));
+      }
+      console.log(`Linked contracts: ${rows.length}`);
+      const files = fs.existsSync(projectContext.contractsDir) ? fs.readdirSync(projectContext.contractsDir).filter(f => f.endsWith('.fc.md')) : [];
+      const ids = files.map(f => fs.readFileSync(path.join(projectContext.contractsDir, f), 'utf8').match(/\*\*ID:\*\*\s*(FC-\d+)/)?.[1]).filter(Boolean);
+      const orphanContracts = ids.filter(id => !links[id]).length;
+      console.log(`Orphan contracts: ${orphanContracts}`);
+      break;
+    }
+    default:
+      console.log(c.heading('\nJira Commands'));
+      console.log('─'.repeat(40));
+      console.log('  grabby jira setup                        Enable Jira config scaffold');
+      console.log('  grabby jira test                         Test Jira connection');
+      console.log('  grabby jira create <contract>            Create Jira issue from contract');
+      console.log('  grabby jira link <contract-id> <ISSUE>   Link existing issue');
+      console.log('  grabby jira unlink <contract-id>         Unlink issue');
+      console.log('  grabby jira sync <contract> [--dry-run]  Sync one contract');
+      console.log('  grabby jira sync --all [--dry-run]       Sync all linked contracts');
+      console.log('  grabby jira import <ISSUE-KEY>           Import issue as contract');
+      console.log('  grabby jira import --jql "<JQL>"         Bulk import issues by JQL');
+      console.log('  grabby jira list                         List linked Jira issues');
+      console.log('  grabby jira status                       Show sync health');
+      console.log('  grabby jira orphans                      List contracts without Jira links');
+  }
+}
+
 
 async function ai() {
   const subCommand = args[0];
@@ -869,6 +1116,8 @@ const commands = {
   plugin,
   tui,
   ai,
+  config: configCmd,
+  jira,
   serve,
   workspace,
   system,
