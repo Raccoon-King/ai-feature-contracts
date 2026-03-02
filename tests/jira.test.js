@@ -52,6 +52,15 @@ describe('jira', () => {
     expect(content).toContain('Jira: PROJ-1');
   });
 
+
+  test('createIssueFromContract supports ticket-key IDs in contract body', async () => {
+    fs.writeFileSync(path.join(dir, 'contracts', 'ticket.fc.md'), '# FC: Demo Ticket\n**ID:** tt-77 | **Status:** approved\n## Objective\nBuild\n## Scope\n- A\n');
+    global.fetch = jest.fn(async (_url, req) => ({ ok: true, text: async () => JSON.stringify({ key: 'PROJ-77', body: req?.body }) }));
+    const out = await createIssueFromContract(config, path.join(dir, 'contracts'), 'ticket', dir);
+    expect(out.contractId).toBe('TT-77');
+    const links = listLinks(dir);
+    expect(links['TT-77'].issueKey).toBe('PROJ-77');
+  });
   test('syncContract updates issue and attempts transition', async () => {
     const calls = [];
     global.fetch = jest.fn(async (url, req = {}) => {

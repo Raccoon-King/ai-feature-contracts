@@ -37,6 +37,28 @@ For wrappers, CI, or future IDE integrations:
 4. `Dev` prepares the execution brief.
 5. `Iris` prepares the audit checklist.
 
+
+## Ticket-Aware IDs and Naming
+
+- Work item IDs are ticket-aware: `KEY-123` (`FC-123`, `TT-123`, `JIRA-123`, etc.).
+- Grabby normalizes key casing to uppercase.
+- Canonical ID resolution order is deterministic:
+  1. `**ID:** <ID>` in contract content
+  2. Contract filename
+  3. Jira key during import
+- Canonical artifact filenames:
+  - `contracts/<ID>.fc.md`
+  - `contracts/<ID>.plan.yaml`
+  - `contracts/<ID>.audit.md`
+  - `.grabby/metrics/<ID>.metrics.json`
+- Validation guards (`validate`, `plan`, `approve`) enforce ID-vs-filename matching and fail fast with rename/edit guidance.
+- Branch naming via `grabby start <contract-file> [--type feat|fix|chore]`:
+  - `<type>/<ID>-<slug>`
+  - slug is lowercase, hyphenated, max 8 words.
+- PR/MR template generation via `grabby pr-template <contract-file>`:
+  - Title: `<ID>: <Title>`
+  - Includes ticket ID, contract path, derived plan/audit paths, and Done-When excerpt.
+
 ## Artifact Flow
 
 1. `grabby task "<request>"` writes:

@@ -180,9 +180,9 @@ describe('Command handlers', () => {
     });
 
     fs.mkdirSync(context.contractsDir, { recursive: true });
-    fs.writeFileSync(path.join(context.contractsDir, 'invalid.fc.md'), '# FC: Invalid\n## Objective\nMissing sections\n', 'utf8');
+    fs.writeFileSync(path.join(context.contractsDir, 'FC-999.fc.md'), '# FC: Invalid\n**ID:** FC-999 | **Status:** draft\n## Objective\nMissing sections\n', 'utf8');
 
-    handlers.plan('invalid.fc.md');
+    handlers.plan('FC-999.fc.md');
 
     expect(exits).toEqual([1]);
     expect(logger.lines.join('\n')).toContain('Contract has validation errors');
