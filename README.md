@@ -64,6 +64,8 @@ grabby audit login-redirect-bug.fc.md
 | `grabby session <file>` | Inspect, check, or regenerate a session artifact |
 | `grabby session --check-all` | Validate all session artifacts under `contracts/` for CI |
 | `grabby approve <file>` | Approve for execution |
+| `grabby start <file> [--type feat\|fix\|chore]` | Create a branch from contract ID/title and write `**Branch:**` |
+| `grabby pr-template <file>` | Print a PR/MR title + body template from contract metadata |
 | `grabby execute <file>` | Show execution instructions (Phase 2) |
 | `grabby audit <file>` | Post-execution audit |
 | `grabby list` | List all contracts |
@@ -96,6 +98,21 @@ Grabby uses BMAD-style personalities in the CLI:
 - `docs/RULESET_CORE.md`
 - `docs/ENV_STACK.md`
 - `docs/EXECUTION_PROTOCOL.md`
+
+## Ticket Key Awareness
+
+Grabby supports work-item IDs in the form `KEY-123` (for example `FC-123`, `TT-123`, `JIRA-123`).
+
+- ID normalization uppercases the key prefix (`tt-123` -> `TT-123`).
+- Canonical ID resolution order: `**ID:**` in contract content, then filename, then Jira issue key on import.
+- Contract/plan/audit artifacts should use canonical ID filenames:
+  - `contracts/<ID>.fc.md`
+  - `contracts/<ID>.plan.yaml`
+  - `contracts/<ID>.audit.md`
+  - `.grabby/metrics/<ID>.metrics.json`
+- `grabby validate`, `grabby plan`, and `grabby approve` fail on ID/filename mismatches with an actionable rename/edit message.
+- `grabby start <contract-file>` creates branches as `<type>/<ID>-<slug>` where slug is lowercased and limited to 8 words.
+- `grabby pr-template <contract-file>` prints `Title: <ID>: <Title>` with contract/plan/audit and Done-When context.
 
 ## Generated Artifacts
 
