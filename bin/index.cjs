@@ -136,6 +136,10 @@ function execute(file) {
   commandHandlers.execute(file);
 }
 
+function guard(file) {
+  commandHandlers.guard(file);
+}
+
 function resolve(file) {
   commandHandlers.resolve(file);
 }
@@ -1118,6 +1122,7 @@ const commands = {
   plan: () => plan(args[0]),
   approve: () => approve(args[0]),
   execute: () => execute(args[0]),
+  guard: () => guard(args[0]),
   resolve: () => resolve(args[0]),
   'upgrade-contract': () => upgradeContract(args[0]),
   audit: () => audit(args[0]),

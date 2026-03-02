@@ -1,5 +1,9 @@
 # FC: [NAME]
 **ID:** [ID] | **Status:** draft
+CONTRACT_TYPE: FEATURE_CONTRACT
+ARCH_VERSION: v3
+RULESET_VERSION: v2
+ENV_VERSION: v1
 
 ## Objective
 Integrate [service/library/API] to enable [capability].
@@ -54,6 +58,6 @@ Integrate [service/library/API] to enable [capability].
 - [ ] Rate limiting considered
 
 ## Context Refs
-- ARCH_INDEX_v1 §integrations
-- RULESET_CORE_v1 §typescript
-- ENV_STACK_v1
+- ARCH: auth-module@v3
+- RULESET: imports@v2
+- ENV: test-runner@v1

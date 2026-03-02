@@ -1,5 +1,9 @@
 # FC: [NAME]
 **ID:** [ID] | **Status:** draft
+CONTRACT_TYPE: FEATURE_CONTRACT
+ARCH_VERSION: v3
+RULESET_VERSION: v2
+ENV_VERSION: v1
 
 ## Objective
 Create API endpoint for [NAME] that [purpose].
@@ -46,5 +50,6 @@ Create API endpoint for [NAME] that [purpose].
 - Integration: `src/tests/[NAME].integration.test.ts`
 
 ## Context Refs
-- ARCH_INDEX_v1 §api
-- RULESET_CORE_v1 §typescript §validation
+- ARCH: auth-module@v3
+- RULESET: imports@v2
+- ENV: test-runner@v1

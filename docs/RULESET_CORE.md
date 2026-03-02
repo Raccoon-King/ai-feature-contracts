@@ -1,4 +1,4 @@
-# RULESET_CORE_v1
+# RULESET_CORE_v2
 
 ## §contracts
 - All features require approved contracts

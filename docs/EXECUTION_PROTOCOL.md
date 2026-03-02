@@ -73,6 +73,7 @@ For wrappers, CI, or future IDE integrations:
 - Only modify approved files
 - No scope expansion
 - Follow `RULESET_CORE` patterns
+- Before commit, run `grabby guard <contract.fc.md>` to verify plan/contract scope alignment
 
 ## Pre-Execution Validation
 ```
