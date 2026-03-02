@@ -1,0 +1,3 @@
+$ grabby execute contracts/minimal-feature.fc.md
+✗ Execution guard failure:
+  - Out-of-scope file modified: docs/RULESET_CORE.md

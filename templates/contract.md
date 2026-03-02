@@ -1,5 +1,9 @@
 # FC: [NAME]
 **ID:** [ID] | **Status:** draft
+CONTRACT_TYPE: FEATURE_CONTRACT
+ARCH_VERSION: v3
+RULESET_VERSION: v2
+ENV_VERSION: v1
 
 ## Objective
 [1-2 line description of what this feature does]
@@ -22,40 +26,17 @@
 | create | `src/tests/use[FEATURE].test.ts` | Unit tests |
 | modify | `src/types.ts` | Add interfaces |
 
-## Dependencies
-- Allowed: existing packages only
-- Banned: moment, lodash, jquery
-- Security: Run `npm audit` before adding packages
-
 ## Security Considerations
 - [ ] Input validation implemented
 - [ ] No secrets in code
-- [ ] Dependencies CVE-free (`npm audit`)
-- [ ] Error messages don't leak sensitive info
-- [ ] Auth/authz checks where needed
-
-## Code Quality
-- [ ] TypeScript strict mode (no `any`)
-- [ ] ESLint passes (no warnings)
-- [ ] No console.log/debugger statements
-- [ ] Error handling complete
-- [ ] Functions < 50 lines
 
 ## Done When
 - [ ] Feature works as specified
 - [ ] Tests pass (80%+ coverage)
 - [ ] Lint passes
 - [ ] Build succeeds
-- [ ] Security checklist complete
-- [ ] Code quality checklist complete
-
-## Testing
-- Unit: `src/tests/[feature].test.ts`
-- Coverage: 80%+ lines, branches, functions
-- E2E: `e2e/[feature].spec.ts` (if applicable)
 
 ## Context Refs
-- ARCH_INDEX_v1 §frontend
-- RULESET_CORE_v1 §hooks §typescript
-- SECURITY_v1 §input-validation
-- BEST_PRACTICES_v1 §testing
+- ARCH: auth-module@v3
+- RULESET: imports@v2
+- ENV: test-runner@v1

@@ -249,3 +249,11 @@ After `grabby init`, your project will have:
 MIT
 
 
+
+
+## Governance Upgrades
+
+- `grabby resolve <contract>`: resolve section-scoped context with token budgets.
+- `grabby upgrade-contract <file>`: update pinned contract versions to latest supported set.
+- `grabby metrics summary`: summarize per-feature governance metrics from `contracts/*.metrics.json`.
+- Execution now hard-fails for out-of-plan file edits and restricted directory writes.
