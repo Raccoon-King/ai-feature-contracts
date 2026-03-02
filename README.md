@@ -66,6 +66,8 @@ grabby audit login-redirect-bug.fc.md
 | `grabby approve <file>` | Approve for execution |
 | `grabby start <file> [--type feat\|fix\|chore]` | Create a branch from contract ID/title and write `**Branch:**` |
 | `grabby pr-template <file>` | Print a PR/MR title + body template from contract metadata |
+| `grabby context:lint` | Validate docs/context-index.yaml file references, sections, and token budgets |
+| `grabby policy:check` | Enforce optional contract-required policy from `.grabby/config.json` (CI-focused) |
 | `grabby execute <file>` | Show execution instructions (Phase 2) |
 | `grabby audit <file>` | Post-execution audit |
 | `grabby list` | List all contracts |
@@ -93,6 +95,7 @@ Grabby uses BMAD-style personalities in the CLI:
 - `contracts/`
 - `contracts/README.md`
 - `.grabby/config.json`
+- `.grabby/governance.lock`
 - `.grabbyignore`
 - `docs/ARCHITECTURE_INDEX.md`
 - `docs/RULESET_CORE.md`
@@ -110,9 +113,36 @@ Grabby supports work-item IDs in the form `KEY-123` (for example `FC-123`, `TT-1
   - `contracts/<ID>.plan.yaml`
   - `contracts/<ID>.audit.md`
   - `.grabby/metrics/<ID>.metrics.json`
-- `grabby validate`, `grabby plan`, and `grabby approve` fail on ID/filename mismatches with an actionable rename/edit message.
+- `grabby validate`, `grabby plan`, `grabby approve`, and `grabby execute` fail on ID/filename mismatches with an actionable rename/edit message.
 - `grabby start <contract-file>` creates branches as `<type>/<ID>-<slug>` where slug is lowercased and limited to 8 words.
 - `grabby pr-template <contract-file>` prints `Title: <ID>: <Title>` with contract/plan/audit and Done-When context.
+
+
+## Governance Lock + Policy
+
+- `grabby init` creates `.grabby/governance.lock` and stamps the active CLI version.
+- `grabby validate` warns when the local CLI version differs from `governance.lock` (no automatic upgrade).
+- Optional CI gate in `.grabby/config.json`:
+
+```json
+{
+  "contractRequired": {
+    "fileCountThreshold": 10,
+    "restrictedPaths": ["src/core", "migrations"],
+    "alwaysRequireTypes": ["architectural_change"]
+  }
+}
+```
+
+- `grabby policy:check` inspects staged git diff and exits non-zero when policy triggers but no contract exists.
+
+## Context Index Hardening
+
+- `grabby context:lint` validates:
+  - referenced files exist
+  - `## <Section>` headings exist
+  - token budget values are numeric
+- context resolution errors now include file + section details and suggestion hints for nearby section names.
 
 ## Generated Artifacts
 
