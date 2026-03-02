@@ -1,74 +1,33 @@
 /**
  * Grabby - CLI integration tests
+ * Uses child_process for proper isolation
  */
 
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
 const yaml = require('yaml');
+const { execSync, spawnSync } = require('child_process');
 
 const PKG_ROOT = path.join(__dirname, '..');
 const CLI_PATH = path.join(PKG_ROOT, 'bin', 'index.cjs');
-
-class ExitError extends Error {
-  constructor(code) {
-    super(`Exited with code ${code}`);
-    this.code = code;
-  }
-}
 
 function stripAnsi(value) {
   return value.replace(/\x1B\[[0-9;]*m/g, '');
 }
 
 function runCli(args, cwd) {
-  const originalArgv = process.argv;
-  const originalCwd = process.cwd();
-  const originalExit = process.exit;
-  const originalLog = console.log;
-  const originalError = console.error;
-  const modulePath = require.resolve(CLI_PATH);
-
-  let stdout = '';
-  let stderr = '';
-  let status = 0;
-
-  console.log = (...values) => {
-    stdout += `${values.join(' ')}\n`;
-  };
-  console.error = (...values) => {
-    stderr += `${values.join(' ')}\n`;
-  };
-  process.exit = (code) => {
-    throw new ExitError(code || 0);
-  };
-
-  jest.resetModules();
-
-  try {
-    process.argv = [process.execPath, CLI_PATH, ...args];
-    process.chdir(cwd);
-    require(modulePath);
-  } catch (error) {
-    if (error instanceof ExitError) {
-      status = error.code;
-    } else {
-      status = 1;
-      stderr += `${error.stack || error.message}\n`;
-    }
-  } finally {
-    jest.resetModules();
-    process.argv = originalArgv;
-    process.chdir(originalCwd);
-    process.exit = originalExit;
-    console.log = originalLog;
-    console.error = originalError;
-  }
+  const result = spawnSync(process.execPath, [CLI_PATH, ...args], {
+    cwd,
+    encoding: 'utf8',
+    env: { ...process.env, FORCE_COLOR: '0' },
+    timeout: 30000,
+  });
 
   return {
-    status,
-    stdout: stripAnsi(stdout),
-    stderr: stripAnsi(stderr),
+    status: result.status || 0,
+    stdout: stripAnsi(result.stdout || ''),
+    stderr: stripAnsi(result.stderr || ''),
   };
 }
 
@@ -151,6 +110,18 @@ describe('CLI integration', () => {
     expect(result.stdout).toContain('grabby session <file>');
   });
 
+  it('shows help with -h flag', () => {
+    const result = runCli(['-h'], tempDir);
+    expect(result.status).toBe(0);
+    expect(result.stdout).toContain('Grabby - CLI');
+  });
+
+  it('shows help with --help flag', () => {
+    const result = runCli(['--help'], tempDir);
+    expect(result.status).toBe(0);
+    expect(result.stdout).toContain('Grabby - CLI');
+  });
+
   it('initializes docs and contracts in the current project', () => {
     const result = runCli(['init'], tempDir);
 
@@ -180,6 +151,15 @@ describe('CLI integration', () => {
     expect(fs.existsSync(contractPath)).toBe(true);
     expect(fs.readFileSync(contractPath, 'utf8')).toContain('# FC: unit test');
     expect(result.stdout).toContain('Template: contract');
+  });
+
+  it('creates a bug-fix template for fix commands', () => {
+    const result = runCli(['create', 'fix', 'login', 'redirect', 'bug'], tempDir);
+    const contractPath = path.join(tempDir, 'contracts', 'login-redirect-bug.fc.md');
+
+    expect(result.status).toBe(0);
+    expect(fs.existsSync(contractPath)).toBe(true);
+    expect(result.stdout).toContain('Template: bug-fix');
   });
 
   it('runs task non-interactively and writes a session artifact', () => {
@@ -413,5 +393,98 @@ describe('CLI integration', () => {
     expect(result.stdout).toContain('Status: draft');
     expect(result.stdout).toContain('ID: FC-123');
   });
-});
 
+  it('lists empty contracts directory with guidance', () => {
+    const result = runCli(['list'], tempDir);
+
+    expect(result.status).toBe(0);
+    expect(result.stdout).toContain('No contracts found');
+  });
+
+  it('shows agent list', () => {
+    const result = runCli(['agent', 'list'], tempDir);
+
+    expect(result.status).toBe(0);
+    expect(result.stdout).toContain('Archie');
+    expect(result.stdout).toContain('AVAILABLE AGENTS');
+  });
+
+  it('shows party workflow', () => {
+    const result = runCli(['party'], tempDir);
+
+    expect(result.status).toBe(0);
+    expect(result.stdout).toContain('PARTY MODE');
+    expect(result.stdout).toContain('TEAM WORKFLOW');
+  });
+
+  it('shows metrics for contracts', () => {
+    writeValidContract(tempDir);
+
+    const result = runCli(['metrics'], tempDir);
+
+    expect(result.status).toBe(0);
+    expect(result.stdout).toContain('METRICS');
+  });
+
+  it('shows features list', () => {
+    const result = runCli(['features'], tempDir);
+
+    expect(result.status).toBe(0);
+    // Either shows empty list or features heading
+    expect(result.stdout.length).toBeGreaterThan(0);
+  });
+
+  it('shows system command help', () => {
+    const result = runCli(['system'], tempDir);
+
+    expect(result.status).toBe(0);
+    expect(result.stdout).toContain('System Contract Commands');
+  });
+
+  it('shows workspace info', () => {
+    const result = runCli(['workspace', 'info'], tempDir);
+
+    expect(result.status).toBe(0);
+    expect(result.stdout.length).toBeGreaterThan(0);
+  });
+
+  it('handles quick flow with contract name', () => {
+    // First create a contract that quick can work on
+    writeValidContract(tempDir);
+    runCli(['approve', 'valid-feature.fc.md'], tempDir);
+
+    // Quick with existing contract shows execution info
+    const result = runCli(['quick', 'valid-feature.fc.md'], tempDir);
+
+    // Quick command either prompts interactively or shows the workflow
+    expect(result.stdout).toContain('QUICK');
+  });
+
+  it('shows cicd status', () => {
+    const result = runCli(['cicd'], tempDir);
+
+    expect(result.status).toBe(0);
+    expect(result.stdout.length).toBeGreaterThan(0);
+  });
+
+  it('shows plugin list', () => {
+    const result = runCli(['plugin', 'list'], tempDir);
+
+    expect(result.status).toBe(0);
+    expect(result.stdout.length).toBeGreaterThan(0);
+  });
+
+  it('shows ai status', () => {
+    const result = runCli(['ai', 'status'], tempDir);
+
+    expect(result.status).toBe(0);
+    expect(result.stdout.length).toBeGreaterThan(0);
+  });
+
+  it('handles init-hooks command', () => {
+    const result = runCli(['init-hooks'], tempDir);
+
+    // May succeed or fail depending on .git existence
+    expect(result.stdout.length + result.stderr.length).toBeGreaterThan(0);
+  });
+});

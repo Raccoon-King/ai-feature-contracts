@@ -1,0 +1,134 @@
+{
+  "$schema": "https://grabby.dev/schemas/config.json",
+  "version": "1.0",
+
+  "jira": {
+    "enabled": false,
+    "host": "https://your-company.atlassian.net",
+    "email": "your-email@company.com",
+    "apiToken": "${JIRA_API_TOKEN}",
+    "project": "PROJ",
+    "defaults": {
+      "issueType": "Story",
+      "labels": ["grabby", "feature-contract"],
+      "components": [],
+      "priority": "Medium"
+    },
+    "sync": {
+      "autoCreate": false,
+      "autoUpdate": true,
+      "bidirectional": false,
+      "statusMapping": {
+        "draft": "To Do",
+        "approved": "In Progress",
+        "executing": "In Progress",
+        "completed": "Done",
+        "archived": "Done"
+      }
+    },
+    "customFields": {
+      "contractId": null,
+      "complexity": null,
+      "coverageTarget": null
+    }
+  },
+
+  "ai": {
+    "provider": "anthropic",
+    "model": "claude-sonnet-4-20250514",
+    "maxTokens": 4096,
+    "temperature": 0.7,
+
+    "providers": {
+      "anthropic": {
+        "apiKey": "${ANTHROPIC_API_KEY}",
+        "models": {
+          "default": "claude-sonnet-4-20250514",
+          "fast": "claude-3-5-haiku-20241022",
+          "powerful": "claude-opus-4-20250514"
+        }
+      },
+
+      "openai": {
+        "apiKey": "${OPENAI_API_KEY}",
+        "organization": "${OPENAI_ORG_ID}",
+        "models": {
+          "default": "gpt-4-turbo",
+          "fast": "gpt-4o-mini",
+          "powerful": "gpt-4o"
+        }
+      },
+
+      "bedrock": {
+        "region": "us-east-1",
+        "profile": null,
+        "accessKeyId": "${AWS_ACCESS_KEY_ID}",
+        "secretAccessKey": "${AWS_SECRET_ACCESS_KEY}",
+        "sessionToken": "${AWS_SESSION_TOKEN}",
+        "roleArn": null,
+        "crossRegion": false,
+        "inferenceProfile": null,
+        "fallbackRegions": [],
+        "models": {
+          "default": "anthropic.claude-3-sonnet-20240229-v1:0",
+          "fast": "anthropic.claude-3-haiku-20240307-v1:0",
+          "powerful": "anthropic.claude-3-opus-20240229-v1:0",
+          "claude-3-5-sonnet": "anthropic.claude-3-5-sonnet-20240620-v1:0",
+          "llama3-70b": "meta.llama3-70b-instruct-v1:0",
+          "llama3-8b": "meta.llama3-8b-instruct-v1:0",
+          "mistral-large": "mistral.mistral-large-2402-v1:0",
+          "mixtral": "mistral.mixtral-8x7b-instruct-v0:1",
+          "titan-premier": "amazon.titan-text-premier-v1:0",
+          "command-r-plus": "cohere.command-r-plus-v1:0"
+        },
+        "modelConfig": {
+          "anthropic.claude-3-sonnet-20240229-v1:0": {
+            "maxTokens": 4096,
+            "temperature": 0.7
+          },
+          "meta.llama3-70b-instruct-v1:0": {
+            "maxTokens": 2048,
+            "temperature": 0.6
+          }
+        },
+        "guardrails": {
+          "guardrailId": null,
+          "guardrailVersion": null
+        }
+      },
+
+      "azure": {
+        "endpoint": "${AZURE_OPENAI_ENDPOINT}",
+        "apiKey": "${AZURE_OPENAI_API_KEY}",
+        "apiVersion": "2024-02-01",
+        "deploymentName": "gpt-4-turbo"
+      },
+
+      "ollama": {
+        "host": "http://localhost:11434",
+        "model": "llama3:70b"
+      }
+    }
+  },
+
+  "contracts": {
+    "directory": "contracts",
+    "templates": ".grabby/templates",
+    "autoValidate": true,
+    "strictMode": false,
+    "coverageThreshold": 80
+  },
+
+  "hooks": {
+    "preCommit": true,
+    "postCreate": [],
+    "postApprove": [],
+    "postComplete": []
+  },
+
+  "metrics": {
+    "enabled": true,
+    "trackCosts": false,
+    "outputDir": ".grabby/metrics"
+  }
+}

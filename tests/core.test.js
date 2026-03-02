@@ -188,7 +188,7 @@ Test
 ## Files
 | Action | Path | Reason |
 |--------|------|--------|
-| modify | node_modules/pkg/index.js | Hack |`;
+| modify | \`node_modules/pkg/index.js\` | Hack |`;
 
       const result = core.validateContract(content);
       expect(result.errors).toContain('Restricted directory in files: node_modules/');
@@ -199,18 +199,26 @@ Test
 ## Files
 | Action | Path | Reason |
 |--------|------|--------|
-| modify | .env | Secrets |`;
+| modify | \`.env\` | Secrets |`;
 
       const result = core.validateContract(content);
       expect(result.errors).toContain('Restricted directory in files: .env');
     });
 
     it('should fail when using backend/ in files', () => {
-      const content = `${baseContent}
+      const content = `## Objective
+Test
+## Scope
+- Item
+## Directories
+**Allowed:** src/
+**Restricted:** \`backend/\`
+## Done When
+- [ ] Done
 ## Files
 | Action | Path | Reason |
 |--------|------|--------|
-| modify | backend/api.js | API |`;
+| modify | \`backend/api.js\` | API |`;
 
       const result = core.validateContract(content);
       expect(result.errors).toContain('Restricted directory in files: backend/');
