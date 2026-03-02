@@ -24,7 +24,7 @@ const featuresLib = require('../lib/features.cjs');
 const featureChat = require('../lib/feature-chat.cjs');
 const contractLevels = require('../lib/contract-levels.cjs');
 const { interactiveCreateRuleset } = require('../lib/ruleset-builder.cjs');
-const { extractContractId } = require('../lib/id-utils.cjs');
+const { extractContractId, parseWorkItemId } = require('../lib/id-utils.cjs');
 
 // ============================================================================
 // TERMINAL COLORS (no dependencies)
@@ -123,7 +123,8 @@ async function approve(file) {
     const id = extractContractId(content, filePath);
     if (!id) return;
 
-    const isLegacyFc = /^FC-\d+$/.test(id);
+    const parsedId = parseWorkItemId(id);
+    const isLegacyFc = Boolean(parsedId && parsedId.startsWith('FC-'));
     const allowAnyId = cfg?.jira?.sync?.autoCreateForAnyId === true;
     if (!isLegacyFc && !allowAnyId) return;
 
@@ -169,6 +170,14 @@ function start(file) {
 
 function prTemplate(file) {
   commandHandlers.prTemplate(file);
+}
+
+function contextLint() {
+  commandHandlers.contextLint();
+}
+
+function policyCheck() {
+  commandHandlers.policyCheck();
 }
 
 function backlog(file) {
@@ -1145,6 +1154,8 @@ const commands = {
   backlog: () => backlog(args[0]),
   start: () => start(args[0]),
   'pr-template': () => prTemplate(args[0]),
+  'context:lint': contextLint,
+  'policy:check': policyCheck,
   prompt: () => promptBundle(args[0]),
   session: () => session(args[0]),
   watch,
