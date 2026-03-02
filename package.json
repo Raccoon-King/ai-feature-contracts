@@ -11,7 +11,13 @@
     "test": "jest --coverage",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage --coverageThreshold='{\"global\":{\"lines\":80,\"branches\":80,\"functions\":80}}'",
-    "lint": "echo 'No lint configured yet'"
+    "lint": "echo 'No lint configured yet'",
+    "grabby:init": "node bin/index.cjs init",
+    "grabby:validate": "node bin/index.cjs validate",
+    "grabby:plan": "node bin/index.cjs plan",
+    "grabby:execute": "node bin/index.cjs execute",
+    "grabby:guard": "node bin/index.cjs guard",
+    "grabby:session": "node bin/index.cjs session --check-all"
   },
   "keywords": [
     "ai",
