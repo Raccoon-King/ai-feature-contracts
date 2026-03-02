@@ -9,6 +9,14 @@ This document outlines the implementation plan for:
 
 ---
 
+## Implementation Status (Current)
+
+- ✅ `grabby config init|set|show|validate` implemented.
+- ✅ `grabby jira test`, `grabby jira create`, `grabby jira link`, `grabby jira unlink` implemented.
+- ✅ `grabby jira sync <contract>`, `grabby jira sync --all`, and `--dry-run` implemented.
+- ✅ `grabby jira import <ISSUE-KEY>` implemented.
+- ⚠️ Sprint management, webhook watch mode, and bidirectional conflict resolution remain roadmap extensions.
+
 ## Configuration System
 
 ### Config File: `grabby.config.json`
@@ -166,10 +174,10 @@ grabby config validate
 **Title:** As a user, I want to configure Jira credentials so that Grabby can sync with my Jira instance
 
 **Acceptance Criteria:**
-- [ ] User can run `grabby config init` to set up Jira config interactively
-- [ ] Config supports Jira Cloud (Atlassian) and Jira Server/Data Center
-- [ ] API token stored securely via environment variable reference
-- [ ] Connection test available via `grabby jira test`
+- [x] User can run `grabby config init` to set up Jira config (file initialization implemented)
+- [x] Config supports Jira Cloud (Atlassian) and Jira Server/Data Center (via configurable `jira.apiVersion`) 
+- [x] API token stored securely via environment variable reference
+- [x] Connection test available via `grabby jira test`
 - [ ] Clear error messages for authentication failures
 
 **Technical Notes:**
@@ -184,13 +192,13 @@ grabby config validate
 **Title:** As a user, I want to create Jira issues from feature contracts automatically
 
 **Acceptance Criteria:**
-- [ ] `grabby jira create <contract>` creates a Jira issue from contract
-- [ ] Issue title from contract title, description from Objective/Scope
-- [ ] Contract ID stored in Jira custom field
-- [ ] Jira issue key stored in contract metadata
+- [x] `grabby jira create <contract>` creates a Jira issue from contract
+- [x] Issue title from contract title, description from Objective/Scope
+- [x] Contract ID stored in Jira custom field
+- [x] Jira issue key stored in contract metadata
 - [ ] Support for Epic linking
 - [ ] Subtasks created from contract's file changes (optional)
-- [ ] Auto-create on `grabby approve` when `sync.autoCreate: true`
+- [x] Auto-create on `grabby approve` when `sync.autoCreate: true`
 
 **API Mapping:**
 ```
@@ -212,12 +220,12 @@ Files (creates)    → Subtasks (optional)
 **Title:** As a user, I want contract status changes to sync to Jira automatically
 
 **Acceptance Criteria:**
-- [ ] Contract status changes trigger Jira transitions
-- [ ] Status mapping configurable in `grabby.config.json`
-- [ ] Manual sync via `grabby jira sync <contract>`
-- [ ] Bulk sync via `grabby jira sync --all`
+- [x] Contract status changes trigger Jira transitions
+- [x] Status mapping configurable in `grabby.config.json`
+- [x] Manual sync via `grabby jira sync <contract>`
+- [x] Bulk sync via `grabby jira sync --all`
 - [ ] Conflict detection with user prompt
-- [ ] Dry-run mode: `grabby jira sync --dry-run`
+- [x] Dry-run mode: `grabby jira sync --dry-run`
 
 **Status Mapping Example:**
 ```
@@ -237,11 +245,11 @@ archived        → Closed
 **Title:** As a user, I want to import existing Jira issues as feature contracts
 
 **Acceptance Criteria:**
-- [ ] `grabby jira import PROJ-123` creates contract from Jira issue
-- [ ] Bulk import via JQL: `grabby jira import --jql "project=PROJ AND type=Story"`
+- [x] `grabby jira import PROJ-123` creates contract from Jira issue
+- [x] Bulk import via JQL: `grabby jira import --jql "project=PROJ AND type=Story"`
 - [ ] Interactive field mapping during import
-- [ ] Preserve Jira issue key in contract
-- [ ] Skip already-imported issues (idempotent)
+- [x] Preserve Jira issue key in contract
+- [x] Skip already-imported issues (idempotent)
 
 **Import Mapping:**
 ```
@@ -275,10 +283,10 @@ Components           → Directories hint
 **Title:** As a user, I want to see Jira integration status in Grabby metrics
 
 **Acceptance Criteria:**
-- [ ] `grabby jira status` shows sync health
+- [x] `grabby jira status` shows sync health
 - [ ] `grabby metrics` includes Jira sync stats
 - [ ] Contracts linked to closed Jira issues highlighted
-- [ ] Orphaned contracts (no Jira link) flagged
+- [x] Orphaned contracts (no Jira link) flagged
 - [ ] Orphaned Jira issues (no contract) listed
 
 ---
