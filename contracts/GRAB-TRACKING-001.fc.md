@@ -1,5 +1,5 @@
 # Feature Contract: Toggle Contract Tracking
-**ID:** GRAB-TRACKING-001 | **Status:** draft
+**ID:** GRAB-TRACKING-001 | **Status:** approved
 CONTRACT_TYPE: FEATURE_CONTRACT
 ARCH_VERSION: v1
 RULESET_VERSION: v1
@@ -17,21 +17,12 @@ Add a setting that lets developers enable or disable repo-tracked Grabby contrac
 Introduce an explicit contract tracking mode under Grabby config. In `tracked` mode, behavior stays as-is and contracts remain canonical repo artifacts. In `local-only` mode, Grabby still supports intake, planning, and local governance, but contract artifacts are treated as disposable local files and are expected to be removed or ignored before check-in.
 
 ## Scope
-- Add a config setting for contract tracking mode under `contracts.trackingMode`
-- Support two modes:
-  - `tracked` = current behavior, contracts are committed repo artifacts
-  - `local-only` = contracts may be created locally but should not be required as committed repo artifacts
-- Define which artifacts are local-only when tracking is disabled:
-  - `contracts/<ID>.fc.md`
-  - `contracts/<ID>.plan.yaml`
-  - `contracts/<ID>.audit.md`
-  - related brief/prompt/session artifacts
-- Preserve a local-only change log or feature log under `.grabby/` when `trackingMode=local-only`
-- Provide an explicit cleanup path before check-in:
-  - manual command and/or documented workflow
-  - no implicit deletion during normal feature execution
-- Prevent validation/policy flows from failing solely because committed contract artifacts are absent in `local-only` mode
-- Ensure feature indexing excludes local-only contracts from canonical repo feature reporting
+- Add `contracts.trackingMode` config setting supporting `tracked` (default, committed repo artifacts) and `local-only` (disposable local files) modes
+- Define which artifacts are local-only: contract files, plan files, audit files, brief/prompt/session artifacts
+- Preserve a local-only change log under `.grabby/` when `trackingMode=local-only`
+- Provide an explicit cleanup command or documented workflow for removing local artifacts before check-in
+- Prevent validation/policy flows from failing when contract artifacts are absent in `local-only` mode
+- Exclude local-only contracts from canonical feature indexing and repo reporting
 - Document tracked vs local-only behavior and recommended `.gitignore` usage
 
 ## Non-Goals
@@ -68,6 +59,7 @@ Introduce an explicit contract tracking mode under Grabby config. In `tracked` m
 - [ ] Contract cleanup requires explicit developer action or explicit command
 - [ ] Local-only logs stay inside approved Grabby directories
 - [ ] `local-only` mode does not weaken existing restricted-directory protections
+- [ ] Run `npm audit` before adding any dependencies
 
 ## Done When
 - [ ] `contracts.trackingMode` exists with supported values `tracked` and `local-only`
