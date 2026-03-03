@@ -1,5 +1,5 @@
 # Feature Contract: Toggle Contract Tracking
-**ID:** GRAB-TRACKING-001 | **Status:** approved
+**ID:** GRAB-TRACKING-001 | **Status:** complete
 CONTRACT_TYPE: FEATURE_CONTRACT
 ARCH_VERSION: v1
 RULESET_VERSION: v1
