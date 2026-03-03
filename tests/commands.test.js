@@ -188,16 +188,80 @@ describe('Command handlers', () => {
     expect(logger.lines.join('\n')).toContain('Contract has validation errors');
   });
 
-  it('approves a contract even when no plan file exists yet', () => {
+  it('fails validation when a completed feature remains in contracts/active', () => {
     const logger = createLogger();
+    const exits = [];
     const context = createProjectContext({ cwd: tempDir, pkgRoot: PKG_ROOT });
-    const handlers = createCommandHandlers({ context, logger });
+    const handlers = createCommandHandlers({
+      context,
+      logger,
+      exit: (code) => exits.push(code),
+    });
+
+    const activeDir = path.join(tempDir, 'contracts', 'active');
+    fs.mkdirSync(activeDir, { recursive: true });
+    fs.writeFileSync(path.join(activeDir, 'ARCH-9.fc.md'), `# Feature Contract: Done Feature
+**ID:** ARCH-9 | **Status:** completed
+
+## Objective
+Archive me
+
+## Scope
+- done
+
+## Non-Goals
+- none
+
+## Directories
+**Allowed:** \`contracts/\`
+**Restricted:** \`node_modules/\`
+
+## Files
+| Action | Path | Reason |
+|--------|------|--------|
+| modify | \`contracts/active/ARCH-9.fc.md\` | contract |
+
+## Dependencies
+- Allowed: existing packages only
+- Banned: moment, lodash, jquery
+
+## Security Considerations
+- [ ] none
+
+## Code Quality
+- [ ] lint
+
+## Done When
+- [ ] Tests pass (80%+ coverage)
+- [ ] Lint passes
+
+## Testing
+- Unit
+
+## Context Refs
+- ARCH: auth-module@v1
+- RULESET: imports@v1
+- ENV: test-runner@v1
+`, 'utf8');
+
+    handlers.validate(path.join(activeDir, 'ARCH-9.fc.md'));
+
+    expect(exits).toEqual([1]);
+    expect(logger.lines.join('\n')).toContain('Completed features must not remain in contracts/active/');
+  });
+
+  it('fails approval when no plan file exists yet', () => {
+    const logger = createLogger();
+    const exits = [];
+    const context = createProjectContext({ cwd: tempDir, pkgRoot: PKG_ROOT });
+    const handlers = createCommandHandlers({ context, logger, exit: (code) => exits.push(code) });
 
     const contractPath = writeValidContract(tempDir);
     handlers.approve('valid-feature.fc.md');
 
-    expect(fs.readFileSync(contractPath, 'utf8')).toContain('**Status:** approved');
-    expect(logger.lines.join('\n')).toContain('Contract approved');
+    expect(fs.readFileSync(contractPath, 'utf8')).toContain('**Status:** draft');
+    expect(exits).toEqual([1]);
+    expect(logger.lines.join('\n')).toContain('No plan found');
   });
 
   it('fails execution when the plan file is missing', () => {
@@ -233,7 +297,13 @@ describe('Command handlers', () => {
     });
 
     writeValidContract(tempDir, 'valid-feature.fc.md', 'approved');
-    fs.writeFileSync(path.join(tempDir, 'package.json'), JSON.stringify({ name: 'tmp' }), 'utf8');
+    fs.writeFileSync(path.join(tempDir, 'package.json'), JSON.stringify({
+      name: 'tmp',
+      scripts: {
+        lint: 'echo lint',
+        build: 'echo build',
+      },
+    }), 'utf8');
     fs.mkdirSync(path.join(tempDir, 'src'), { recursive: true });
     fs.writeFileSync(path.join(tempDir, 'src', 'feature.ts'), 'module.exports = {};', 'utf8');
     fs.mkdirSync(path.join(tempDir, 'contracts'), { recursive: true });
@@ -247,10 +317,44 @@ describe('Command handlers', () => {
 
     handlers.audit('valid-feature.fc.md');
 
-    expect(commands).toEqual(['npm run lint', 'npm run build']);
+    const npmCommand = process.platform === 'win32' ? 'npm.cmd' : 'npm';
+    expect(commands).toEqual([`${npmCommand} run lint`, `${npmCommand} run build`]);
     expect(logger.lines.join('\n')).toContain('Lint: passed');
     expect(logger.lines.join('\n')).toContain('Build: failed');
     expect(logger.lines.join('\n')).toContain('src/feature.ts');
+  });
+
+  it('skips unconfigured build checks during audit', () => {
+    const logger = createLogger();
+    const commands = [];
+    const context = createProjectContext({ cwd: tempDir, pkgRoot: PKG_ROOT });
+    const handlers = createCommandHandlers({
+      context,
+      logger,
+      execSyncImpl: (command) => {
+        commands.push(command);
+      },
+    });
+
+    writeValidContract(tempDir, 'valid-feature.fc.md', 'approved');
+    fs.writeFileSync(path.join(tempDir, 'package.json'), JSON.stringify({
+      name: 'tmp',
+      scripts: {
+        lint: 'echo lint',
+      },
+    }), 'utf8');
+    fs.mkdirSync(path.join(tempDir, 'contracts'), { recursive: true });
+    fs.writeFileSync(path.join(tempDir, 'contracts', 'FC-123.plan.yaml'), yaml.stringify({
+      status: 'executing',
+      files: [],
+    }));
+
+    handlers.audit('valid-feature.fc.md');
+
+    const npmCommand = process.platform === 'win32' ? 'npm.cmd' : 'npm';
+    expect(commands).toEqual([`${npmCommand} run lint`]);
+    expect(logger.lines.join('\n')).toContain('Lint: passed');
+    expect(logger.lines.join('\n')).toContain('Build: not configured');
   });
 
   it('lists an empty contract directory clearly', () => {
@@ -274,6 +378,124 @@ describe('Command handlers', () => {
     expect(fs.existsSync(path.join(tempDir, '.grabby', 'config.json'))).toBe(true);
     expect(fs.existsSync(path.join(tempDir, '.grabbyignore'))).toBe(true);
     expect(logger.lines.join('\n')).toContain('.grabby/config.json');
+  });
+
+  it('archives a completed feature and removes active artifacts', () => {
+    const logger = createLogger();
+    const context = createProjectContext({ cwd: tempDir, pkgRoot: PKG_ROOT });
+    const handlers = createCommandHandlers({ context, logger });
+    const activeDir = path.join(tempDir, 'contracts', 'active');
+    fs.mkdirSync(activeDir, { recursive: true });
+    fs.writeFileSync(path.join(activeDir, 'ARCH-1.fc.md'), `# Feature Contract: Archived Feature
+**ID:** ARCH-1 | **Status:** completed
+
+## Ticket
+- Who: Devs
+- What: Close this feature
+- Why: Keep history
+
+## Objective
+Archive this feature
+
+## Scope
+- Archive artifacts
+
+## Non-Goals
+- None
+
+## Directories
+**Allowed:** \`contracts/\`
+**Restricted:** \`node_modules/\`
+
+## Files
+| Action | Path | Reason |
+|--------|------|--------|
+| modify | \`contracts/active/ARCH-1.fc.md\` | contract |
+
+## Dependencies
+- Allowed: existing packages only
+- Banned: moment, lodash, jquery
+
+## Security Considerations
+- [ ] None
+
+## Code Quality
+- [ ] Covered
+
+## Done When
+- [ ] Tests pass (80%+ coverage)
+- [ ] Lint passes
+
+## Testing
+- Unit
+
+## Context Refs
+- ARCH: auth-module@v1
+- RULESET: imports@v1
+- ENV: test-runner@v1
+`, 'utf8');
+    fs.writeFileSync(path.join(activeDir, 'ARCH-1.plan.yaml'), yaml.stringify({
+      files: [{ path: 'contracts/active/ARCH-1.fc.md' }],
+      execution_guard: 'passed',
+    }), 'utf8');
+    fs.writeFileSync(path.join(activeDir, 'ARCH-1.audit.md'), '# Audit\nValidation commands run: npm test (passed)\n', 'utf8');
+
+    handlers.featureClose('ARCH-1');
+
+    expect(fs.existsSync(path.join(activeDir, 'ARCH-1.fc.md'))).toBe(false);
+    expect(fs.existsSync(path.join(activeDir, 'ARCH-1.plan.yaml'))).toBe(false);
+    expect(fs.existsSync(path.join(activeDir, 'ARCH-1.audit.md'))).toBe(false);
+    const archiveDir = path.join(tempDir, 'contracts', 'archive');
+    const yearDir = fs.readdirSync(archiveDir)[0];
+    const bundlePath = path.join(archiveDir, yearDir, 'ARCH-1.bundle.md');
+    expect(fs.existsSync(bundlePath)).toBe(true);
+    expect(fs.readFileSync(bundlePath, 'utf8')).toContain('Status: complete');
+    expect(logger.lines.join('\n')).toContain('Archived feature ARCH-1');
+  });
+
+  it('records explicit keep dispositions for hanging contracts', () => {
+    const logger = createLogger();
+    const context = createProjectContext({ cwd: tempDir, pkgRoot: PKG_ROOT });
+    const handlers = createCommandHandlers({ context, logger });
+    const activeDir = path.join(tempDir, 'contracts', 'active');
+    fs.mkdirSync(activeDir, { recursive: true });
+    fs.writeFileSync(path.join(activeDir, 'ARCH-KEEP-1.fc.md'), `# Feature Contract: Hanging Feature
+**ID:** ARCH-KEEP-1 | **Status:** approved
+`, 'utf8');
+
+    const staleTime = new Date('2025-01-01T00:00:00.000Z');
+    fs.utimesSync(path.join(activeDir, 'ARCH-KEEP-1.fc.md'), staleTime, staleTime);
+
+    handlers.featureGc('keep', 'ARCH-KEEP-1', { reason: 'Waiting on external dependency', maxAgeDays: 30 });
+
+    const index = JSON.parse(fs.readFileSync(path.join(tempDir, '.grabby', 'features.index.json'), 'utf8'));
+    expect(index.features[0]).toMatchObject({
+      id: 'ARCH-KEEP-1',
+      gcDisposition: 'keep',
+      gcReason: 'Waiting on external dependency',
+    });
+    expect(logger.lines.join('\n')).toContain('Recorded garbage-collector disposition for ARCH-KEEP-1');
+  });
+
+  it('fails garbage-collector checks when stale active contracts need disposition', () => {
+    const logger = createLogger();
+    const exits = [];
+    const context = createProjectContext({ cwd: tempDir, pkgRoot: PKG_ROOT });
+    const handlers = createCommandHandlers({ context, logger, exit: (code) => exits.push(code) });
+    const activeDir = path.join(tempDir, 'contracts', 'active');
+    fs.mkdirSync(activeDir, { recursive: true });
+    fs.writeFileSync(path.join(activeDir, 'ARCH-GC-1.fc.md'), `# Feature Contract: Hanging Feature
+**ID:** ARCH-GC-1 | **Status:** draft
+`, 'utf8');
+
+    const staleTime = new Date('2025-01-01T00:00:00.000Z');
+    fs.utimesSync(path.join(activeDir, 'ARCH-GC-1.fc.md'), staleTime, staleTime);
+
+    handlers.featureGc('check', null, { maxAgeDays: 30 });
+
+    expect(exits).toEqual([1]);
+    expect(logger.lines.join('\n')).toContain('ARCH-GC-1');
+    expect(logger.lines.join('\n')).toContain('No contract activity');
   });
 
   it('generates an agile backlog from a valid contract', () => {

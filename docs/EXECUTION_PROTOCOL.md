@@ -78,6 +78,18 @@ For wrappers, CI, or future IDE integrations:
 3. `grabby prompt <file>` writes:
    - `contracts/<name>.prompt.md`
 
+## Feature Close
+
+- `grabby feature:close <ID>` is the archive flow for completed work.
+- `grabby feature gc list` surfaces hanging active contracts that need a developer disposition.
+- `grabby feature gc check` is the non-interactive enforcement mode for CI.
+- `grabby feature gc keep <ID> <reason>` records an explicit decision to keep a hanging story active.
+- Closing a feature writes `contracts/archive/<YEAR>/<ID>.bundle.md`.
+- The bundle keeps ticket data, directory rules, context refs, planned file paths, audit summary, validation summary, and branch/PR metadata when available.
+- After bundling, active `contracts/active/<ID>.fc.md`, `contracts/active/<ID>.plan.yaml`, and `contracts/active/<ID>.audit.md` artifacts should no longer remain in the active set.
+- `.grabby/features.index.json` remains the searchable metadata source and stores the archive pointer plus close date after archival.
+- Garbage-collector keep decisions are also persisted in `.grabby/features.index.json` so stale contracts are not silently left hanging.
+
 ## Init Output
 
 `grabby init` bootstraps the current repo with:

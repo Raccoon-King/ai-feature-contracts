@@ -69,6 +69,8 @@ grabby audit login-redirect-bug.fc.md
 | `grabby features:list` | List contract-backed features from `contracts/*.fc.md` |
 | `grabby features:status <id>` | Show contract/plan/audit status for one feature |
 | `grabby features:refresh` | Regenerate `.grabby/features.index.json` |
+| `grabby feature:close <id>` | Archive a completed feature into a bundle and remove active artifacts |
+| `grabby feature gc [action] [id]` | List, check, archive, or explicitly keep hanging active contracts |
 | `grabby contracts:clean-local` | Remove local-only Grabby artifacts under `.grabby/` |
 | `grabby session --check-all` | Validate all session artifacts under `contracts/` for CI |
 | `grabby approve <file>` | Approve for execution |
@@ -327,6 +329,8 @@ After `grabby init`, your project will have:
 
 - `contracts/<ID>.fc.md` is the canonical feature/ticket artifact inside the repo.
 - `contracts/<ID>.plan.yaml` and `contracts/<ID>.audit.md` remain the retained execution artifacts.
+- Completed features may be closed into `contracts/archive/<YEAR>/<ID>.bundle.md`, after which the active FC/plan/audit artifacts are removed and the feature index retains the archive pointer.
+- Hanging active contracts can be reviewed with `grabby feature gc list`, enforced in CI with `grabby feature gc check`, archived when complete, or explicitly kept with a recorded reason in `.grabby/features.index.json`.
 - Standalone ticket markdown such as `TT-123.md`, `JIRA-123.md`, or `tickets/*.md` is deprecated and should be migrated into the feature contract instead of duplicated.
 
 ## Contract Tracking Mode

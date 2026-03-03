@@ -22,3 +22,15 @@ jobs:
 
       - name: Run Grabby self-governance session
         run: npm run grabby:session
+
+      - name: Fail completed features left in active contracts
+        run: |
+          if [ -d contracts/active ]; then
+            if grep -RIl "\*\*Status:\*\* complete\|\*\*Status:\*\* completed" contracts/active/*.fc.md 2>/dev/null; then
+              echo "Completed features must be archived out of contracts/active/"
+              exit 1
+            fi
+          fi
+
+      - name: Fail hanging active contracts without disposition
+        run: node bin/index.cjs feature:gc check

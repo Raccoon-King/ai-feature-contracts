@@ -1,0 +1,129 @@
+{
+  "generatedAt": "2026-03-03T00:42:28.938Z",
+  "features": [
+    {
+      "id": "FC-001",
+      "title": "Grabby v2 Enhancements",
+      "type": "feat",
+      "status": "approved",
+      "branch": null,
+      "lastModifiedAt": "2026-03-01T01:57:44.260Z",
+      "contractPath": "contracts/grabby-v2-enhancements.fc.md",
+      "planPath": null,
+      "auditPath": null,
+      "archivePath": null,
+      "closedAt": null
+    },
+    {
+      "id": "FC-002",
+      "title": "Feature Management System",
+      "type": "feat",
+      "status": "complete",
+      "branch": "-",
+      "contractPath": null,
+      "planPath": null,
+      "auditPath": null,
+      "archivePath": "contracts/archive/2026/FC-002.bundle.md",
+      "closedAt": "2026-03-03T00:36:45.496Z"
+    },
+    {
+      "id": "FC-003",
+      "title": "Contract Level System",
+      "type": "feat",
+      "status": "complete",
+      "branch": "-",
+      "contractPath": null,
+      "planPath": null,
+      "auditPath": null,
+      "archivePath": "contracts/archive/2026/FC-003.bundle.md",
+      "closedAt": "2026-03-03T00:36:45.653Z"
+    },
+    {
+      "id": "GRAB-ARCHIVE-001",
+      "title": "Archive Completed Features with Close Flow",
+      "type": "FEATURE_CONTRACT",
+      "status": "complete",
+      "branch": "-",
+      "contractPath": null,
+      "planPath": null,
+      "auditPath": null,
+      "archivePath": "contracts/archive/2026/GRAB-ARCHIVE-001.bundle.md",
+      "closedAt": "2026-03-03T00:36:32.016Z"
+    },
+    {
+      "id": "GRAB-FEATURES-001",
+      "title": "Contract-Backed Feature Index",
+      "type": "FEATURE_CONTRACT",
+      "status": "complete",
+      "branch": "-",
+      "contractPath": null,
+      "planPath": null,
+      "auditPath": null,
+      "archivePath": "contracts/archive/2026/GRAB-FEATURES-001.bundle.md",
+      "closedAt": "2026-03-03T00:36:32.182Z"
+    },
+    {
+      "id": "GRAB-GOV-001",
+      "title": "Enforce Grabby Method Routing for All Feature Work",
+      "type": "FEATURE_CONTRACT",
+      "status": "draft",
+      "branch": null,
+      "lastModifiedAt": "2026-03-02T23:28:26.869Z",
+      "contractPath": "contracts/GRAB-GOV-001.fc.md",
+      "planPath": "contracts/GRAB-GOV-001.plan.yaml",
+      "auditPath": null,
+      "archivePath": null,
+      "closedAt": null
+    },
+    {
+      "id": "GRAB-INTAKE-002",
+      "title": "Ticket Generator Wizard",
+      "type": "FEATURE_CONTRACT",
+      "status": "complete",
+      "branch": "-",
+      "contractPath": null,
+      "planPath": null,
+      "auditPath": null,
+      "archivePath": "contracts/archive/2026/GRAB-INTAKE-002.bundle.md",
+      "closedAt": "2026-03-03T00:36:32.367Z"
+    },
+    {
+      "id": "GRAB-INTAKE-003",
+      "title": "Modern Ticket Intake Shape",
+      "type": "FEATURE_CONTRACT",
+      "status": "complete",
+      "branch": "-",
+      "contractPath": null,
+      "planPath": null,
+      "auditPath": null,
+      "archivePath": "contracts/archive/2026/GRAB-INTAKE-003.bundle.md",
+      "closedAt": "2026-03-03T00:36:32.528Z"
+    },
+    {
+      "id": "GRAB-TRACKING-001",
+      "title": "Toggle Contract Tracking",
+      "type": "FEATURE_CONTRACT",
+      "status": "draft",
+      "branch": null,
+      "lastModifiedAt": "2026-03-02T22:14:43.528Z",
+      "contractPath": "contracts/GRAB-TRACKING-001.fc.md",
+      "planPath": null,
+      "auditPath": null,
+      "archivePath": null,
+      "closedAt": null
+    },
+    {
+      "id": "GRABBY-001",
+      "title": "Comprehensive Test Suite for Grabby",
+      "type": "FEATURE_CONTRACT",
+      "status": "paused",
+      "branch": null,
+      "lastModifiedAt": "2026-03-02T21:49:07.983Z",
+      "contractPath": "contracts/GRABBY-001.fc.md",
+      "planPath": "contracts/GRABBY-001.plan.yaml",
+      "auditPath": null,
+      "archivePath": null,
+      "closedAt": null
+    }
+  ]
+}

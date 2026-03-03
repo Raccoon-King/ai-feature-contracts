@@ -69,6 +69,70 @@ Build the ticket wizard.
     expect(loaded.features[0].id).toBe('GRAB-3');
   });
 
+  it('indexes archived feature bundles with archive pointer metadata', () => {
+    const archiveDir = path.join(tempDir, 'contracts', 'archive', '2026');
+    fs.mkdirSync(archiveDir, { recursive: true });
+    fs.writeFileSync(path.join(archiveDir, 'GRAB-4.bundle.md'), `# Feature Archive Bundle
+ID: GRAB-4
+Title: Archived Feature
+Type: FEATURE_CONTRACT
+Status: complete
+Closed: 2026-03-03T00:00:00.000Z
+Branch: feat/GRAB-4
+PR/MR: -
+`, 'utf8');
+
+    const refreshed = features.refreshFeatureIndex(tempDir);
+    expect(refreshed.features).toHaveLength(1);
+    expect(refreshed.features[0]).toMatchObject({
+      id: 'GRAB-4',
+      status: 'complete',
+      archivePath: 'contracts/archive/2026/GRAB-4.bundle.md',
+      closedAt: '2026-03-03T00:00:00.000Z',
+    });
+  });
+
+  it('preserves garbage-collector metadata across index refreshes', () => {
+    writeContract('GRAB-5.fc.md', `# FC: Hanging Feature
+**ID:** GRAB-5 | **Status:** approved
+`);
+    fs.mkdirSync(path.join(tempDir, '.grabby'), { recursive: true });
+    fs.writeFileSync(path.join(tempDir, '.grabby', 'features.index.json'), JSON.stringify({
+      generatedAt: '2026-03-03T00:00:00.000Z',
+      features: [
+        {
+          id: 'GRAB-5',
+          gcDisposition: 'keep',
+          gcReason: 'Pending decision',
+        },
+      ],
+    }, null, 2), 'utf8');
+
+    const refreshed = features.refreshFeatureIndex(tempDir);
+    expect(refreshed.features[0]).toMatchObject({
+      id: 'GRAB-5',
+      gcDisposition: 'keep',
+      gcReason: 'Pending decision',
+    });
+  });
+
+  it('lists stale active contracts as garbage-collector candidates', () => {
+    writeContract('GRAB-6.fc.md', `# FC: Hanging Feature
+**ID:** GRAB-6 | **Status:** draft
+`);
+    const contractPath = path.join(contractsDir, 'GRAB-6.fc.md');
+    const staleTime = new Date('2025-01-01T00:00:00.000Z');
+    fs.utimesSync(contractPath, staleTime, staleTime);
+
+    const candidates = features.listGarbageCandidates(tempDir, { maxAgeDays: 30 });
+    expect(candidates).toHaveLength(1);
+    expect(candidates[0]).toMatchObject({
+      id: 'GRAB-6',
+      recommendedAction: 'choose',
+    });
+    expect(candidates[0].staleReason).toContain('No contract activity');
+  });
+
   it('detects deprecated standalone ticket markdown files', () => {
     fs.writeFileSync(path.join(tempDir, 'TT-123.md'), '# legacy\n', 'utf8');
     fs.mkdirSync(path.join(tempDir, 'tickets'), { recursive: true });

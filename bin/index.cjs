@@ -854,7 +854,27 @@ function features() {
 }
 
 async function feature() {
-  const subCommand = args[0];
+  const subCommand = cmd === 'feature:close' ? 'close' : (cmd === 'feature:gc' ? 'gc' : args[0]);
+
+  if (subCommand === 'close') {
+    const id = (cmd === 'feature:close' ? args[0] : args[1])?.toUpperCase();
+    if (!id) {
+      console.log(c.error('Usage: grabby feature close <ID>'));
+      process.exit(1);
+    }
+    commandHandlers.featureClose(id);
+    return;
+  }
+
+  if (subCommand === 'gc') {
+    const action = cmd === 'feature:gc' ? (args[0] || 'list') : (args[1] || 'list');
+    const id = (cmd === 'feature:gc' ? args[1] : args[2])?.toUpperCase() || null;
+    const reasonParts = cmd === 'feature:gc' ? args.slice(2) : args.slice(3);
+    commandHandlers.featureGc(action, id, {
+      reason: reasonParts.join(' ').trim() || undefined,
+    });
+    return;
+  }
 
   if (subCommand === 'describe' || subCommand === 'show') {
     const id = args[1]?.toUpperCase();
@@ -879,6 +899,8 @@ async function feature() {
   console.log('  grabby features:status <id>     Show contract/plan/audit status for one feature');
   console.log('  grabby features:refresh         Regenerate .grabby/features.index.json');
   console.log('  grabby feature describe <id>    Alias for features:status <id>');
+  console.log('  grabby feature close <id>       Archive a completed feature and remove active artifacts');
+  console.log('  grabby feature gc [action]      List/check/disposition hanging active contracts');
   console.log('');
   console.log(c.dim('Feature contracts are the canonical source of truth.'));
   return;
@@ -1249,6 +1271,8 @@ const commands = {
   'features:status': features,
   'features:refresh': features,
   feature,
+  'feature:close': feature,
+  'feature:gc': feature,
   ruleset,
   agent,
   task,
