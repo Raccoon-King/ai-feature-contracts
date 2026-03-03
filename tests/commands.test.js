@@ -445,11 +445,11 @@ Archive this feature
     expect(fs.existsSync(path.join(activeDir, 'ARCH-1.fc.md'))).toBe(false);
     expect(fs.existsSync(path.join(activeDir, 'ARCH-1.plan.yaml'))).toBe(false);
     expect(fs.existsSync(path.join(activeDir, 'ARCH-1.audit.md'))).toBe(false);
-    const archiveDir = path.join(tempDir, 'contracts', 'archive');
-    const yearDir = fs.readdirSync(archiveDir)[0];
-    const bundlePath = path.join(archiveDir, yearDir, 'ARCH-1.bundle.md');
-    expect(fs.existsSync(bundlePath)).toBe(true);
-    expect(fs.readFileSync(bundlePath, 'utf8')).toContain('Status: complete');
+    const historyFile = path.join(tempDir, '.grabby', 'history', 'history-001.yaml');
+    expect(fs.existsSync(historyFile)).toBe(true);
+    const historyContent = yaml.parse(fs.readFileSync(historyFile, 'utf8'));
+    expect(historyContent.entries).toHaveLength(1);
+    expect(historyContent.entries[0].id).toBe('ARCH-1');
     expect(logger.lines.join('\n')).toContain('Archived feature ARCH-1');
   });
 

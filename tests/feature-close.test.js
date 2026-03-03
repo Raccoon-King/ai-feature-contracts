@@ -85,24 +85,24 @@ Validation commands run:
 `, 'utf8');
   }
 
-  it('closing creates a bundle and updates the feature index', () => {
+  it('closing creates compact history and updates the feature index', () => {
     writeCompletedFeature();
 
     const result = features.createArchiveBundle('GRAB-ARCH-1', tempDir, {
       closedAt: '2026-03-03T00:00:00.000Z',
     });
 
-    expect(result.bundlePath).toBe('contracts/archive/2026/GRAB-ARCH-1.bundle.md');
-    const bundle = fs.readFileSync(path.join(tempDir, result.bundlePath), 'utf8');
-    expect(bundle).toContain('ID: GRAB-ARCH-1');
-    expect(bundle).toContain('Status: complete');
-    expect(bundle).toContain('## Plan Paths');
-    expect(bundle).toContain('contracts/active/GRAB-ARCH-1.fc.md');
+    expect(result.historyFile).toBe('.grabby/history/history-001.yaml');
+    const historyContent = fs.readFileSync(path.join(tempDir, result.historyFile), 'utf8');
+    const history = yaml.parse(historyContent);
+    expect(history.entries).toHaveLength(1);
+    expect(history.entries[0].id).toBe('GRAB-ARCH-1');
+    expect(history.entries[0].closedAt).toBe('2026-03-03T00:00:00.000Z');
 
     const index = features.loadFeatureIndex(tempDir);
     expect(index.features[0]).toMatchObject({
       id: 'GRAB-ARCH-1',
-      archivePath: 'contracts/archive/2026/GRAB-ARCH-1.bundle.md',
+      archivePath: '.grabby/history/history-001.yaml',
       closedAt: '2026-03-03T00:00:00.000Z',
     });
   });
