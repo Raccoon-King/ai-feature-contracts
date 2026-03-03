@@ -3,7 +3,7 @@
 <html lang="en">
 
 <head>
-    <title>Code coverage report for api-server.cjs</title>
+    <title>Code coverage report for ticket-intake.cjs</title>
     <meta charset="utf-8" />
     <link rel="stylesheet" href="prettify.css" />
     <link rel="stylesheet" href="base.css" />
@@ -19,34 +19,34 @@
 <body>
 <div class='wrapper'>
     <div class='pad1'>
-        <h1><a href="index.html">All files</a> api-server.cjs</h1>
+        <h1><a href="index.html">All files</a> ticket-intake.cjs</h1>
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">82.84% </span>
+                <span class="strong">72.72% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>140/169</span>
+                <span class='fraction'>104/143</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">70% </span>
+                <span class="strong">51.56% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>49/70</span>
+                <span class='fraction'>66/128</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">86.66% </span>
+                <span class="strong">76.19% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>26/30</span>
+                <span class='fraction'>16/21</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">82.69% </span>
+                <span class="strong">72.99% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>129/156</span>
+                <span class='fraction'>100/137</span>
             </div>
         
             
@@ -61,7 +61,7 @@
             </div>
         </template>
     </div>
-    <div class='status-line high'></div>
+    <div class='status-line medium'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -404,318 +404,46 @@
 <a name='L339'></a><a href='#L339'>339</a>
 <a name='L340'></a><a href='#L340'>340</a>
 <a name='L341'></a><a href='#L341'>341</a>
-<a name='L342'></a><a href='#L342'>342</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">4x</span>
-<span class="cline-any cline-yes">4x</span>
-<span class="cline-any cline-yes">4x</span>
-<span class="cline-any cline-yes">4x</span>
-<span class="cline-any cline-yes">4x</span>
-<span class="cline-any cline-yes">4x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">4x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">15x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">15x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">4x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">15x</span>
-<span class="cline-any cline-yes">15x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">15x</span>
-<span class="cline-any cline-yes">15x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">15x</span>
-<span class="cline-any cline-yes">16x</span>
-<span class="cline-any cline-yes">16x</span>
-<span class="cline-any cline-yes">16x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">15x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L342'></a><a href='#L342'>342</a>
+<a name='L343'></a><a href='#L343'>343</a>
+<a name='L344'></a><a href='#L344'>344</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">41x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">15x</span>
-<span class="cline-any cline-yes">14x</span>
-<span class="cline-any cline-yes">67x</span>
-<span class="cline-any cline-yes">67x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">32x</span>
-<span class="cline-any cline-yes">32x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">32x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">23x</span>
-<span class="cline-any cline-yes">23x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">23x</span>
-<span class="cline-any cline-yes">74x</span>
-<span class="cline-any cline-yes">4x</span>
-<span class="cline-any cline-yes">70x</span>
-<span class="cline-any cline-yes">10x</span>
+<span class="cline-any cline-yes">9x</span>
+<span class="cline-any cline-yes">9x</span>
 <span class="cline-any cline-yes">10x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">23x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">15x</span>
-<span class="cline-any cline-yes">16x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">16x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">15x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">14x</span>
-<span class="cline-any cline-yes">14x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">14x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">13x</span>
-<span class="cline-any cline-yes">13x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">15x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">15x</span>
-<span class="cline-any cline-yes">15x</span>
-<span class="cline-any cline-yes">15x</span>
-<span class="cline-any cline-yes">15x</span>
-<span class="cline-any cline-yes">15x</span>
-<span class="cline-any cline-yes">15x</span>
-<span class="cline-any cline-yes">15x</span>
-<span class="cline-any cline-yes">15x</span>
-<span class="cline-any cline-yes">15x</span>
-<span class="cline-any cline-yes">15x</span>
-<span class="cline-any cline-yes">15x</span>
-<span class="cline-any cline-yes">15x</span>
-<span class="cline-any cline-yes">15x</span>
-<span class="cline-any cline-yes">15x</span>
-<span class="cline-any cline-yes">15x</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">15x</span>
-<span class="cline-any cline-yes">15x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -723,369 +451,647 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">12x</span>
+<span class="cline-any cline-yes">12x</span>
+<span class="cline-any cline-yes">27x</span>
+<span class="cline-any cline-yes">27x</span>
+<span class="cline-any cline-yes">7x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">12x</span>
+<span class="cline-any cline-yes">12x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">4x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">16x</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">12x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">/**
- * REST API Server for Grabby
- * Provides HTTP endpoints for external integrations
- */
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">const { parseWorkItemId, normalizeWorkItemId } = require('./id-utils.cjs');
 &nbsp;
-const http = require('http');
-const fs = require('fs');
-const path = require('path');
-const url = require('url');
-const { validateContract, validateContractStrict } = require('./core.cjs');
-const { collectMetrics, generateReport } = require('./metrics.cjs');
-const { scoreContractComplexity } = require('./complexity.cjs');
-const { executeGraphQL } = require('./graphql.cjs');
+const REQUIRED_FIELDS = ['who', 'what', 'why', 'dod'];
 &nbsp;
-/**
- * Parse JSON body from request
- */
-function parseBody(req) {
-  return new Promise((resolve, reject) =&gt; {
-    let body = '';
-    req.on('data', chunk =&gt; body += chunk);
-    req.on('end', () =&gt; {
-      try {
-        resolve(body ? JSON.parse(body) : {});
-      } catch (err) {
-<span class="cstat-no" title="statement not covered" >        reject(new Error('Invalid JSON'));</span>
-      }
-    });
-    req.on('error', reject);
-  });
+function normalizeWhitespace(value) {
+  return String(value || '')
+    .replace(/\r/g, '')
+    .replace(/[ \t]+/g, ' ')
+    .trim();
 }
 &nbsp;
-/**
- * Send JSON response
- */
-function sendJSON(res, data, status = 200) {
-  res.writeHead(status, {
-    'Content-Type': 'application/json',
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type',
-  });
-  res.end(JSON.stringify(data, null, 2));
-}
-&nbsp;
-/**
- * Send error response
- */
-function sendError(res, message, status = 400) {
-  sendJSON(res, { error: message }, status);
-}
-&nbsp;
-/**
- * Create API server
- */
-function createAPIServer(context, options = <span class="branch-0 cbranch-no" title="branch not covered" >{})</span> {
-  const { contractsDir, grabbyDir } = context;
-  const { rateLimit = 100 } = options;
-&nbsp;
-  // Simple rate limiting
-  const requestCounts = new Map();
-  const resetInterval = setInterval(<span class="fstat-no" title="function not covered" >()</span> =&gt; <span class="cstat-no" title="statement not covered" >requestCounts.clear(),</span> 60000);
-&nbsp;
-  const checkRateLimit = (ip) =&gt; {
-    const count = requestCounts.get(ip) || 0;
-    requestCounts.set(ip, count + 1);
-    return count &lt; rateLimit;
-  };
-&nbsp;
-  // Route handlers
-  const routes = {
-    // List all contracts
-    'GET /api/contracts': async (req, res) =&gt; {
-      if (!fs.existsSync(contractsDir)) {
-        return sendJSON(res, { contracts: [] });
-      }
-&nbsp;
-      const files = fs.readdirSync(contractsDir).filter(f =&gt; f.endsWith('.fc.md'));
-      const contracts = files.map(file =&gt; {
-        const content = fs.readFileSync(path.join(contractsDir, file), 'utf8');
-        const titleMatch = content.match(/^# FC:\s+(.+)$/m);
-        const idMatch = content.match(/\*\*ID:\*\*\s*(FC-\d+)/);
-        const statusMatch = content.match(/\*\*Status:\*\*\s*(\w+)/);
-&nbsp;
-        return {
-          file,
-          id: idMatch?.[1] || <span class="branch-1 cbranch-no" title="branch not covered" >'unknown',</span>
-          title: titleMatch?.[1] || <span class="branch-1 cbranch-no" title="branch not covered" >file,</span>
-          status: statusMatch?.[1] || <span class="branch-1 cbranch-no" title="branch not covered" >'unknown',</span>
-        };
-      });
-&nbsp;
-      sendJSON(res, { contracts });
-    },
-&nbsp;
-    // Get single contract
-    'GET /api/contracts/:id': async (req, res, params) =&gt; {
-      const file = findContractByIdOrFile(contractsDir, params.id);
-      if (!file) {
-        return sendError(res, 'Contract not found', 404);
-      }
-&nbsp;
-      const filePath = path.join(contractsDir, file);
-      const content = fs.readFileSync(filePath, 'utf8');
-      const validation = validateContract(content);
-      const complexity = scoreContractComplexity(content);
-&nbsp;
-      sendJSON(res, {
-        file,
-        content,
-        validation,
-        complexity,
-      });
-    },
-&nbsp;
-    // Create contract
-    'POST /api/contracts': async (req, res) =&gt; {
-      const body = await parseBody(req);
-      const { name, template = 'contract', content } = body;
-&nbsp;
-      if (!name &amp;&amp; !content) {
-        return sendError(res, 'Name or content required');
-      }
-&nbsp;
-      <span class="missing-if-branch" title="else path not taken" >E</span>if (!fs.existsSync(contractsDir)) {
-        fs.mkdirSync(contractsDir, { recursive: true });
-      }
-&nbsp;
-      if (content) {
-        // Direct content creation
-        const fileName = `${slugify(name || <span class="branch-1 cbranch-no" title="branch not covered" >'contract')</span>}.fc.md`;
-        const filePath = path.join(contractsDir, fileName);
-        fs.writeFileSync(filePath, content);
-        sendJSON(res, { created: fileName }, 201);
-      } else {
-        // Use template
-        const { createContract } = require('./core.cjs');
-        const templatesDir = path.join(__dirname, '..', 'templates');
-        try {
-          const result = createContract(templatesDir, contractsDir, name, template);
-          sendJSON(res, { created: result.fileName, id: result.id }, 201);
-        } catch (err) {
-<span class="cstat-no" title="statement not covered" >          sendError(res, err.message);</span>
-        }
-      }
-    },
-&nbsp;
-    // Update contract
-    'PUT /api/contracts/:id': <span class="fstat-no" title="function not covered" >as</span>ync (req, res, params) =&gt; {
-      const file = <span class="cstat-no" title="statement not covered" >findContractByIdOrFile(contractsDir, params.id);</span>
-<span class="cstat-no" title="statement not covered" >      if (!file) {</span>
-<span class="cstat-no" title="statement not covered" >        return sendError(res, 'Contract not found', 404);</span>
-      }
-&nbsp;
-      const body = <span class="cstat-no" title="statement not covered" >await parseBody(req);</span>
-      const { content, status } = <span class="cstat-no" title="statement not covered" >body;</span>
-&nbsp;
-      const filePath = <span class="cstat-no" title="statement not covered" >path.join(contractsDir, file);</span>
-      let fileContent = <span class="cstat-no" title="statement not covered" >fs.readFileSync(filePath, 'utf8');</span>
-&nbsp;
-<span class="cstat-no" title="statement not covered" >      if (content) {</span>
-<span class="cstat-no" title="statement not covered" >        fileContent = content;</span>
-      }
-&nbsp;
-<span class="cstat-no" title="statement not covered" >      if (status) {</span>
-<span class="cstat-no" title="statement not covered" >        fileContent = fileContent.replace(/\*\*Status:\*\*\s*\w+/, `**Status:** ${status}`);</span>
-      }
-&nbsp;
-<span class="cstat-no" title="statement not covered" >      fs.writeFileSync(filePath, fileContent);</span>
-<span class="cstat-no" title="statement not covered" >      sendJSON(res, { updated: file });</span>
-    },
-&nbsp;
-    // Delete contract
-    'DELETE /api/contracts/:id': <span class="fstat-no" title="function not covered" >as</span>ync (req, res, params) =&gt; {
-      const file = <span class="cstat-no" title="statement not covered" >findContractByIdOrFile(contractsDir, params.id);</span>
-<span class="cstat-no" title="statement not covered" >      if (!file) {</span>
-<span class="cstat-no" title="statement not covered" >        return sendError(res, 'Contract not found', 404);</span>
-      }
-&nbsp;
-<span class="cstat-no" title="statement not covered" >      fs.unlinkSync(path.join(contractsDir, file));</span>
-<span class="cstat-no" title="statement not covered" >      sendJSON(res, { deleted: file });</span>
-    },
-&nbsp;
-    // Validate contract
-    'POST /api/contracts/:id/validate': async (req, res, params) =&gt; {
-      const file = findContractByIdOrFile(contractsDir, params.id);
-      <span class="missing-if-branch" title="if path not taken" >I</span>if (!file) {
-<span class="cstat-no" title="statement not covered" >        return sendError(res, 'Contract not found', 404);</span>
-      }
-&nbsp;
-      const body = await parseBody(req);
-      const strict = body.strict || false;
-&nbsp;
-      const content = fs.readFileSync(path.join(contractsDir, file), 'utf8');
-      const result = strict
-        ? <span class="branch-0 cbranch-no" title="branch not covered" >validateContractStrict(content, path.dirname(contractsDir))</span>
-        : validateContract(content);
-&nbsp;
-      sendJSON(res, result);
-    },
-&nbsp;
-&nbsp;
-    // GraphQL endpoint
-    'POST /api/graphql': <span class="fstat-no" title="function not covered" >as</span>ync (req, res) =&gt; {
-      const body = <span class="cstat-no" title="statement not covered" >await parseBody(req);</span>
-      const result = <span class="cstat-no" title="statement not covered" >executeGraphQL(body.query, { contractsDir, grabbyDir });</span>
-<span class="cstat-no" title="statement not covered" >      sendJSON(res, result, result.errors ? 400 : 200);</span>
-    },
-&nbsp;
-    // Get metrics
-    'GET /api/metrics': async (req, res) =&gt; {
-      const metrics = collectMetrics(contractsDir);
-      sendJSON(res, metrics);
-    },
-&nbsp;
-    // Health check
-    'GET /api/health': async (req, res) =&gt; {
-      sendJSON(res, {
-        status: 'ok',
-        version: '2.0.0',
-        uptime: process.uptime(),
-      });
-    },
-  };
-&nbsp;
-  // Route matching
-  const matchRoute = (method, pathname) =&gt; {
-    for (const [route, handler] of Object.entries(routes)) {
-      const [routeMethod, routePath] = route.split(' ');
-      if (method !== routeMethod) continue;
-&nbsp;
-      // Check for params
-      const routeParts = routePath.split('/');
-      const pathParts = pathname.split('/');
-&nbsp;
-      if (routeParts.length !== pathParts.length) continue;
-&nbsp;
-      const params = {};
-      let match = true;
-&nbsp;
-      for (let i = 0; i &lt; routeParts.length; i++) {
-        if (routeParts[i].startsWith(':')) {
-          params[routeParts[i].slice(1)] = pathParts[i];
-        } else if (routeParts[i] !== pathParts[i]) {
-          match = false;
-          break;
-        }
-      }
-&nbsp;
-      if (match) return { handler, params };
-    }
-    return null;
-  };
-&nbsp;
-  // Create server
-  const server = http.createServer(async (req, res) =&gt; {
-    const ip = req.socket.remoteAddress;
-&nbsp;
-    // Rate limiting
-    if (!checkRateLimit(ip)) {
-      return sendError(res, 'Rate limit exceeded', 429);
-    }
-&nbsp;
-    // CORS preflight
-    if (req.method === 'OPTIONS') {
-      res.writeHead(204, {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-        'Access-Control-Allow-Headers': 'Content-Type',
-      });
-      return res.end();
-    }
-&nbsp;
-    const { pathname } = url.parse(req.url);
-    const route = matchRoute(req.method, pathname);
-&nbsp;
-    if (!route) {
-      return sendError(res, 'Not found', 404);
-    }
-&nbsp;
-    try {
-      await route.handler(req, res, route.params);
-    } catch (err) {
-<span class="cstat-no" title="statement not covered" >      console.error('API Error:', err);</span>
-<span class="cstat-no" title="statement not covered" >      sendError(res, err.message, 500);</span>
-    }
-  });
-&nbsp;
-  return {
-    start: (port = <span class="branch-0 cbranch-no" title="branch not covered" >3456)</span> =&gt; {
-      return new Promise((resolve) =&gt; {
-        server.listen(port, () =&gt; {
-          console.log(`Grabby API server running on http://localhost:${port}`);
-          console.log('\nEndpoints:');
-          console.log('  GET    /api/health              Health check');
-          console.log('  GET    /api/contracts           List contracts');
-          console.log('  GET    /api/contracts/:id       Get contract');
-          console.log('  POST   /api/contracts           Create contract');
-          console.log('  PUT    /api/contracts/:id       Update contract');
-          console.log('  DELETE /api/contracts/:id       Delete contract');
-          console.log('  POST   /api/contracts/:id/validate  Validate');
-          console.log('  GET    /api/metrics             Get metrics');
-          console.log('  POST   /api/graphql             Run GraphQL query');
-          console.log('\nPress Ctrl+C to stop\n');
-          resolve(server);
-        });
-      });
-    },
-&nbsp;
-    stop: () =&gt; {
-      clearInterval(resetInterval);
-      return new Promise((resolve) =&gt; server.close(resolve));
-    },
-  };
-}
-&nbsp;
-// Helper functions
-function slugify(s) {
-  return s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
-}
-&nbsp;
-function findContractByIdOrFile(contractsDir, idOrFile) {
-  if (!fs.existsSync(contractsDir)) return null;
-&nbsp;
-  const files = fs.readdirSync(contractsDir).filter(f =&gt; f.endsWith('.fc.md'));
-&nbsp;
-  // Try exact file match first
-  if (files.includes(idOrFile)) return idOrFile;
-  <span class="missing-if-branch" title="if path not taken" >I</span>if (files.includes(`${idOrFile}.fc.md`)) <span class="cstat-no" title="statement not covered" >return `${idOrFile}.fc.md`;</span>
-&nbsp;
-  // Try ID match
-  for (const file of files) {
-    const content = fs.readFileSync(path.join(contractsDir, file), 'utf8');
-    const idMatch = content.match(/\*\*ID:\*\*\s*(FC-\d+)/);
-    <span class="missing-if-branch" title="else path not taken" >E</span>if (idMatch?.[1] === idOrFile) return file;
+function normalizeDodList(value) {
+  <span class="missing-if-branch" title="else path not taken" >E</span>if (Array.isArray(value)) {
+    return value
+      .map((item) =&gt; normalizeWhitespace(String(item || <span class="branch-1 cbranch-no" title="branch not covered" >'')</span>.replace(/^(?:[-*]|\d+\.)\s+/, '')))
+      .filter(Boolean);
   }
 &nbsp;
-<span class="cstat-no" title="statement not covered" >  return null;</span>
+  const text = <span class="cstat-no" title="statement not covered" >String(value || '').replace(/\r/g, '').trim();</span>
+<span class="cstat-no" title="statement not covered" >  if (!text) <span class="cstat-no" title="statement not covered" >return [];</span></span>
+&nbsp;
+  const bulletMatches = <span class="cstat-no" title="statement not covered" >text.match(/^(?:[-*]|\d+\.)\s+.+$/gm);</span>
+<span class="cstat-no" title="statement not covered" >  if (bulletMatches &amp;&amp; bulletMatches.length &gt; 0) {</span>
+<span class="cstat-no" title="statement not covered" >    return bulletMatches.map(<span class="fstat-no" title="function not covered" >(l</span>ine) =&gt; <span class="cstat-no" title="statement not covered" >normalizeWhitespace(line.replace(/^(?:[-*]|\d+\.)\s+/, '')))</span>.filter(Boolean);</span>
+  }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >  return text</span>
+    .split(/[,\n]/)
+    .map(<span class="fstat-no" title="function not covered" >(i</span>tem) =&gt; <span class="cstat-no" title="statement not covered" >normalizeWhitespace(item))</span>
+    .filter(Boolean);
 }
 &nbsp;
-module.exports = { createAPIServer };
+function inferDraftTicket(request = <span class="branch-0 cbranch-no" title="branch not covered" >'')</span> {
+  const normalized = normalizeWhitespace(request);
+  if (!normalized) {
+    return {
+      ticketId: null,
+      who: '',
+      what: '',
+      why: '',
+      dod: [],
+    };
+  }
+&nbsp;
+  return {
+    ticketId: null,
+    who: '',
+    what: normalized,
+    why: '',
+    dod: [],
+  };
+}
+&nbsp;
+function extractField(lines, name) {
+  const prefix = new RegExp(`^${name}:\\s*(.*)$`, 'i');
+  for (const line of lines) {
+    const match = line.match(prefix);
+    if (match) {
+      return normalizeWhitespace(match[1]);
+    }
+  }
+  return '';
+}
+&nbsp;
+function extractDodSection(lines, headings = ['Definition of Done', 'DoD']) {
+  const headingRegex = new RegExp(`^(?:${headings.map((item) =&gt; item.replace(/[.*+?^${}()|[\]\\]/g, '\\$&amp;')).join('|')}):?\\s*(.*)$`, 'i');
+  let startIndex = -1;
+  let inlineValue = '';
+&nbsp;
+  for (let index = 0; index &lt; lines.length; index += 1) {
+    const match = lines[index].match(headingRegex);
+    if (match) {
+      startIndex = index;
+      inlineValue = normalizeWhitespace(match[1]);
+      break;
+    }
+  }
+&nbsp;
+  if (startIndex === -1) {
+    return [];
+  }
+&nbsp;
+  const collected = [];
+  <span class="missing-if-branch" title="if path not taken" >I</span>if (inlineValue) {
+<span class="cstat-no" title="statement not covered" >    collected.push(inlineValue);</span>
+  }
+&nbsp;
+  for (let index = startIndex + 1; index &lt; lines.length; index += 1) {
+    const line = lines[index];
+    <span class="missing-if-branch" title="if path not taken" >I</span>if (/^[A-Za-z][A-Za-z ]+:\s*/.test(line)) {
+<span class="cstat-no" title="statement not covered" >      break;</span>
+    }
+    <span class="missing-if-branch" title="if path not taken" >I</span>if (!line.trim()) {
+<span class="cstat-no" title="statement not covered" >      continue;</span>
+    }
+    collected.push(line);
+  }
+&nbsp;
+  return normalizeDodList(collected);
+}
+&nbsp;
+function parseStructuredTicket(text) {
+  const lines = String(text || <span class="branch-1 cbranch-no" title="branch not covered" >'')</span>.replace(/\r/g, '').split('\n');
+  const who = extractField(lines, 'Who');
+  const what = extractField(lines, 'What');
+  const why = extractField(lines, 'Why');
+  const ticketId = extractField(lines, 'Ticket ID') || null;
+  const dod = extractDodSection(lines);
+&nbsp;
+  const ticket = { ticketId, who, what, why, dod };
+  const missingFields = getMissingTicketFields(ticket);
+&nbsp;
+  return {
+    kind: 'structured',
+    ticket,
+    missingFields,
+  };
+}
+&nbsp;
+function parseLegacyTicket(text) {
+  const lines = String(text || <span class="branch-1 cbranch-no" title="branch not covered" >'')</span>.replace(/\r/g, '').split('\n');
+  const ticketId = extractField(lines, 'Ticket ID') || <span class="branch-1 cbranch-no" title="branch not covered" >null;</span>
+  const who = extractField(lines, 'Who');
+  const what = extractField(lines, 'What');
+  const whatSystem = extractField(lines, 'What System');
+  const dod = extractDodSection(lines);
+&nbsp;
+  <span class="missing-if-branch" title="if path not taken" >I</span>if (!who &amp;&amp; <span class="branch-1 cbranch-no" title="branch not covered" >!what </span>&amp;&amp; <span class="branch-2 cbranch-no" title="branch not covered" >!whatSystem </span>&amp;&amp; <span class="branch-3 cbranch-no" title="branch not covered" >!ticketId </span>&amp;&amp; <span class="branch-4 cbranch-no" title="branch not covered" >dod.length === 0)</span> {
+<span class="cstat-no" title="statement not covered" >    return null;</span>
+  }
+&nbsp;
+  const why = whatSystem ? `Requested for ${whatSystem}.` : <span class="branch-1 cbranch-no" title="branch not covered" >'';</span>
+  const ticket = { ticketId, who, what, why, dod };
+&nbsp;
+  return {
+    kind: 'legacy',
+    ticket,
+    missingFields: getMissingTicketFields(ticket),
+    mappedFromLegacy: true,
+    legacySystem: whatSystem || <span class="branch-1 cbranch-no" title="branch not covered" >null,</span>
+  };
+}
+&nbsp;
+function parseTicketInput(input) {
+  const text = String(input || <span class="branch-1 cbranch-no" title="branch not covered" >'')</span>.trim();
+  <span class="missing-if-branch" title="if path not taken" >I</span>if (!text) {
+<span class="cstat-no" title="statement not covered" >    return {</span>
+      kind: 'missing',
+      ticket: inferDraftTicket(''),
+      missingFields: [...REQUIRED_FIELDS],
+      rawRequest: '',
+    };
+  }
+&nbsp;
+  if (/^What System:/im.test(text)) {
+    const legacy = parseLegacyTicket(text);
+    <span class="missing-if-branch" title="else path not taken" >E</span>if (legacy) {
+      return legacy;
+    }
+  }
+&nbsp;
+  const structured = parseStructuredTicket(text);
+  if (structured.ticket.who || structured.ticket.what || structured.ticket.why || structured.ticket.ticketId || structured.ticket.dod.length &gt; 0) {
+    return structured;
+  }
+&nbsp;
+  const inferred = inferDraftTicket(text);
+  return {
+    kind: 'unstructured',
+    ticket: inferred,
+    missingFields: getMissingTicketFields(inferred),
+    rawRequest: text,
+  };
+}
+&nbsp;
+function getMissingTicketFields(ticket) {
+  const requireTicketId = Boolean(ticket?.requireTicketId);
+  const normalized = {
+    who: normalizeWhitespace(ticket?.who),
+    what: normalizeWhitespace(ticket?.what),
+    why: normalizeWhitespace(ticket?.why),
+    dod: normalizeDodList(ticket?.dod),
+  };
+&nbsp;
+  const missing = REQUIRED_FIELDS.filter((field) =&gt; {
+    if (field === 'dod') {
+      return normalized.dod.length === 0;
+    }
+    return !normalized[field];
+  });
+&nbsp;
+  <span class="missing-if-branch" title="if path not taken" >I</span>if (requireTicketId &amp;&amp; <span class="branch-1 cbranch-no" title="branch not covered" >!normalizeWhitespace(ticket?.ticketId))</span> {
+<span class="cstat-no" title="statement not covered" >    missing.unshift('ticketId');</span>
+  }
+&nbsp;
+  return missing;
+}
+&nbsp;
+function <span class="fstat-no" title="function not covered" >isCompleteTicket(</span>ticket) {
+<span class="cstat-no" title="statement not covered" >  return getMissingTicketFields(ticket).length === 0;</span>
+}
+&nbsp;
+function mergeTicketInput(baseTicket, overrides = <span class="branch-0 cbranch-no" title="branch not covered" >{})</span> {
+  const rawTicketId = normalizeWhitespace(overrides.ticketId || baseTicket.ticketId || '');
+  const normalizedTicketId = normalizeWorkItemId(rawTicketId);
+  return {
+    ticketId: normalizedTicketId || (rawTicketId ? <span class="branch-0 cbranch-no" title="branch not covered" >rawTicketId.toUpperCase() </span>: null),
+    who: normalizeWhitespace(overrides.who || <span class="branch-1 cbranch-no" title="branch not covered" >baseTicket.who </span>|| <span class="branch-2 cbranch-no" title="branch not covered" >'')</span>,
+    what: normalizeWhitespace(overrides.what || <span class="branch-1 cbranch-no" title="branch not covered" >baseTicket.what </span>|| <span class="branch-2 cbranch-no" title="branch not covered" >'')</span>,
+    why: normalizeWhitespace(overrides.why || baseTicket.why || ''),
+    dod: normalizeDodList(overrides.dod !== undefined ? overrides.dod : <span class="branch-1 cbranch-no" title="branch not covered" >baseTicket.dod)</span>,
+    requireTicketId: overrides.requireTicketId !== undefined ? Boolean(overrides.requireTicketId) : Boolean(baseTicket.requireTicketId),
+  };
+}
+&nbsp;
+function getWizardQuestions(ticket, options = {}) {
+  const {
+    maxQuestions = 5,
+    rawRequest = '',
+    requireTicketId = false,
+  } = options;
+  const merged = mergeTicketInput(inferDraftTicket(rawRequest), {
+    ...ticket,
+    requireTicketId,
+  });
+  const questions = [];
+&nbsp;
+  <span class="missing-if-branch" title="if path not taken" >I</span>if (requireTicketId &amp;&amp; <span class="branch-1 cbranch-no" title="branch not covered" >!merged.ticketId)</span> {
+<span class="cstat-no" title="statement not covered" >    questions.push({</span>
+      field: 'ticketId',
+      prompt: 'Ticket ID (KEY-123)',
+      defaultValue: '',
+    });
+  }
+&nbsp;
+  <span class="missing-if-branch" title="if path not taken" >I</span>if (!merged.who) {
+<span class="cstat-no" title="statement not covered" >    questions.push({</span>
+      field: 'who',
+      prompt: 'Who is this for?',
+      defaultValue: '',
+    });
+  }
+&nbsp;
+  <span class="missing-if-branch" title="if path not taken" >I</span>if (!merged.what) {
+<span class="cstat-no" title="statement not covered" >    questions.push({</span>
+      field: 'what',
+      prompt: 'What should be built or changed?',
+      defaultValue: rawRequest ? normalizeWhitespace(rawRequest) : '',
+    });
+  }
+&nbsp;
+  <span class="missing-if-branch" title="else path not taken" >E</span>if (!merged.why) {
+    questions.push({
+      field: 'why',
+      prompt: 'Why is this needed?',
+      defaultValue: '',
+    });
+  }
+&nbsp;
+  <span class="missing-if-branch" title="else path not taken" >E</span>if (merged.dod.length === 0) {
+    questions.push({
+      field: 'dod',
+      prompt: 'What is the definition of done? (comma-separated or bullets)',
+      defaultValue: '',
+    });
+  }
+&nbsp;
+  return questions.slice(0, maxQuestions);
+}
+&nbsp;
+function <span class="fstat-no" title="function not covered" >applyWizardAnswer(</span>ticket, field, value) {
+<span class="cstat-no" title="statement not covered" >  if (field === 'ticketId') {</span>
+<span class="cstat-no" title="statement not covered" >    return mergeTicketInput(ticket, { ticketId: value });</span>
+  }
+<span class="cstat-no" title="statement not covered" >  if (field === 'dod') {</span>
+<span class="cstat-no" title="statement not covered" >    return mergeTicketInput(ticket, { dod: normalizeDodList(value) });</span>
+  }
+<span class="cstat-no" title="statement not covered" >  return mergeTicketInput(ticket, { [field]: value });</span>
+}
+&nbsp;
+function <span class="fstat-no" title="function not covered" >validateTicket(</span>ticket, options = <span class="branch-0 cbranch-no" title="branch not covered" >{})</span> {
+  const requireTicketId = <span class="cstat-no" title="statement not covered" >options.requireTicketId !== undefined</span>
+    ? Boolean(options.requireTicketId)
+    : Boolean(ticket?.requireTicketId);
+  const effectiveTicket = <span class="cstat-no" title="statement not covered" >mergeTicketInput({}, { ...ticket, requireTicketId });</span>
+  const missingFields = <span class="cstat-no" title="statement not covered" >getMissingTicketFields(effectiveTicket);</span>
+  const errors = <span class="cstat-no" title="statement not covered" >[];</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >  if (missingFields.length &gt; 0) {</span>
+<span class="cstat-no" title="statement not covered" >    errors.push(`Missing required ticket fields: ${missingFields.join(', ')}`);</span>
+  }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >  if (requireTicketId) {</span>
+<span class="cstat-no" title="statement not covered" >    if (!effectiveTicket.ticketId) {</span>
+<span class="cstat-no" title="statement not covered" >      errors.push('Ticket ID is required and must match KEY-123.');</span>
+    } else <span class="cstat-no" title="statement not covered" >if (!parseWorkItemId(effectiveTicket.ticketId)) {</span>
+<span class="cstat-no" title="statement not covered" >      errors.push('Ticket ID must match [A-Z][A-Z0-9]+-\\d+ and will be normalized to uppercase.');</span>
+    }
+  }
+&nbsp;
+  const dod = <span class="cstat-no" title="statement not covered" >normalizeDodList(effectiveTicket?.dod);</span>
+<span class="cstat-no" title="statement not covered" >  if (dod.length === 0) {</span>
+<span class="cstat-no" title="statement not covered" >    errors.push('Definition of Done must be a bullet list.');</span>
+  }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >  return {</span>
+    valid: errors.length === 0,
+    errors,
+    missingFields,
+  };
+}
+&nbsp;
+function buildTicketMarkdown(ticket) {
+  const merged = mergeTicketInput({}, ticket);
+  const dod = normalizeDodList(merged.dod).map((item) =&gt; `- ${item}`).join('\n');
+  const lines = [];
+&nbsp;
+  <span class="missing-if-branch" title="else path not taken" >E</span>if (merged.ticketId) {
+    lines.push(`Ticket ID: ${merged.ticketId}`);
+  }
+  lines.push(`Who: ${merged.who}`);
+  lines.push(`What: ${merged.what}`);
+  lines.push(`Why: ${merged.why}`);
+  lines.push('');
+  lines.push('Definition of Done');
+  lines.push(dod);
+&nbsp;
+  return `${lines.join('\n').trim()}\n`;
+}
+&nbsp;
+module.exports = {
+  REQUIRED_FIELDS,
+  normalizeDodList,
+  inferDraftTicket,
+  parseTicketInput,
+  getMissingTicketFields,
+  isCompleteTicket,
+  mergeTicketInput,
+  getWizardQuestions,
+  applyWizardAnswer,
+  validateTicket,
+  buildTicketMarkdown,
+};
 &nbsp;</pre></td></tr></table></pre>
 
                 <div class='push'></div><!-- for sticky footer -->

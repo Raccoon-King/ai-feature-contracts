@@ -19,7 +19,16 @@
       "Bash(timeout 5 node:*)",
       "Bash(npm run dev:*)",
       "Bash(node tests/features.test.cjs:*)",
-      "Bash(node:*)"
+      "Bash(node:*)",
+      "Bash(grabby list:*)",
+      "Bash(grabby validate:*)",
+      "Bash(grabby approve:*)",
+      "Bash(grabby plan:*)",
+      "Bash(grabby execute:*)",
+      "Bash(grabby audit:*)",
+      "Bash(grabby resolve:*)",
+      "Bash(GITHUB_TOKEN= git push:*)",
+      "Bash(set \"GITHUB_TOKEN=\")"
     ]
   }
 }
