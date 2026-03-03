@@ -1,0 +1,46 @@
+contract: GRAB-002.fc.md
+phase: plan
+timestamp: 2026-03-03T21:29:50.600Z
+context:
+  - ARCH:stack@v1
+  - RULESET:imports@v1
+  - ENV:test-runner@v1
+context_token_usage: 9
+context_token_budget: 1200
+files:
+  - action: modify
+    path: lib/commands.cjs
+    reason: Trigger project assessment and baseline contract generation from `grabby
+      init`
+  - action: modify
+    path: lib/ai-complete.cjs
+    reason: Reuse or extend AI helpers for project assessment and baseline content
+      generation
+  - action: create
+    path: lib/assessment.cjs
+    reason: Isolate repository scanning, tech stack detection, and baseline contract
+      assembly if needed
+  - action: create
+    path: templates/system-baseline.md
+    reason: Provide a stable template for the generated system baseline contract
+  - action: modify
+    path: tests/commands.test.js
+    reason: Cover init behavior and generated baseline contract artifacts
+  - action: modify
+    path: tests/ai-complete.test.js
+    reason: Cover assessment helper behavior or AI prompt generation changes
+rules:
+  - §typescript
+  - §hooks
+  - §testing
+risks:
+  - State synchronization
+  - Type coverage
+  - Edge cases
+status: executing
+approval_token_required: Approved
+execution_mode: plan_only
+approved_at: 2026-03-03T21:29:55.958Z
+approval_token: Approved
+executed_at: 2026-03-03T21:29:59.551Z
+execution_guard: passed

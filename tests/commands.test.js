@@ -357,6 +357,37 @@ Archive me
     expect(logger.lines.join('\n')).toContain('Build: not configured');
   });
 
+  it('treats noop lint scripts as not configured during audit', () => {
+    const logger = createLogger();
+    const commands = [];
+    const context = createProjectContext({ cwd: tempDir, pkgRoot: PKG_ROOT });
+    const handlers = createCommandHandlers({
+      context,
+      logger,
+      execSyncImpl: (command) => {
+        commands.push(command);
+      },
+    });
+
+    writeValidContract(tempDir, 'valid-feature.fc.md', 'approved');
+    fs.writeFileSync(path.join(tempDir, 'package.json'), JSON.stringify({
+      name: 'tmp',
+      scripts: {
+        lint: "echo 'No lint configured yet'",
+      },
+    }), 'utf8');
+    fs.mkdirSync(path.join(tempDir, 'contracts'), { recursive: true });
+    fs.writeFileSync(path.join(tempDir, 'contracts', 'FC-123.plan.yaml'), yaml.stringify({
+      status: 'executing',
+      files: [],
+    }));
+
+    handlers.audit('valid-feature.fc.md');
+
+    expect(commands).toEqual([]);
+    expect(logger.lines.join('\n')).toContain('Lint: not configured (noop script)');
+  });
+
   it('lists an empty contract directory clearly', () => {
     const logger = createLogger();
     const context = createProjectContext({ cwd: tempDir, pkgRoot: PKG_ROOT });
@@ -368,16 +399,50 @@ Archive me
     expect(logger.lines.join('\n')).toContain('grabby create "feature-name"');
   });
 
-  it('initializes repo config during init', () => {
+  it('initializes repo config during init', async () => {
     const logger = createLogger();
     const context = createProjectContext({ cwd: tempDir, pkgRoot: PKG_ROOT });
     const handlers = createCommandHandlers({ context, logger });
 
-    handlers.init();
+    fs.writeFileSync(path.join(tempDir, 'package.json'), JSON.stringify({
+      name: 'baseline-demo',
+      scripts: { test: 'jest' },
+      dependencies: { react: '^18.0.0' },
+      devDependencies: { jest: '^29.7.0' },
+    }), 'utf8');
+    fs.mkdirSync(path.join(tempDir, 'src'), { recursive: true });
+    fs.mkdirSync(path.join(tempDir, 'tests'), { recursive: true });
+
+    await handlers.init();
 
     expect(fs.existsSync(path.join(tempDir, '.grabby', 'config.json'))).toBe(true);
     expect(fs.existsSync(path.join(tempDir, '.grabbyignore'))).toBe(true);
+    expect(fs.existsSync(path.join(tempDir, 'contracts', 'SYSTEM-BASELINE.fc.md'))).toBe(true);
+    expect(fs.existsSync(path.join(tempDir, 'contracts', 'PROJECT-BASELINE.fc.md'))).toBe(true);
+    expect(fs.readFileSync(path.join(tempDir, 'contracts', 'README.md'), 'utf8')).toContain('## Baseline Contracts');
+    expect(fs.readFileSync(path.join(tempDir, 'contracts', 'PROJECT-BASELINE.fc.md'), 'utf8')).toContain('React application');
     expect(logger.lines.join('\n')).toContain('.grabby/config.json');
+    expect(logger.lines.join('\n')).toContain('Baseline assessment:');
+  });
+
+  it('preserves existing baseline contracts during init', async () => {
+    const logger = createLogger();
+    const context = createProjectContext({ cwd: tempDir, pkgRoot: PKG_ROOT });
+    const handlers = createCommandHandlers({ context, logger });
+    const contractsDir = path.join(tempDir, 'contracts');
+
+    fs.mkdirSync(contractsDir, { recursive: true });
+    fs.writeFileSync(path.join(contractsDir, 'SYSTEM-BASELINE.fc.md'), '# existing system baseline\n', 'utf8');
+    fs.writeFileSync(path.join(tempDir, 'package.json'), JSON.stringify({
+      name: 'preserve-demo',
+      scripts: { test: 'jest' },
+    }), 'utf8');
+
+    await handlers.init();
+
+    expect(fs.readFileSync(path.join(contractsDir, 'SYSTEM-BASELINE.fc.md'), 'utf8')).toBe('# existing system baseline\n');
+    expect(fs.existsSync(path.join(contractsDir, 'PROJECT-BASELINE.fc.md'))).toBe(true);
+    expect(logger.lines.join('\n')).toContain('Preserved existing contracts/SYSTEM-BASELINE.fc.md');
   });
 
   it('archives a completed feature and removes active artifacts', () => {
