@@ -100,6 +100,59 @@ For wrappers, CI, or future IDE integrations:
 - `docs/RULESET_CORE.md`
 - `docs/ENV_STACK.md`
 - `docs/EXECUTION_PROTOCOL.md`
+- `.clinerules/00-grabby-core.md` (router rules for Cline)
+- `.continue/rules/00-grabby-core.md` (router rules for Continue)
+- `.codex/prompts/router.md` (router rules for Codex)
+
+## Method Router
+
+The method router ensures that LLM agents follow the Grabby lifecycle automatically. Router rules are installed for Cline, Continue, and Codex during `grabby init`.
+
+### Routing Logic
+
+1. **Feature request detection**
+   - If a request mentions `contracts/<ID>.fc.md` or a valid contract ID, use that contract.
+   - Otherwise, route to ticket intake before proceeding.
+
+2. **Ticket intake**
+   - Collect required fields: Who, What, Why, Definition of Done.
+   - Validate ticket ID format: `[A-Z][A-Z0-9]+-\d+`.
+   - Create `contracts/<ID>.fc.md` as draft.
+
+3. **Plan phase (no code changes)**
+   - Generate `contracts/<ID>.plan.yaml`.
+   - No implementation file modifications allowed.
+
+4. **Approval gate**
+   - Execution is blocked until `approval_token: Approved` is present.
+   - Explicit user approval required.
+
+5. **Execute phase (scoped changes only)**
+   - Modify only files listed in the plan.
+   - Stay within allowed directories.
+   - Never touch restricted directories.
+
+### Recovery from Failures
+
+If blocked:
+1. Report the specific blocker to the user.
+2. Do not attempt workarounds that bypass governance.
+3. Wait for user guidance or contract amendment.
+
+If plan phase fails:
+1. Fix the contract or plan file.
+2. Re-run `grabby plan <ID>`.
+
+If execution scope violation detected:
+1. Revert out-of-scope changes.
+2. Amend the plan if scope expansion is justified.
+3. Re-run `grabby approve <ID>` after plan amendment.
+
+### CI/Policy Enforcement
+
+- `grabby guard <contract>` verifies scope compliance before commit.
+- CI jobs fail when policy-triggered changes lack a contract, plan, or stay outside approved scope.
+- Initial rollout supports allow-failure mode before required enforcement.
 
 ## Contract Tracking Mode
 
