@@ -18,4 +18,71 @@ entries:
       - .continue/rules/00-grabby-core.md
       - .codex/prompts/router.md
     closedAt: 2026-03-03T20:59:22.045Z
-lastUpdated: 2026-03-03T20:59:22.046Z
+  - id: FC-002
+    title: Feature Management System
+    objective: Feature Management System
+    type: feat
+    closedAt: 2026-03-03T00:36:45.496Z
+    migratedFrom: legacy-bundle
+  - id: FC-003
+    title: Contract Level System
+    objective: Contract Level System
+    type: feat
+    closedAt: 2026-03-03T00:36:45.653Z
+    migratedFrom: legacy-bundle
+  - id: GRAB-ARCHIVE-001
+    title: Archive Completed Features with Close Flow
+    objective: Implement feature close flow that compresses completed feature
+      artifacts and archives them, and add a garbage-collector path for hanging
+      stories so th
+    type: FEATURE_CONTRACT
+    files:
+      - bin/index.cjs
+      - lib/commands.cjs
+      - lib/features.cjs
+      - lib/governance-runtime.cjs
+      - README.md
+      - docs/EXECUTION_PROTOCOL.md
+      - .github/workflows/self-governance.yml
+      - tests/feature-close.test.js
+      - tests/commands.test.js
+      - tests/features-index.test.js
+    closedAt: 2026-03-03T00:36:32.016Z
+    migratedFrom: legacy-bundle
+  - id: GRAB-FEATURES-001
+    title: Contract-Backed Feature Index
+    objective: Contract-Backed Feature Index
+    type: FEATURE_CONTRACT
+    closedAt: 2026-03-03T00:36:32.182Z
+    migratedFrom: legacy-bundle
+  - id: GRAB-INTAKE-002
+    title: Ticket Generator Wizard
+    objective: Ticket Generator Wizard
+    type: FEATURE_CONTRACT
+    closedAt: 2026-03-03T00:36:32.367Z
+    migratedFrom: legacy-bundle
+  - id: GRAB-INTAKE-003
+    title: Modern Ticket Intake Shape
+    objective: Modern Ticket Intake Shape
+    type: FEATURE_CONTRACT
+    closedAt: 2026-03-03T00:36:32.528Z
+    migratedFrom: legacy-bundle
+  - id: GRAB-TRACKING-001
+    title: Toggle Contract Tracking
+    objective: Turn contract tracking on and off so feature and intake contract
+      files can be excluded or removed before check-in
+    type: FEATURE_CONTRACT
+    files:
+      - lib/config.cjs
+      - lib/commands.cjs
+      - lib/interactive-workflows.cjs
+      - lib/features.cjs
+      - bin/index.cjs
+      - grabby.config.example.json
+      - .grabbyignore or generated ignore guidance
+      - README.md
+      - docs/EXECUTION_PROTOCOL.md
+      - tests/tracking-mode.test.js
+    closedAt: 2026-03-03T20:41:50.510Z
+    migratedFrom: legacy-bundle
+lastUpdated: 2026-03-03T21:14:49.284Z
