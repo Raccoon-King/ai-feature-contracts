@@ -13,6 +13,19 @@ const { execSync, spawnSync } = require('child_process');
 const PKG_ROOT = path.join(__dirname, '..', '..');
 const CLI_PATH = path.join(PKG_ROOT, 'bin', 'index.cjs');
 
+function canSpawnNodeCli() {
+  const probe = spawnSync(process.execPath, ['-e', 'process.stdout.write("ok")'], {
+    cwd: PKG_ROOT,
+    encoding: 'utf8',
+    timeout: 5000,
+    env: { ...process.env, NO_COLOR: '1' },
+  });
+
+  return !probe.error && probe.status === 0 && (probe.stdout || '') === 'ok';
+}
+
+const describeCli = canSpawnNodeCli() ? describe : describe.skip;
+
 // Temp directory for tests
 let tempDir;
 let contractsDir;
@@ -62,7 +75,7 @@ function runCli(args, options = {}) {
 // HELP COMMAND
 // ============================================================================
 
-describe('Help Command', () => {
+describeCli('Help Command', () => {
   it('should display help with --help flag', () => {
     const result = runCli(['--help']);
     expect(result.stdout).toContain('grabby');
@@ -84,7 +97,7 @@ describe('Help Command', () => {
 // LIST COMMAND
 // ============================================================================
 
-describe('List Command', () => {
+describeCli('List Command', () => {
   it('should list contracts when contracts exist', () => {
     // Create a test contract
     fs.writeFileSync(
@@ -107,7 +120,7 @@ describe('List Command', () => {
 // VALIDATE COMMAND
 // ============================================================================
 
-describe('Validate Command', () => {
+describeCli('Validate Command', () => {
   it('should validate a valid contract', () => {
     const validContract = `# FC: Valid Test
 **ID:** FC-123 | **Status:** draft
@@ -168,7 +181,7 @@ Test objective
 // AGENT COMMAND
 // ============================================================================
 
-describe('Agent Command', () => {
+describeCli('Agent Command', () => {
   it('should list available agents', () => {
     const result = runCli(['agent', 'list']);
     expect(result.stdout).toContain('Archie');
@@ -191,7 +204,7 @@ describe('Agent Command', () => {
 // CREATE COMMAND
 // ============================================================================
 
-describe('Create Command', () => {
+describeCli('Create Command', () => {
   it('should show create help', () => {
     const result = runCli(['create', '--help']);
     expect(result.status).toBe(0);
@@ -202,7 +215,7 @@ describe('Create Command', () => {
 // PLAN COMMAND
 // ============================================================================
 
-describe('Plan Command', () => {
+describeCli('Plan Command', () => {
   it('should generate plan for valid contract', () => {
     const contract = `# FC: Plan Test
 **ID:** FC-123 | **Status:** draft
@@ -245,7 +258,7 @@ Test
 // APPROVE COMMAND
 // ============================================================================
 
-describe('Approve Command', () => {
+describeCli('Approve Command', () => {
   it('should handle approve with missing contract', () => {
     const result = runCli(['approve', 'nonexistent.fc.md']);
     expect(result.stderr.toLowerCase() + result.stdout.toLowerCase()).toMatch(/not found|error/i);
@@ -256,7 +269,7 @@ describe('Approve Command', () => {
 // EXECUTE COMMAND
 // ============================================================================
 
-describe('Execute Command', () => {
+describeCli('Execute Command', () => {
   it('should handle execute with missing contract', () => {
     const result = runCli(['execute', 'nonexistent.fc.md']);
     expect(result.stderr.toLowerCase() + result.stdout.toLowerCase()).toMatch(/not found|error/i);
@@ -267,7 +280,7 @@ describe('Execute Command', () => {
 // AUDIT COMMAND
 // ============================================================================
 
-describe('Audit Command', () => {
+describeCli('Audit Command', () => {
   it('should handle audit with missing contract', () => {
     const result = runCli(['audit', 'nonexistent.fc.md']);
     expect(result.stderr.toLowerCase() + result.stdout.toLowerCase()).toMatch(/not found|error/i);
@@ -290,7 +303,7 @@ describe('Party Command', () => {
 // ERROR HANDLING
 // ============================================================================
 
-describe('Error Handling', () => {
+describeCli('Error Handling', () => {
   it('should handle unknown command gracefully', () => {
     const result = runCli(['unknowncommand123']);
     // Should not crash, show help or error
@@ -313,7 +326,7 @@ describe('Error Handling', () => {
 // OUTPUT FORMATTING
 // ============================================================================
 
-describe('Output Formatting', () => {
+describeCli('Output Formatting', () => {
   it('should respect NO_COLOR environment variable', () => {
     const result = runCli(['--help']);
     // Output should contain help text regardless of color

@@ -83,6 +83,12 @@ Validation commands run:
 - npm test -> passed
 - npm run lint -> passed
 `, 'utf8');
+
+    fs.writeFileSync(path.join(activeDir, `${id}.brief.md`), '# brief\n', 'utf8');
+    fs.writeFileSync(path.join(activeDir, `${id}.backlog.yaml`), 'epics: []\n', 'utf8');
+    fs.writeFileSync(path.join(activeDir, `${id}.prompt.md`), '# prompt\n', 'utf8');
+    fs.writeFileSync(path.join(activeDir, `${id}.session.json`), JSON.stringify({ version: 1 }, null, 2), 'utf8');
+    fs.writeFileSync(path.join(activeDir, `${id}.session.yaml`), 'version: 1\n', 'utf8');
   }
 
   it('closing creates compact history and updates the feature index', () => {
@@ -113,6 +119,18 @@ Validation commands run:
     features.createArchiveBundle('GRAB-ARCH-2', tempDir);
 
     expect(fs.existsSync(path.join(activeDir, 'GRAB-ARCH-2.plan.yaml'))).toBe(false);
+  });
+
+  it('removes sibling story artifacts after bundling', () => {
+    writeCompletedFeature('GRAB-ARCH-4');
+
+    features.createArchiveBundle('GRAB-ARCH-4', tempDir);
+
+    expect(fs.existsSync(path.join(activeDir, 'GRAB-ARCH-4.brief.md'))).toBe(false);
+    expect(fs.existsSync(path.join(activeDir, 'GRAB-ARCH-4.backlog.yaml'))).toBe(false);
+    expect(fs.existsSync(path.join(activeDir, 'GRAB-ARCH-4.prompt.md'))).toBe(false);
+    expect(fs.existsSync(path.join(activeDir, 'GRAB-ARCH-4.session.json'))).toBe(false);
+    expect(fs.existsSync(path.join(activeDir, 'GRAB-ARCH-4.session.yaml'))).toBe(false);
   });
 
   it('enforces ID mismatch safety', () => {

@@ -38,6 +38,45 @@ describe('Integration with Workflow Runtime', () => {
     const exportCount = Object.keys(interactive).length;
     expect(exportCount).toBe(1);
   });
+
+  it('should delegate runtime and shell creation with the provided deps', () => {
+    jest.resetModules();
+
+    const runtime = { id: 'runtime' };
+    const shellHandlers = { id: 'shell' };
+    const createWorkflowRuntime = jest.fn(() => runtime);
+    const createShellHandlers = jest.fn(() => shellHandlers);
+
+    jest.doMock('../lib/interactive-workflows.cjs', () => ({ createWorkflowRuntime }));
+    jest.doMock('../lib/interactive-shell.cjs', () => ({ createShellHandlers }));
+
+    let tested;
+    jest.isolateModules(() => {
+      tested = require('../lib/interactive.cjs');
+    });
+
+    const deps = {
+      c: { info: (value) => value },
+      argv: ['node', 'grabby'],
+      logger: { log: () => {} },
+      extra: 'kept-for-runtime',
+    };
+
+    const result = tested.createInteractiveHandlers(deps);
+
+    expect(createWorkflowRuntime).toHaveBeenCalledWith(deps);
+    expect(createShellHandlers).toHaveBeenCalledWith({
+      c: deps.c,
+      argv: deps.argv,
+      logger: deps.logger,
+      runtime,
+      workflowsDirLabel: 'workflow',
+    });
+    expect(result).toBe(shellHandlers);
+
+    jest.dontMock('../lib/interactive-workflows.cjs');
+    jest.dontMock('../lib/interactive-shell.cjs');
+  });
 });
 
 // ============================================================================

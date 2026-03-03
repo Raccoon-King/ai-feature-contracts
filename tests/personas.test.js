@@ -31,6 +31,35 @@ describe('Persona selection', () => {
     expect(persona.agentKey).toBe('architect');
     expect(persona.agentName).toBe('Archie');
   });
+
+  it('routes review and validation requests to their specialized personas', () => {
+    expect(selectPersonaForTask('audit this contract before merge')).toEqual(expect.objectContaining({
+      agentKey: 'auditor',
+      mode: 'audit',
+      agentName: 'Iris',
+    }));
+    expect(selectPersonaForTask('validate the security guardrails')).toEqual(expect.objectContaining({
+      agentKey: 'validator',
+      mode: 'validation',
+      agentName: 'Val',
+    }));
+  });
+
+  it('routes explicit implementation and bug-fix requests without losing the original request text', () => {
+    expect(selectPersonaForTask('implement the oauth callback flow')).toEqual(expect.objectContaining({
+      agentKey: 'dev',
+      mode: 'execution',
+      request: 'implement the oauth callback flow',
+    }));
+    expect(selectPersonaForTask('bug regression in profile save')).toEqual(expect.objectContaining({
+      agentKey: 'quick',
+      mode: 'quick',
+    }));
+    expect(selectPersonaForTask('')).toEqual(expect.objectContaining({
+      agentKey: 'architect',
+      request: '',
+    }));
+  });
 });
 
 describe('Task brief', () => {

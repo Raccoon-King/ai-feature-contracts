@@ -180,6 +180,53 @@ describe('Interactive shell', () => {
     expect(closed).toEqual(['closed']);
   });
 
+  it('passes ticket wizard flags through to the runtime', async () => {
+    const closed = [];
+    const calls = [];
+    const handlers = createShellHandlers({
+      c: createFormatter(),
+      argv: [
+        'node', 'cli', 'ticket', 'stabilize', 'workflow', 'coverage',
+        '--ticket-id', 'GRABBY-101',
+        '--who', 'platform team',
+        '--what', 'raise workflow coverage',
+        '--why', 'meet repo threshold',
+        '--dod', 'tests pass,coverage improves',
+        '--yes',
+      ],
+      runtime: {
+        createPromptInterface: () => ({ close: () => closed.push('closed') }),
+        runTicketWizardWorkflow: async (_rl, request, options) => calls.push({ request, options }),
+      },
+    });
+
+    await handlers.ticket();
+    expect(calls).toEqual([{
+      request: 'stabilize workflow coverage',
+      options: {
+        input: {
+          request: 'stabilize workflow coverage',
+          ticketId: 'GRABBY-101',
+          who: 'platform team',
+          what: 'raise workflow coverage',
+          why: 'meet repo threshold',
+          dod: ['tests pass', 'coverage improves'],
+          taskName: undefined,
+          objective: undefined,
+          scopeItems: undefined,
+          nonGoals: undefined,
+          directories: undefined,
+          constraints: undefined,
+          dependencies: undefined,
+          doneWhen: undefined,
+          testing: undefined,
+        },
+        nonInteractive: true,
+      },
+    }]);
+    expect(closed).toEqual(['closed']);
+  });
+
   it('routes orchestration through the interactive runtime', async () => {
     const closed = [];
     const calls = [];

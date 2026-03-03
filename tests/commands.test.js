@@ -72,6 +72,48 @@ Ship a bounded feature contract workflow.
   return contractPath;
 }
 
+function createContextDocs(tempDir) {
+  const docsDir = path.join(tempDir, 'docs');
+  fs.mkdirSync(docsDir, { recursive: true });
+  fs.writeFileSync(path.join(docsDir, 'context-index.yaml'), yaml.stringify({
+    defaults: {},
+    references: {
+      ARCH: {
+        'auth-module@v1': {
+          file: 'architecture.md',
+          section: 'Auth Module',
+          phases: ['plan', 'execute'],
+        },
+      },
+      RULESET: {
+        'imports@v1': {
+          file: 'ruleset.md',
+          section: 'Imports',
+          phases: ['plan', 'execute'],
+        },
+      },
+      ENV: {
+        'test-runner@v1': {
+          file: 'env.md',
+          section: 'Test Runner',
+          phases: ['plan', 'execute'],
+        },
+      },
+    },
+    versions: {
+      latest: {
+        ARCH_VERSION: 'v1',
+        RULESET_VERSION: 'v1',
+        ENV_VERSION: 'v1',
+      },
+    },
+  }), 'utf8');
+  fs.writeFileSync(path.join(docsDir, 'architecture.md'), '## Auth Module\nArchitecture\n', 'utf8');
+  fs.writeFileSync(path.join(docsDir, 'ruleset.md'), '## Imports\nRules\n', 'utf8');
+  fs.writeFileSync(path.join(docsDir, 'env.md'), '## Test Runner\nEnvironment\n', 'utf8');
+  return docsDir;
+}
+
 describe('Command handlers', () => {
   let tempDir;
 
@@ -279,6 +321,29 @@ Archive me
 
     expect(exits).toEqual([1]);
     expect(logger.lines.join('\n')).toContain('No plan found');
+  });
+
+  it('executes legacy plans that use files_to_modify and files_to_create', () => {
+    const logger = createLogger();
+    const context = createProjectContext({ cwd: tempDir, pkgRoot: PKG_ROOT });
+    const handlers = createCommandHandlers({ context, logger });
+
+    writeValidContract(tempDir, 'valid-feature.fc.md', 'approved');
+    fs.writeFileSync(path.join(tempDir, 'contracts', 'FC-123.plan.yaml'), yaml.stringify({
+      status: 'approved',
+      context: ['ARCH:test@v1'],
+      rules: ['§testing'],
+      files_to_create: ['tests/new-cli.test.js'],
+      files_to_modify: ['tests/cli.test.js'],
+    }));
+
+    handlers.execute('valid-feature.fc.md');
+
+    const planData = yaml.parse(fs.readFileSync(path.join(tempDir, 'contracts', 'FC-123.plan.yaml'), 'utf8'));
+    expect(planData.status).toBe('executing');
+    expect(planData.execution_guard).toBe('passed');
+    expect(logger.lines.join('\n')).toContain('create: tests/new-cli.test.js');
+    expect(logger.lines.join('\n')).toContain('modify: tests/cli.test.js');
   });
 
   it('audits files and reports lint/build outcomes', () => {
@@ -563,6 +628,33 @@ Archive this feature
     expect(logger.lines.join('\n')).toContain('No contract activity');
   });
 
+  it('archives hanging completed contracts and removes sibling story artifacts', () => {
+    const logger = createLogger();
+    const context = createProjectContext({ cwd: tempDir, pkgRoot: PKG_ROOT });
+    const handlers = createCommandHandlers({ context, logger });
+    const activeDir = path.join(tempDir, 'contracts', 'active');
+    fs.mkdirSync(activeDir, { recursive: true });
+    fs.writeFileSync(path.join(activeDir, 'ARCH-GC-2.fc.md'), `# Feature Contract: Hanging Feature
+**ID:** ARCH-GC-2 | **Status:** completed
+`, 'utf8');
+    fs.writeFileSync(path.join(activeDir, 'ARCH-GC-2.plan.yaml'), yaml.stringify({
+      files: [{ path: 'contracts/active/ARCH-GC-2.fc.md' }],
+    }), 'utf8');
+    fs.writeFileSync(path.join(activeDir, 'ARCH-GC-2.brief.md'), '# brief\n', 'utf8');
+    fs.writeFileSync(path.join(activeDir, 'ARCH-GC-2.backlog.yaml'), 'epics: []\n', 'utf8');
+    fs.writeFileSync(path.join(activeDir, 'ARCH-GC-2.prompt.md'), '# prompt\n', 'utf8');
+    fs.writeFileSync(path.join(activeDir, 'ARCH-GC-2.session.json'), JSON.stringify({ version: 1 }), 'utf8');
+
+    handlers.featureGc('archive', 'ARCH-GC-2');
+
+    expect(fs.existsSync(path.join(activeDir, 'ARCH-GC-2.fc.md'))).toBe(false);
+    expect(fs.existsSync(path.join(activeDir, 'ARCH-GC-2.brief.md'))).toBe(false);
+    expect(fs.existsSync(path.join(activeDir, 'ARCH-GC-2.backlog.yaml'))).toBe(false);
+    expect(fs.existsSync(path.join(activeDir, 'ARCH-GC-2.prompt.md'))).toBe(false);
+    expect(fs.existsSync(path.join(activeDir, 'ARCH-GC-2.session.json'))).toBe(false);
+    expect(logger.lines.join('\n')).toContain('Archived hanging feature ARCH-GC-2');
+  });
+
   it('generates an agile backlog from a valid contract', () => {
     const logger = createLogger();
     const context = createProjectContext({ cwd: tempDir, pkgRoot: PKG_ROOT });
@@ -761,6 +853,507 @@ Archive this feature
     expect(fs.existsSync(localContractsDir)).toBe(false);
     expect(fs.existsSync(featureLogPath)).toBe(false);
     expect(logger.lines.join('\n')).toContain('Removed local-only Grabby artifacts');
+  });
+
+  it('prints a no-op message when no local-only artifacts exist', () => {
+    const logger = createLogger();
+    const context = createProjectContext({ cwd: tempDir, pkgRoot: PKG_ROOT });
+    const handlers = createCommandHandlers({ context, logger });
+
+    handlers.cleanLocalContracts();
+
+    expect(logger.lines.join('\n')).toContain('No local-only Grabby artifacts found.');
+  });
+
+  it('builds a PR template from a contract', () => {
+    const logger = createLogger();
+    const context = createProjectContext({ cwd: tempDir, pkgRoot: PKG_ROOT });
+    const handlers = createCommandHandlers({ context, logger });
+
+    writeValidContract(tempDir);
+    handlers.prTemplate('valid-feature.fc.md');
+
+    const output = logger.lines.join('\n');
+    expect(output).toContain('Title: FC-123: Valid Feature');
+    expect(output).toContain('- Plan: contracts/FC-123.plan.yaml');
+    expect(output).toContain('## Done When');
+  });
+
+  it('creates a branch and updates the contract when git is available', () => {
+    const logger = createLogger();
+    const commands = [];
+    const context = createProjectContext({ cwd: tempDir, pkgRoot: PKG_ROOT });
+    const handlers = createCommandHandlers({
+      context,
+      logger,
+      execSyncImpl: (command) => commands.push(command),
+    });
+
+    const contractPath = writeValidContract(tempDir);
+    handlers.start('valid-feature.fc.md', { type: 'fix' });
+
+    expect(commands).toEqual([
+      'git rev-parse --is-inside-work-tree',
+      expect.stringMatching(/^git checkout -b fix\/FC-123-/),
+    ]);
+    expect(fs.readFileSync(contractPath, 'utf8')).toContain('**Branch:** fix/FC-123-valid-feature');
+    expect(logger.lines.join('\n')).toContain('Created branch fix/FC-123-valid-feature');
+  });
+
+  it('reports manual branch creation when git is unavailable', () => {
+    const logger = createLogger();
+    const exits = [];
+    const context = createProjectContext({ cwd: tempDir, pkgRoot: PKG_ROOT });
+    const handlers = createCommandHandlers({
+      context,
+      logger,
+      exit: (code) => exits.push(code),
+      execSyncImpl: () => {
+        throw new Error('git missing');
+      },
+    });
+
+    writeValidContract(tempDir);
+    handlers.start('valid-feature.fc.md');
+
+    expect(exits).toEqual([1]);
+    expect(logger.lines.join('\n')).toContain('Git not available. Create the branch manually.');
+    expect(logger.lines.join('\n')).toContain('Branch: feat/FC-123-valid-feature');
+  });
+
+  it('passes policy checks when only contract artifacts changed', () => {
+    const logger = createLogger();
+    const context = createProjectContext({ cwd: tempDir, pkgRoot: PKG_ROOT });
+    const handlers = createCommandHandlers({ context, logger });
+    process.env.GRABBY_CHANGED_FILES = 'contracts/FC-123.fc.md,contracts/FC-123.plan.yaml';
+
+    handlers.policyCheck();
+
+    expect(logger.lines.join('\n')).toContain('Policy check passed');
+    delete process.env.GRABBY_CHANGED_FILES;
+  });
+
+  it('fails policy checks when git diff cannot be inspected', () => {
+    const logger = createLogger();
+    const exits = [];
+    const context = createProjectContext({ cwd: tempDir, pkgRoot: PKG_ROOT });
+    const handlers = createCommandHandlers({
+      context,
+      logger,
+      exit: (code) => exits.push(code),
+      execSyncImpl: () => {
+        throw new Error('git unavailable');
+      },
+    });
+
+    handlers.policyCheck();
+
+    expect(exits).toEqual([1]);
+    expect(logger.lines.join('\n')).toContain('Unable to inspect git diff.');
+  });
+
+  it('fails policy checks when triggered changes have no governing contract', () => {
+    const logger = createLogger();
+    const exits = [];
+    fs.mkdirSync(path.join(tempDir, '.grabby'), { recursive: true });
+    fs.writeFileSync(path.join(tempDir, '.grabby', 'config.json'), JSON.stringify({
+      contractRequired: {
+        fileCountThreshold: 1,
+        restrictedPaths: ['lib/'],
+      },
+    }), 'utf8');
+    const context = { ...createProjectContext({ cwd: tempDir, pkgRoot: PKG_ROOT }), trackingMode: 'tracked' };
+    const handlers = createCommandHandlers({ context, logger, exit: (code) => exits.push(code) });
+    process.env.GRABBY_CHANGED_FILES = 'lib/commands.cjs';
+
+    handlers.policyCheck();
+
+    expect(exits).toEqual([1]);
+    expect(logger.lines.join('\n')).toContain('Contract required by policy but none found.');
+    delete process.env.GRABBY_CHANGED_FILES;
+  });
+
+  it('fails policy checks when a triggered contract is missing its plan', () => {
+    const logger = createLogger();
+    const exits = [];
+    fs.mkdirSync(path.join(tempDir, '.grabby'), { recursive: true });
+    fs.writeFileSync(path.join(tempDir, '.grabby', 'config.json'), JSON.stringify({
+      contractRequired: {
+        fileCountThreshold: 1,
+        restrictedPaths: ['lib/'],
+      },
+    }), 'utf8');
+    const context = { ...createProjectContext({ cwd: tempDir, pkgRoot: PKG_ROOT }), trackingMode: 'tracked' };
+    const handlers = createCommandHandlers({ context, logger, exit: (code) => exits.push(code) });
+    process.env.GRABBY_CHANGED_FILES = 'lib/commands.cjs';
+
+    writeValidContract(tempDir);
+    handlers.policyCheck();
+
+    expect(exits).toEqual([1]);
+    expect(logger.lines.join('\n')).toContain('Plan required by policy');
+    delete process.env.GRABBY_CHANGED_FILES;
+  });
+
+  it('passes policy checks when changed files stay within plan scope', () => {
+    const logger = createLogger();
+    const exits = [];
+    fs.mkdirSync(path.join(tempDir, '.grabby'), { recursive: true });
+    fs.writeFileSync(path.join(tempDir, '.grabby', 'config.json'), JSON.stringify({
+      contractRequired: {
+        fileCountThreshold: 1,
+        restrictedPaths: ['lib/'],
+      },
+    }), 'utf8');
+    const context = { ...createProjectContext({ cwd: tempDir, pkgRoot: PKG_ROOT }), trackingMode: 'tracked' };
+    const handlers = createCommandHandlers({ context, logger, exit: (code) => exits.push(code) });
+    process.env.GRABBY_CHANGED_FILES = 'src/feature.ts';
+
+    writeValidContract(tempDir);
+    fs.writeFileSync(path.join(tempDir, 'contracts', 'FC-123.plan.yaml'), yaml.stringify({
+      status: 'approved',
+      files: [{ action: 'create', path: 'src/feature.ts' }],
+    }), 'utf8');
+
+    handlers.policyCheck();
+
+    expect(exits).toEqual([]);
+    expect(logger.lines.join('\n')).toContain('Policy check passed');
+    delete process.env.GRABBY_CHANGED_FILES;
+  });
+
+  it('fails policy checks when changed files drift beyond plan scope', () => {
+    const logger = createLogger();
+    const exits = [];
+    fs.mkdirSync(path.join(tempDir, '.grabby'), { recursive: true });
+    fs.writeFileSync(path.join(tempDir, '.grabby', 'config.json'), JSON.stringify({
+      contractRequired: {
+        fileCountThreshold: 1,
+        restrictedPaths: ['lib/'],
+      },
+    }), 'utf8');
+    const context = { ...createProjectContext({ cwd: tempDir, pkgRoot: PKG_ROOT }), trackingMode: 'tracked' };
+    const handlers = createCommandHandlers({ context, logger, exit: (code) => exits.push(code) });
+    process.env.GRABBY_CHANGED_FILES = 'lib/commands.cjs';
+
+    writeValidContract(tempDir);
+    fs.writeFileSync(path.join(tempDir, 'contracts', 'FC-123.plan.yaml'), yaml.stringify({
+      status: 'approved',
+      files: [{ action: 'create', path: 'src/feature.ts' }],
+    }), 'utf8');
+
+    handlers.policyCheck();
+
+    expect(exits).toEqual([1]);
+    expect(logger.lines.join('\n')).toContain('Scope drift detected by policy.');
+    delete process.env.GRABBY_CHANGED_FILES;
+  });
+
+  it('inspects YAML session artifacts and reports ignored files', () => {
+    const logger = createLogger();
+    const context = createProjectContext({ cwd: tempDir, pkgRoot: PKG_ROOT });
+    const handlers = createCommandHandlers({ context, logger });
+    fs.mkdirSync(context.contractsDir, { recursive: true });
+    fs.writeFileSync(path.join(tempDir, '.grabbyignore'), 'contracts/ignored.brief.md\n', 'utf8');
+    fs.writeFileSync(path.join(context.contractsDir, 'ignored.brief.md'), '# ignored', 'utf8');
+    fs.writeFileSync(path.join(context.contractsDir, 'valid-feature.session.yaml'), yaml.stringify({
+      version: 1,
+      mode: 'task',
+      request: 'valid feature',
+      persona: {
+        key: 'architect',
+        name: 'Archie',
+        title: 'Contract Architect',
+        handoffCommand: 'grabby agent architect CC',
+      },
+      artifacts: {
+        contractFile: 'contracts/valid-feature.fc.md',
+        briefFile: 'contracts/ignored.brief.md',
+      },
+      generatedAt: new Date().toISOString(),
+    }));
+
+    handlers.session('contracts/valid-feature.session.yaml');
+
+    const output = logger.lines.join('\n');
+    expect(output).toContain('contracts/ignored.brief.md (ignored)');
+    expect(output).toContain('Schema: v1 valid');
+  });
+
+  it('fails session regeneration when the brief is missing', () => {
+    const logger = createLogger();
+    const exits = [];
+    const context = createProjectContext({ cwd: tempDir, pkgRoot: PKG_ROOT });
+    const handlers = createCommandHandlers({ context, logger, exit: (code) => exits.push(code) });
+
+    writeValidContract(tempDir);
+    handlers.session('valid-feature.fc.md', { regenerate: true });
+
+    expect(exits).toEqual([1]);
+    expect(logger.lines.join('\n')).toContain('Brief not found for contract: valid-feature.fc.md');
+  });
+
+  it('installs git hooks when a repository is present', () => {
+    const logger = createLogger();
+    const context = createProjectContext({ cwd: tempDir, pkgRoot: PKG_ROOT });
+    const handlers = createCommandHandlers({ context, logger });
+    fs.mkdirSync(path.join(tempDir, '.git', 'hooks'), { recursive: true });
+
+    handlers.initHooks();
+
+    expect(fs.existsSync(path.join(tempDir, '.git', 'hooks', 'pre-commit'))).toBe(true);
+    expect(fs.existsSync(path.join(tempDir, '.git', 'hooks', 'commit-msg'))).toBe(true);
+    expect(logger.lines.join('\n')).toContain('Git Hooks Installed');
+  });
+
+  it('fails context lint when the context index is invalid', () => {
+    const logger = createLogger();
+    const exits = [];
+    const docsDir = path.join(tempDir, 'docs');
+    fs.mkdirSync(docsDir, { recursive: true });
+    const context = { ...createProjectContext({ cwd: tempDir, pkgRoot: PKG_ROOT }), docsDir };
+    const handlers = createCommandHandlers({ context, logger, exit: (code) => exits.push(code) });
+    handlers.contextLint();
+    expect(exits).toEqual([1]);
+    expect(logger.lines.join('\n')).toContain('context-index.yaml');
+  });
+
+  it('fails planning for unapproved architecture change contracts', () => {
+    const logger = createLogger();
+    const exits = [];
+    const docsDir = createContextDocs(tempDir);
+    const context = { ...createProjectContext({ cwd: tempDir, pkgRoot: PKG_ROOT }), docsDir };
+    const handlers = createCommandHandlers({ context, logger, exit: (code) => exits.push(code) });
+
+    fs.mkdirSync(context.contractsDir, { recursive: true });
+    fs.writeFileSync(path.join(context.contractsDir, 'ARCH-100.fc.md'), `# FC: Arch Change
+**ID:** ARCH-100 | **Status:** draft
+CONTRACT_TYPE: ARCH_CHANGE_CONTRACT
+ARCH_VERSION: v1
+RULESET_VERSION: v1
+ENV_VERSION: v1
+
+## Objective
+Change architecture safely.
+
+## Scope
+- update auth boundary
+
+## Directories
+**Allowed:** \`src/\`
+**Restricted:** \`node_modules/\`
+
+## Files
+| Action | Path | Reason |
+|--------|------|--------|
+| modify | \`src/auth.ts\` | auth |
+
+## Dependencies
+- Allowed: existing packages only
+- Banned: moment, lodash, jquery
+
+## Security Considerations
+- [ ] reviewed
+
+## Code Quality
+- [ ] lint passes
+
+## Done When
+- [ ] Tests pass (80%+ coverage)
+- [ ] Lint passes
+
+## Testing
+- Unit
+
+## Context Refs
+- ARCH: auth-module@v1
+- RULESET: imports@v1
+- ENV: test-runner@v1
+`, 'utf8');
+
+    handlers.plan('ARCH-100.fc.md');
+
+    expect(exits).toEqual([1]);
+    expect(logger.lines.join('\n')).toContain('ARCH_CHANGE_CONTRACT requires ARCH_APPROVED: true before execution');
+  });
+
+  it('fails guard when the plan is missing or not approved', () => {
+    const logger = createLogger();
+    const exits = [];
+    const context = createProjectContext({ cwd: tempDir, pkgRoot: PKG_ROOT });
+    const handlers = createCommandHandlers({ context, logger, exit: (code) => exits.push(code) });
+
+    writeValidContract(tempDir, 'guarded.fc.md', 'approved');
+    handlers.guard('guarded.fc.md');
+    expect(exits).toEqual([1]);
+    expect(logger.lines.join('\n')).toContain('No plan found.');
+
+    exits.length = 0;
+    logger.lines.length = 0;
+    fs.writeFileSync(path.join(tempDir, 'contracts', 'FC-123.plan.yaml'), yaml.stringify({ status: 'draft', files: [] }), 'utf8');
+
+    handlers.guard('guarded.fc.md');
+
+    expect(exits).toEqual([1]);
+    expect(logger.lines.join('\n')).toContain('Plan is not approved');
+  });
+
+  it('passes guard when the approved plan stays in scope', () => {
+    const logger = createLogger();
+    const exits = [];
+    const context = createProjectContext({ cwd: tempDir, pkgRoot: PKG_ROOT });
+    const handlers = createCommandHandlers({ context, logger, exit: (code) => exits.push(code) });
+
+    writeValidContract(tempDir, 'guard-pass.fc.md', 'approved');
+    fs.writeFileSync(path.join(tempDir, 'contracts', 'FC-123.plan.yaml'), yaml.stringify({
+      status: 'approved',
+      files: [{ action: 'create', path: 'src/feature.ts' }],
+    }), 'utf8');
+
+    handlers.guard('guard-pass.fc.md');
+
+    expect(exits).toEqual([]);
+    expect(logger.lines.join('\n')).toContain('Guard passed');
+  });
+
+  it('reports empty-session failures during bulk session checks', () => {
+    const logger = createLogger();
+    const exits = [];
+    const context = createProjectContext({ cwd: tempDir, pkgRoot: PKG_ROOT });
+    const handlers = createCommandHandlers({ context, logger, exit: (code) => exits.push(code) });
+
+    handlers.session(null, { checkAll: true });
+
+    expect(exits).toEqual([1]);
+    expect(logger.lines.join('\n')).toContain('no session artifacts found');
+  });
+
+  it('resolves plan and execute context bundles for a contract', () => {
+    const logger = createLogger();
+    const docsDir = createContextDocs(tempDir);
+    const context = { ...createProjectContext({ cwd: tempDir, pkgRoot: PKG_ROOT }), docsDir };
+    const handlers = createCommandHandlers({ context, logger });
+
+    fs.mkdirSync(context.contractsDir, { recursive: true });
+    fs.writeFileSync(path.join(context.contractsDir, 'CTX-123.fc.md'), `# FC: Resolve Context
+**ID:** CTX-123 | **Status:** draft
+ARCH_VERSION: v1
+RULESET_VERSION: v1
+ENV_VERSION: v1
+
+## Objective
+Resolve context refs.
+
+## Scope
+- bounded
+
+## Directories
+**Allowed:** \`src/\`
+**Restricted:** \`node_modules/\`
+
+## Files
+| Action | Path | Reason |
+|--------|------|--------|
+| modify | \`src/context.ts\` | context |
+
+## Dependencies
+- Allowed: existing packages only
+- Banned: moment, lodash, jquery
+
+## Security Considerations
+- [ ] reviewed
+
+## Code Quality
+- [ ] lint passes
+
+## Done When
+- [ ] Tests pass (80%+ coverage)
+
+## Testing
+- Unit
+
+## Context Refs
+- ARCH: auth-module@v1
+- RULESET: imports@v1
+- ENV: test-runner@v1
+`, 'utf8');
+
+    handlers.resolve('CTX-123.fc.md');
+
+    const output = logger.lines.join('\n');
+    expect(output).toContain('plan:');
+    expect(output).toContain('execute:');
+    expect(output).toContain('auth-module@v1');
+  });
+
+  it('upgrades contract version pins and summarizes metrics', () => {
+    const logger = createLogger();
+    const docsDir = createContextDocs(tempDir);
+    const context = { ...createProjectContext({ cwd: tempDir, pkgRoot: PKG_ROOT }), docsDir };
+    const handlers = createCommandHandlers({ context, logger });
+
+    fs.mkdirSync(context.contractsDir, { recursive: true });
+    fs.writeFileSync(path.join(context.contractsDir, 'VERS-1.fc.md'), `# FC: Versions
+**ID:** VERS-1 | **Status:** draft
+ARCH_VERSION: v0
+RULESET_VERSION: v0
+ENV_VERSION: v0
+`, 'utf8');
+
+    handlers.upgradeContract('VERS-1.fc.md');
+    const upgraded = fs.readFileSync(path.join(context.contractsDir, 'VERS-1.fc.md'), 'utf8');
+    expect(upgraded).toContain('ARCH_VERSION: v1');
+    expect(upgraded).toContain('RULESET_VERSION: v1');
+    expect(upgraded).toContain('ENV_VERSION: v1');
+
+    fs.mkdirSync(path.join(context.grabbyDir, 'metrics'), { recursive: true });
+    fs.writeFileSync(path.join(context.grabbyDir, 'metrics', 'a.metrics.json'), JSON.stringify({
+      feature: 'a',
+      token_usage: { total: 50 },
+      files_modified: 2,
+      lines_changed: 10,
+      rule_violations_detected: 1,
+      plan_execution_drift: { drift_count: 0 },
+    }), 'utf8');
+
+    logger.lines.length = 0;
+    handlers.metricsSummary();
+    expect(logger.lines.join('\n')).toContain('total_tokens: 50');
+    expect(logger.lines.join('\n')).toContain('features: 1');
+  });
+
+  it('fails initHooks outside a git repository', () => {
+    const logger = createLogger();
+    const exits = [];
+    const context = createProjectContext({ cwd: tempDir, pkgRoot: PKG_ROOT });
+    const handlers = createCommandHandlers({ context, logger, exit: (code) => exits.push(code) });
+
+    handlers.initHooks();
+
+    expect(exits).toEqual([1]);
+    expect(logger.lines.join('\n')).toContain('Not a git repository');
+  });
+
+  it('dispatches watch mode through the watcher module', () => {
+    jest.resetModules();
+    jest.doMock('../lib/watcher.cjs', () => ({
+      runWatchMode: jest.fn(() => 'watch-started'),
+    }));
+
+    const { createCommandHandlers: createHandlersFresh, createProjectContext: createContextFresh } = require('../lib/commands.cjs');
+    const watcher = require('../lib/watcher.cjs');
+    const logger = createLogger();
+    const context = createContextFresh({ cwd: tempDir, pkgRoot: PKG_ROOT });
+    const handlers = createHandlersFresh({ context, logger });
+
+    const result = handlers.watch({ debounceMs: 5 });
+
+    expect(result).toBe('watch-started');
+    expect(watcher.runWatchMode).toHaveBeenCalledWith(context.contractsDir, expect.objectContaining({
+      logger,
+      debounceMs: 5,
+    }));
+    jest.dontMock('../lib/watcher.cjs');
   });
 });
 

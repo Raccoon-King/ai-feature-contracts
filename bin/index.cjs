@@ -10,7 +10,6 @@ const fs = require('fs');
 const path = require('path');
 const { createProjectContext, createCommandHandlers } = require('../lib/commands.cjs');
 const { createInteractiveHandlers } = require('../lib/interactive.cjs');
-const { runWatchMode } = require('../lib/watcher.cjs');
 const { collectMetrics, generateReport, saveMetricsSnapshot } = require('../lib/metrics.cjs');
 const { generateCICDFiles, checkCICDSetup, formatSetupReport } = require('../lib/cicd.cjs');
 const { createPluginRegistry, scaffoldPlugin, validatePlugin } = require('../lib/plugins.cjs');
@@ -250,7 +249,7 @@ function watch() {
   console.log(c.heading('\n' + '─'.repeat(50)));
   console.log(c.heading('WATCH MODE'));
   console.log(c.heading('─'.repeat(50)));
-  runWatchMode(projectContext.contractsDir, { logger: console });
+  commandHandlers.watch({ logger: console });
 }
 
 function metrics() {

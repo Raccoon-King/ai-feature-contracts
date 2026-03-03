@@ -11,6 +11,30 @@ npm install
 npm link
 ```
 
+## Airgapped Installation
+
+Build the offline artifact on a connected machine:
+
+```bash
+git clone https://github.com/Raccoon-King/ai-feature-contracts.git
+cd ai-feature-contracts
+npm ci
+npm pack
+```
+
+That produces a tarball such as `grabby-2.0.0.tgz` with Grabby's runtime dependencies bundled into the package.
+
+Move the tarball into the airgapped environment, then install from the local file:
+
+```bash
+npm install -g ./grabby-2.0.0.tgz
+grabby --help
+```
+
+Notes:
+- No registry access is required during the airgapped install step because the package bundles its runtime dependencies.
+- The connected build machine should be used to refresh the tarball whenever runtime dependencies or Grabby code change.
+
 ## Quick Start
 
 ```bash

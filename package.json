@@ -7,6 +7,21 @@
     "grabby": "bin/index.cjs",
     "afc": "bin/index.cjs"
   },
+  "files": [
+    "bin/",
+    "lib/",
+    "templates/",
+    "docs/",
+    "agents/",
+    "workflows/",
+    "hooks/",
+    "README.md"
+  ],
+  "bundleDependencies": [
+    "chokidar",
+    "cli-progress",
+    "yaml"
+  ],
   "scripts": {
     "test": "jest --coverage",
     "test:watch": "jest --watch",

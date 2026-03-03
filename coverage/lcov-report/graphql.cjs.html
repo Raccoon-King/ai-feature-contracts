@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">86.36% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>19/22</span>
+                <span class='fraction'>22/22</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">47.36% </span>
+                <span class="strong">89.47% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>9/19</span>
+                <span class='fraction'>17/19</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">80% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>4/5</span>
+                <span class='fraction'>5/5</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">95% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>19/20</span>
+                <span class='fraction'>20/20</span>
             </div>
         
             
@@ -112,34 +112,34 @@
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">7x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-yes">10x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">8x</span>
+<span class="cline-any cline-yes">8x</span>
+<span class="cline-any cline-yes">8x</span>
+<span class="cline-any cline-yes">8x</span>
+<span class="cline-any cline-yes">8x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">7x</span>
+<span class="cline-any cline-yes">7x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">7x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-yes">5x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">2x</span>
@@ -152,15 +152,15 @@ const fs = require('fs');
 const path = require('path');
 &nbsp;
 function readContracts(contractsDir) {
-  <span class="missing-if-branch" title="if path not taken" >I</span>if (!fs.existsSync(contractsDir)) <span class="cstat-no" title="statement not covered" >return [];</span>
+  if (!fs.existsSync(contractsDir)) return [];
 &nbsp;
   return fs.readdirSync(contractsDir)
     .filter(f =&gt; f.endsWith('.fc.md'))
     .map(file =&gt; {
       const content = fs.readFileSync(path.join(contractsDir, file), 'utf8');
-      const title = content.match(/^# FC:\s+(.+)$/m)?.[1] || <span class="branch-1 cbranch-no" title="branch not covered" >file;</span>
-      const id = content.match(/\*\*ID:\*\*\s*(FC-\d+)/)?.[1] || <span class="branch-1 cbranch-no" title="branch not covered" >'unknown';</span>
-      const status = content.match(/\*\*Status:\*\*\s*(\w+)/)?.[1] || <span class="branch-1 cbranch-no" title="branch not covered" >'unknown';</span>
+      const title = content.match(/^# FC:\s+(.+)$/m)?.[1] || file;
+      const id = content.match(/\*\*ID:\*\*\s*(FC-\d+)/)?.[1] || 'unknown';
+      const status = content.match(/\*\*Status:\*\*\s*(\w+)/)?.[1] || 'unknown';
       return { id, title, status, file };
     });
 }
@@ -173,13 +173,13 @@ function executeGraphQL(query, context = <span class="branch-0 cbranch-no" title
     return { data: { health: { status: 'ok', version: '2.0.0' } } };
   }
 &nbsp;
-  <span class="missing-if-branch" title="else path not taken" >E</span>if (/\bcontracts\b/i.test(normalized)) {
+  if (/\bcontracts\b/i.test(normalized)) {
     const id = normalized.match(/id\s*:\s*"([^"]+)"/i)?.[1];
-    const filtered = id ? <span class="branch-0 cbranch-no" title="branch not covered" >contracts.filter(<span class="fstat-no" title="function not covered" >c </span>=&gt; <span class="cstat-no" title="statement not covered" >c.id === id || c.file === id)</span> </span>: contracts;
+    const filtered = id ? contracts.filter(c =&gt; c.id === id || c.file === id) : contracts;
     return { data: { contracts: filtered } };
   }
 &nbsp;
-<span class="cstat-no" title="statement not covered" >  return { errors: [{ message: 'Unsupported query' }] };</span>
+  return { errors: [{ message: 'Unsupported query' }] };
 }
 &nbsp;
 module.exports = { executeGraphQL, readContracts };
@@ -190,7 +190,7 @@ module.exports = { executeGraphQL, readContracts };
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-03-03T21:18:36.734Z
+                at 2026-03-03T23:23:00.410Z
             </div>
         <script src="prettify.js"></script>
         <script>

@@ -6,6 +6,7 @@
 const fs = require('fs');
 const path = require('path');
 const os = require('os');
+const readline = require('readline');
 const featureChat = require('../lib/feature-chat.cjs');
 const features = require('../lib/features.cjs');
 
@@ -270,6 +271,168 @@ describe('Integration with features module', () => {
     const output = consoleSpy.mock.calls.map((c) => c[0]).join('\n');
     expect(output).toContain('First enhancement');
     consoleSpy.mockRestore();
+  });
+});
+
+describe('interactive flows', () => {
+  function mockReadlineAnswers(answers) {
+    const rl = {
+      question: jest.fn((question, callback) => callback(answers.shift() ?? '')),
+      close: jest.fn(),
+    };
+
+    jest.spyOn(readline, 'createInterface').mockReturnValue(rl);
+    return rl;
+  }
+
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
+  it('interactiveAddFeature returns null when name is empty', async () => {
+    const consoleSpy = jest.spyOn(console, 'log').mockImplementation();
+    const rl = mockReadlineAnswers(['']);
+
+    const result = await featureChat.interactiveAddFeature(tempDir);
+
+    expect(result).toBeNull();
+    expect(rl.close).toHaveBeenCalled();
+    expect(consoleSpy.mock.calls.map((call) => call[0]).join('\n')).toContain('Feature name is required');
+  });
+
+  it('interactiveAddFeature normalizes invalid status and persists parsed fields', async () => {
+    const consoleSpy = jest.spyOn(console, 'log').mockImplementation();
+    mockReadlineAnswers([
+      'Chat Feature',
+      'Interactive description',
+      'alpha, beta',
+      'not-a-status',
+      'FC-1, FC-2',
+      'note text',
+    ]);
+
+    const feature = await featureChat.interactiveAddFeature(tempDir);
+
+    expect(feature).toMatchObject({
+      name: 'Chat Feature',
+      description: 'Interactive description',
+      status: 'proposed',
+      tags: ['alpha', 'beta'],
+      contracts: ['FC-1', 'FC-2'],
+      notes: 'note text',
+    });
+    expect(consoleSpy).toHaveBeenCalled();
+  });
+
+  it('interactiveEnhance returns null for unknown feature', async () => {
+    const consoleSpy = jest.spyOn(console, 'log').mockImplementation();
+
+    const result = await featureChat.interactiveEnhance('FEAT-404', tempDir);
+
+    expect(result).toBeNull();
+    expect(consoleSpy.mock.calls.map((call) => call[0]).join('\n')).toContain('not found');
+  });
+
+  it('interactiveEnhance adds an enhancement with fallback priority and contract hint', async () => {
+    const consoleSpy = jest.spyOn(console, 'log').mockImplementation();
+    const feature = features.addFeature({ name: 'Enhance Me', status: 'approved' }, tempDir);
+    mockReadlineAnswers([
+      'Improve resilience',
+      'invalid-priority',
+      'Needed for edge cases',
+      'y',
+    ]);
+
+    const enhancement = await featureChat.interactiveEnhance(feature.id, tempDir);
+    const updated = features.getFeature(feature.id, tempDir);
+
+    expect(enhancement).toMatchObject({
+      priority: 'medium',
+      status: 'proposed',
+    });
+    expect(updated.enhancements).toHaveLength(1);
+    expect(updated.enhancements[0].description).toContain('Improve resilience');
+    expect(updated.enhancements[0].description).toContain('Rationale: Needed for edge cases');
+    expect(consoleSpy.mock.calls.map((call) => call[0]).join('\n')).toContain('Run: grabby task');
+  });
+
+  it('startChatSession handles list, show, search, stats, tags, status, and exit commands', async () => {
+    const consoleSpy = jest.spyOn(console, 'log').mockImplementation();
+    const feature = {
+      id: 'FEAT-1',
+      name: 'Feature One',
+      status: 'approved',
+      enhancements: [{ id: 'ENH-1', description: 'Enhancement', status: 'proposed' }],
+      created: new Date().toISOString(),
+      updated: new Date().toISOString(),
+    };
+    const rl = {
+      question: jest.fn(),
+      close: jest.fn(),
+    };
+    const answers = [
+      'list approved',
+      'show FEAT-1',
+      'search feature',
+      'stats',
+      'tags',
+      'status FEAT-1 completed',
+      'status FEAT-1 invalid',
+      'unknown',
+      'exit',
+    ];
+    rl.question.mockImplementation((question, callback) => callback(answers.shift() ?? 'exit'));
+    jest.spyOn(readline, 'createInterface').mockReturnValue(rl);
+    jest.spyOn(features, 'listFeatures').mockImplementation((baseDir, filters) => {
+      if (filters?.status === 'approved') return [feature];
+      return [feature];
+    });
+    jest.spyOn(features, 'getFeature').mockReturnValue(feature);
+    jest.spyOn(features, 'searchFeatures').mockReturnValue([feature]);
+    jest.spyOn(features, 'getFeatureStats').mockReturnValue({
+      total: 1,
+      withEnhancements: 1,
+      totalEnhancements: 1,
+      linkedToContracts: 0,
+      byStatus: { approved: 1 },
+    });
+    jest.spyOn(features, 'getAllTags').mockReturnValue(['alpha', 'beta']);
+    jest.spyOn(features, 'updateFeature').mockReturnValue({ ...feature, status: 'completed' });
+
+    await featureChat.startChatSession(tempDir);
+
+    const output = consoleSpy.mock.calls.map((call) => call[0]).join('\n');
+    expect(output).toContain('Features (approved)');
+    expect(output).toContain('Search results for "feature"');
+    expect(output).toContain('Feature Statistics');
+    expect(output).toContain('Tags: alpha, beta');
+    expect(output).toContain('status updated to completed');
+    expect(output).toContain('Invalid status');
+    expect(output).toContain('Unknown command');
+    expect(output).toContain('Goodbye!');
+  });
+
+  it('startChatSession handles discover and import commands', async () => {
+    const consoleSpy = jest.spyOn(console, 'log').mockImplementation();
+    const rl = {
+      question: jest.fn(),
+      close: jest.fn(),
+    };
+    const answers = ['discover', 'import', 'exit'];
+    rl.question.mockImplementation((question, callback) => callback(answers.shift() ?? 'exit'));
+    jest.spyOn(readline, 'createInterface').mockReturnValue(rl);
+    jest.spyOn(features, 'discoverFeatures').mockReturnValue([
+      { name: 'Discovered Feature', source: 'contracts/demo.fc.md' },
+    ]);
+    jest.spyOn(features, 'importDiscoveredFeatures').mockReturnValue([
+      { id: 'FEAT-2', name: 'Discovered Feature' },
+    ]);
+
+    await featureChat.startChatSession(tempDir);
+
+    const output = consoleSpy.mock.calls.map((call) => call[0]).join('\n');
+    expect(output).toContain('Discovered 1 features');
+    expect(output).toContain('Imported 1 features');
   });
 });
 

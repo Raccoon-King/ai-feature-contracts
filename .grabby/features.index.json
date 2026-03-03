@@ -1,19 +1,40 @@
 {
-  "generatedAt": "2026-03-03T21:14:49.299Z",
+  "generatedAt": "2026-03-03T23:51:06.259Z",
   "trackingMode": "tracked",
   "features": [
     {
+      "id": "AIR-001",
+      "title": "Airgapped Install Support",
+      "status": "archived",
+      "archivePath": ".grabby/history/history-001.yaml",
+      "closedAt": "2026-03-03T21:57:21.575Z",
+      "objective": "Make Grabby installable from a prebuilt offline artifact by bundling required runtime dependencies and documenting the operator workflow for airgap...",
+      "type": "FEATURE_CONTRACT",
+      "files": [
+        "package.json",
+        "README.md",
+        "tests/packaging.test.js"
+      ]
+    },
+    {
       "id": "FC-001",
-      "title": "Grabby v2 Enhancements",
-      "type": "feat",
-      "status": "approved",
-      "branch": null,
-      "lastModifiedAt": "2026-03-03T20:27:40.046Z",
-      "contractPath": "contracts/FC-001.fc.md",
-      "planPath": "contracts/FC-001.plan.yaml",
-      "auditPath": "contracts/FC-001.audit.md",
-      "archivePath": null,
-      "closedAt": null
+      "title": "Grabby v2 Enhancements Umbrella",
+      "status": "archived",
+      "archivePath": ".grabby/history/history-001.yaml",
+      "closedAt": "2026-03-03T22:13:59.423Z",
+      "objective": "Track the original Grabby v2 enhancement roadmap at the portfolio level while execution moves into smaller, phase-sized contracts that can be compl...",
+      "type": "FEATURE_CONTRACT",
+      "files": [
+        "lib/progress.cjs",
+        "lib/watcher.cjs",
+        "lib/smart-prompts.cjs",
+        "lib/commands.cjs",
+        "lib/interactive-workflows.cjs",
+        "bin/index.cjs",
+        "tests/progress.test.js",
+        "tests/watcher.test.js",
+        "tests/smart-prompts.test.js"
+      ]
     },
     {
       "id": "FC-002",
@@ -32,6 +53,111 @@
       "closedAt": "2026-03-03T00:36:45.653Z",
       "objective": "Contract Level System",
       "type": "feat"
+    },
+    {
+      "id": "FC-101",
+      "title": "Grabby v2 Phase 1 Developer Experience",
+      "status": "archived",
+      "archivePath": ".grabby/history/history-001.yaml",
+      "closedAt": "2026-03-03T22:14:03.391Z",
+      "objective": "Deliver the phase 1 developer-experience features for Grabby: progress tracking, watch mode, and context-aware prompt generation.",
+      "type": "FEATURE_CONTRACT",
+      "files": [
+        "lib/progress.cjs",
+        "lib/watcher.cjs",
+        "lib/smart-prompts.cjs",
+        "lib/commands.cjs",
+        "lib/interactive-workflows.cjs",
+        "bin/index.cjs",
+        "tests/progress.test.js",
+        "tests/watcher.test.js",
+        "tests/smart-prompts.test.js"
+      ]
+    },
+    {
+      "id": "FC-102",
+      "title": "Grabby v2 Phase 2 Validation and Metrics",
+      "status": "archived",
+      "archivePath": ".grabby/history/history-001.yaml",
+      "closedAt": "2026-03-03T22:14:06.630Z",
+      "objective": "Deliver the phase 2 validation and metrics work for Grabby: complexity analysis, dependency analysis, metrics/reporting, and CI/CD scaffolding.",
+      "type": "FEATURE_CONTRACT",
+      "files": [
+        "lib/complexity.cjs",
+        "lib/dependency-analyzer.cjs",
+        "lib/metrics.cjs",
+        "lib/cicd.cjs",
+        "lib/core.cjs",
+        "tests/complexity.test.js",
+        "tests/metrics.test.js"
+      ]
+    },
+    {
+      "id": "FC-103",
+      "title": "Grabby v2 Phase 3 Architecture and Extensibility",
+      "status": "archived",
+      "archivePath": ".grabby/history/history-001.yaml",
+      "closedAt": "2026-03-03T22:14:09.841Z",
+      "objective": "Deliver the phase 3 architecture and extensibility work for Grabby: plugins, TUI, and AI-powered contract assistance.",
+      "type": "FEATURE_CONTRACT",
+      "files": [
+        "lib/plugins.cjs",
+        "lib/tui.cjs",
+        "lib/ai-complete.cjs",
+        "lib/governance.cjs",
+        "bin/index.cjs",
+        "tests/plugins.test.js",
+        "tests/tui.test.js",
+        "tests/ai-complete.test.js"
+      ]
+    },
+    {
+      "id": "FC-104",
+      "title": "Grabby v2 Phase 4 Enterprise Interfaces",
+      "status": "archived",
+      "archivePath": ".grabby/history/history-001.yaml",
+      "closedAt": "2026-03-03T22:14:13.082Z",
+      "objective": "Deliver the phase 4 enterprise-facing work for Grabby: API server and multi-repo support.",
+      "type": "FEATURE_CONTRACT",
+      "files": [
+        "lib/api-server.cjs",
+        "lib/graphql.cjs",
+        "lib/multi-repo.cjs",
+        "bin/server.cjs",
+        "tests/api-server.test.js",
+        "tests/multi-repo.test.js"
+      ]
+    },
+    {
+      "id": "GC-001",
+      "title": "Garbage Collector Story Artifact Cleanup",
+      "status": "archived",
+      "archivePath": ".grabby/history/history-001.yaml",
+      "closedAt": "2026-03-03T21:57:21.598Z",
+      "objective": "Fix garbage-collector archive behavior so archiving a stale feature removes all generated story artifacts, not just the contract, plan, and audit f...",
+      "type": "FEATURE_CONTRACT",
+      "files": [
+        "lib/features.cjs",
+        "tests/feature-close.test.js",
+        "tests/commands.test.js"
+      ]
+    },
+    {
+      "id": "GRAB-002",
+      "title": "AI-Powered Baseline Contracts",
+      "status": "archived",
+      "archivePath": ".grabby/history/history-001.yaml",
+      "closedAt": "2026-03-03T21:58:18.930Z",
+      "objective": "Extend `grabby init` so a fresh project can generate baseline feature contracts from an AI-assisted project assessment without overwriting existing...",
+      "type": "FEATURE_CONTRACT",
+      "files": [
+        "lib/commands.cjs",
+        "lib/ai-complete.cjs",
+        "lib/assessment.cjs",
+        "templates/system-baseline.md",
+        "tests/commands.test.js",
+        "tests/ai-complete.test.js"
+      ]
     },
     {
       "id": "GRAB-ARCHIVE-001",
@@ -126,15 +252,99 @@
     {
       "id": "GRABBY-001",
       "title": "Comprehensive Test Suite for Grabby",
+      "status": "archived",
+      "archivePath": ".grabby/history/history-001.yaml",
+      "closedAt": "2026-03-03T23:51:06.229Z",
+      "objective": "Track the remaining repository-wide test coverage work for Grabby at the umbrella level while execution continues through smaller module-group cont...",
+      "type": "FEATURE_CONTRACT"
+    },
+    {
+      "id": "GRABBY-101",
+      "title": "Workflow Runtime Coverage Closure",
+      "status": "archived",
+      "archivePath": ".grabby/history/history-001.yaml",
+      "closedAt": "2026-03-03T22:35:29.793Z",
+      "objective": "Raise coverage for Grabby's workflow runtime surfaces by targeting `interactive-workflows` and closely related runtime behavior with bounded, deter...",
       "type": "FEATURE_CONTRACT",
-      "status": "paused",
-      "branch": null,
-      "lastModifiedAt": "2026-03-02T21:49:07.983Z",
-      "contractPath": "contracts/GRABBY-001.fc.md",
-      "planPath": "contracts/GRABBY-001.plan.yaml",
-      "auditPath": null,
-      "archivePath": null,
-      "closedAt": null
+      "files": [
+        "tests/interactive-workflows.test.js",
+        "tests/interactive-shell.test.js",
+        "contracts/GRABBY-101.fc.md",
+        "coverage/"
+      ]
+    },
+    {
+      "id": "GRABBY-102",
+      "title": "Command and Governance Coverage Closure",
+      "status": "archived",
+      "archivePath": ".grabby/history/history-001.yaml",
+      "closedAt": "2026-03-03T22:35:29.836Z",
+      "objective": "Raise coverage for Grabby's command and governance surfaces by targeting untested branches in command execution, feature indexing, and governance-r...",
+      "type": "FEATURE_CONTRACT",
+      "files": [
+        "tests/commands.test.js",
+        "tests/governance-runtime.test.js",
+        "tests/features-index.test.js",
+        "contracts/GRABBY-102.fc.md",
+        "coverage/"
+      ]
+    },
+    {
+      "id": "GRABBY-103",
+      "title": "Conversational, UI, and AI Coverage Closure",
+      "status": "archived",
+      "archivePath": ".grabby/history/history-001.yaml",
+      "closedAt": "2026-03-03T22:35:29.747Z",
+      "objective": "Raise coverage for Grabby's conversational, terminal UI, and AI helper surfaces by testing interactive branches, provider parsing, and menu/action ...",
+      "type": "FEATURE_CONTRACT",
+      "files": [
+        "lib/feature-chat.cjs",
+        "tests/feature-chat.test.js",
+        "tests/tui.test.js",
+        "tests/ai-complete.test.js",
+        "contracts/GRABBY-103.fc.md",
+        "coverage/"
+      ]
+    },
+    {
+      "id": "GRABBY-105",
+      "title": "Deep Coverage Closure for Remaining Core Modules",
+      "status": "archived",
+      "archivePath": ".grabby/history/history-001.yaml",
+      "closedAt": "2026-03-03T22:49:59.015Z",
+      "objective": "Close the remaining repository-wide coverage gap by targeting the structurally lowest-covered core modules that still block the global Jest thresho...",
+      "type": "FEATURE_CONTRACT",
+      "files": [
+        "lib/interactive-workflows.cjs",
+        "lib/commands.cjs",
+        "lib/watcher.cjs",
+        "lib/plugins.cjs",
+        "lib/ruleset-builder.cjs",
+        "tests/*.test.js",
+        "contracts/GRABBY-105.fc.md",
+        "coverage/"
+      ]
+    },
+    {
+      "id": "GRABBY-106",
+      "title": "Final Threshold Closure for Residual Coverage Gaps",
+      "status": "archived",
+      "archivePath": ".grabby/history/history-001.yaml",
+      "closedAt": "2026-03-03T23:50:18.012Z",
+      "objective": "Close the remaining global coverage threshold gap after `GRABBY-105` by targeting the residual low-coverage modules that still block repository-wid...",
+      "type": "FEATURE_CONTRACT",
+      "files": [
+        "lib/core.cjs",
+        "lib/interactive-workflows.cjs",
+        "lib/graphql.cjs",
+        "lib/personas.cjs",
+        "lib/assessment.cjs",
+        "lib/features.cjs",
+        "lib/multi-repo.cjs",
+        "lib/tui.cjs",
+        "lib/jira.cjs",
+        "lib/commands.cjs"
+      ]
     }
   ]
 }

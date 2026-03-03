@@ -6,8 +6,11 @@
 const fs = require('fs');
 const path = require('path');
 const os = require('os');
+const childProcess = require('child_process');
+const readline = require('readline');
 const yaml = require('yaml');
-const { createWorkflowRuntime } = require('../lib/interactive-workflows.cjs');
+const interactiveWorkflows = require('../lib/interactive-workflows.cjs');
+const { createWorkflowRuntime } = interactiveWorkflows;
 
 // Test directories
 const PKG_ROOT = path.join(__dirname, '..');
@@ -111,6 +114,44 @@ Test objective
   return filePath;
 }
 
+function createQuickRuntime(overrides = {}) {
+  return createWorkflowRuntime({
+    c: mockColors,
+    outputMode: 'console',
+    pkgRoot: PKG_ROOT,
+    cwd: tempDir,
+    commandHandlers: {
+      resolveContract: (file) => {
+        const directPath = path.join(contractsDir, file);
+        if (fs.existsSync(directPath)) {
+          return directPath;
+        }
+        const fcPath = path.join(contractsDir, file.endsWith('.fc.md') ? file : `${file}.fc.md`);
+        if (!fs.existsSync(fcPath)) {
+          throw new Error(`Contract not found: ${file}`);
+        }
+        return fcPath;
+      },
+      backlog: jest.fn(),
+      plan: jest.fn(),
+      ...overrides,
+    },
+  });
+}
+
+function mockReadlineAnswers(answers) {
+  const remaining = [...answers];
+  const rl = {
+    question: jest.fn((_prompt, callback) => callback(remaining.shift() ?? '')),
+    close: jest.fn(),
+  };
+  const spy = jest.spyOn(readline, 'createInterface').mockReturnValue(rl);
+  return {
+    rl,
+    restore: () => spy.mockRestore(),
+  };
+}
+
 // ============================================================================
 // RUNTIME CREATION
 // ============================================================================
@@ -146,6 +187,26 @@ describe('createWorkflowRuntime', () => {
       commandHandlers: mockCommandHandlers,
     });
     expect(bothRuntime).toBeDefined();
+  });
+});
+
+describe('Contract Request Helpers', () => {
+  it('extracts normalized referenced contracts from requests', () => {
+    expect(interactiveWorkflows.extractReferencedContract('finish contracts/grabby-101.fc.md')).toEqual({
+      ticketId: 'GRABBY-101',
+      fileName: 'GRABBY-101.fc.md',
+      path: 'contracts/GRABBY-101.fc.md',
+    });
+  });
+
+  it('returns null when no contract reference is present', () => {
+    expect(interactiveWorkflows.extractReferencedContract('finish the workflow coverage work')).toBeNull();
+  });
+
+  it('routes feature requests only when no contract reference is embedded', () => {
+    expect(interactiveWorkflows.shouldRouteFeatureRequest('implement better workflow coverage')).toBe(true);
+    expect(interactiveWorkflows.shouldRouteFeatureRequest('implement contracts/GRABBY-101.fc.md')).toBe(false);
+    expect(interactiveWorkflows.shouldRouteFeatureRequest('')).toBe(false);
   });
 });
 
@@ -225,6 +286,51 @@ describe('Agent Functions', () => {
       const archie = agents.find((a) => a.name === 'Archie');
       expect(archie).toBeDefined();
       expect(archie.title).toContain('Architect');
+    });
+  });
+
+  describe('executeAgentCommand', () => {
+    it('lists agents and exits when the agent is unknown', async () => {
+      const consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
+      const exitSpy = jest.spyOn(process, 'exit').mockImplementation((code) => {
+        throw new Error(`exit:${code}`);
+      });
+
+      await expect(runtime.executeAgentCommand('missing-agent', 'CC', [])).rejects.toThrow('exit:1');
+      expect(consoleSpy).toHaveBeenCalledWith('? Agent not found: missing-agent');
+      expect(consoleSpy).toHaveBeenCalledWith('\nAvailable agents:');
+
+      consoleSpy.mockRestore();
+      exitSpy.mockRestore();
+    });
+
+    it('shows agent details when no command is provided', async () => {
+      const consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
+
+      await runtime.executeAgentCommand('architect');
+
+      const output = consoleSpy.mock.calls.map((call) => call.join(' ')).join('\n');
+      expect(output).toContain('Archie - Contract Architect');
+      expect(output).toContain('MENU');
+      expect(output).toContain('Usage: grabby agent archie <command>');
+
+      consoleSpy.mockRestore();
+    });
+
+    it('lists menu commands and exits on unknown agent command', async () => {
+      const consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
+      const exitSpy = jest.spyOn(process, 'exit').mockImplementation((code) => {
+        throw new Error(`exit:${code}`);
+      });
+
+      await expect(runtime.executeAgentCommand('architect', 'missing-command', [])).rejects.toThrow('exit:1');
+
+      const output = consoleSpy.mock.calls.map((call) => call.join(' ')).join('\n');
+      expect(output).toContain('? Unknown command: missing-command');
+      expect(output).toContain('Available commands for Archie:');
+
+      consoleSpy.mockRestore();
+      exitSpy.mockRestore();
     });
   });
 });
@@ -427,6 +533,983 @@ Test objective
   });
 });
 
+describe('Interactive Workflow Runtimes', () => {
+  it('returns null from ticket wizard when no request or structured fields are provided', async () => {
+    const consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
+    const rl = {
+      question: (_prompt, callback) => callback(''),
+      close: () => {},
+    };
+
+    const result = await runtime.runTicketWizardWorkflow(rl, '', { input: {}, nonInteractive: true });
+
+    expect(result).toBeNull();
+    expect(consoleSpy.mock.calls.map((call) => call.join(' ')).join('\n')).toContain('Ticket input required.');
+    consoleSpy.mockRestore();
+  });
+
+  it('creates task, brief, and session artifacts in non-interactive mode', async () => {
+    const consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
+
+    await runtime.runTaskBreakdownWorkflow({}, 'implement login guard', {
+      nonInteractive: true,
+      sessionFormat: 'json',
+      input: {
+        request: 'implement login guard',
+        ticketId: 'GRABBY-105',
+        who: 'developers',
+        what: 'implement login guard',
+        why: 'keep auth flows deterministic',
+        dod: ['tests pass', 'lint passes'],
+        taskName: 'Login Guard',
+        objective: 'Implement login guard. Why: keep auth flows deterministic',
+        scopeItems: ['add route guard', 'cover login redirect'],
+        nonGoals: ['no auth provider rewrite'],
+        directories: ['src/', 'tests/'],
+        constraints: 'stay bounded',
+        dependencies: 'none',
+        doneWhen: ['tests pass', 'lint passes'],
+        testing: 'Unit: tests/login-guard.test.js',
+        securityImpact: 'auth flow reviewed',
+      },
+    });
+
+    const contractPath = path.join(contractsDir, 'GRABBY-105.fc.md');
+    const briefPath = path.join(contractsDir, 'GRABBY-105.brief.md');
+    const sessionPath = path.join(contractsDir, 'GRABBY-105.session.json');
+    expect(fs.existsSync(contractPath)).toBe(true);
+    expect(fs.existsSync(briefPath)).toBe(true);
+    expect(fs.existsSync(sessionPath)).toBe(true);
+    expect(fs.readFileSync(contractPath, 'utf8')).toContain('Security/migration impact reviewed: auth flow reviewed');
+    expect(fs.readFileSync(contractPath, 'utf8')).toContain('`node_modules/`, `.git/`, `dist/`');
+    expect(JSON.parse(fs.readFileSync(sessionPath, 'utf8')).mode).toBe('task');
+
+    consoleSpy.mockRestore();
+  });
+
+  it('creates orchestrated execution artifacts in non-interactive mode', async () => {
+    const consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
+    const orchestrationRuntime = createQuickRuntime({
+      backlog: jest.fn((fileName) => {
+        fs.writeFileSync(path.join(contractsDir, fileName.replace('.fc.md', '.backlog.yaml')), yaml.stringify({
+          epics: [{ id: 'EPIC-1', tasks: [] }],
+        }));
+      }),
+      plan: jest.fn((fileName) => {
+        fs.writeFileSync(path.join(contractsDir, fileName.replace('.fc.md', '.plan.yaml')), yaml.stringify({
+          files: [{ action: 'modify', path: 'src/login.js' }],
+          rules: ['§testing'],
+        }));
+      }),
+    });
+
+    await orchestrationRuntime.runTaskBreakdownWorkflow({}, 'fix login redirect bug', {
+      orchestrate: true,
+      nonInteractive: true,
+      sessionFormat: 'yaml',
+      input: {
+        request: 'fix login redirect bug',
+        ticketId: 'GRABBY-106',
+        who: 'operators',
+        what: 'fix login redirect bug',
+        why: 'prevent broken auth redirect',
+        dod: ['tests pass', 'lint passes'],
+        taskName: 'Login Redirect Fix',
+        objective: 'Fix login redirect bug. Why: prevent broken auth redirect',
+        scopeItems: ['fix redirect loop'],
+        nonGoals: ['no auth redesign'],
+        directories: ['src/', 'tests/'],
+        constraints: 'keep the patch bounded',
+        dependencies: 'none',
+        doneWhen: ['tests pass', 'lint passes'],
+        testing: 'Unit: tests/login-redirect.test.js',
+        securityImpact: 'reviewed',
+      },
+    });
+
+    expect(fs.existsSync(path.join(contractsDir, 'GRABBY-106.execute.md'))).toBe(true);
+    expect(fs.existsSync(path.join(contractsDir, 'GRABBY-106.audit.md'))).toBe(true);
+    expect(fs.existsSync(path.join(contractsDir, 'GRABBY-106.session.yaml'))).toBe(true);
+    expect(mockCommandHandlers.backlog).not.toHaveBeenCalled();
+    expect(consoleSpy.mock.calls.map((call) => call.join(' ')).join('\n')).toContain('ORCHESTRATION COMPLETE');
+
+    consoleSpy.mockRestore();
+  });
+
+  it('returns early when non-interactive ticket intake is incomplete', async () => {
+    const consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
+
+    await runtime.runTaskBreakdownWorkflow({}, 'implement auth flow', {
+      nonInteractive: true,
+      input: {
+        request: 'implement auth flow',
+      },
+    });
+
+    expect(fs.readdirSync(contractsDir)).toEqual([]);
+    expect(consoleSpy.mock.calls.map((call) => call.join(' ')).join('\n')).toContain('Ticket intake incomplete.');
+    consoleSpy.mockRestore();
+  });
+
+  it('creates a quick spec and prints quick dev instructions', async () => {
+    const quickRuntime = createQuickRuntime();
+    const consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
+    const answers = [
+      'tighten login redirect behavior',
+      'src/login.js, tests/login.test.js',
+      'redirect works correctly',
+      'low',
+      'y',
+    ];
+    const rl = {
+      question: (_prompt, callback) => callback(answers.shift() || ''),
+      close: () => {},
+    };
+    const quickAgent = quickRuntime.loadAgent('quick');
+
+    await quickRuntime.runQuickSpecWorkflow(rl, quickAgent);
+    await quickRuntime.runQuickDevWorkflow(rl, quickAgent, 'tighten-login-redirect.quick.md');
+
+    const quickPath = path.join(contractsDir, 'tighten-login-redirect.quick.md');
+    expect(fs.existsSync(quickPath)).toBe(true);
+    expect(fs.readFileSync(quickPath, 'utf8')).toContain('# QFC: tighten login redirect behavior');
+    const output = consoleSpy.mock.calls.map((call) => call.join(' ')).join('\n');
+    expect(output).toContain('Quick contract created: contracts/tighten-login-redirect.quick.md');
+    expect(output).toContain('Quick Implementation: tighten login redirect behavior');
+
+    consoleSpy.mockRestore();
+  });
+
+  it('reports missing quick contracts when quick dev has nothing to run', async () => {
+    const quickRuntime = createQuickRuntime();
+    const consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
+    const rl = {
+      question: (_prompt, callback) => callback(''),
+      close: () => {},
+    };
+
+    await quickRuntime.runQuickDevWorkflow(rl, quickRuntime.loadAgent('quick'));
+
+    expect(consoleSpy.mock.calls.map((call) => call.join(' ')).join('\n')).toContain('No quick contracts found.');
+    consoleSpy.mockRestore();
+  });
+
+  it('rejects quick specs with no change description or files', async () => {
+    const quickRuntime = createQuickRuntime();
+    const consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
+
+    let rl = {
+      question: (_prompt, callback) => callback(''),
+      close: () => {},
+    };
+    await quickRuntime.runQuickSpecWorkflow(rl, quickRuntime.loadAgent('quick'));
+    expect(consoleSpy.mock.calls.map((call) => call.join(' ')).join('\n')).toContain('Change description required.');
+
+    consoleSpy.mockClear();
+    rl = {
+      question: (_prompt, callback) => callback(_prompt.includes('What\'s the change?') ? 'small fix' : ''),
+      close: () => {},
+    };
+    await quickRuntime.runQuickSpecWorkflow(rl, quickRuntime.loadAgent('quick'));
+    expect(consoleSpy.mock.calls.map((call) => call.join(' ')).join('\n')).toContain('At least one file required.');
+
+    consoleSpy.mockRestore();
+  });
+
+  it('supports quick-spec escalation and cancellation branches', async () => {
+    const quickRuntime = createQuickRuntime();
+    const consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
+
+    let answers = [
+      'large refactor',
+      'a.js, b.js, c.js, d.js',
+      'y',
+    ];
+    let rl = {
+      question: (_prompt, callback) => callback(answers.shift() || ''),
+      close: () => {},
+    };
+    await quickRuntime.runQuickSpecWorkflow(rl, quickRuntime.loadAgent('quick'));
+    expect(consoleSpy.mock.calls.map((call) => call.join(' ')).join('\n')).toContain('Use: grabby agent architect CC');
+
+    consoleSpy.mockClear();
+    answers = [
+      'contained refactor',
+      'a.js, b.js, c.js, d.js',
+      'n',
+      'works',
+      'low',
+      'n',
+    ];
+    rl = {
+      question: (_prompt, callback) => callback(answers.shift() || ''),
+      close: () => {},
+    };
+    await quickRuntime.runQuickSpecWorkflow(rl, quickRuntime.loadAgent('quick'));
+    expect(consoleSpy.mock.calls.map((call) => call.join(' ')).join('\n')).toContain('Cancelled.');
+
+    consoleSpy.mockRestore();
+  });
+
+  it('lets quick-dev choose a listed quick contract and falls back to filename when change is missing', async () => {
+    const quickRuntime = createQuickRuntime();
+    fs.writeFileSync(path.join(contractsDir, 'fallback.quick.md'), `# QFC: fallback
+**ID:** QFC-1 | **Status:** approved
+
+## Files
+| Action | Path |
+|--------|------|
+| modify | \`src/fallback.js\` |
+`, 'utf8');
+    const consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
+    const rl = {
+      question: (_prompt, callback) => callback('1'),
+      close: () => {},
+    };
+
+    await quickRuntime.runQuickDevWorkflow(rl, quickRuntime.loadAgent('quick'));
+
+    const output = consoleSpy.mock.calls.map((call) => call.join(' ')).join('\n');
+    expect(output).toContain('Quick contracts:');
+    expect(output).toContain('Quick Implementation: fallback.quick.md');
+    consoleSpy.mockRestore();
+  });
+
+  it('creates a contract through the architect agent workflow', async () => {
+    const fileRuntime = createWorkflowRuntime({
+      c: mockColors,
+      outputMode: 'both',
+      pkgRoot: PKG_ROOT,
+      cwd: tempDir,
+      commandHandlers: mockCommandHandlers,
+    });
+    const consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
+    const mockRl = mockReadlineAnswers([
+      '1',
+      'Workflow Feature',
+      'Create a workflow contract from prompts.',
+      'capture scope, generate file',
+      '',
+      'src/workflows/, tests/',
+      '',
+      'none',
+      'contract generated, tests pass',
+      '',
+      'y',
+    ]);
+
+    await fileRuntime.executeAgentCommand('architect', 'create-contract', []);
+
+    const contractPath = path.join(contractsDir, 'workflow-feature.fc.md');
+    expect(fs.existsSync(contractPath)).toBe(true);
+    expect(fs.readFileSync(contractPath, 'utf8')).toContain('# FC: Workflow Feature');
+    expect(fs.readFileSync(contractPath, 'utf8')).toContain('src/hooks/useWorkflowFeature.ts');
+    expect(mockRl.rl.close).toHaveBeenCalled();
+    expect(consoleSpy.mock.calls.map((call) => call.join(' ')).join('\n')).toContain('CONTRACT CREATED');
+
+    mockRl.restore();
+    consoleSpy.mockRestore();
+  });
+
+  it('validates an existing contract through the validator workflow', async () => {
+    createTestContract('validate-me');
+    const consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
+    const mockRl = mockReadlineAnswers([]);
+
+    await runtime.executeAgentCommand('validator', 'validate-contract', ['validate-me.fc.md']);
+
+    const output = consoleSpy.mock.calls.map((call) => call.join(' ')).join('\n');
+    expect(output).toContain('VALIDATE CONTRACT WORKFLOW');
+    expect(output).toContain('Contract is valid');
+    expect(mockRl.rl.close).toHaveBeenCalled();
+
+    mockRl.restore();
+    consoleSpy.mockRestore();
+  });
+
+  it('reports structural, security, and quality failures for invalid contracts', async () => {
+    createTestContract('invalid-validate', `# FC: [NAME]
+**ID:** FC-[ID] | **Status:** draft
+
+## Objective
+Improve auth and optimize login with password handling.
+
+## Scope
+- improve auth
+- optimize login
+- enhance tokens
+- refactor credentials
+- better password rules
+- faster secret rotation
+- fix issues in payment capture
+- clean up api key storage
+
+## Directories
+**Allowed:** \`src/\`
+
+## Files
+| Action | Path | Reason |
+|--------|------|--------|
+| modify | \`backend/auth.js\` | backend |
+| modify | \`node_modules/bad.js\` | deps |
+| modify | \`src/a.js\` | a |
+| modify | \`src/b.js\` | b |
+| modify | \`src/c.js\` | c |
+| modify | \`src/d.js\` | d |
+| modify | \`src/e.js\` | e |
+| modify | \`src/f.js\` | f |
+| modify | \`src/g.js\` | g |
+| modify | \`src/h.js\` | h |
+| modify | \`src/i.js\` | i |
+| modify | \`src/j.js\` | j |
+| modify | \`src/k.js\` | k |
+| modify | \`src/l.js\` | l |
+| modify | \`src/m.js\` | m |
+| modify | \`src/n.js\` | n |
+
+## Dependencies
+- Allowed: moment, lodash, jquery, child_process, crypto
+
+## Done When
+- shipped
+`);
+    const consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
+    const mockRl = mockReadlineAnswers([]);
+
+    await runtime.executeAgentCommand('validator', 'validate-contract', ['invalid-validate.fc.md']);
+
+    const output = consoleSpy.mock.calls.map((call) => call.join(' ')).join('\n');
+    expect(output).toContain('Contract has errors');
+    expect(output).toContain('No testing section defined');
+    expect(output).toContain('Restricted directory in files: backend/');
+    expect(output).toContain('Banned dependency: moment');
+    expect(output).toContain('Security-sensitive feature');
+    expect(output).toContain('Missing Security Considerations section');
+    expect(output).toContain('Done When should include lint check');
+
+    mockRl.restore();
+    consoleSpy.mockRestore();
+  });
+
+  it('warns when security sections lack checklist items and recognizes existing quality sections', async () => {
+    createTestContract('warn-validate', `# FC: Warn Validate
+**ID:** FC-777 | **Status:** draft
+
+## Objective
+Handle auth token flow.
+
+## Scope
+- add auth guard
+- add token refresh
+- add login retry
+- add audit log
+- add session timeout
+- add recovery
+
+## Non-Goals
+- none
+
+## Directories
+**Allowed:** \`src/\`
+
+## Files
+| Action | Path | Reason |
+|--------|------|--------|
+| create | \`src/auth.test.ts\` | tests |
+| create | \`src/auth.ts\` | auth |
+
+## Dependencies
+- Allowed: existing packages only
+- Banned: moment, lodash, jquery
+
+## Security Considerations
+- reviewed manually
+
+## Code Quality
+- [ ] reviewed
+
+## Done When
+- [ ] auth works
+- [ ] coverage improved
+
+## Testing
+- Unit
+
+## Context Refs
+- ARCH_INDEX_v1
+`);
+    const consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
+    const mockRl = mockReadlineAnswers([]);
+
+    await runtime.executeAgentCommand('validator', 'validate-contract', ['warn-validate.fc.md']);
+
+    const output = consoleSpy.mock.calls.map((call) => call.join(' ')).join('\n');
+    expect(output).toContain('Security section has no checklist items');
+    expect(output).toContain('Large scope (6 items) - consider splitting');
+    expect(output).toContain('Done When should include 80%+ coverage requirement');
+    expect(output).toContain('Done When should include lint check');
+
+    mockRl.restore();
+    consoleSpy.mockRestore();
+  });
+
+  it('updates a contract and resets approved status through the architect edit workflow', async () => {
+    const contractPath = writeApprovedWorkflowContract('editable.fc.md');
+    const consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
+    const mockRl = mockReadlineAnswers(['1', 'Updated objective from workflow']);
+
+    await runtime.executeAgentCommand('architect', 'edit-contract', ['editable.fc.md']);
+
+    const content = fs.readFileSync(contractPath, 'utf8');
+    expect(content).toContain('Updated objective from workflow');
+    expect(content).toContain('**Status:** draft');
+    expect(consoleSpy.mock.calls.map((call) => call.join(' ')).join('\n')).toContain('Status reset to draft due to edits.');
+
+    mockRl.restore();
+    consoleSpy.mockRestore();
+  });
+
+  it('reports high risks through the validator risk workflow', async () => {
+    const riskyContract = `# FC: Risky Feature
+**ID:** FC-999 | **Status:** draft
+
+## Objective
+Improve and optimize several systems at once.
+
+## Scope
+- improve login flow
+- optimize session refresh
+- enhance dashboard
+- refactor API client
+- improve caching
+- better metrics
+
+## Directories
+**Allowed:** \`src/\`
+
+## Files
+| Action | Path | Reason |
+|--------|------|--------|
+| modify | \`src/a.ts\` | a |
+| modify | \`src/b.ts\` | b |
+| modify | \`src/c.ts\` | c |
+| modify | \`src/d.ts\` | d |
+| modify | \`src/e.ts\` | e |
+| modify | \`src/f.ts\` | f |
+| modify | \`src/g.ts\` | g |
+| modify | \`src/h.ts\` | h |
+| modify | \`src/i.ts\` | i |
+| modify | \`src/j.ts\` | j |
+| modify | \`src/k.ts\` | k |
+
+## Done When
+- [ ] works
+`;
+    createTestContract('risky', riskyContract);
+    const consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
+    const mockRl = mockReadlineAnswers([]);
+
+    await runtime.executeAgentCommand('validator', 'risk-check', ['risky.fc.md']);
+
+    const output = consoleSpy.mock.calls.map((call) => call.join(' ')).join('\n');
+    expect(output).toContain('Overall Risk');
+    expect(output).toContain('Recommendation: Address HIGH risks before proceeding.');
+    expect(output).toContain('No testing plan');
+
+    mockRl.restore();
+    consoleSpy.mockRestore();
+  });
+
+  it('generates and optimizes a plan through strategist workflows', async () => {
+    createTestContract('plan-me', `# FC: Plan Me
+**ID:** FC-200 | **Status:** draft
+
+## Objective
+Plan the workflow.
+
+## Scope
+- create hook
+- create component
+
+## Directories
+**Allowed:** \`src/\`, \`tests/\`
+
+## Files
+| Action | Path | Reason |
+|--------|------|--------|
+| create | \`src/components/Dashboard.tsx\` | UI |
+| create | \`src/hooks/useDashboard.ts\` | state |
+| create | \`src/types/dashboard.ts\` | types |
+| create | \`tests/dashboard.test.ts\` | tests |
+
+## Done When
+- [ ] Tests pass (80%+ coverage)
+
+## Testing
+- Unit: tests/dashboard.test.ts
+
+## Context Refs
+- ARCH_INDEX_v1
+`);
+    const consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
+
+    let mockRl = mockReadlineAnswers([]);
+    await runtime.executeAgentCommand('strategist', 'generate-plan', ['plan-me.fc.md']);
+    mockRl.restore();
+
+    const planPath = path.join(contractsDir, 'plan-me.plan.yaml');
+    const plan = yaml.parse(fs.readFileSync(planPath, 'utf8'));
+    expect(plan.files[0].path).toBe('src/types/dashboard.ts');
+    expect(plan.status).toBe('pending_approval');
+
+    mockRl = mockReadlineAnswers(['1']);
+    await runtime.executeAgentCommand('strategist', 'optimize-plan', ['plan-me.fc.md']);
+    mockRl.restore();
+
+    const optimizedPlan = yaml.parse(fs.readFileSync(planPath, 'utf8'));
+    expect(optimizedPlan.optimized_at).toBeDefined();
+    expect(optimizedPlan.files[optimizedPlan.files.length - 1].path).toBe('tests/dashboard.test.ts');
+    expect(consoleSpy.mock.calls.map((call) => call.join(' ')).join('\n')).toContain('Plan optimized');
+
+    consoleSpy.mockRestore();
+  });
+
+  it('renders execution instructions through the dev workflow', async () => {
+    createTestContract('ship-it', `# FC: Ship It
+**ID:** FC-300 | **Status:** approved
+
+## Objective
+Ship it.
+
+## Scope
+- implement feature
+
+## Directories
+**Allowed:** \`src/\`
+
+## Files
+| Action | Path | Reason |
+|--------|------|--------|
+| modify | \`src/ship.js\` | ship |
+
+## Done When
+- [ ] done
+`);
+    fs.writeFileSync(path.join(contractsDir, 'ship-it.plan.yaml'), yaml.stringify({
+      context: ['ARCH:ship@v1'],
+      files: [{ action: 'modify', path: 'src/ship.js', reason: 'ship it' }],
+      rules: ['§testing'],
+      status: 'approved',
+    }));
+    const consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
+    const mockRl = mockReadlineAnswers(['y']);
+
+    await runtime.executeAgentCommand('dev', 'execute-contract', ['ship-it.fc.md']);
+
+    const plan = yaml.parse(fs.readFileSync(path.join(contractsDir, 'ship-it.plan.yaml'), 'utf8'));
+    expect(plan.status).toBe('executing');
+    expect(plan.executed_at).toBeDefined();
+    expect(consoleSpy.mock.calls.map((call) => call.join(' ')).join('\n')).toContain('Execution Instructions for: ship-it.fc.md');
+
+    mockRl.restore();
+    consoleSpy.mockRestore();
+  });
+
+  it('blocks execution when the contract is not approved', async () => {
+    createTestContract('not-approved');
+    const consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
+    const mockRl = mockReadlineAnswers([]);
+
+    await runtime.executeAgentCommand('dev', 'execute-contract', ['not-approved.fc.md']);
+
+    expect(consoleSpy.mock.calls.map((call) => call.join(' ')).join('\n')).toContain('Contract must be approved before execution.');
+    mockRl.restore();
+    consoleSpy.mockRestore();
+  });
+
+  it('blocks execution when the plan is missing', async () => {
+    createTestContract('missing-plan', `# FC: Missing Plan
+**ID:** FC-301 | **Status:** approved
+
+## Objective
+Require a plan.
+
+## Scope
+- bounded
+
+## Directories
+**Allowed:** \`src/\`
+
+## Files
+| Action | Path | Reason |
+|--------|------|--------|
+| modify | \`src/ship.js\` | ship |
+
+## Done When
+- [ ] done
+`);
+    const consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
+    const mockRl = mockReadlineAnswers([]);
+
+    await runtime.executeAgentCommand('dev', 'execute-contract', ['missing-plan.fc.md']);
+
+    expect(consoleSpy.mock.calls.map((call) => call.join(' ')).join('\n')).toContain('Plan must exist before execution.');
+    mockRl.restore();
+    consoleSpy.mockRestore();
+  });
+
+  it('cancels execution when the dev workflow declines to proceed', async () => {
+    createTestContract('cancel-exec', `# FC: Cancel Exec
+**ID:** FC-302 | **Status:** approved
+
+## Objective
+Cancel execution.
+
+## Scope
+- bounded
+
+## Directories
+**Allowed:** \`src/\`
+
+## Files
+| Action | Path | Reason |
+|--------|------|--------|
+| modify | \`src/cancel.js\` | cancel |
+
+## Done When
+- [ ] done
+`);
+    fs.writeFileSync(path.join(contractsDir, 'cancel-exec.plan.yaml'), yaml.stringify({
+      context: [],
+      files: [{ action: 'modify', path: 'src/cancel.js', reason: 'cancel path' }],
+      rules: [],
+      status: 'approved',
+    }));
+    const consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
+    const mockRl = mockReadlineAnswers(['n']);
+
+    await runtime.executeAgentCommand('dev', 'execute-contract', ['cancel-exec.fc.md']);
+
+    const plan = yaml.parse(fs.readFileSync(path.join(contractsDir, 'cancel-exec.plan.yaml'), 'utf8'));
+    expect(plan.status).toBe('approved');
+    expect(consoleSpy.mock.calls.map((call) => call.join(' ')).join('\n')).toContain('Execution cancelled.');
+    mockRl.restore();
+    consoleSpy.mockRestore();
+  });
+
+  it('renders generated test templates through the dev test workflow', async () => {
+    createTestContract('testable', `# FC: Testable
+**ID:** FC-400 | **Status:** draft
+
+## Objective
+Generate tests.
+
+## Scope
+- generate tests
+
+## Directories
+**Allowed:** \`src/\`, \`tests/\`
+
+## Files
+| Action | Path | Reason |
+|--------|------|--------|
+| create | \`src/hooks/useLogin.ts\` | hook |
+| create | \`src/components/LoginPanel.tsx\` | component |
+| create | \`src/utils/session.ts\` | utility |
+
+## Done When
+- [ ] done
+    `);
+    const consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
+    const mockRl = mockReadlineAnswers(['n']);
+
+    await runtime.executeAgentCommand('dev', 'test-suite', ['testable.fc.md']);
+
+    const output = consoleSpy.mock.calls.map((call) => call.join(' ')).join('\n');
+    expect(output).toContain('src/tests/useLogin.test.ts');
+    expect(output).toContain('src/tests/LoginPanel.test.ts');
+    expect(output).toContain('session.test.ts');
+
+    mockRl.restore();
+    consoleSpy.mockRestore();
+  });
+
+  it('saves generated test templates and skips existing ones', async () => {
+    createTestContract('save-tests', `# FC: Save Tests
+**ID:** FC-401 | **Status:** draft
+
+## Objective
+Generate tests.
+
+## Scope
+- generate tests
+
+## Directories
+**Allowed:** \`src/\`, \`tests/\`
+
+## Files
+| Action | Path | Reason |
+|--------|------|--------|
+| create | \`src/hooks/useSession.ts\` | hook |
+| create | \`src/components/SessionPanel.tsx\` | component |
+
+## Done When
+- [ ] done
+`);
+    fs.mkdirSync(path.join(tempDir, 'src', 'tests'), { recursive: true });
+    fs.writeFileSync(path.join(tempDir, 'src', 'tests', 'useSession.test.ts'), '// existing\n', 'utf8');
+    const consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
+    const mockRl = mockReadlineAnswers(['y']);
+
+    await runtime.executeAgentCommand('dev', 'test-suite', ['save-tests.fc.md']);
+
+    expect(fs.existsSync(path.join(tempDir, 'src', 'tests', 'SessionPanel.test.ts'))).toBe(true);
+    const output = consoleSpy.mock.calls.map((call) => call.join(' ')).join('\n');
+    expect(output).toContain('Skipped (exists): src/tests/useSession.test.ts');
+    expect(output).toContain('Created: src/tests/SessionPanel.test.ts');
+    mockRl.restore();
+    consoleSpy.mockRestore();
+  });
+
+  it('warns when no contracts exist for the edit workflow', async () => {
+    const emptyDir = fs.mkdtempSync(path.join(os.tmpdir(), 'grabby-empty-edit-'));
+    const emptyRuntime = createWorkflowRuntime({
+      c: mockColors,
+      outputMode: 'console',
+      pkgRoot: PKG_ROOT,
+      cwd: emptyDir,
+      commandHandlers: mockCommandHandlers,
+    });
+    const consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
+    const mockRl = mockReadlineAnswers([]);
+
+    await emptyRuntime.executeAgentCommand('architect', 'edit-contract', []);
+
+    expect(consoleSpy.mock.calls.map((call) => call.join(' ')).join('\n')).toContain('No contracts found. Create one first:');
+    mockRl.restore();
+    consoleSpy.mockRestore();
+    fs.rmSync(emptyDir, { recursive: true, force: true });
+  });
+
+  it('handles prompted invalid section selection in the edit workflow', async () => {
+    createTestContract('prompt-edit');
+    const consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
+    const mockRl = mockReadlineAnswers(['1', '9']);
+
+    await runtime.executeAgentCommand('architect', 'edit-contract', []);
+
+    expect(consoleSpy.mock.calls.map((call) => call.join(' ')).join('\n')).toContain('Invalid selection');
+    mockRl.restore();
+    consoleSpy.mockRestore();
+  });
+
+  it('keeps the contract unchanged when edit workflow input is empty', async () => {
+    const contractPath = createTestContract('no-change');
+    const before = fs.readFileSync(contractPath, 'utf8');
+    const consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
+    const mockRl = mockReadlineAnswers(['1', '']);
+
+    await runtime.executeAgentCommand('architect', 'edit-contract', ['no-change.fc.md']);
+
+    expect(fs.readFileSync(contractPath, 'utf8')).toBe(before);
+    expect(consoleSpy.mock.calls.map((call) => call.join(' ')).join('\n')).toContain('No changes made.');
+    mockRl.restore();
+    consoleSpy.mockRestore();
+  });
+
+  it('falls back to default contexts when generating a plan without context refs', async () => {
+    createTestContract('no-context', `# FC: No Context
+**ID:** FC-201 | **Status:** draft
+
+## Objective
+Plan without context refs.
+
+## Scope
+- create utility
+
+## Directories
+**Allowed:** \`src/\`
+
+## Files
+| Action | Path | Reason |
+|--------|------|--------|
+| create | \`src/utils/value.ts\` | util |
+
+## Done When
+- [ ] Tests pass (80%+ coverage)
+`);
+    const consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
+    const mockRl = mockReadlineAnswers([]);
+
+    await runtime.executeAgentCommand('strategist', 'generate-plan', ['no-context.fc.md']);
+
+    const plan = yaml.parse(fs.readFileSync(path.join(contractsDir, 'no-context.plan.yaml'), 'utf8'));
+    expect(plan.context).toEqual(['ARCH_INDEX_v1', 'RULESET_CORE_v1']);
+    mockRl.restore();
+    consoleSpy.mockRestore();
+  });
+
+  it('reports missing plans in the optimize workflow', async () => {
+    const consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
+    const mockRl = mockReadlineAnswers([]);
+
+    await runtime.executeAgentCommand('strategist', 'optimize-plan', ['missing-plan.fc.md']);
+
+    expect(consoleSpy.mock.calls.map((call) => call.join(' ')).join('\n')).toContain('Plan not found: missing-plan.plan.yaml');
+    mockRl.restore();
+    consoleSpy.mockRestore();
+  });
+
+  it('supports directory grouping and manual optimize branches', async () => {
+    fs.writeFileSync(path.join(contractsDir, 'branchy.plan.yaml'), yaml.stringify({
+      files: [
+        { order: 1, path: 'src/z/file.ts' },
+        { order: 2, path: 'src/a/file.ts' },
+      ],
+    }));
+    const consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
+
+    let mockRl = mockReadlineAnswers(['2']);
+    await runtime.executeAgentCommand('strategist', 'optimize-plan', ['branchy.plan.yaml']);
+    mockRl.restore();
+    let plan = yaml.parse(fs.readFileSync(path.join(contractsDir, 'branchy.plan.yaml'), 'utf8'));
+    expect(plan.files[0].path).toBe('src/a/file.ts');
+
+    mockRl = mockReadlineAnswers(['4']);
+    await runtime.executeAgentCommand('strategist', 'optimize-plan', ['branchy.plan.yaml']);
+    mockRl.restore();
+
+    expect(consoleSpy.mock.calls.map((call) => call.join(' ')).join('\n')).toContain('Manual reorder not yet implemented.');
+    plan = yaml.parse(fs.readFileSync(path.join(contractsDir, 'branchy.plan.yaml'), 'utf8'));
+    expect(plan.files[0].path).toBe('src/a/file.ts');
+    consoleSpy.mockRestore();
+  });
+
+  it('marks contracts complete when the auditor workflow passes', async () => {
+    createTestContract('audited', `# FC: Audited
+**ID:** FC-500 | **Status:** approved
+
+## Objective
+Audit the workflow.
+
+## Scope
+- verify files
+
+## Directories
+**Allowed:** \`src/\`
+
+## Files
+| Action | Path | Reason |
+|--------|------|--------|
+| create | \`src/audited.js\` | file |
+
+## Done When
+- [ ] done
+`);
+    fs.mkdirSync(path.join(tempDir, 'src'), { recursive: true });
+    fs.writeFileSync(path.join(tempDir, 'src', 'audited.js'), 'module.exports = true;\n', 'utf8');
+    fs.writeFileSync(path.join(contractsDir, 'audited.plan.yaml'), yaml.stringify({
+      status: 'executing',
+      files: [{ action: 'create', path: 'src/audited.js' }],
+    }));
+    const execSpy = jest.spyOn(childProcess, 'execSync').mockImplementation(() => Buffer.from('ok'));
+    const consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
+    const mockRl = mockReadlineAnswers([]);
+
+    await runtime.executeAgentCommand('auditor', 'audit-contract', ['audited.fc.md']);
+
+    expect(fs.readFileSync(path.join(contractsDir, 'audited.fc.md'), 'utf8')).toContain('**Status:** complete');
+    const plan = yaml.parse(fs.readFileSync(path.join(contractsDir, 'audited.plan.yaml'), 'utf8'));
+    expect(plan.status).toBe('complete');
+    expect(execSpy).toHaveBeenCalledTimes(3);
+    expect(consoleSpy.mock.calls.map((call) => call.join(' ')).join('\n')).toContain('Audit passed! Contract marked complete.');
+
+    mockRl.restore();
+    consoleSpy.mockRestore();
+    execSpy.mockRestore();
+  });
+
+  it('reports missing files and failed checks when the auditor workflow fails', async () => {
+    createTestContract('audit-fail', `# FC: Audit Fail
+**ID:** FC-501 | **Status:** approved
+
+## Objective
+Fail the audit.
+
+## Scope
+- verify files
+
+## Directories
+**Allowed:** \`src/\`
+
+## Files
+| Action | Path | Reason |
+|--------|------|--------|
+| create | \`src/missing.js\` | file |
+
+## Done When
+- [ ] done
+`);
+    fs.writeFileSync(path.join(contractsDir, 'audit-fail.plan.yaml'), yaml.stringify({
+      status: 'executing',
+      files: [{ action: 'create', path: 'src/missing.js' }],
+    }));
+    const execSpy = jest.spyOn(childProcess, 'execSync').mockImplementation(() => {
+      throw new Error('check failed');
+    });
+    const consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
+    const mockRl = mockReadlineAnswers([]);
+
+    await runtime.executeAgentCommand('auditor', 'audit-contract', ['audit-fail.fc.md']);
+
+    expect(fs.readFileSync(path.join(contractsDir, 'audit-fail.fc.md'), 'utf8')).toContain('**Status:** approved');
+    const output = consoleSpy.mock.calls.map((call) => call.join(' ')).join('\n');
+    expect(output).toContain('Audit failed. Issues need resolution.');
+    expect(output).toContain('Missing files:');
+    expect(output).toContain('src/missing.js');
+
+    mockRl.restore();
+    consoleSpy.mockRestore();
+    execSpy.mockRestore();
+  });
+
+  it('warns when quality check has no plan and reports file-level warnings otherwise', async () => {
+    createTestContract('quality-empty');
+    fs.writeFileSync(path.join(contractsDir, 'quality-empty.plan.yaml'), yaml.stringify({
+      status: 'approved',
+      files: [
+        { action: 'modify', path: 'src/problem.js' },
+        { action: 'modify', path: 'src/clean.js' },
+      ],
+    }));
+    fs.mkdirSync(path.join(tempDir, 'src'), { recursive: true });
+    fs.writeFileSync(path.join(tempDir, 'src', 'problem.js'), 'console.log("x");\n// TODO\nconst value = any;\n', 'utf8');
+    fs.writeFileSync(path.join(tempDir, 'src', 'clean.js'), 'export function clean() { return true; }\n', 'utf8');
+    const consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
+    let mockRl = mockReadlineAnswers([]);
+
+    await runtime.executeAgentCommand('auditor', 'quality-check', ['quality-empty.fc.md']);
+
+    let output = consoleSpy.mock.calls.map((call) => call.join(' ')).join('\n');
+    expect(output).toContain('Warnings:');
+    expect(output).toContain('Contains TODO comments');
+    expect(output).toContain('No quality issues');
+
+    consoleSpy.mockClear();
+    fs.unlinkSync(path.join(contractsDir, 'quality-empty.plan.yaml'));
+    mockRl.restore();
+    mockRl = mockReadlineAnswers([]);
+
+    await runtime.executeAgentCommand('auditor', 'quality-check', ['quality-empty.fc.md']);
+
+    output = consoleSpy.mock.calls.map((call) => call.join(' ')).join('\n');
+    expect(output).toContain('No plan found. Generate a plan first.');
+
+    mockRl.restore();
+    consoleSpy.mockRestore();
+  });
+});
+
 // ============================================================================
 // INTEGRATION TESTS
 // ============================================================================
@@ -503,3 +1586,37 @@ describe('Edge Cases', () => {
     expect(progress[0].step).toBe(0);
   });
 });
+
+function writeApprovedWorkflowContract(name) {
+  const contractPath = path.join(contractsDir, name);
+  fs.writeFileSync(contractPath, `# FC: Editable Feature
+**ID:** FC-555 | **Status:** approved
+
+## Objective
+Original objective
+
+## Scope
+- Keep bounded
+
+## Non-Goals
+- none
+
+## Directories
+**Allowed:** \`src/\`
+
+## Files
+| Action | Path | Reason |
+|--------|------|--------|
+| modify | \`src/editable.ts\` | update |
+
+## Dependencies
+- Allowed: existing packages only
+
+## Done When
+- [ ] Tests pass (80%+ coverage)
+
+## Testing
+- Unit
+`, 'utf8');
+  return contractPath;
+}
