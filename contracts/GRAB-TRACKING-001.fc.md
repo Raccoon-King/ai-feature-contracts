@@ -1,5 +1,5 @@
 # Feature Contract: Toggle Contract Tracking
-**ID:** GRAB-TRACKING-001 | **Status:** draft
+**ID:** GRAB-TRACKING-001 | **Status:** approved
 CONTRACT_TYPE: FEATURE_CONTRACT
 ARCH_VERSION: v1
 RULESET_VERSION: v1
@@ -31,8 +31,7 @@ Introduce an explicit contract tracking mode under Grabby config. In `tracked` m
   - manual command and/or documented workflow
   - no implicit deletion during normal feature execution
 - Prevent validation/policy flows from failing solely because committed contract artifacts are absent in `local-only` mode
-- Ensure feature indexing excludes local-only contracts from canonical repo feature reporting
-- Document tracked vs local-only behavior and recommended `.gitignore` usage
+- Ensure feature indexing excludes local-only contracts from canonical repo feature reporting and document tracked vs local-only behavior including recommended `.gitignore` usage
 
 ## Non-Goals
 - Replacing Jira or external ticket systems

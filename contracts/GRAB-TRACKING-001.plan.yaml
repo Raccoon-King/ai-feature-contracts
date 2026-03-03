@@ -1,0 +1,53 @@
+contract: GRAB-TRACKING-001.fc.md
+phase: plan
+timestamp: 2026-03-03T00:52:14.222Z
+context:
+  - ARCH:auth-module@v1
+  - RULESET:imports@v1
+  - ENV:test-runner@v1
+context_token_usage: 10
+context_token_budget: 1200
+files:
+  - action: modify
+    path: lib/config.cjs
+    reason: Add on/off setting for contract tracking
+  - action: modify
+    path: lib/commands.cjs
+    reason: Respect tracking mode in validate/list/create/audit flows
+  - action: modify
+    path: lib/interactive-workflows.cjs
+    reason: Handle local-only contract lifecycle when tracking is disabled
+  - action: modify
+    path: lib/features.cjs
+    reason: Exclude or adapt feature indexing when contracts are local-only
+  - action: modify
+    path: bin/index.cjs
+    reason: Expose any user-facing status or config behavior
+  - action: modify
+    path: grabby.config.example.json
+    reason: Document tracking mode in example config
+  - action: modify
+    path: .grabbyignore or generated ignore guidance
+    reason: Keep local-only artifacts out of normal reporting when configured
+  - action: modify
+    path: README.md
+    reason: Document tracked and untracked workflows
+  - action: modify
+    path: docs/EXECUTION_PROTOCOL.md
+    reason: Document removal-before-checkin behavior
+  - action: create
+    path: tests/tracking-mode.test.js
+    reason: Cover tracked and untracked contract behavior
+rules:
+  - §typescript
+  - §hooks
+  - §testing
+risks:
+  - State synchronization
+  - Type coverage
+  - Edge cases
+status: approved
+approval_token_required: Approved
+execution_mode: plan_only
+approved_at: 2026-03-03T00:52:17.433Z
+approval_token: Approved
