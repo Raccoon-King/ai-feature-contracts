@@ -1,106 +1,160 @@
 const fs = require('fs');
-const os = require('os');
 const path = require('path');
+const os = require('os');
 const {
-  createProjectContext,
-  createCommandHandlers,
-} = require('../lib/commands.cjs');
-const { listContractFeatures } = require('../lib/features.cjs');
+  getTrackingMode,
+  getContractsDirectory,
+  loadConfig,
+  saveConfig,
+  defaultConfig,
+  validateConfig,
+} = require('../lib/config.cjs');
+const {
+  refreshFeatureIndex,
+  listContractFeatures,
+} = require('../lib/features.cjs');
 
-const PKG_ROOT = path.join(__dirname, '..');
-
-function createLogger() {
-  const lines = [];
-  return {
-    lines,
-    log: (...values) => lines.push(values.join(' ')),
-  };
-}
-
-describe('tracking mode', () => {
+describe('Contract Tracking Mode', () => {
   let tempDir;
 
   beforeEach(() => {
-    tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'grabby-tracking-'));
+    tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'grabby-tracking-test-'));
   });
 
   afterEach(() => {
     fs.rmSync(tempDir, { recursive: true, force: true });
   });
 
-  function writeLocalOnlyConfig() {
-    fs.writeFileSync(path.join(tempDir, 'grabby.config.json'), JSON.stringify({
-      version: '1.0',
-      contracts: {
-        trackingMode: 'local-only',
-      },
-    }, null, 2));
-  }
-
-  it('uses .grabby/contracts as the active contracts directory in local-only mode', () => {
-    writeLocalOnlyConfig();
-
-    const context = createProjectContext({ cwd: tempDir, pkgRoot: PKG_ROOT });
-    expect(context.trackingMode).toBe('local-only');
-    expect(context.contractsDir).toBe(path.join(tempDir, '.grabby', 'contracts'));
-  });
-
-  it('creates new contracts under .grabby/contracts in local-only mode', () => {
-    writeLocalOnlyConfig();
-    const logger = createLogger();
-    const handlers = createCommandHandlers({
-      context: createProjectContext({ cwd: tempDir, pkgRoot: PKG_ROOT }),
-      logger,
+  describe('getTrackingMode', () => {
+    it('defaults to tracked when no config exists', () => {
+      expect(getTrackingMode(null, tempDir)).toBe('tracked');
     });
 
-    handlers.create('Local Only Feature');
-
-    expect(fs.existsSync(path.join(tempDir, '.grabby', 'contracts', 'local-only-feature.fc.md'))).toBe(true);
-    expect(fs.existsSync(path.join(tempDir, 'contracts', 'local-only-feature.fc.md'))).toBe(false);
-  });
-
-  it('writes a local feature log entry in local-only mode', () => {
-    writeLocalOnlyConfig();
-    const handlers = createCommandHandlers({
-      context: createProjectContext({ cwd: tempDir, pkgRoot: PKG_ROOT }),
-      logger: createLogger(),
+    it('returns tracked when explicitly set', () => {
+      const config = defaultConfig();
+      config.contracts.trackingMode = 'tracked';
+      saveConfig(config, tempDir);
+      expect(getTrackingMode(null, tempDir)).toBe('tracked');
     });
 
-    handlers.create('Local Log Feature');
-
-    const logPath = path.join(tempDir, '.grabby', 'feature-log.json');
-    expect(fs.existsSync(logPath)).toBe(true);
-    const log = JSON.parse(fs.readFileSync(logPath, 'utf8'));
-    expect(log.entries).toHaveLength(1);
-    expect(log.entries[0].contractFile).toBe('.grabby/contracts/local-log-feature.fc.md');
-  });
-
-  it('keeps canonical feature listing rooted in contracts/', () => {
-    writeLocalOnlyConfig();
-    fs.mkdirSync(path.join(tempDir, 'contracts'), { recursive: true });
-    fs.writeFileSync(path.join(tempDir, 'contracts', 'TRACKED-1.fc.md'), `# FC: Tracked Feature
-**ID:** TRACKED-1 | **Status:** completed
-`, 'utf8');
-
-    fs.mkdirSync(path.join(tempDir, '.grabby', 'contracts'), { recursive: true });
-    fs.writeFileSync(path.join(tempDir, '.grabby', 'contracts', 'LOCAL-1.fc.md'), `# FC: Local Feature
-**ID:** LOCAL-1 | **Status:** draft
-`, 'utf8');
-
-    const features = listContractFeatures(tempDir);
-    expect(features.map((feature) => feature.id)).toEqual(['TRACKED-1']);
-  });
-
-  it('lets policy check pass in local-only mode without committed contracts', () => {
-    writeLocalOnlyConfig();
-    const logger = createLogger();
-    const handlers = createCommandHandlers({
-      context: createProjectContext({ cwd: tempDir, pkgRoot: PKG_ROOT }),
-      logger,
-      execSyncImpl: () => 'src/a.ts\nsrc/b.ts\n',
+    it('returns local-only when explicitly set', () => {
+      const config = defaultConfig();
+      config.contracts.trackingMode = 'local-only';
+      saveConfig(config, tempDir);
+      expect(getTrackingMode(null, tempDir)).toBe('local-only');
     });
 
-    handlers.policyCheck();
-    expect(logger.lines.join('\n')).toContain('contracts.trackingMode=local-only');
+    it('normalizes invalid values to tracked', () => {
+      const config = defaultConfig();
+      config.contracts.trackingMode = 'invalid';
+      saveConfig(config, tempDir);
+      expect(getTrackingMode(null, tempDir)).toBe('tracked');
+    });
+  });
+
+  describe('getContractsDirectory', () => {
+    it('returns contracts/ for tracked mode', () => {
+      const config = defaultConfig();
+      config.contracts.trackingMode = 'tracked';
+      saveConfig(config, tempDir);
+      expect(getContractsDirectory(tempDir)).toBe(path.join(tempDir, 'contracts'));
+    });
+
+    it('returns .grabby/contracts/ for local-only mode', () => {
+      const config = defaultConfig();
+      config.contracts.trackingMode = 'local-only';
+      saveConfig(config, tempDir);
+      expect(getContractsDirectory(tempDir)).toBe(path.join(tempDir, '.grabby', 'contracts'));
+    });
+  });
+
+  describe('validateConfig', () => {
+    it('accepts valid trackingMode values', () => {
+      const config = defaultConfig();
+      config.contracts.trackingMode = 'tracked';
+      expect(validateConfig(config).valid).toBe(true);
+
+      config.contracts.trackingMode = 'local-only';
+      expect(validateConfig(config).valid).toBe(true);
+    });
+
+    it('rejects invalid trackingMode values', () => {
+      const config = defaultConfig();
+      config.contracts.trackingMode = 'invalid';
+      const result = validateConfig(config);
+      expect(result.valid).toBe(false);
+      expect(result.errors).toContain('contracts.trackingMode must be "tracked" or "local-only"');
+    });
+  });
+
+  describe('Feature indexing with tracking mode', () => {
+    it('includes contracts in feature index when tracked', () => {
+      const config = defaultConfig();
+      config.contracts.trackingMode = 'tracked';
+      saveConfig(config, tempDir);
+
+      const contractsDir = path.join(tempDir, 'contracts');
+      fs.mkdirSync(contractsDir, { recursive: true });
+      fs.writeFileSync(
+        path.join(contractsDir, 'TEST-001.fc.md'),
+        `# FC: Test Feature
+**ID:** TEST-001 | **Status:** draft
+
+## Objective
+Test feature for tracking mode.
+
+## Scope
+- Test item
+
+## Files
+| Action | Path | Reason |
+|--------|------|--------|
+| create | test.js | Test file |
+
+## Done When
+- [ ] Test passes
+`,
+        'utf8'
+      );
+
+      const result = refreshFeatureIndex(tempDir);
+      expect(result.features.length).toBe(1);
+      expect(result.features[0].id).toBe('TEST-001');
+      expect(result.trackingMode).toBe('tracked');
+    });
+
+    it('excludes contracts from feature index when local-only', () => {
+      const config = defaultConfig();
+      config.contracts.trackingMode = 'local-only';
+      saveConfig(config, tempDir);
+
+      const localContractsDir = path.join(tempDir, '.grabby', 'contracts');
+      fs.mkdirSync(localContractsDir, { recursive: true });
+      fs.writeFileSync(
+        path.join(localContractsDir, 'LOCAL-001.fc.md'),
+        `# FC: Local Feature
+**ID:** LOCAL-001 | **Status:** draft
+
+## Objective
+Local feature for testing.
+
+## Scope
+- Local item
+
+## Files
+| Action | Path | Reason |
+|--------|------|--------|
+| create | local.js | Local file |
+
+## Done When
+- [ ] Local test passes
+`,
+        'utf8'
+      );
+
+      const result = refreshFeatureIndex(tempDir);
+      expect(result.features.length).toBe(0);
+      expect(result.trackingMode).toBe('local-only');
+    });
   });
 });

@@ -101,6 +101,30 @@ For wrappers, CI, or future IDE integrations:
 - `docs/ENV_STACK.md`
 - `docs/EXECUTION_PROTOCOL.md`
 
+## Contract Tracking Mode
+
+Grabby supports two contract tracking modes via `contracts.trackingMode` in `grabby.config.json`:
+
+### tracked (default)
+- Contracts are canonical repo artifacts stored in `contracts/`
+- Feature indexing includes all contracts in `.grabby/features.index.json`
+- Contracts should be committed to the repository
+
+### local-only
+- Contracts are disposable local files stored in `.grabby/contracts/`
+- Feature indexing excludes local-only contracts from canonical reporting
+- Use this mode when external tracking (Jira, etc.) is the source of truth
+
+**Cleanup before check-in:**
+- Run `grabby contracts:clean-local` to remove local-only artifacts
+- Or manually delete `.grabby/contracts/` before commit
+- Add `.grabby/contracts/` to `.gitignore` when using local-only mode
+
+**Recommended .gitignore for local-only mode:**
+```
+.grabby/contracts/
+```
+
 ## Two-Phase Execution
 
 ### Phase 1: PLAN
