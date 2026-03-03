@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-03T20:41:50.525Z",
+  "generatedAt": "2026-03-03T20:59:22.063Z",
   "trackingMode": "tracked",
   "features": [
     {
@@ -66,15 +66,23 @@
     {
       "id": "GRAB-GOV-001",
       "title": "Enforce Grabby Method Routing for All Feature Work",
+      "status": "archived",
+      "archivePath": ".grabby/history/history-001.yaml",
+      "closedAt": "2026-03-03T20:59:22.045Z",
+      "objective": "Make Grabby the default, enforced intake and execution path for feature/change work across supported agent surfaces so implementation cannot start ...",
       "type": "FEATURE_CONTRACT",
-      "status": "approved",
-      "branch": null,
-      "lastModifiedAt": "2026-03-03T20:06:29.221Z",
-      "contractPath": "contracts/GRAB-GOV-001.fc.md",
-      "planPath": "contracts/GRAB-GOV-001.plan.yaml",
-      "auditPath": null,
-      "archivePath": null,
-      "closedAt": null
+      "files": [
+        "bin/index.cjs",
+        "lib/commands.cjs",
+        "lib/interactive-workflows.cjs",
+        "lib/ticket-intake.cjs",
+        "lib/id-utils.cjs",
+        "lib/governance-runtime.cjs",
+        "lib/cicd.cjs",
+        ".clinerules/00-grabby-core.md",
+        ".continue/rules/00-grabby-core.md",
+        ".codex/prompts/router.md"
+      ]
     },
     {
       "id": "GRAB-INTAKE-002",

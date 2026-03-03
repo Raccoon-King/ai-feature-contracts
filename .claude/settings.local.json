@@ -28,7 +28,11 @@
       "Bash(grabby audit:*)",
       "Bash(grabby resolve:*)",
       "Bash(GITHUB_TOKEN= git push:*)",
-      "Bash(set \"GITHUB_TOKEN=\")"
+      "Bash(set \"GITHUB_TOKEN=\")",
+      "Bash(grabby feature:close:*)",
+      "Bash(grabby quick)",
+      "Bash(npm run grabby:*)",
+      "Bash(npx grabby:*)"
     ]
   }
 }

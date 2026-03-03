@@ -1,0 +1,21 @@
+version: "1.0"
+entries:
+  - id: GRAB-GOV-001
+    title: Enforce Grabby Method Routing for All Feature Work
+    objective: Make Grabby the default, enforced intake and execution path for
+      feature/change work across supported agent surfaces so implementation
+      cannot start ...
+    type: FEATURE_CONTRACT
+    files:
+      - bin/index.cjs
+      - lib/commands.cjs
+      - lib/interactive-workflows.cjs
+      - lib/ticket-intake.cjs
+      - lib/id-utils.cjs
+      - lib/governance-runtime.cjs
+      - lib/cicd.cjs
+      - .clinerules/00-grabby-core.md
+      - .continue/rules/00-grabby-core.md
+      - .codex/prompts/router.md
+    closedAt: 2026-03-03T20:59:22.045Z
+lastUpdated: 2026-03-03T20:59:22.046Z
