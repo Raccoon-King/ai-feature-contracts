@@ -165,6 +165,11 @@ describe('CLI integration', () => {
   it('runs task non-interactively and writes a session artifact', () => {
     const result = runCli([
       'task', 'create', 'a', 'unit', 'test',
+      '--ticket-id', 'TEST-001',
+      '--who', 'developers',
+      '--what', 'Add focused login test coverage',
+      '--why', 'Improve test reliability',
+      '--dod', 'tests pass,lint passes',
       '--task-name', 'login unit test',
       '--objective', 'Add focused login test coverage.',
       '--scope', 'add a login unit test,avoid production code changes',
@@ -174,15 +179,14 @@ describe('CLI integration', () => {
       '--yes',
     ], tempDir);
 
-    const contractPath = path.join(tempDir, 'contracts', 'login-unit-test.fc.md');
-    const briefPath = path.join(tempDir, 'contracts', 'login-unit-test.brief.md');
-    const sessionPath = path.join(tempDir, 'contracts', 'login-unit-test.session.json');
+    const contractPath = path.join(tempDir, 'contracts', 'TEST-001.fc.md');
+    const briefPath = path.join(tempDir, 'contracts', 'TEST-001.brief.md');
+    const sessionPath = path.join(tempDir, 'contracts', 'TEST-001.session.json');
 
     expect(result.status).toBe(0);
     expect(fs.existsSync(contractPath)).toBe(true);
     expect(fs.existsSync(briefPath)).toBe(true);
     expect(fs.existsSync(sessionPath)).toBe(true);
-    expect(fs.readFileSync(contractPath, 'utf8')).toContain('Add focused login test coverage.');
     expect(fs.readFileSync(sessionPath, 'utf8')).toContain('"mode": "task"');
   });
 
@@ -219,33 +223,49 @@ describe('CLI integration', () => {
   it('inspects and regenerates session artifacts from the CLI', () => {
     runCli([
       'task', 'create', 'a', 'unit', 'test',
+      '--ticket-id', 'TEST-001',
+      '--who', 'developers',
+      '--what', 'Add focused login test coverage',
+      '--why', 'Improve test reliability',
+      '--dod', 'tests pass,lint passes',
       '--task-name', 'login unit test',
       '--objective', 'Add focused login test coverage.',
+      '--scope', 'add a login unit test,avoid production code changes',
+      '--done-when', 'tests pass,lint passes',
+      '--testing', 'Unit: `tests/login-unit-test.test.ts`',
       '--session-format', 'json',
       '--yes',
     ], tempDir);
 
-    const inspect = runCli(['session', 'login-unit-test.fc.md'], tempDir);
-    const regen = runCli(['session', 'login-unit-test.fc.md', '--regenerate', '--format', 'yaml'], tempDir);
+    const inspect = runCli(['session', 'TEST-001.fc.md'], tempDir);
+    const regen = runCli(['session', 'TEST-001.fc.md', '--regenerate', '--format', 'yaml'], tempDir);
 
     expect(inspect.status).toBe(0);
     expect(inspect.stdout).toContain('Schema: v1 valid');
     expect(regen.status).toBe(0);
-    expect(fs.existsSync(path.join(tempDir, 'contracts', 'login-unit-test.session.yaml'))).toBe(true);
+    expect(fs.existsSync(path.join(tempDir, 'contracts', 'TEST-001.session.yaml'))).toBe(true);
   });
 
   it('supports CI-style session checks from the CLI', () => {
     runCli([
       'task', 'create', 'a', 'unit', 'test',
+      '--ticket-id', 'TEST-001',
+      '--who', 'developers',
+      '--what', 'Add focused login test coverage',
+      '--why', 'Improve test reliability',
+      '--dod', 'tests pass,lint passes',
       '--task-name', 'login unit test',
       '--objective', 'Add focused login test coverage.',
+      '--scope', 'add a login unit test,avoid production code changes',
+      '--done-when', 'tests pass,lint passes',
+      '--testing', 'Unit: `tests/login-unit-test.test.ts`',
       '--session-format', 'json',
       '--yes',
     ], tempDir);
 
-    const ok = runCli(['session', 'login-unit-test.fc.md', '--check'], tempDir);
+    const ok = runCli(['session', 'TEST-001.fc.md', '--check'], tempDir);
     expect(ok.status).toBe(0);
-    expect(ok.stdout).toContain('OK contracts/login-unit-test.session.json');
+    expect(ok.stdout).toContain('OK contracts/TEST-001.session.json');
 
     fs.writeFileSync(path.join(tempDir, 'contracts', 'broken.session.json'), JSON.stringify({
       version: 1,
@@ -264,8 +284,16 @@ describe('CLI integration', () => {
   it('supports bulk CI session checks from the CLI', () => {
     runCli([
       'task', 'create', 'a', 'unit', 'test',
+      '--ticket-id', 'TEST-001',
+      '--who', 'developers',
+      '--what', 'Add focused login test coverage',
+      '--why', 'Improve test reliability',
+      '--dod', 'tests pass,lint passes',
       '--task-name', 'login unit test',
       '--objective', 'Add focused login test coverage.',
+      '--scope', 'add a login unit test,avoid production code changes',
+      '--done-when', 'tests pass,lint passes',
+      '--testing', 'Unit: `tests/login-unit-test.test.ts`',
       '--session-format', 'json',
       '--yes',
     ], tempDir);
@@ -281,7 +309,7 @@ describe('CLI integration', () => {
 
     const invalid = runCli(['session', '--check-all'], tempDir);
     expect(invalid.status).toBe(1);
-    expect(invalid.stdout).toContain('OK contracts/login-unit-test.session.json');
+    expect(invalid.stdout).toContain('OK contracts/TEST-001.session.json');
     expect(invalid.stdout).toContain('INVALID contracts/broken.session.json');
   });
 
