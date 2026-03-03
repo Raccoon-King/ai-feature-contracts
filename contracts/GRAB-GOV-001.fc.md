@@ -1,5 +1,5 @@
 # Feature Contract: Enforce Grabby Method Routing for All Feature Work
-**ID:** GRAB-GOV-001 | **Status:** draft
+**ID:** GRAB-GOV-001 | **Status:** approved
 CONTRACT_TYPE: FEATURE_CONTRACT
 ARCH_VERSION: v1
 RULESET_VERSION: v1
