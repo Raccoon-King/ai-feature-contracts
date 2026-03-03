@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1772571529113" clover="3.2.0">
-  <project timestamp="1772571529113" name="All files">
+<coverage generated="1772572716835" clover="3.2.0">
+  <project timestamp="1772572716836" name="All files">
     <metrics statements="5026" coveredstatements="2771" conditionals="3348" coveredconditionals="1526" methods="858" coveredmethods="525" elements="9232" coveredelements="4822" complexity="0" loc="5026" ncloc="5026" packages="1" files="33" classes="33"/>
     <file name="agile.cjs" path="C:\Users\jesse\ai-feature-contracts\lib\agile.cjs">
       <metrics statements="28" coveredstatements="28" conditionals="25" coveredconditionals="24" methods="15" coveredmethods="15"/>
