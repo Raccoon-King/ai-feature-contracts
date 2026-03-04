@@ -547,6 +547,69 @@ Test
       const result = core.validateContract(content);
       expect(result.warnings).not.toContain('No test files in Files section');
     });
+
+    it('should not warn when the contract only tracks contract artifacts', () => {
+      const content = `# FC: Portfolio
+**ID:** PORT-1 | **Status:** complete
+
+## Objective
+Track child contracts to completion.
+
+## Scope
+- Coordinate child work
+
+## Directories
+**Allowed:** \`contracts/\`
+
+## Files
+| Action | Path | Reason |
+|--------|------|--------|
+| modify | \`contracts/PORT-1.fc.md\` | umbrella contract |
+| create | \`contracts/PORT-2.fc.md\` | child contract |
+
+## Done When
+- [x] Child contracts are closed
+- [x] Coverage target is met
+- [x] Audit is complete
+
+## Security Considerations
+- [x] No production files changed
+
+## Testing
+- Manual verification`;
+
+      const result = core.validateContract(content);
+      expect(result.warnings).not.toContain('No test files in Files section');
+      expect(result.stats.tracksContractArtifactsOnly).toBe(true);
+    });
+  });
+
+  describe('Checklist Detection', () => {
+    it('should treat checked Done When and Security items as checklist items', () => {
+      const content = `## Objective
+Test
+## Scope
+- Item
+## Directories
+**Allowed:** src/
+## Files
+| Action | Path | Reason |
+|--------|------|--------|
+| modify | \`contracts/PORT-1.fc.md\` | contract |
+## Done When
+- [x] Done
+- [x] Tested
+- [x] Audited
+## Security Considerations
+- [x] Reviewed
+## Testing
+- Unit`;
+
+      const result = core.validateContract(content);
+      expect(result.warnings).not.toContain('Done When has no checkboxes - add verifiable criteria');
+      expect(result.warnings).not.toContain('Security section has no checklist items');
+      expect(result.stats.checkboxCount).toBe(3);
+    });
   });
 
   describe('Stats', () => {

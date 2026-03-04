@@ -453,6 +453,34 @@ Archive me
     expect(logger.lines.join('\n')).toContain('Lint: not configured (noop script)');
   });
 
+  it('reports the real contract status during audit instead of the plan status', () => {
+    const logger = createLogger();
+    const context = createProjectContext({ cwd: tempDir, pkgRoot: PKG_ROOT });
+    const handlers = createCommandHandlers({
+      context,
+      logger,
+      execSyncImpl: () => {},
+    });
+
+    writeValidContract(tempDir, 'valid-feature.fc.md', 'complete');
+    fs.writeFileSync(path.join(tempDir, 'package.json'), JSON.stringify({
+      name: 'tmp',
+      scripts: {
+        lint: 'echo lint',
+      },
+    }), 'utf8');
+    fs.writeFileSync(path.join(tempDir, 'contracts', 'FC-123.plan.yaml'), yaml.stringify({
+      status: 'executing',
+      files: [],
+    }), 'utf8');
+
+    handlers.audit('valid-feature.fc.md');
+
+    expect(logger.lines.join('\n')).toContain('Status: complete');
+    expect(logger.lines.join('\n')).not.toContain('Status: executing');
+    expect(fs.readFileSync(path.join(tempDir, 'contracts', 'FC-123.audit.md'), 'utf8')).toContain('- Status: complete');
+  });
+
   it('lists an empty contract directory clearly', () => {
     const logger = createLogger();
     const context = createProjectContext({ cwd: tempDir, pkgRoot: PKG_ROOT });
@@ -581,6 +609,54 @@ Archive this feature
     expect(historyContent.entries).toHaveLength(1);
     expect(historyContent.entries[0].id).toBe('ARCH-1');
     expect(logger.lines.join('\n')).toContain('Archived feature ARCH-1');
+  });
+
+  it('lists no active contracts immediately after feature close', () => {
+    const closeLogger = createLogger();
+    const listLogger = createLogger();
+    const context = createProjectContext({ cwd: tempDir, pkgRoot: PKG_ROOT });
+    const closeHandlers = createCommandHandlers({ context, logger: closeLogger });
+    const listHandlers = createCommandHandlers({ context, logger: listLogger });
+    const activeDir = path.join(tempDir, 'contracts', 'active');
+    fs.mkdirSync(activeDir, { recursive: true });
+    fs.writeFileSync(path.join(activeDir, 'ARCH-LIST-1.fc.md'), `# Feature Contract: Archived
+**ID:** ARCH-LIST-1 | **Status:** complete
+
+## Objective
+Archive it
+
+## Scope
+- Remove it from active contracts
+
+## Directories
+**Allowed:** \`contracts/\`
+
+## Files
+| Action | Path | Reason |
+|--------|------|--------|
+| modify | \`contracts/active/ARCH-LIST-1.fc.md\` | contract |
+
+## Done When
+- [ ] Tests pass (80%+ coverage)
+- [ ] Lint passes
+
+## Security Considerations
+- [ ] None
+
+## Testing
+- Unit
+`, 'utf8');
+    fs.writeFileSync(path.join(activeDir, 'ARCH-LIST-1.plan.yaml'), yaml.stringify({
+      files: [{ path: 'contracts/active/ARCH-LIST-1.fc.md' }],
+      execution_guard: 'passed',
+    }), 'utf8');
+
+    closeHandlers.featureClose('ARCH-LIST-1');
+    listHandlers.list();
+
+    expect(fs.existsSync(path.join(activeDir, 'ARCH-LIST-1.fc.md'))).toBe(false);
+    expect(listLogger.lines.join('\n')).toContain('No contracts found.');
+    expect(listLogger.lines.join('\n')).not.toContain('ARCH-LIST-1');
   });
 
   it('records explicit keep dispositions for hanging contracts', () => {

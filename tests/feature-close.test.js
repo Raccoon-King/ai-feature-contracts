@@ -133,6 +133,18 @@ Validation commands run:
     expect(fs.existsSync(path.join(activeDir, 'GRAB-ARCH-4.session.yaml'))).toBe(false);
   });
 
+  it('removes the closed feature from the active feature list immediately', () => {
+    writeCompletedFeature('GRAB-ARCH-5');
+
+    features.createArchiveBundle('GRAB-ARCH-5', tempDir);
+
+    expect(features.listContractFeatures(tempDir).find((feature) => feature.id === 'GRAB-ARCH-5')).toBeUndefined();
+    expect(features.getContractFeatureStatus('GRAB-ARCH-5', tempDir)).toMatchObject({
+      id: 'GRAB-ARCH-5',
+      status: 'archived',
+    });
+  });
+
   it('enforces ID mismatch safety', () => {
     writeCompletedFeature('GRAB-ARCH-3');
     const contractPath = path.join(activeDir, 'GRAB-ARCH-3.fc.md');

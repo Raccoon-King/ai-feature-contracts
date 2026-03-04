@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-03T23:51:06.259Z",
+  "generatedAt": "2026-03-04T00:00:16.461Z",
   "trackingMode": "tracked",
   "features": [
     {
@@ -14,6 +14,36 @@
         "package.json",
         "README.md",
         "tests/packaging.test.js"
+      ]
+    },
+    {
+      "id": "BUG-202",
+      "title": "Umbrella Contract Validation Fix",
+      "status": "archived",
+      "archivePath": ".grabby/history/history-001.yaml",
+      "closedAt": "2026-03-04T00:00:16.358Z",
+      "objective": "Teach contract validation to recognize completed umbrella tracking contracts so it stops emitting misleading implementation-specific warnings while...",
+      "type": "FEATURE_CONTRACT",
+      "files": [
+        "lib/core.cjs",
+        "tests/core.test.js",
+        "contracts/BUG-202.fc.md"
+      ]
+    },
+    {
+      "id": "BUG-203",
+      "title": "Feature Close Consistency Fix",
+      "status": "archived",
+      "archivePath": ".grabby/history/history-001.yaml",
+      "closedAt": "2026-03-04T00:00:16.415Z",
+      "objective": "Make feature close refresh active contract state deterministically so the next list reflects archival immediately.",
+      "type": "FEATURE_CONTRACT",
+      "files": [
+        "lib/commands.cjs",
+        "lib/features.cjs",
+        "tests/feature-close.test.js",
+        "tests/commands.test.js",
+        "contracts/BUG-203.fc.md"
       ]
     },
     {
