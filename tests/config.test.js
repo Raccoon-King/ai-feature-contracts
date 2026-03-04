@@ -13,6 +13,17 @@ describe('config', () => {
     expect(result.created).toBe(true);
     const cfg = loadConfig(dir);
     expect(cfg).toHaveProperty('jira');
+    expect(cfg).toMatchObject({
+      interactive: {
+        enabled: false,
+        defaultNextAction: null,
+      },
+      features: {
+        menuMode: true,
+        startupArt: true,
+        rulesetWizard: true,
+      },
+    });
   });
 
   test('setConfigValue and validate', () => {
@@ -152,5 +163,38 @@ describe('config', () => {
       },
     };
     expect(validateConfig(emptyToken).errors).toContain('jira.apiToken must resolve to a non-empty value');
+  });
+
+  test('validateConfig accepts interactive mode defaults and rejects invalid interactive actions', () => {
+    initConfig(dir);
+    const cfg = loadConfig(dir);
+    setConfigValue(cfg, 'interactive.enabled', 'true');
+    setConfigValue(cfg, 'interactive.defaultNextAction', 'pause');
+
+    expect(validateConfig(cfg).valid).toBe(true);
+
+    cfg.interactive.enabled = 'sometimes';
+    cfg.interactive.defaultNextAction = 'teleport';
+    const result = validateConfig(cfg);
+    expect(result.valid).toBe(false);
+    expect(result.errors).toEqual(expect.arrayContaining([
+      'interactive.enabled must be true or false',
+      'interactive.defaultNextAction must be one of: continue, revise-contract, revise-plan, switch-role, pause, abort',
+    ]));
+  });
+
+  test('validateConfig accepts feature toggles and rejects invalid feature values', () => {
+    initConfig(dir);
+    const cfg = loadConfig(dir);
+    setConfigValue(cfg, 'features.menuMode', 'false');
+    setConfigValue(cfg, 'features.startupArt', 'true');
+    setConfigValue(cfg, 'features.rulesetWizard', 'true');
+
+    expect(validateConfig(cfg).valid).toBe(true);
+
+    cfg.features.menuMode = 'sometimes';
+    const result = validateConfig(cfg);
+    expect(result.valid).toBe(false);
+    expect(result.errors).toContain('features.menuMode must be true or false');
   });
 });

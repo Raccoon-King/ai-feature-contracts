@@ -246,6 +246,12 @@ describe('Agent Functions', () => {
       expect(agent.agent.metadata.name).toBe('Dev');
     });
 
+    it('should load tester agent', () => {
+      const agent = runtime.loadAgent('tester');
+      expect(agent).not.toBeNull();
+      expect(agent.agent.metadata.name).toBe('Tess');
+    });
+
     it('should load auditor agent', () => {
       const agent = runtime.loadAgent('auditor');
       expect(agent).not.toBeNull();
@@ -534,6 +540,41 @@ Test objective
 });
 
 describe('Interactive Workflow Runtimes', () => {
+  it('pauses at the intake breakpoint and persists session state when interactive mode needs a decision', async () => {
+    const consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
+    const mockRl = mockReadlineAnswers(['5']);
+
+    await runtime.runTaskBreakdownWorkflow(mockRl.rl, 'implement login guard', {
+      nonInteractive: true,
+      interactiveMode: { enabled: true },
+      input: {
+        request: 'implement login guard',
+        ticketId: 'GRAB-IMODE-001',
+        who: 'developers',
+        what: 'implement login guard',
+        why: 'keep auth flows deterministic',
+        dod: ['tests pass', 'lint passes'],
+        taskName: 'Login Guard',
+        objective: 'Implement login guard. Why: keep auth flows deterministic',
+        scopeItems: ['add route guard'],
+        directories: ['src/', 'tests/'],
+      },
+    });
+
+    const sessionPath = path.join(tempDir, '.grabby', 'session', 'GRAB-IMODE-001.json');
+    expect(fs.existsSync(sessionPath)).toBe(true);
+    expect(fs.existsSync(path.join(contractsDir, 'GRAB-IMODE-001.fc.md'))).toBe(false);
+
+    const session = JSON.parse(fs.readFileSync(sessionPath, 'utf8'));
+    expect(session.currentPhase).toBe('intake');
+    expect(session.lastInteractionPoint).toBe('after-ticket-intake');
+    expect(consoleSpy.mock.calls.map((call) => call.join(' ')).join('\n')).toContain('INTERACTIVE BREAKPOINT');
+    expect(consoleSpy.mock.calls.map((call) => call.join(' ')).join('\n')).toContain('Next command: grabby resume');
+
+    mockRl.restore();
+    consoleSpy.mockRestore();
+  });
+
   it('returns null from ticket wizard when no request or structured fields are provided', async () => {
     const consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
     const rl = {
@@ -587,6 +628,107 @@ describe('Interactive Workflow Runtimes', () => {
     consoleSpy.mockRestore();
   });
 
+  it('runs interactive breakpoints in sequence and saves the approved plan hash during orchestration', async () => {
+    const consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
+    const orchestratedRuntime = createQuickRuntime({
+      backlog: jest.fn((fileName) => {
+        fs.writeFileSync(path.join(contractsDir, fileName.replace('.fc.md', '.backlog.yaml')), yaml.stringify({
+          epic: 'demo',
+          tasks: [{ id: 'TASK-1', title: 'demo' }],
+        }));
+      }),
+      plan: jest.fn((fileName) => {
+        fs.writeFileSync(path.join(contractsDir, fileName.replace('.fc.md', '.plan.yaml')), yaml.stringify({
+          status: 'pending_approval',
+          files: [{ action: 'modify', path: 'src/login-guard.js', reason: 'guard flow' }],
+          context: ['ARCH:auth-module@v1'],
+        }));
+      }),
+    });
+
+    await orchestratedRuntime.runTaskBreakdownWorkflow({}, 'implement login guard', {
+      orchestrate: true,
+      nonInteractive: true,
+      interactiveMode: { enabled: true, autoContinue: true },
+      input: {
+        request: 'implement login guard',
+        ticketId: 'GRAB-IMODE-002',
+        who: 'developers',
+        what: 'implement login guard',
+        why: 'keep auth flows deterministic',
+        dod: ['tests pass', 'lint passes'],
+        taskName: 'Login Guard',
+        objective: 'Implement login guard. Why: keep auth flows deterministic',
+        scopeItems: ['add route guard', 'cover login redirect'],
+        nonGoals: ['no auth provider rewrite'],
+        directories: ['src/', 'tests/'],
+        constraints: 'stay bounded',
+        dependencies: 'none',
+        doneWhen: ['tests pass', 'lint passes'],
+        testing: 'Unit: tests/login-guard.test.js',
+        securityImpact: 'auth flow reviewed',
+      },
+    });
+
+    const sessionPath = path.join(tempDir, '.grabby', 'session', 'GRAB-IMODE-002.json');
+    const session = JSON.parse(fs.readFileSync(sessionPath, 'utf8'));
+    expect(fs.existsSync(path.join(contractsDir, 'GRAB-IMODE-002.fc.md'))).toBe(true);
+    expect(fs.existsSync(path.join(contractsDir, 'GRAB-IMODE-002.plan.yaml'))).toBe(true);
+    expect(session.currentPhase).toBe('execution_handoff');
+    expect(session.lastInteractionPoint).toBe('after-plan-generated');
+    expect(session.approvedPlanHash).toBeTruthy();
+
+    const output = consoleSpy.mock.calls.map((call) => call.join(' ')).join('\n');
+    expect(output).toContain('Breakpoint: after-ticket-intake');
+    expect(output).toContain('Breakpoint: after-contract-draft');
+    expect(output).toContain('Breakpoint: after-plan-generated');
+
+    consoleSpy.mockRestore();
+  });
+
+  it('reframes the next task via role switching and resumes from saved interactive session state', async () => {
+    const consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
+    const sessionDir = path.join(tempDir, '.grabby', 'session');
+    fs.mkdirSync(sessionDir, { recursive: true });
+    fs.writeFileSync(path.join(sessionDir, 'GRAB-IMODE-003.json'), JSON.stringify({
+      ticketId: 'GRAB-IMODE-003',
+      currentPhase: 'intake',
+      lastInteractionPoint: 'after-ticket-intake',
+      selectedRole: 'dev',
+    }, null, 2));
+
+    await runtime.runTaskBreakdownWorkflow({}, 'implement login guard', {
+      nonInteractive: true,
+      interactiveMode: { enabled: true, nextAction: 'switch-role', selectedRole: 'tester' },
+      input: {
+        request: 'implement login guard',
+        ticketId: 'GRAB-IMODE-003',
+        who: 'developers',
+        what: 'implement login guard',
+        why: 'keep auth flows deterministic',
+        dod: ['tests pass', 'lint passes'],
+        taskName: 'Login Guard',
+        objective: 'Implement login guard. Why: keep auth flows deterministic',
+        scopeItems: ['add route guard'],
+        nonGoals: ['no auth provider rewrite'],
+        directories: ['src/', 'tests/'],
+        constraints: 'stay bounded',
+        dependencies: 'none',
+        doneWhen: ['tests pass', 'lint passes'],
+        testing: 'Unit: tests/login-guard.test.js',
+      },
+    });
+
+    const session = JSON.parse(fs.readFileSync(path.join(sessionDir, 'GRAB-IMODE-003.json'), 'utf8'));
+    expect(session.selectedRole).toBe('tester');
+
+    const output = consoleSpy.mock.calls.map((call) => call.join(' ')).join('\n');
+    expect(output).toContain('Resuming interactive session');
+    expect(output).toContain('Role reframed: Test Engineer');
+
+    consoleSpy.mockRestore();
+  });
+
   it('creates orchestrated execution artifacts in non-interactive mode', async () => {
     const consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
     const orchestrationRuntime = createQuickRuntime({
@@ -631,7 +773,11 @@ describe('Interactive Workflow Runtimes', () => {
     expect(fs.existsSync(path.join(contractsDir, 'GRABBY-106.audit.md'))).toBe(true);
     expect(fs.existsSync(path.join(contractsDir, 'GRABBY-106.session.yaml'))).toBe(true);
     expect(mockCommandHandlers.backlog).not.toHaveBeenCalled();
-    expect(consoleSpy.mock.calls.map((call) => call.join(' ')).join('\n')).toContain('ORCHESTRATION COMPLETE');
+    const output = consoleSpy.mock.calls.map((call) => call.join(' ')).join('\n');
+    expect(output).toContain('ORCHESTRATION COMPLETE');
+    expect(output).toContain('Stage transitions:');
+    expect(output).toContain('verification -> Tess (Test Engineer)');
+    expect(output).toContain('Tess');
 
     consoleSpy.mockRestore();
   });
@@ -1197,7 +1343,7 @@ Cancel execution.
     consoleSpy.mockRestore();
   });
 
-  it('renders generated test templates through the dev test workflow', async () => {
+  it('renders generated test templates through the test engineer workflow', async () => {
     createTestContract('testable', `# FC: Testable
 **ID:** FC-400 | **Status:** draft
 
@@ -1223,7 +1369,7 @@ Generate tests.
     const consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
     const mockRl = mockReadlineAnswers(['n']);
 
-    await runtime.executeAgentCommand('dev', 'test-suite', ['testable.fc.md']);
+    await runtime.executeAgentCommand('tester', 'test-suite', ['testable.fc.md']);
 
     const output = consoleSpy.mock.calls.map((call) => call.join(' ')).join('\n');
     expect(output).toContain('src/tests/useLogin.test.ts');
@@ -1234,7 +1380,7 @@ Generate tests.
     consoleSpy.mockRestore();
   });
 
-  it('saves generated test templates and skips existing ones', async () => {
+  it('saves generated test templates and skips existing ones through the test engineer workflow', async () => {
     createTestContract('save-tests', `# FC: Save Tests
 **ID:** FC-401 | **Status:** draft
 
@@ -1261,7 +1407,7 @@ Generate tests.
     const consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
     const mockRl = mockReadlineAnswers(['y']);
 
-    await runtime.executeAgentCommand('dev', 'test-suite', ['save-tests.fc.md']);
+    await runtime.executeAgentCommand('tester', 'test-suite', ['save-tests.fc.md']);
 
     expect(fs.existsSync(path.join(tempDir, 'src', 'tests', 'SessionPanel.test.ts'))).toBe(true);
     const output = consoleSpy.mock.calls.map((call) => call.join(' ')).join('\n');
@@ -1543,7 +1689,7 @@ describe('Integration Tests', () => {
   });
 
   it('should handle workflow with all agent types', () => {
-    const agentTypes = ['architect', 'validator', 'strategist', 'dev', 'auditor', 'quick'];
+    const agentTypes = ['analyst', 'architect', 'validator', 'strategist', 'dev', 'tester', 'auditor', 'quick'];
     agentTypes.forEach((type) => {
       const agent = runtime.loadAgent(type);
       expect(agent).not.toBeNull();

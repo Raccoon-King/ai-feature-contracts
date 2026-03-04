@@ -43,6 +43,29 @@ Build the ticket wizard.
     });
   });
 
+  it('deduplicates mixed-layout contracts by ID and keeps the active artifact path', () => {
+    const legacyActiveDir = path.join(tempDir, 'contracts', 'active');
+    fs.mkdirSync(legacyActiveDir, { recursive: true });
+    writeContract('GRAB-7.fc.md', `# FC: Root Duplicate
+**ID:** GRAB-7 | **Status:** draft
+`);
+    fs.writeFileSync(path.join(legacyActiveDir, 'GRAB-7.fc.md'), `# FC: Active Duplicate
+**ID:** GRAB-7 | **Status:** approved
+`, 'utf8');
+    fs.writeFileSync(path.join(legacyActiveDir, 'GRAB-7.plan.yaml'), 'status: approved\n', 'utf8');
+
+    const listed = features.listContractFeatures(tempDir);
+    expect(listed.filter((feature) => feature.id === 'GRAB-7')).toHaveLength(1);
+
+    const status = features.getContractFeatureStatus('GRAB-7', tempDir);
+    expect(status).toMatchObject({
+      id: 'GRAB-7',
+      status: 'approved',
+      contractPath: 'contracts/active/GRAB-7.fc.md',
+      planPath: 'contracts/active/GRAB-7.plan.yaml',
+    });
+  });
+
   it('resolves feature status paths for plan and audit artifacts', () => {
     writeContract('GRAB-2.fc.md', `# FC: Feature Tracking
 **ID:** GRAB-2 | **Status:** draft
@@ -54,6 +77,50 @@ Build the ticket wizard.
     expect(status.planPath).toBe('contracts/GRAB-2.plan.yaml');
     expect(status.auditPath).toBe('contracts/GRAB-2.audit.md');
     expect(status.contractPath).toBe('contracts/GRAB-2.fc.md');
+  });
+
+  it('falls back to the active contracts directory when an artifact path is requested before the contract exists', () => {
+    const legacyActiveDir = path.join(tempDir, 'contracts', 'active');
+    fs.mkdirSync(legacyActiveDir, { recursive: true });
+
+    const paths = features.getFeatureArtifactPaths('grab-ghost-1', tempDir);
+    expect(paths.activeDir).toBe(legacyActiveDir);
+    expect(paths.contractPath).toBe(path.join(legacyActiveDir, 'GRAB-GHOST-1.fc.md'));
+    expect(paths.planPath).toBe(path.join(legacyActiveDir, 'GRAB-GHOST-1.plan.yaml'));
+    expect(paths.auditPath).toBe(path.join(legacyActiveDir, 'GRAB-GHOST-1.audit.md'));
+  });
+
+  it('defaults discovery to the root contracts directory when no live contract directories exist yet', () => {
+    expect(features.getCandidateContractsDirs(tempDir)).toEqual([
+      path.join(tempDir, 'contracts'),
+    ]);
+    expect(features.listContractFeatures(tempDir)).toEqual([]);
+  });
+
+  it('prefers the legacy active directory first when both mixed-layout directories exist', () => {
+    const legacyActiveDir = path.join(tempDir, 'contracts', 'active');
+    fs.mkdirSync(legacyActiveDir, { recursive: true });
+
+    expect(features.getCandidateContractsDirs(tempDir)).toEqual([
+      legacyActiveDir,
+      path.join(tempDir, 'contracts'),
+    ]);
+  });
+
+  it('skips malformed contracts during mixed-layout discovery', () => {
+    const legacyActiveDir = path.join(tempDir, 'contracts', 'active');
+    fs.mkdirSync(legacyActiveDir, { recursive: true });
+    writeContract('BROKEN.fc.md', '# not a valid feature contract\n');
+    fs.writeFileSync(path.join(legacyActiveDir, 'GRAB-8.fc.md'), `# FC: Valid Active Contract
+**ID:** GRAB-8 | **Status:** approved
+`, 'utf8');
+
+    expect(features.listContractFeatures(tempDir)).toMatchObject([
+      {
+        id: 'GRAB-8',
+        contractPath: 'contracts/active/GRAB-8.fc.md',
+      },
+    ]);
   });
 
   it('generates and reloads the cached feature index', () => {

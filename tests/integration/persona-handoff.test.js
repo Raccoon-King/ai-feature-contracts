@@ -36,7 +36,7 @@ afterEach(() => {
 
 describe('Agent Loading', () => {
   it('should load all required agents', () => {
-    const agents = ['contract-architect', 'scope-validator', 'plan-strategist', 'dev-agent', 'auditor'];
+    const agents = ['analyst', 'contract-architect', 'scope-validator', 'plan-strategist', 'dev-agent', 'auditor'];
 
     agents.forEach(agentName => {
       const agent = core.loadAgent(AGENTS_DIR, agentName);
@@ -47,10 +47,12 @@ describe('Agent Loading', () => {
 
   it('should load agents by alias', () => {
     const aliases = {
+      'analyst': 'Ari',
       'architect': 'Archie',
       'validator': 'Val',
       'strategist': 'Sage',
       'dev': 'Dev',
+      'tester': 'Tess',
       'auditor': 'Iris',
     };
 
@@ -73,6 +75,12 @@ describe('Agent Loading', () => {
 // ============================================================================
 
 describe('Persona Selection', () => {
+  it('should select analyst for intake tasks', () => {
+    const persona = personas.selectPersonaForTask('clarify this request and turn it into a ticket');
+    expect(persona.agentKey).toMatch(/analyst/i);
+    expect(persona.agentName).toBe('Ari');
+  });
+
   it('should select architect for contract creation tasks', () => {
     const persona = personas.selectPersonaForTask('create a new feature contract');
     expect(persona.agentKey).toMatch(/architect/i);
@@ -97,6 +105,12 @@ describe('Persona Selection', () => {
     expect(persona.agentName).toBe('Dev');
   });
 
+  it('should select tester for verification tasks', () => {
+    const persona = personas.selectPersonaForTask('improve regression coverage for this change');
+    expect(persona.agentKey).toMatch(/tester/i);
+    expect(persona.agentName).toBe('Tess');
+  });
+
   it('should select auditor for review tasks', () => {
     const persona = personas.selectPersonaForTask('audit the implementation');
     expect(persona.agentKey).toMatch(/auditor/i);
@@ -108,7 +122,13 @@ describe('Persona Selection', () => {
 // ARCHIE → VAL HANDOFF
 // ============================================================================
 
-describe('Archie → Val Handoff', () => {
+describe('Ari -> Archie -> Val Handoff', () => {
+  it('should use analyst intake before contract authoring', () => {
+    const analyst = core.loadAgent(AGENTS_DIR, 'analyst');
+    expect(analyst.agent.metadata.name).toBe('Ari');
+    expect(analyst.agent.persona.role).toContain('Request Analyst');
+  });
+
   it('should create contract ready for validation', () => {
     const archie = core.loadAgent(AGENTS_DIR, 'architect');
     expect(archie.agent.metadata.name).toBe('Archie');
@@ -267,7 +287,7 @@ describe('Sage → Dev Handoff', () => {
 // ============================================================================
 
 describe('Dev → Iris Handoff', () => {
-  it('should prepare implementation for audit', () => {
+  it('should prepare implementation for verification before audit', () => {
     const dev = core.loadAgent(AGENTS_DIR, 'dev');
     expect(dev.agent.metadata.name).toBe('Dev');
 
@@ -277,6 +297,10 @@ describe('Dev → Iris Handoff', () => {
       testsPass: true,
       lintPass: true,
     };
+
+    // Tess verifies
+    const tester = core.loadAgent(AGENTS_DIR, 'tester');
+    expect(tester.agent.metadata.name).toBe('Tess');
 
     // Iris audits
     const iris = core.loadAgent(AGENTS_DIR, 'auditor');
@@ -310,8 +334,12 @@ describe('Dev → Iris Handoff', () => {
 // ============================================================================
 
 describe('Full Handoff Chain', () => {
-  it('should complete Archie → Val → Sage → Dev → Iris flow', () => {
-    // 1. Archie creates contract
+  it('should complete Ari -> Archie -> Val -> Sage -> Dev -> Tess -> Iris flow', () => {
+    // 1. Ari analyzes and routes the request
+    const analyst = core.loadAgent(AGENTS_DIR, 'analyst');
+    expect(analyst.agent.metadata.name).toBe('Ari');
+
+    // 2. Archie creates contract
     const archie = core.loadAgent(AGENTS_DIR, 'architect');
     expect(archie.agent.metadata.name).toBe('Archie');
 
@@ -344,12 +372,12 @@ Complete feature
 - Unit tests
 `;
 
-    // 2. Val validates
+    // 3. Val validates
     const val = core.loadAgent(AGENTS_DIR, 'validator');
     const validation = core.validateContract(contractContent);
     expect(validation.valid).toBe(true);
 
-    // 3. Sage plans
+    // 4. Sage plans
     const sage = core.loadAgent(AGENTS_DIR, 'strategist');
     const plan = {
       contract: 'full-flow-feature.fc.md',
@@ -360,17 +388,25 @@ Complete feature
       ],
     };
 
-    // 4. Dev implements
+    // 5. Dev implements
     const dev = core.loadAgent(AGENTS_DIR, 'dev');
     const implementation = {
       filesCreated: plan.files.map(f => f.path),
       testsPass: true,
     };
 
-    // 5. Iris audits
+    // 6. Tess verifies
+    const tester = core.loadAgent(AGENTS_DIR, 'tester');
+    const verification = {
+      testsPass: implementation.testsPass,
+      filesCovered: implementation.filesCreated.length,
+    };
+
+    // 7. Iris audits
     const iris = core.loadAgent(AGENTS_DIR, 'auditor');
     const auditPassed = implementation.filesCreated.length === plan.files.length
-      && implementation.testsPass;
+      && verification.testsPass
+      && tester.agent.metadata.name === 'Tess';
 
     expect(auditPassed).toBe(true);
   });
@@ -393,10 +429,12 @@ Complete feature
 describe('Persona Metadata', () => {
   it('should have consistent persona information', () => {
     const expectedPersonas = [
+      { alias: 'analyst', name: 'Ari', role: 'Analyst' },
       { alias: 'architect', name: 'Archie', role: 'Architect' },
       { alias: 'validator', name: 'Val', role: 'Validator' },
       { alias: 'strategist', name: 'Sage', role: 'Strategist' },
       { alias: 'dev', name: 'Dev', role: 'Agent' },
+      { alias: 'tester', name: 'Tess', role: 'Test Engineer' },
       { alias: 'auditor', name: 'Iris', role: 'Auditor' },
     ];
 
@@ -408,7 +446,7 @@ describe('Persona Metadata', () => {
   });
 
   it('should have greeting for each persona', () => {
-    const aliases = ['architect', 'validator', 'strategist', 'dev', 'auditor'];
+    const aliases = ['analyst', 'architect', 'validator', 'strategist', 'dev', 'tester', 'auditor'];
 
     aliases.forEach(alias => {
       const agent = core.loadAgent(AGENTS_DIR, alias);
@@ -418,7 +456,7 @@ describe('Persona Metadata', () => {
   });
 
   it('should have persona identity defined', () => {
-    const aliases = ['architect', 'validator', 'strategist', 'dev', 'auditor'];
+    const aliases = ['analyst', 'architect', 'validator', 'strategist', 'dev', 'tester', 'auditor'];
 
     aliases.forEach(alias => {
       const agent = core.loadAgent(AGENTS_DIR, alias);

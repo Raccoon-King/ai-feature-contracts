@@ -12,6 +12,7 @@ const {
 const {
   refreshFeatureIndex,
   listContractFeatures,
+  getCandidateContractsDirs,
 } = require('../lib/features.cjs');
 
 describe('Contract Tracking Mode', () => {
@@ -155,6 +156,31 @@ Local feature for testing.
       const result = refreshFeatureIndex(tempDir);
       expect(result.features.length).toBe(0);
       expect(result.trackingMode).toBe('local-only');
+    });
+
+    it('uses only the local contracts directory when tracking mode is local-only', () => {
+      const config = defaultConfig();
+      config.contracts.trackingMode = 'local-only';
+      saveConfig(config, tempDir);
+
+      const rootContractsDir = path.join(tempDir, 'contracts');
+      const localContractsDir = path.join(tempDir, '.grabby', 'contracts');
+      fs.mkdirSync(rootContractsDir, { recursive: true });
+      fs.mkdirSync(localContractsDir, { recursive: true });
+      fs.writeFileSync(path.join(rootContractsDir, 'ROOT-001.fc.md'), `# FC: Root Feature
+**ID:** ROOT-001 | **Status:** draft
+`, 'utf8');
+      fs.writeFileSync(path.join(localContractsDir, 'LOCAL-002.fc.md'), `# FC: Local Feature
+**ID:** LOCAL-002 | **Status:** approved
+`, 'utf8');
+
+      expect(getCandidateContractsDirs(tempDir)).toEqual([localContractsDir]);
+      expect(listContractFeatures(tempDir)).toMatchObject([
+        {
+          id: 'LOCAL-002',
+          contractPath: '.grabby/contracts/LOCAL-002.fc.md',
+        },
+      ]);
     });
   });
 });

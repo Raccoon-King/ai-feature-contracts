@@ -145,6 +145,61 @@ Validation commands run:
     });
   });
 
+  it('discovers and closes root contracts even when contracts/active exists', () => {
+    const rootContractsDir = path.join(tempDir, 'contracts');
+    fs.writeFileSync(path.join(rootContractsDir, 'GRAB-ROOT-1.fc.md'), `# FC: Root Layout
+**ID:** GRAB-ROOT-1 | **Status:** complete
+
+## Objective
+Archive the root contract.
+
+## Scope
+- Keep root contracts discoverable.
+
+## Directories
+**Allowed:** \`contracts/\`
+**Restricted:** \`node_modules/\`
+
+## Files
+| Action | Path | Reason |
+|--------|------|--------|
+| modify | \`contracts/GRAB-ROOT-1.fc.md\` | contract |
+
+## Dependencies
+- Allowed: existing packages only
+- Banned: moment, lodash, jquery
+
+## Security Considerations
+- [ ] None
+
+## Code Quality
+- [ ] Covered
+
+## Done When
+- [ ] Tests pass (80%+ coverage)
+
+## Testing
+- Unit
+`, 'utf8');
+    fs.writeFileSync(path.join(rootContractsDir, 'GRAB-ROOT-1.plan.yaml'), yaml.stringify({
+      status: 'complete',
+      files: [{ path: 'contracts/GRAB-ROOT-1.fc.md' }],
+    }), 'utf8');
+
+    expect(features.listContractFeatures(tempDir).find((feature) => feature.id === 'GRAB-ROOT-1')).toMatchObject({
+      id: 'GRAB-ROOT-1',
+      contractPath: 'contracts/GRAB-ROOT-1.fc.md',
+    });
+
+    features.createArchiveBundle('GRAB-ROOT-1', tempDir);
+
+    expect(fs.existsSync(path.join(rootContractsDir, 'GRAB-ROOT-1.fc.md'))).toBe(false);
+    expect(features.getContractFeatureStatus('GRAB-ROOT-1', tempDir)).toMatchObject({
+      id: 'GRAB-ROOT-1',
+      status: 'archived',
+    });
+  });
+
   it('enforces ID mismatch safety', () => {
     writeCompletedFeature('GRAB-ARCH-3');
     const contractPath = path.join(activeDir, 'GRAB-ARCH-3.fc.md');

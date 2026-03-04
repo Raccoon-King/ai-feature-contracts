@@ -666,7 +666,7 @@ describe('Agent Functions', () => {
     });
 
     it('should load all standard agents', () => {
-      const agents = ['architect', 'validator', 'strategist', 'dev', 'auditor', 'quick'];
+      const agents = ['analyst', 'architect', 'validator', 'strategist', 'dev', 'tester', 'auditor', 'quick'];
       agents.forEach(alias => {
         const agent = core.loadAgent(AGENTS_DIR, alias);
         expect(agent).not.toBeNull();
@@ -677,7 +677,7 @@ describe('Agent Functions', () => {
   describe('listAgents', () => {
     it('should list all agents', () => {
       const agents = core.listAgents(AGENTS_DIR);
-      expect(agents.length).toBe(6);
+      expect(agents.length).toBe(8);
     });
 
     it('should return agent metadata', () => {

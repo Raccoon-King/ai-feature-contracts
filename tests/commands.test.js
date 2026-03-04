@@ -481,6 +481,37 @@ Archive me
     expect(fs.readFileSync(path.join(tempDir, 'contracts', 'FC-123.audit.md'), 'utf8')).toContain('- Status: complete');
   });
 
+  it('pauses audit at the interactive verification breakpoint when no scripted decision is provided', () => {
+    const logger = createLogger();
+    const commands = [];
+    const context = createProjectContext({ cwd: tempDir, pkgRoot: PKG_ROOT });
+    const handlers = createCommandHandlers({
+      context,
+      logger,
+      execSyncImpl: (command) => {
+        commands.push(command);
+      },
+    });
+
+    writeValidContract(tempDir, 'valid-feature.fc.md', 'approved');
+    fs.writeFileSync(path.join(tempDir, 'grabby.config.json'), JSON.stringify({
+      interactive: { enabled: true },
+      contracts: { directory: 'contracts', trackingMode: 'tracked' },
+    }, null, 2));
+    fs.writeFileSync(path.join(tempDir, 'contracts', 'FC-123.plan.yaml'), yaml.stringify({
+      status: 'executing',
+      files: [],
+    }), 'utf8');
+
+    handlers.audit('valid-feature.fc.md');
+
+    expect(commands).toEqual([]);
+    expect(fs.existsSync(path.join(tempDir, 'contracts', 'FC-123.audit.md'))).toBe(false);
+    expect(fs.existsSync(path.join(tempDir, '.grabby', 'session', 'FC-123.json'))).toBe(true);
+    expect(logger.lines.join('\n')).toContain('INTERACTIVE BREAKPOINT');
+    expect(logger.lines.join('\n')).toContain('Audit paused before test execution.');
+  });
+
   it('lists an empty contract directory clearly', () => {
     const logger = createLogger();
     const context = createProjectContext({ cwd: tempDir, pkgRoot: PKG_ROOT });
@@ -516,6 +547,9 @@ Archive me
     expect(fs.readFileSync(path.join(tempDir, 'contracts', 'PROJECT-BASELINE.fc.md'), 'utf8')).toContain('React application');
     expect(logger.lines.join('\n')).toContain('.grabby/config.json');
     expect(logger.lines.join('\n')).toContain('Baseline assessment:');
+    expect(logger.lines.join('\n')).toContain('Setup summary');
+    expect(logger.lines.join('\n')).toContain('Mode: brownfield');
+    expect(logger.lines.join('\n')).toContain('Review contracts/PROJECT-BASELINE.fc.md and contracts/SYSTEM-BASELINE.fc.md');
   });
 
   it('preserves existing baseline contracts during init', async () => {
@@ -536,6 +570,44 @@ Archive me
     expect(fs.readFileSync(path.join(contractsDir, 'SYSTEM-BASELINE.fc.md'), 'utf8')).toBe('# existing system baseline\n');
     expect(fs.existsSync(path.join(contractsDir, 'PROJECT-BASELINE.fc.md'))).toBe(true);
     expect(logger.lines.join('\n')).toContain('Preserved existing contracts/SYSTEM-BASELINE.fc.md');
+    expect(logger.lines.join('\n')).toContain('Preserved:');
+  });
+
+  it('preserves existing brownfield docs and local overrides during init', async () => {
+    const logger = createLogger();
+    const context = createProjectContext({ cwd: tempDir, pkgRoot: PKG_ROOT });
+    const handlers = createCommandHandlers({ context, logger });
+
+    fs.mkdirSync(path.join(tempDir, 'docs'), { recursive: true });
+    fs.mkdirSync(path.join(tempDir, '.clinerules'), { recursive: true });
+    fs.writeFileSync(path.join(tempDir, 'docs', 'ARCHITECTURE_INDEX.md'), '# existing architecture\n', 'utf8');
+    fs.writeFileSync(path.join(tempDir, '.clinerules', '90-local-overrides.md'), '# local overrides\n', 'utf8');
+    fs.writeFileSync(path.join(tempDir, 'package.json'), JSON.stringify({
+      name: 'brownfield-demo',
+      scripts: { test: 'jest' },
+    }), 'utf8');
+
+    await handlers.init();
+
+    expect(fs.readFileSync(path.join(tempDir, 'docs', 'ARCHITECTURE_INDEX.md'), 'utf8')).toBe('# existing architecture\n');
+    expect(fs.readFileSync(path.join(tempDir, '.clinerules', '90-local-overrides.md'), 'utf8')).toBe('# local overrides\n');
+    expect(logger.lines.join('\n')).toContain('Preserved:');
+    expect(logger.lines.join('\n')).toContain('docs/ARCHITECTURE_INDEX.md');
+    expect(logger.lines.join('\n')).toContain('.clinerules/90-local-overrides.md');
+  });
+
+  it('persists repo interactive defaults when init runs with interactive mode enabled', async () => {
+    const logger = createLogger();
+    const context = createProjectContext({ cwd: tempDir, pkgRoot: PKG_ROOT });
+    const handlers = createCommandHandlers({ context, logger });
+
+    await handlers.init({ interactive: true });
+
+    const repoConfig = JSON.parse(fs.readFileSync(path.join(tempDir, 'grabby.config.json'), 'utf8'));
+    const runtimeConfig = JSON.parse(fs.readFileSync(path.join(tempDir, '.grabby', 'config.json'), 'utf8'));
+    expect(repoConfig.interactive.enabled).toBe(true);
+    expect(runtimeConfig.interactive.enabled).toBe(true);
+    expect(logger.lines.join('\n')).toContain('Enabled interactive mode by default');
   });
 
   it('archives a completed feature and removes active artifacts', () => {
@@ -611,6 +683,48 @@ Archive this feature
     expect(logger.lines.join('\n')).toContain('Archived feature ARCH-1');
   });
 
+  it('pauses feature close at the archive confirmation breakpoint when interactive mode is enabled', () => {
+    const logger = createLogger();
+    const context = createProjectContext({ cwd: tempDir, pkgRoot: PKG_ROOT });
+    const handlers = createCommandHandlers({ context, logger });
+    const activeDir = path.join(tempDir, 'contracts', 'active');
+    fs.mkdirSync(activeDir, { recursive: true });
+    fs.writeFileSync(path.join(tempDir, 'grabby.config.json'), JSON.stringify({
+      interactive: { enabled: true },
+      contracts: { directory: 'contracts', trackingMode: 'tracked' },
+    }, null, 2));
+    fs.writeFileSync(path.join(activeDir, 'ARCH-PAUSE-1.fc.md'), `# Feature Contract: Archived Feature
+**ID:** ARCH-PAUSE-1 | **Status:** complete
+
+## Objective
+Archive this feature
+
+## Scope
+- Archive artifacts
+
+## Directories
+**Allowed:** \`contracts/\`
+
+## Files
+| Action | Path | Reason |
+|--------|------|--------|
+| modify | \`contracts/active/ARCH-PAUSE-1.fc.md\` | contract |
+
+## Done When
+- [ ] Tests pass (80%+ coverage)
+`, 'utf8');
+    fs.writeFileSync(path.join(activeDir, 'ARCH-PAUSE-1.plan.yaml'), yaml.stringify({
+      files: [{ path: 'contracts/active/ARCH-PAUSE-1.fc.md' }],
+      execution_guard: 'passed',
+    }), 'utf8');
+
+    handlers.featureClose('ARCH-PAUSE-1');
+
+    expect(fs.existsSync(path.join(activeDir, 'ARCH-PAUSE-1.fc.md'))).toBe(true);
+    expect(fs.existsSync(path.join(tempDir, '.grabby', 'session', 'ARCH-PAUSE-1.json'))).toBe(true);
+    expect(logger.lines.join('\n')).toContain('Archive paused for ARCH-PAUSE-1.');
+  });
+
   it('lists no active contracts immediately after feature close', () => {
     const closeLogger = createLogger();
     const listLogger = createLogger();
@@ -657,6 +771,64 @@ Archive it
     expect(fs.existsSync(path.join(activeDir, 'ARCH-LIST-1.fc.md'))).toBe(false);
     expect(listLogger.lines.join('\n')).toContain('No contracts found.');
     expect(listLogger.lines.join('\n')).not.toContain('ARCH-LIST-1');
+  });
+
+  it('closes root contracts and refreshes list output even when contracts/active exists', () => {
+    const closeLogger = createLogger();
+    const listLogger = createLogger();
+    const context = createProjectContext({ cwd: tempDir, pkgRoot: PKG_ROOT });
+    const closeHandlers = createCommandHandlers({ context, logger: closeLogger });
+    const listHandlers = createCommandHandlers({ context, logger: listLogger });
+    const activeDir = path.join(tempDir, 'contracts', 'active');
+    const rootContractsDir = path.join(tempDir, 'contracts');
+    fs.mkdirSync(activeDir, { recursive: true });
+    fs.writeFileSync(path.join(rootContractsDir, 'ROOT-LIST-1.fc.md'), `# FC: Root Listed
+**ID:** ROOT-LIST-1 | **Status:** complete
+
+## Objective
+Archive the root contract safely.
+
+## Scope
+- Remove it from the live list.
+
+## Directories
+**Allowed:** \`contracts/\`
+**Restricted:** \`node_modules/\`
+
+## Files
+| Action | Path | Reason |
+|--------|------|--------|
+| modify | \`contracts/ROOT-LIST-1.fc.md\` | contract |
+
+## Dependencies
+- Allowed: existing packages only
+- Banned: moment, lodash, jquery
+
+## Security Considerations
+- [ ] None
+
+## Code Quality
+- [ ] Covered
+
+## Done When
+- [ ] Tests pass (80%+ coverage)
+- [ ] Lint passes
+
+## Testing
+- Unit
+`, 'utf8');
+    fs.writeFileSync(path.join(rootContractsDir, 'ROOT-LIST-1.plan.yaml'), yaml.stringify({
+      status: 'complete',
+      files: [{ path: 'contracts/ROOT-LIST-1.fc.md' }],
+      execution_guard: 'passed',
+    }), 'utf8');
+
+    closeHandlers.featureClose('ROOT-LIST-1');
+    listHandlers.list();
+
+    expect(fs.existsSync(path.join(rootContractsDir, 'ROOT-LIST-1.fc.md'))).toBe(false);
+    expect(listLogger.lines.join('\n')).not.toContain('ROOT-LIST-1');
+    expect(closeLogger.lines.join('\n')).toContain('Archived feature ROOT-LIST-1');
   });
 
   it('records explicit keep dispositions for hanging contracts', () => {

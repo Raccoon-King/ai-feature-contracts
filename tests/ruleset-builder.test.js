@@ -1,6 +1,7 @@
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
+
 jest.mock('readline', () => ({
   createInterface: jest.fn(),
 }));
@@ -12,7 +13,14 @@ jest.mock('../lib/ai-complete.cjs', () => ({
 
 const readline = require('readline');
 const { callLLM, getAvailableProvider } = require('../lib/ai-complete.cjs');
-const { interactiveCreateRuleset, resolveInputFiles, summarizeFiles } = require('../lib/ruleset-builder.cjs');
+const {
+  interactiveCreateRuleset,
+  runRulesetWizard,
+  createRulesetFromMode,
+  createFallbackRuleset,
+  resolveInputFiles,
+  summarizeFiles,
+} = require('../lib/ruleset-builder.cjs');
 
 describe('ruleset builder helpers', () => {
   let tempDir;
@@ -63,25 +71,51 @@ describe('ruleset builder helpers', () => {
     expect(longOnly).toContain('...');
   });
 
-  it('creates a fallback ruleset without a provider', async () => {
+  it('builds deterministic fallback ruleset content', () => {
+    const content = createFallbackRuleset({
+      title: 'Team Rules',
+      goal: 'Keep pull requests scoped',
+      references: ['README.md'],
+      mode: 'create-local',
+    });
+    expect(content).toContain('# RULESET: Team Rules');
+    expect(content).toContain('- Keep pull requests scoped');
+    expect(content).toContain('- README.md');
+  });
+
+  it('creates an imported ruleset without a provider under docs/rulesets', async () => {
     getAvailableProvider.mockReturnValue(null);
     const logger = { log: jest.fn() };
 
-    const outPath = await interactiveCreateRuleset(tempDir, {
+    const outPath = await createRulesetFromMode(tempDir, {
       logger,
+      mode: 'import-existing',
       goal: 'Keep pull requests scoped',
-      title: 'Team Rules',
+      title: 'Imported Team Rules',
       pathsCsv: 'README.md, docs',
     });
 
     const content = fs.readFileSync(outPath, 'utf8');
-    expect(path.basename(outPath)).toBe('team-rules.ruleset.md');
-    expect(content).toContain('# RULESET: Team Rules');
-    expect(content).toContain('- Keep pull requests scoped');
+    expect(path.relative(tempDir, outPath).replace(/\\/g, '/')).toBe('docs/rulesets/imported-team-rules.ruleset.md');
+    expect(content).toContain('# RULESET: Imported Team Rules');
     expect(content).toContain('- README.md');
     expect(content).toContain('- docs/guide.md');
     expect(logger.log).toHaveBeenCalledWith(expect.stringContaining('Included context from 2 file(s).'));
-    expect(close).toHaveBeenCalled();
+  });
+
+  it('creates a local repo ruleset under .grabby/rulesets', async () => {
+    getAvailableProvider.mockReturnValue(null);
+
+    const outPath = await createRulesetFromMode(tempDir, {
+      logger: { log: () => {} },
+      mode: 'create-local',
+      goal: 'Define repo-local standards',
+      title: 'Local Rules',
+      pathsCsv: 'README.md',
+    });
+
+    expect(path.relative(tempDir, outPath).replace(/\\/g, '/')).toBe('.grabby/rulesets/local-rules.ruleset.md');
+    expect(fs.readFileSync(outPath, 'utf8')).toContain('Define repo-local standards');
   });
 
   it('uses the provider response and prefixes markdown headers when needed', async () => {
@@ -89,8 +123,9 @@ describe('ruleset builder helpers', () => {
     getAvailableProvider.mockReturnValue('openai');
     const logger = { log: jest.fn() };
 
-    const outPath = await interactiveCreateRuleset(tempDir, {
+    const outPath = await createRulesetFromMode(tempDir, {
       logger,
+      mode: 'create-local',
       goal: 'Document guardrails',
       title: 'Provider Rules',
       pathsCsv: 'README.md',
@@ -103,19 +138,27 @@ describe('ruleset builder helpers', () => {
       temperature: 0.3,
     }));
     expect(content.startsWith('# RULESET: Provider Rules')).toBe(true);
-    expect(content).toContain('Purpose');
+    expect(close).not.toHaveBeenCalled();
+  });
+
+  it('runs the import wizard interactively', async () => {
+    answers = ['1', 'Ingest existing standards', 'Imported Rules', 'README.md, docs'];
+    getAvailableProvider.mockReturnValue(null);
+
+    const outPath = await runRulesetWizard(tempDir, { logger: { log: () => {} } });
+
+    expect(path.relative(tempDir, outPath).replace(/\\/g, '/')).toBe('docs/rulesets/imported-rules.ruleset.md');
+    expect(readline.createInterface).toHaveBeenCalled();
     expect(close).toHaveBeenCalled();
   });
 
-  it('collects interactive answers when options are not prefilled', async () => {
-    answers = ['Set coding standards', '   ', 'README.md'];
+  it('runs the local ruleset wizard interactively', async () => {
+    answers = ['2', 'Local standards', 'Repo Rules', 'README.md'];
     getAvailableProvider.mockReturnValue(null);
 
     const outPath = await interactiveCreateRuleset(tempDir, { logger: { log: () => {} } });
 
-    expect(fs.readFileSync(outPath, 'utf8')).toContain('# RULESET: Custom Ruleset');
-    expect(fs.readFileSync(outPath, 'utf8')).toContain('- Set coding standards');
-    expect(readline.createInterface).toHaveBeenCalled();
+    expect(path.relative(tempDir, outPath).replace(/\\/g, '/')).toBe('.grabby/rulesets/repo-rules.ruleset.md');
     expect(close).toHaveBeenCalled();
   });
 });

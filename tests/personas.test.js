@@ -1,5 +1,5 @@
 const path = require('path');
-const { selectPersonaForTask } = require('../lib/personas.cjs');
+const { selectPersonaForTask, selectPersonaForStage, deriveWorkflowRoles } = require('../lib/personas.cjs');
 const { buildTaskBrief, getTaskBriefPath } = require('../lib/task-brief.cjs');
 
 describe('Persona selection', () => {
@@ -8,6 +8,14 @@ describe('Persona selection', () => {
 
     expect(persona.agentName).toBe('Conductor');
     expect(persona.mode).toBe('orchestration');
+  });
+
+  it('routes intake-style requests to the analyst persona', () => {
+    const persona = selectPersonaForTask('triage this request into a ticket');
+
+    expect(persona.agentKey).toBe('analyst');
+    expect(persona.agentName).toBe('Ari');
+    expect(persona.mode).toBe('analysis');
   });
 
   it('routes unit-test style work to the quick persona', () => {
@@ -45,6 +53,14 @@ describe('Persona selection', () => {
     }));
   });
 
+  it('routes verification-heavy requests to the test engineer persona', () => {
+    expect(selectPersonaForTask('close the regression coverage gap for this change')).toEqual(expect.objectContaining({
+      agentKey: 'tester',
+      mode: 'verification',
+      agentName: 'Tess',
+    }));
+  });
+
   it('routes explicit implementation and bug-fix requests without losing the original request text', () => {
     expect(selectPersonaForTask('implement the oauth callback flow')).toEqual(expect.objectContaining({
       agentKey: 'dev',
@@ -58,6 +74,69 @@ describe('Persona selection', () => {
     expect(selectPersonaForTask('')).toEqual(expect.objectContaining({
       agentKey: 'architect',
       request: '',
+    }));
+  });
+
+  it('selects dedicated owners for explicit workflow stages', () => {
+    expect(selectPersonaForStage('intake')).toEqual(expect.objectContaining({
+      agentKey: 'analyst',
+      agentName: 'Ari',
+    }));
+    expect(selectPersonaForStage('contract')).toEqual(expect.objectContaining({
+      agentKey: 'architect',
+      agentName: 'Archie',
+    }));
+    expect(selectPersonaForStage('execution', { quick: true })).toEqual(expect.objectContaining({
+      agentKey: 'quick',
+      agentName: 'Flash',
+    }));
+    expect(selectPersonaForStage('verification')).toEqual(expect.objectContaining({
+      agentKey: 'tester',
+      agentName: 'Tess',
+    }));
+  });
+
+  it('derives workflow roles from artifact state', () => {
+    expect(deriveWorkflowRoles({
+      request: 'new feature request',
+      hasContract: false,
+    })).toEqual(expect.objectContaining({
+      intake: expect.objectContaining({ agentKey: 'analyst' }),
+      primary: expect.objectContaining({ agentKey: 'architect' }),
+      next: expect.objectContaining({ agentKey: 'validator' }),
+    }));
+
+    expect(deriveWorkflowRoles({
+      request: 'validate this draft contract',
+      hasContract: true,
+      contractStatus: 'draft',
+      hasPlan: false,
+    })).toEqual(expect.objectContaining({
+      primary: expect.objectContaining({ agentKey: 'validator' }),
+      next: expect.objectContaining({ agentKey: 'strategist' }),
+    }));
+
+    expect(deriveWorkflowRoles({
+      request: 'implement the approved plan',
+      hasContract: true,
+      contractStatus: 'approved',
+      hasPlan: true,
+      planApproved: true,
+    })).toEqual(expect.objectContaining({
+      primary: expect.objectContaining({ agentKey: 'dev' }),
+      next: expect.objectContaining({ agentKey: 'tester' }),
+    }));
+
+    expect(deriveWorkflowRoles({
+      request: 'verify the implemented change',
+      hasContract: true,
+      contractStatus: 'approved',
+      hasPlan: true,
+      planApproved: true,
+      implementationComplete: true,
+    })).toEqual(expect.objectContaining({
+      primary: expect.objectContaining({ agentKey: 'tester' }),
+      next: expect.objectContaining({ agentKey: 'auditor' }),
     }));
   });
 });

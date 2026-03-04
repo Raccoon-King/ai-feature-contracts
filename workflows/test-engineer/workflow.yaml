@@ -1,0 +1,12 @@
+name: test-engineer
+description: Verification-stage workflow for regression coverage and test readiness
+agent: test-engineer
+
+steps:
+  - goal: Identify testable changes and missing verification coverage
+  - goal: Generate or review test templates for scoped files
+  - goal: Prepare the contract for audit with explicit verification evidence
+
+output:
+  type: verification
+  format: markdown

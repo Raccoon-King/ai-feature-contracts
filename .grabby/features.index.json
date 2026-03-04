@@ -1,7 +1,49 @@
 {
-  "generatedAt": "2026-03-04T00:00:16.461Z",
+  "generatedAt": "2026-03-04T03:38:32.397Z",
   "trackingMode": "tracked",
   "features": [
+    {
+      "id": "AGENT-201",
+      "title": "dedicated workflow agents",
+      "status": "archived",
+      "archivePath": ".grabby/history/history-001.yaml",
+      "closedAt": "2026-03-04T02:46:57.385Z",
+      "objective": "Define a dedicated agent architecture for Grabby's workflow.",
+      "type": "FEATURE_CONTRACT",
+      "files": [
+        "agents/analyst.agent.yaml",
+        "workflows\\analyze-request\\workflow.yaml",
+        "docs/AGENT_ARCHITECTURE.md",
+        "lib/personas.cjs",
+        "lib/interactive-workflows.cjs",
+        "lib/interactive-shell.cjs",
+        "lib/core.cjs",
+        "tests/personas.test.js",
+        "tests/interactive-shell.test.js",
+        "tests/core.test.js"
+      ]
+    },
+    {
+      "id": "AGENT-202",
+      "title": "test engineer and explicit orchestration",
+      "status": "archived",
+      "archivePath": ".grabby/history/history-001.yaml",
+      "closedAt": "2026-03-04T02:47:02.433Z",
+      "objective": "Add a dedicated Test Engineer role and make Grabby orchestration follow explicit stage transitions.",
+      "type": "FEATURE_CONTRACT",
+      "files": [
+        "agents/test-engineer.agent.yaml",
+        "workflows/test-engineer/workflow.yaml",
+        "docs/AGENT_ARCHITECTURE.md",
+        "lib/personas.cjs",
+        "lib/interactive-workflows.cjs",
+        "lib/interactive-shell.cjs",
+        "lib/core.cjs",
+        "tests/personas.test.js",
+        "tests/interactive-shell.test.js",
+        "tests/core.test.js"
+      ]
+    },
     {
       "id": "AIR-001",
       "title": "Airgapped Install Support",
@@ -241,6 +283,27 @@
       ]
     },
     {
+      "id": "GRAB-IMODE-001",
+      "title": "interactive mode",
+      "status": "archived",
+      "archivePath": ".grabby/history/history-001.yaml",
+      "closedAt": "2026-03-04T03:02:31.579Z",
+      "objective": "Add an opt-in interactive mode with explicit decision breakpoints, role-switch suggestions, and resumable session state.",
+      "type": "FEATURE_CONTRACT",
+      "files": [
+        "lib/config.cjs",
+        "lib/interactive-shell.cjs",
+        "lib/interactive-workflows.cjs",
+        "lib/commands.cjs",
+        "bin/index.cjs",
+        "tests/config.test.js",
+        "tests/interactive-shell.test.js",
+        "tests/interactive-workflows.test.js",
+        "tests/commands.test.js",
+        "contracts/GRAB-IMODE-001.fc.md"
+      ]
+    },
+    {
       "id": "GRAB-INTAKE-002",
       "title": "Ticket Generator Wizard",
       "status": "archived",
@@ -277,6 +340,61 @@
         "README.md",
         "docs/EXECUTION_PROTOCOL.md",
         "tests/tracking-mode.test.js"
+      ]
+    },
+    {
+      "id": "GRAB-UX-001",
+      "title": "Replace flag-heavy setup and workflow entry with an intui...",
+      "status": "archived",
+      "archivePath": ".grabby/history/history-001.yaml",
+      "closedAt": "2026-03-04T03:11:34.807Z",
+      "objective": "Make Grabby menu-first and easier to operate by introducing a mature interactive home screen, settings management, ruleset setup wizards, and brand...",
+      "type": "FEATURE_CONTRACT",
+      "files": [
+        "lib/tui.cjs",
+        "bin/index.cjs",
+        "lib/config.cjs",
+        "lib/ruleset-builder.cjs",
+        "lib/interactive-shell.cjs",
+        "tests/tui.test.js",
+        "tests/ruleset-builder.test.js",
+        "tests/interactive-shell.test.js",
+        "contracts/GRAB-UX-001.fc.md"
+      ]
+    },
+    {
+      "id": "GRAB-UX-002",
+      "title": "Add a guided setup/onboarding wizard from the home menu s...",
+      "status": "archived",
+      "archivePath": ".grabby/history/history-001.yaml",
+      "closedAt": "2026-03-04T03:38:32.343Z",
+      "objective": "Add a guided setup and onboarding wizard to the new Grabby home menu so first-run and brownfield configuration happen through a coherent interactiv...",
+      "type": "FEATURE_CONTRACT",
+      "files": [
+        "lib/tui.cjs",
+        "tests/tui.test.js",
+        "contracts/GRAB-UX-002.fc.md"
+      ]
+    },
+    {
+      "id": "GRAB-UX-003",
+      "title": "Drive the full contract lifecycle from the GrabbyAI home ...",
+      "status": "archived",
+      "archivePath": ".grabby/history/history-001.yaml",
+      "closedAt": "2026-03-04T03:30:20.575Z",
+      "objective": "Make Grabby's home menu the primary end-to-end workflow surface for bounded feature delivery so a developer can move a contract through governance ...",
+      "type": "FEATURE_CONTRACT",
+      "files": [
+        "lib/tui.cjs",
+        "lib/interactive-workflows.cjs",
+        "lib/interactive-shell.cjs",
+        "lib/commands.cjs",
+        "bin/index.cjs",
+        "tests/tui.test.js",
+        "tests/interactive-workflows.test.js",
+        "tests/interactive-shell.test.js",
+        "tests/commands.test.js",
+        "contracts/GRAB-UX-003.fc.md"
       ]
     },
     {
@@ -374,6 +492,22 @@
         "lib/tui.cjs",
         "lib/jira.cjs",
         "lib/commands.cjs"
+      ]
+    },
+    {
+      "id": "SETUP-201",
+      "title": "Brownfield Setup Streamlining",
+      "status": "archived",
+      "archivePath": ".grabby/history/history-001.yaml",
+      "closedAt": "2026-03-04T02:24:55.082Z",
+      "objective": "Reduce friction for installing and initializing Grabby in an existing project by making setup safer, more automatic, and easier to understand.",
+      "type": "FEATURE_CONTRACT",
+      "files": [
+        "lib/commands.cjs",
+        "tests/commands.test.js",
+        "README.md",
+        "docs/QUICKSTART.md",
+        "contracts/SETUP-201.fc.md"
       ]
     }
   ]

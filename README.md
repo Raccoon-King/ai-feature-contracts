@@ -76,6 +76,30 @@ grabby session --check-all
 grabby audit login-redirect-bug.fc.md
 ```
 
+### Brownfield Setup
+
+For an existing repository, start with `grabby init` from the repo root. Grabby will preserve existing project files, install its repo-local guidance, and print a setup summary showing:
+- what it created
+- what it preserved
+- the next brownfield-safe steps
+
+Recommended brownfield flow:
+
+```bash
+cd your-existing-repo
+grabby init
+
+# Review the generated baselines against the real repo
+grabby validate contracts/PROJECT-BASELINE.fc.md
+
+# Start a bounded request
+grabby ticket "fix login redirect bug"
+# or
+grabby task "fix login redirect bug"
+```
+
+After `grabby init`, review `contracts/PROJECT-BASELINE.fc.md` and `contracts/SYSTEM-BASELINE.fc.md` before starting implementation work in an existing codebase.
+
 ## Commands
 
 | Command | Description |
@@ -135,6 +159,12 @@ Grabby uses BMAD-style personalities in the CLI:
 - `docs/RULESET_CORE.md`
 - `docs/ENV_STACK.md`
 - `docs/EXECUTION_PROTOCOL.md`
+
+In a brownfield repo, `grabby init` is idempotent:
+- existing docs and local override files are preserved
+- managed router files are refreshed in place
+- baseline contracts are created once and then preserved on reruns
+- the setup summary tells you exactly what changed
 
 ## Ticket Key Awareness
 

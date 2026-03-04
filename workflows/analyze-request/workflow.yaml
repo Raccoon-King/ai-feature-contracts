@@ -1,0 +1,12 @@
+name: analyze-request
+description: Intake and structure a raw request before contract authoring
+agent: analyst
+
+steps:
+  - goal: Capture who the request is for and what outcome is needed
+  - goal: Identify why the work matters and what definition of done is implied
+  - goal: "Recommend the next stage: quick flow, contract authoring, or orchestration"
+
+output:
+  type: ticket
+  format: markdown

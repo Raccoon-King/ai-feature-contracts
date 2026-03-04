@@ -84,12 +84,34 @@ const interactiveHandlers = createInteractiveHandlers({
   commandHandlers,
 });
 
+function getFlagOptions(argvList = args) {
+  const nextIndex = argvList.indexOf('--next');
+  return {
+    interactive: argvList.includes('--interactive'),
+    yes: argvList.includes('--yes'),
+    next: nextIndex !== -1 && argvList[nextIndex + 1] ? argvList[nextIndex + 1] : null,
+  };
+}
+
+function getFirstPositionalArg(argvList = args) {
+  for (let index = 0; index < argvList.length; index += 1) {
+    const token = argvList[index];
+    if (!token.startsWith('--')) {
+      return token;
+    }
+    if (token === '--next' || token === '--output') {
+      index += 1;
+    }
+  }
+  return undefined;
+}
+
 // ============================================================================
 // COMMANDS
 // ============================================================================
 
 function init() {
-  commandHandlers.init();
+  commandHandlers.init({ interactive: args.includes('--interactive') });
 }
 
 function initHooks() {
@@ -137,7 +159,7 @@ async function approve(file) {
 }
 
 function execute(file) {
-  commandHandlers.execute(file);
+  commandHandlers.execute(file, getFlagOptions());
 }
 
 function guard(file) {
@@ -153,7 +175,7 @@ function upgradeContract(file) {
 }
 
 function audit(file) {
-  commandHandlers.audit(file);
+  commandHandlers.audit(file, getFlagOptions());
 }
 
 function list() {
@@ -309,7 +331,7 @@ function cicd() {
 }
 
 function tui() {
-  const app = createTUI(projectContext);
+  const app = createTUI({ ...projectContext, commandHandlers, exit: process.exit });
   app.start();
 }
 
@@ -861,7 +883,7 @@ async function feature() {
       console.log(c.error('Usage: grabby feature close <ID>'));
       process.exit(1);
     }
-    commandHandlers.featureClose(id);
+    commandHandlers.featureClose(id, getFlagOptions(cmd === 'feature:close' ? args.slice(1) : args.slice(2)));
     return;
   }
 
@@ -1231,6 +1253,10 @@ function cleanLocalContracts() {
 }
 
 const [cmd, ...args] = process.argv.slice(2);
+const repoConfig = loadConfig(CWD);
+const shouldLaunchMenuByDefault = !cmd
+  && Boolean(process.stdin.isTTY && process.stdout.isTTY)
+  && repoConfig?.features?.menuMode !== false;
 
 const commands = {
   init,
@@ -1240,6 +1266,7 @@ const commands = {
   plan: () => plan(args[0]),
   approve: () => approve(args[0]),
   execute: () => execute(args[0]),
+  run: () => execute(getFirstPositionalArg(args)),
   guard: () => guard(args[0]),
   resolve: () => resolve(args[0]),
   'upgrade-contract': () => upgradeContract(args[0]),
@@ -1287,7 +1314,7 @@ const commands = {
 };
 
 // Handle async commands
-const command = commands[cmd] || help;
+const command = shouldLaunchMenuByDefault ? tui : (commands[cmd] || help);
 const result = command();
 if (result instanceof Promise) {
   result.catch(err => {

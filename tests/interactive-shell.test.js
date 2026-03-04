@@ -147,6 +147,9 @@ describe('Interactive shell', () => {
         '--scope', 'add login test,keep scope bounded',
         '--done-when', 'tests pass,lint passes',
         '--session-format', 'json',
+        '--interactive',
+        '--next', 'pause',
+        '--role', 'tester',
         '--yes',
       ],
       runtime: {
@@ -171,10 +174,17 @@ describe('Interactive shell', () => {
           dependencies: undefined,
           doneWhen: ['tests pass', 'lint passes'],
           testing: undefined,
+          selectedRole: 'tester',
         },
         nonInteractive: true,
         sessionFormat: 'json',
         sessionOutput: undefined,
+        interactiveMode: {
+          enabled: true,
+          nextAction: 'pause',
+          autoContinue: true,
+          selectedRole: 'tester',
+        },
       },
     }]);
     expect(closed).toEqual(['closed']);
@@ -220,8 +230,15 @@ describe('Interactive shell', () => {
           dependencies: undefined,
           doneWhen: undefined,
           testing: undefined,
+          selectedRole: undefined,
         },
         nonInteractive: true,
+        interactiveMode: {
+          enabled: false,
+          nextAction: undefined,
+          autoContinue: true,
+          selectedRole: undefined,
+        },
       },
     }]);
     expect(closed).toEqual(['closed']);
@@ -255,13 +272,65 @@ describe('Interactive shell', () => {
           dependencies: undefined,
           doneWhen: undefined,
           testing: undefined,
+          selectedRole: undefined,
         },
         nonInteractive: false,
         sessionFormat: undefined,
         sessionOutput: undefined,
+        interactiveMode: {
+          enabled: false,
+          nextAction: undefined,
+          autoContinue: false,
+          selectedRole: undefined,
+        },
       },
     }]);
     expect(closed).toEqual(['closed']);
+  });
+
+  it('passes interactive ticket role switching options through to the runtime', async () => {
+    const calls = [];
+    const handlers = createShellHandlers({
+      c: createFormatter(),
+      argv: ['node', 'cli', 'ticket', 'shape', 'workflow', '--interactive', '--next', 'switch-role', '--role', 'analyst'],
+      runtime: {
+        createPromptInterface: () => ({ close: () => {} }),
+        runTicketWizardWorkflow: async (_rl, request, options) => calls.push({ request, options }),
+      },
+    });
+
+    await handlers.ticket();
+
+    expect(calls).toEqual([{
+      request: 'shape workflow',
+      options: {
+        input: {
+          request: 'shape workflow',
+          ticketId: undefined,
+          who: undefined,
+          what: undefined,
+          why: undefined,
+          dod: undefined,
+          taskName: undefined,
+          objective: undefined,
+          scopeItems: undefined,
+          nonGoals: undefined,
+          directories: undefined,
+          constraints: undefined,
+          dependencies: undefined,
+          doneWhen: undefined,
+          testing: undefined,
+          selectedRole: 'analyst',
+        },
+        nonInteractive: false,
+        interactiveMode: {
+          enabled: true,
+          nextAction: 'switch-role',
+          autoContinue: false,
+          selectedRole: 'analyst',
+        },
+      },
+    }]);
   });
 
   it('reports missing quick agent', async () => {
@@ -293,6 +362,9 @@ describe('Interactive shell', () => {
     await handlers.party();
     expect(logger.lines.join('\n')).toContain('PARTY MODE - Full Team');
     expect(logger.lines.join('\n')).toContain('TEAM WORKFLOW');
+    expect(logger.lines.join('\n')).toContain('Ari');
+    expect(logger.lines.join('\n')).toContain('Tess');
+    expect(logger.lines.join('\n')).toContain('grabby agent analyst AN');
   });
 
   it('lists and displays workflows', async () => {
@@ -391,9 +463,17 @@ describe('Interactive shell', () => {
 
     handlers.help();
     expect(logger.lines.join('\n')).toContain('Grabby - CLI');
+    expect(logger.lines.join('\n')).toContain('grabby                      Open the GrabbyAI home menu');
+    expect(logger.lines.join('\n')).toContain('grabby agent analyst');
+    expect(logger.lines.join('\n')).toContain('grabby agent tester');
     expect(logger.lines.join('\n')).toContain('grabby backlog <file>');
     expect(logger.lines.join('\n')).toContain('grabby task <request>');
     expect(logger.lines.join('\n')).toContain('grabby orchestrate <request>');
+    expect(logger.lines.join('\n')).toContain('grabby run <file>');
+    expect(logger.lines.join('\n')).toContain('grabby tui');
+    expect(logger.lines.join('\n')).toContain('--interactive');
+    expect(logger.lines.join('\n')).toContain('--next <action>');
+    expect(logger.lines.join('\n')).toContain('Ruleset Wizards guide importing existing standards');
 
     expect(handlers.resolveContract('demo.fc.md')).toBe('resolved:demo.fc.md');
   });
