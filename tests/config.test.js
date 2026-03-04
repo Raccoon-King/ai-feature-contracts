@@ -249,6 +249,28 @@ describe('config', () => {
     ]));
   });
 
+  test('validateConfig accepts environment topology settings and rejects invalid values', () => {
+    initConfig(dir);
+    const cfg = loadConfig(dir);
+    setConfigValue(cfg, 'systemGovernance.topology.separatedDeployHost', 'true');
+    setConfigValue(cfg, 'systemGovernance.topology.devHost', 'box-a');
+    setConfigValue(cfg, 'systemGovernance.topology.deployHost', 'box-b');
+    setConfigValue(cfg, 'systemGovernance.topology.clusterAccessFromDev', 'false');
+    setConfigValue(cfg, 'systemGovernance.topology.helmAccessFromDev', 'false');
+    setConfigValue(cfg, 'systemGovernance.topology.artifactGenerationOnly', 'true');
+
+    expect(validateConfig(cfg).valid).toBe(true);
+
+    cfg.systemGovernance.topology.separatedDeployHost = 'sometimes';
+    cfg.systemGovernance.topology.devHost = 42;
+    const result = validateConfig(cfg);
+    expect(result.valid).toBe(false);
+    expect(result.errors).toEqual(expect.arrayContaining([
+      'systemGovernance.topology.separatedDeployHost must be true or false',
+      'systemGovernance.topology.devHost must be a string',
+    ]));
+  });
+
   test('validateConfig accepts git governance settings and rejects invalid values', () => {
     initConfig(dir);
     const cfg = loadConfig(dir);
@@ -278,6 +300,43 @@ describe('config', () => {
       'gitGovernance.allowRebaseAfterReviewOpen must be true or false',
       'gitGovernance.requiredChecks must be an array',
       'gitGovernance.freshnessThresholdBehind must be a non-negative integer',
+    ]));
+  });
+
+  test('validateConfig accepts plugin settings and rejects invalid plugin values', () => {
+    initConfig(dir);
+    const cfg = loadConfig(dir);
+    setConfigValue(cfg, 'plugins.autoSuggestOnInit', 'true');
+    setConfigValue(cfg, 'plugins.items.kubernetes', '{"enabled":true,"mode":"active","roots":["deploy/k8s"],"detected":true,"source":"builtin"}');
+
+    expect(validateConfig(cfg).valid).toBe(true);
+
+    cfg.plugins.autoSuggestOnInit = 'sometimes';
+    cfg.plugins.items.helm = 'invalid';
+    cfg.plugins.items.kubernetes.mode = 'dangerous';
+    const result = validateConfig(cfg);
+    expect(result.valid).toBe(false);
+    expect(result.errors).toEqual(expect.arrayContaining([
+      'plugins.autoSuggestOnInit must be true or false',
+      'plugins.items.helm must be an object',
+      'plugins.items.kubernetes.mode must be one of: off, read-only, active',
+    ]));
+  });
+
+  test('validateConfig accepts plugin environment constraints and rejects invalid values', () => {
+    initConfig(dir);
+    const cfg = loadConfig(dir);
+    setConfigValue(cfg, 'plugins.items.helm', '{"enabled":true,"mode":"active","detected":true,"source":"builtin","constraints":{"offlineOnly":true,"noRemoteAccess":true,"noClusterAccess":true,"generateArtifactsOnly":true}}');
+
+    expect(validateConfig(cfg).valid).toBe(true);
+
+    cfg.plugins.items.helm.constraints = 'invalid';
+    cfg.plugins.items.kubernetes = { enabled: true, mode: 'active', constraints: { offlineOnly: 'sometimes' } };
+    const result = validateConfig(cfg);
+    expect(result.valid).toBe(false);
+    expect(result.errors).toEqual(expect.arrayContaining([
+      'plugins.items.helm.constraints must be an object',
+      'plugins.items.kubernetes.constraints.offlineOnly must be true or false',
     ]));
   });
 

@@ -7,6 +7,9 @@ const {
   createPluginRegistry,
   scaffoldPlugin,
   validatePlugin,
+  getBuiltinPlugins,
+  updatePluginConfig,
+  suggestPluginsForAssessment,
 } = require('../lib/plugins.cjs');
 
 describe('plugins', () => {
@@ -30,6 +33,35 @@ describe('plugins', () => {
     const registry = createPluginRegistry(grabbyDir);
     registry.loadAll();
     expect(registry.list().map(p => p.name)).toContain('demo-plugin');
+  });
+
+  test('builtin plugin catalog and repo config state are surfaced through the registry', () => {
+    const grabbyDir = path.join(dir, '.grabby');
+    fs.mkdirSync(path.join(grabbyDir, 'plugins'), { recursive: true });
+    const config = { plugins: { items: { kubernetes: { enabled: true, mode: 'active', detected: true, source: 'builtin' } } } };
+    const registry = createPluginRegistry(grabbyDir);
+    registry.loadAll({ config, detectedKeys: ['helm'] });
+
+    const available = registry.listAvailable();
+    expect(getBuiltinPlugins().map((plugin) => plugin.key)).toContain('kubernetes');
+    expect(available.find((plugin) => plugin.key === 'kubernetes')).toEqual(expect.objectContaining({
+      enabled: true,
+      detected: true,
+      mode: 'active',
+    }));
+    expect(available.find((plugin) => plugin.key === 'helm')).toEqual(expect.objectContaining({
+      detected: true,
+      enabled: false,
+    }));
+    expect(registry.listEnabled().map((plugin) => plugin.key)).toContain('kubernetes');
+    expect(typeof registry.getRuntime('artifactory').buildArtifactoryPluginContext).toBe('function');
+    expect(typeof registry.getRuntime('argocd').buildArgoCdPluginContext).toBe('function');
+    expect(typeof registry.getRuntime('harbor').buildHarborPluginContext).toBe('function');
+    expect(typeof registry.getRuntime('helm').buildHelmPluginContext).toBe('function');
+    expect(typeof registry.getRuntime('keycloak').buildKeycloakPluginContext).toBe('function');
+    expect(typeof registry.getRuntime('kubernetes').buildKubernetesPluginContext).toBe('function');
+    expect(typeof registry.getRuntime('openshift').buildOpenShiftPluginContext).toBe('function');
+    expect(typeof registry.getRuntime('rancher').buildRancherPluginContext).toBe('function');
   });
 
   test('loadPlugin merges manifest and JS module contributions', () => {
@@ -193,5 +225,32 @@ describe('plugins', () => {
     expect(fs.existsSync(path.join(pluginDir, 'index.js'))).toBe(true);
     expect(readme).toContain('beforeExecute');
     expect(() => scaffoldPlugin(pluginsDir, 'full-plugin')).toThrow('Plugin already exists');
+  });
+
+  test('updatePluginConfig and suggestPluginsForAssessment support repo-managed plugin lifecycle', () => {
+    const config = updatePluginConfig({}, 'helm', {
+      enabled: true,
+      mode: 'read-only',
+      roots: ['helm/platform'],
+      detected: true,
+      source: 'builtin',
+    });
+
+    expect(config.plugins.items.helm).toEqual(expect.objectContaining({
+      enabled: true,
+      mode: 'read-only',
+      roots: ['helm/platform'],
+      detected: true,
+      source: 'builtin',
+    }));
+
+    const suggestions = suggestPluginsForAssessment({
+      projectDirs: ['helm', 'deploy'],
+      rootEntries: [{ name: 'Chart.yaml', kind: 'file' }, { name: 'keycloak', kind: 'dir' }],
+      dependencies: ['keycloak-js'],
+      devDependencies: [],
+    });
+
+    expect(suggestions).toEqual(expect.arrayContaining(['helm', 'keycloak']));
   });
 });

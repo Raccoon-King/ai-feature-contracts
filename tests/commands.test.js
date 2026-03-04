@@ -568,6 +568,32 @@ Archive me
     expect(logger.lines.join('\n')).toContain('Review .grabby/project-context.json');
   });
 
+  it('persists detected plugin suggestions during init', async () => {
+    const logger = createLogger();
+    const context = createProjectContext({ cwd: tempDir, pkgRoot: PKG_ROOT });
+    const handlers = createCommandHandlers({ context, logger });
+
+    fs.writeFileSync(path.join(tempDir, 'package.json'), JSON.stringify({
+      name: 'platform-demo',
+      dependencies: { 'keycloak-js': '^25.0.0' },
+    }), 'utf8');
+    fs.writeFileSync(path.join(tempDir, 'Chart.yaml'), 'apiVersion: v2\nname: platform\n', 'utf8');
+    fs.mkdirSync(path.join(tempDir, 'helm'), { recursive: true });
+
+    await handlers.init();
+
+    const repoConfig = JSON.parse(fs.readFileSync(path.join(tempDir, 'grabby.config.json'), 'utf8'));
+    expect(repoConfig.plugins.items.helm).toEqual(expect.objectContaining({
+      detected: true,
+      source: 'builtin',
+    }));
+    expect(repoConfig.plugins.items.keycloak).toEqual(expect.objectContaining({
+      detected: true,
+      source: 'builtin',
+    }));
+    expect(logger.lines.join('\n')).toContain('Suggested plugins: helm, keycloak');
+  });
+
   it('preserves existing baseline contracts during init', async () => {
     const logger = createLogger();
     const context = createProjectContext({ cwd: tempDir, pkgRoot: PKG_ROOT });
@@ -845,6 +871,29 @@ Archive the root contract safely.
     expect(fs.existsSync(path.join(rootContractsDir, 'ROOT-LIST-1.fc.md'))).toBe(false);
     expect(listLogger.lines.join('\n')).not.toContain('ROOT-LIST-1');
     expect(closeLogger.lines.join('\n')).toContain('Archived feature ROOT-LIST-1');
+  });
+
+  it('lists the canonical live contracts across root and contracts/active layouts', () => {
+    const logger = createLogger();
+    const context = createProjectContext({ cwd: tempDir, pkgRoot: PKG_ROOT });
+    const handlers = createCommandHandlers({ context, logger });
+    const activeDir = path.join(tempDir, 'contracts', 'active');
+    const rootContractsDir = path.join(tempDir, 'contracts');
+    fs.mkdirSync(activeDir, { recursive: true });
+    fs.writeFileSync(path.join(rootContractsDir, 'ROOT-MIX-1.fc.md'), `# FC: Root Mixed Contract
+**ID:** ROOT-MIX-1 | **Status:** draft
+`, 'utf8');
+    fs.writeFileSync(path.join(activeDir, 'ACTIVE-MIX-1.fc.md'), `# FC: Active Mixed Contract
+**ID:** ACTIVE-MIX-1 | **Status:** approved
+`, 'utf8');
+
+    handlers.list();
+
+    const output = logger.lines.join('\n');
+    expect(output).toContain('ROOT-MIX-1.fc.md');
+    expect(output).toContain('ACTIVE-MIX-1.fc.md');
+    expect(output).toContain('ID: ROOT-MIX-1 | Status: draft');
+    expect(output).toContain('ID: ACTIVE-MIX-1 | Status: approved');
   });
 
   it('records explicit keep dispositions for hanging contracts', () => {
@@ -1982,6 +2031,100 @@ paths:
 
     expect(exits).toEqual([1]);
     expect(logger.lines.join('\n')).toContain('Governance policy failure');
+  });
+
+  it('surfaces active environment constraints in plan output', () => {
+    const logger = createLogger();
+    const context = createProjectContext({ cwd: tempDir, pkgRoot: PKG_ROOT });
+    const handlers = createCommandHandlers({ context, logger });
+
+    fs.writeFileSync(path.join(tempDir, 'grabby.config.json'), JSON.stringify({
+      version: '1.0',
+      contracts: { directory: 'contracts', trackingMode: 'tracked' },
+      interactive: { enabled: false, defaultNextAction: null },
+      features: { menuMode: true, startupArt: true, rulesetWizard: true },
+      plugins: {
+        autoSuggestOnInit: true,
+        items: {
+          helm: {
+            enabled: true,
+            mode: 'active',
+            source: 'builtin',
+            constraints: { offlineOnly: true, noRemoteAccess: true },
+          },
+        },
+      },
+      dbGovernance: { discovery: {}, constraints: { ciDbAccess: 'unspecified', airgapped: false, destructiveMigrationsRequireReview: true, offlineOnlyParsing: true } },
+      systemGovernance: {
+        profile: 'fullstack',
+        roots: { frontendRoots: [], backendRoots: [], apiSpecRoots: [], dbSchemaRoots: [], migrationRoots: [] },
+        rulesetIngestion: { dbSafety: true, apiCompat: true, feDeps: true },
+        constraints: { airgapped: true, noDbInCi: false, noNetwork: true, noNewDependencies: false, strictBackwardsCompat: false },
+        topology: { separatedDeployHost: true, devHost: 'box-a', deployHost: 'box-b', clusterAccessFromDev: false, helmAccessFromDev: false, artifactGenerationOnly: true },
+      },
+    }, null, 2));
+
+    const contractPath = writeValidContract(tempDir, 'env-plan.fc.md', 'draft');
+    fs.writeFileSync(contractPath, fs.readFileSync(contractPath, 'utf8').replace('**ID:** FC-123', '**ID:** ENV-202'), 'utf8');
+
+    handlers.plan('env-plan.fc.md');
+
+    const output = logger.lines.join('\n');
+    expect(output).toContain('Active environment constraints:');
+    expect(output).toContain('system.airgapped=true');
+    expect(output).toContain('topology.separatedDeployHost=true (box-a -> box-b)');
+    expect(output).toContain('plugin.helm.offlineOnly=true');
+    const plan = fs.readFileSync(path.join(tempDir, 'contracts', 'ENV-202.plan.yaml'), 'utf8');
+    expect(plan).toContain('environment_constraints:');
+  });
+
+  it('writes active environment constraints into the audit artifact', () => {
+    const logger = createLogger();
+    const context = createProjectContext({ cwd: tempDir, pkgRoot: PKG_ROOT });
+    const handlers = createCommandHandlers({ context, logger });
+
+    fs.writeFileSync(path.join(tempDir, 'grabby.config.json'), JSON.stringify({
+      version: '1.0',
+      contracts: { directory: 'contracts', trackingMode: 'tracked' },
+      interactive: { enabled: false, defaultNextAction: null },
+      features: { menuMode: true, startupArt: true, rulesetWizard: true },
+      plugins: {
+        autoSuggestOnInit: true,
+        items: {
+          kubernetes: {
+            enabled: true,
+            mode: 'read-only',
+            source: 'builtin',
+            constraints: { noClusterAccess: true, generateArtifactsOnly: true },
+          },
+        },
+      },
+      dbGovernance: { discovery: {}, constraints: { ciDbAccess: 'unspecified', airgapped: false, destructiveMigrationsRequireReview: true, offlineOnlyParsing: true } },
+      systemGovernance: {
+        profile: 'fullstack',
+        roots: { frontendRoots: [], backendRoots: [], apiSpecRoots: [], dbSchemaRoots: [], migrationRoots: [] },
+        rulesetIngestion: { dbSafety: true, apiCompat: true, feDeps: true },
+        constraints: { airgapped: false, noDbInCi: false, noNetwork: true, noNewDependencies: false, strictBackwardsCompat: false },
+        topology: { separatedDeployHost: true, devHost: 'dev-box', deployHost: 'deploy-box', clusterAccessFromDev: false, helmAccessFromDev: true, artifactGenerationOnly: true },
+      },
+    }, null, 2));
+
+    const contractPath = writeValidContract(tempDir, 'env-audit.fc.md', 'complete');
+    fs.writeFileSync(contractPath, fs.readFileSync(contractPath, 'utf8').replace('**ID:** FC-123', '**ID:** ENV-203'), 'utf8');
+    fs.writeFileSync(path.join(tempDir, 'contracts', 'ENV-203.plan.yaml'), yaml.stringify({
+      status: 'approved',
+      files: [{ action: 'modify', path: 'lib/config.cjs' }],
+    }), 'utf8');
+
+    handlers.audit('env-audit.fc.md', { yes: true });
+
+    const output = logger.lines.join('\n');
+    const auditArtifact = fs.readFileSync(path.join(tempDir, 'contracts', 'ENV-203.audit.md'), 'utf8');
+    expect(output).toContain('Environment Constraints:');
+    expect(output).toContain('plugin.kubernetes.noClusterAccess=true');
+    expect(auditArtifact).toContain('## Environment Constraints');
+    expect(auditArtifact).toContain('topology.separatedDeployHost=true (dev-box -> deploy-box)');
+    expect(auditArtifact).toContain('plugin.kubernetes.generateArtifactsOnly=true');
   });
 });
 

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-04T05:37:35.523Z",
+  "generatedAt": "2026-03-04T15:30:29.740Z",
   "trackingMode": "tracked",
   "features": [
     {
@@ -86,6 +86,23 @@
         "tests/feature-close.test.js",
         "tests/commands.test.js",
         "contracts/BUG-203.fc.md"
+      ]
+    },
+    {
+      "id": "ENV-202",
+      "title": "Add a menu-driven environment constraints setup flow that...",
+      "status": "archived",
+      "archivePath": ".grabby/history/history-002.yaml",
+      "closedAt": "2026-03-04T15:30:29.690Z",
+      "objective": "Add a menu-driven environment constraints setup flow that persists system and plugin-level restrictions like airgapped mode, no network, split dev/...",
+      "type": "feat",
+      "files": [
+        "lib/config.cjs",
+        "lib/tui.cjs",
+        "lib/commands.cjs",
+        "tests/config.test.js",
+        "tests/tui.test.js",
+        "tests/commands.test.js"
       ]
     },
     {
@@ -1128,6 +1145,112 @@
       "closedAt": "2026-03-04T03:59:12.941Z",
       "objective": "Introduce reusable checklist-driven review prompts so Grabby's verification and audit stages are more explicit, consistent, and role-aware.",
       "type": "FEATURE_CONTRACT"
+    },
+    {
+      "id": "PLUG-201",
+      "title": "Platform Plugin Backlog Umbrella",
+      "status": "archived",
+      "archivePath": ".grabby/history/history-002.yaml",
+      "closedAt": "2026-03-04T15:09:36.863Z",
+      "objective": "Track the platform plugin expansion backlog for Grabby across cluster, registry, identity, and GitOps integrations while execution happens through ...",
+      "type": "feat"
+    },
+    {
+      "id": "PLUG-211",
+      "title": "Helm Charts Plugin",
+      "status": "archived",
+      "archivePath": ".grabby/history/history-001.yaml",
+      "closedAt": "2026-03-04T14:48:54.642Z",
+      "objective": "Add a dedicated Grabby plugin for Helm chart discovery, validation context, and release-governance workflows so contracts can reason about chart st...",
+      "type": "feat"
+    },
+    {
+      "id": "PLUG-212",
+      "title": "Argo CD Plugin",
+      "status": "archived",
+      "archivePath": ".grabby/history/history-001.yaml",
+      "closedAt": "2026-03-04T14:52:08.478Z",
+      "objective": "Add a dedicated Grabby plugin for Argo CD so Grabby can understand applications, app-of-apps layouts, sync policies, project boundaries, and deploy...",
+      "type": "feat"
+    },
+    {
+      "id": "PLUG-213",
+      "title": "Harbor Plugin",
+      "status": "archived",
+      "archivePath": ".grabby/history/history-002.yaml",
+      "closedAt": "2026-03-04T14:57:49.317Z",
+      "objective": "Add a Harbor plugin so Grabby can understand registry projects, image references, retention and replication config, and image-promotion workflows f...",
+      "type": "feat"
+    },
+    {
+      "id": "PLUG-214",
+      "title": "Artifactory Plugin",
+      "status": "archived",
+      "archivePath": ".grabby/history/history-002.yaml",
+      "closedAt": "2026-03-04T15:05:18.892Z",
+      "objective": "Add an Artifactory plugin so Grabby can understand JFrog repository usage, artifact source locations, promotion paths, and package-governance signa...",
+      "type": "feat"
+    },
+    {
+      "id": "PLUG-215",
+      "title": "Rancher Multi-Version Plugin",
+      "status": "archived",
+      "archivePath": ".grabby/history/history-002.yaml",
+      "closedAt": "2026-03-04T15:09:15.226Z",
+      "objective": "Add a Rancher plugin that can discover and normalize Rancher-managed config across multiple Rancher versions so Grabby can reason about cluster, pr...",
+      "type": "feat",
+      "files": [
+        "lib/plugins.cjs",
+        "lib/plugins/rancher.cjs",
+        "tests/plugins.test.js",
+        "tests/rancher-plugin.test.js",
+        "README.md"
+      ]
+    },
+    {
+      "id": "PLUG-216",
+      "title": "Kubernetes Plugin",
+      "status": "archived",
+      "archivePath": ".grabby/history/history-001.yaml",
+      "closedAt": "2026-03-04T14:48:52.886Z",
+      "objective": "Add a Kubernetes plugin so Grabby can understand core Kubernetes manifests, workload relationships, namespace boundaries, service exposure, and dep...",
+      "type": "feat"
+    },
+    {
+      "id": "PLUG-217",
+      "title": "OpenShift Plugin",
+      "status": "archived",
+      "archivePath": ".grabby/history/history-002.yaml",
+      "closedAt": "2026-03-04T14:57:49.341Z",
+      "objective": "Add an OpenShift plugin so Grabby can understand OpenShift-specific resources, security constraints, routes, and deployment context from repo-owned...",
+      "type": "feat"
+    },
+    {
+      "id": "PLUG-218",
+      "title": "Keycloak Plugin",
+      "status": "archived",
+      "archivePath": ".grabby/history/history-002.yaml",
+      "closedAt": "2026-03-04T15:05:18.925Z",
+      "objective": "Add a Keycloak plugin so Grabby can understand realms, clients, roles, groups, identity providers, and auth-related integration risk from repo-owne...",
+      "type": "feat"
+    },
+    {
+      "id": "PLUG-219",
+      "title": "Plugin Manager Menu UX",
+      "status": "archived",
+      "archivePath": ".grabby/history/history-001.yaml",
+      "closedAt": "2026-03-04T14:47:22.937Z",
+      "objective": "Add an intuitive plugin manager to the Grabby menu so developers can discover, enable, disable, inspect, and validate stack-specific plugins withou...",
+      "type": "feat"
+    },
+    {
+      "id": "PLUG-220",
+      "title": "Plugin Config Model And Lifecycle",
+      "status": "archived",
+      "archivePath": ".grabby/history/history-001.yaml",
+      "closedAt": "2026-03-04T14:47:22.870Z",
+      "objective": "Define a simple, portable plugin configuration model so any stack-specific plugin can be added to Grabby and controlled consistently across repos.",
+      "type": "feat"
     },
     {
       "id": "SETUP-201",

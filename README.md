@@ -216,7 +216,50 @@ In a brownfield repo, `grabby init` is idempotent:
 - managed router files are refreshed in place
 - baseline contracts are created once and then preserved on reruns
 - `.grabby/project-context.json` is refreshed as the current brownfield summary artifact
+- stack-specific plugin suggestions are derived from repo signals and stored in `grabby.config.json`
 - the setup summary tells you exactly what changed
+
+## Plugin Manager
+
+Grabby treats plugins as repo-level stack capabilities. The runtime can know about a plugin, but each repo decides whether it is enabled.
+
+- `grabby init` records detected plugin suggestions from deterministic repo evidence such as `Chart.yaml`, `keycloak-js`, or stack-specific paths
+- the menu-first TUI exposes a `Plugins` manager for enable, disable, read-only mode, and root configuration
+- repo state lives in `grabby.config.json` under `plugins.items`
+
+Plugin modes:
+- `off`: plugin is known but disabled for the repo
+- `read-only`: plugin is enabled for discovery and guidance only
+- `active`: plugin is enabled for normal policy/runtime behavior
+
+Current built-in platform coverage:
+- `argocd`: Argo CD application, project, and application-set manifest analysis
+- `artifactory`: JFrog config discovery, repository reference extraction, and promotion hint summaries
+- `harbor`: Harbor config discovery and Harbor-backed image reference analysis
+- `helm`: chart discovery, dependency extraction, template inventory, and values-file key summaries
+- `keycloak`: realm export discovery, client summaries, role/group context, and identity-provider analysis
+- `kubernetes`: manifest discovery, workload/service/ingress relationships, and config/service-account references
+- `openshift`: OpenShift Route, Template, DeploymentConfig, ImageStream, SCC, and Project analysis
+- `rancher`: legacy Rancher Compose plus modern Rancher/Fleet/provisioning resource normalization
+
+Example repo config:
+
+```json
+{
+  "plugins": {
+    "autoSuggestOnInit": true,
+    "items": {
+      "kubernetes": {
+        "enabled": true,
+        "mode": "active",
+        "roots": ["deploy/k8s"],
+        "detected": true,
+        "source": "builtin"
+      }
+    }
+  }
+}
+```
 
 ## Ticket Key Awareness
 

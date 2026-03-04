@@ -892,4 +892,39 @@ entries:
       - tests/config.test.js
       - tests/packaging.test.js
     closedAt: 2026-03-04T05:37:35.438Z
-lastUpdated: 2026-03-04T05:37:35.471Z
+  - id: PLUG-220
+    title: Plugin Config Model And Lifecycle
+    objective: Define a simple, portable plugin configuration model so any
+      stack-specific plugin can be added to Grabby and controlled consistently
+      across repos.
+    type: feat
+    closedAt: 2026-03-04T14:47:22.870Z
+  - id: PLUG-219
+    title: Plugin Manager Menu UX
+    objective: Add an intuitive plugin manager to the Grabby menu so developers can
+      discover, enable, disable, inspect, and validate stack-specific plugins
+      withou...
+    type: feat
+    closedAt: 2026-03-04T14:47:22.937Z
+  - id: PLUG-216
+    title: Kubernetes Plugin
+    objective: Add a Kubernetes plugin so Grabby can understand core Kubernetes
+      manifests, workload relationships, namespace boundaries, service exposure,
+      and dep...
+    type: feat
+    closedAt: 2026-03-04T14:48:52.886Z
+  - id: PLUG-211
+    title: Helm Charts Plugin
+    objective: Add a dedicated Grabby plugin for Helm chart discovery, validation
+      context, and release-governance workflows so contracts can reason about
+      chart st...
+    type: feat
+    closedAt: 2026-03-04T14:48:54.642Z
+  - id: PLUG-212
+    title: Argo CD Plugin
+    objective: Add a dedicated Grabby plugin for Argo CD so Grabby can understand
+      applications, app-of-apps layouts, sync policies, project boundaries, and
+      deploy...
+    type: feat
+    closedAt: 2026-03-04T14:52:08.478Z
+lastUpdated: 2026-03-04T14:52:08.523Z

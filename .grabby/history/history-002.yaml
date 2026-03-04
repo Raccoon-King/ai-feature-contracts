@@ -1,0 +1,65 @@
+version: "1.0"
+entries:
+  - id: PLUG-213
+    title: Harbor Plugin
+    objective: Add a Harbor plugin so Grabby can understand registry projects, image
+      references, retention and replication config, and image-promotion
+      workflows f...
+    type: feat
+    closedAt: 2026-03-04T14:57:49.317Z
+  - id: PLUG-217
+    title: OpenShift Plugin
+    objective: Add an OpenShift plugin so Grabby can understand OpenShift-specific
+      resources, security constraints, routes, and deployment context from
+      repo-owned...
+    type: feat
+    closedAt: 2026-03-04T14:57:49.341Z
+  - id: PLUG-214
+    title: Artifactory Plugin
+    objective: Add an Artifactory plugin so Grabby can understand JFrog repository
+      usage, artifact source locations, promotion paths, and package-governance
+      signa...
+    type: feat
+    closedAt: 2026-03-04T15:05:18.892Z
+  - id: PLUG-218
+    title: Keycloak Plugin
+    objective: Add a Keycloak plugin so Grabby can understand realms, clients,
+      roles, groups, identity providers, and auth-related integration risk from
+      repo-owne...
+    type: feat
+    closedAt: 2026-03-04T15:05:18.925Z
+  - id: PLUG-215
+    title: Rancher Multi-Version Plugin
+    objective: Add a Rancher plugin that can discover and normalize Rancher-managed
+      config across multiple Rancher versions so Grabby can reason about
+      cluster, pr...
+    type: feat
+    files:
+      - lib/plugins.cjs
+      - lib/plugins/rancher.cjs
+      - tests/plugins.test.js
+      - tests/rancher-plugin.test.js
+      - README.md
+    closedAt: 2026-03-04T15:09:15.226Z
+  - id: PLUG-201
+    title: Platform Plugin Backlog Umbrella
+    objective: Track the platform plugin expansion backlog for Grabby across
+      cluster, registry, identity, and GitOps integrations while execution
+      happens through ...
+    type: feat
+    closedAt: 2026-03-04T15:09:36.863Z
+  - id: ENV-202
+    title: Add a menu-driven environment constraints setup flow that...
+    objective: Add a menu-driven environment constraints setup flow that persists
+      system and plugin-level restrictions like airgapped mode, no network,
+      split dev/...
+    type: feat
+    files:
+      - lib/config.cjs
+      - lib/tui.cjs
+      - lib/commands.cjs
+      - tests/config.test.js
+      - tests/tui.test.js
+      - tests/commands.test.js
+    closedAt: 2026-03-04T15:30:29.690Z
+lastUpdated: 2026-03-04T15:30:29.693Z

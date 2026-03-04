@@ -824,10 +824,38 @@ Test
     fs.rmSync(result.tmp, { recursive: true, force: true });
   });
 
-  test('createTUI shows plugin summary when none are installed', () => {
+  test('createTUI shows the plugin manager with available built-in plugins', () => {
     const output = runTuiAction(7);
-    expect(output).toContain('Installed Plugins');
-    expect(output).toContain('No plugins installed');
+    expect(output).toContain('Plugin Manager');
+    expect(output).toContain('Argo CD');
+  });
+
+  test('createTUI enables a plugin from the plugin manager', () => {
+    const fs = require('fs');
+    const path = require('path');
+    const result = runTuiKeys([
+      '\u001B[B',
+      '\u001B[B',
+      '\u001B[B',
+      '\u001B[B',
+      '\u001B[B',
+      '\u001B[B',
+      '\u001B[B',
+      '\r',
+      '\r',
+      '\r',
+    ], () => {}, { keepTemp: true });
+
+    const config = JSON.parse(fs.readFileSync(path.join(result.tmp, 'grabby.config.json'), 'utf8'));
+    const firstPluginKey = Object.keys(config.plugins.items)[0];
+
+    expect(result.output).toContain('Enabled');
+    expect(config.plugins.items[firstPluginKey]).toEqual(expect.objectContaining({
+      enabled: true,
+      mode: 'active',
+    }));
+
+    fs.rmSync(result.tmp, { recursive: true, force: true });
   });
 
   test('createTUI toggles settings in repo config', () => {
@@ -844,6 +872,66 @@ Test
       '\r',
     ]);
     expect(output).toContain('Updated interactive.enabled -> ON');
+  });
+
+  test('createTUI configures environment constraints and plugin restrictions from settings', () => {
+    const fs = require('fs');
+    const path = require('path');
+    const result = runTuiKeys([
+      '\u001B[B',
+      '\u001B[B',
+      '\u001B[B',
+      '\u001B[B',
+      '\u001B[B',
+      '\u001B[B',
+      '\u001B[B',
+      '\u001B[B',
+      '\r',
+      '\u001B[B',
+      '\u001B[B',
+      '\u001B[B',
+      '\u001B[B',
+      '\u001B[B',
+      '\r',
+      '\u001B[B',
+      '\u001B[B',
+      '\u001B[B',
+      '\r',
+      '\r',
+      '\u001B[B',
+      '\u001B[B',
+      '\u001B[B',
+      '\u001B[B',
+      '\r',
+      '\r',
+      '\u001B[B',
+      '\u001B[B',
+      '\u001B[B',
+      '\u001B[B',
+      '\u001B[B',
+      '\u001B[B',
+      '\u001B[B',
+      '\u001B[B',
+      '\u001B[B',
+      '\r',
+      '\r',
+    ], () => {}, { keepTemp: true, answers: ['box-a'] });
+
+    const config = JSON.parse(fs.readFileSync(path.join(result.tmp, 'grabby.config.json'), 'utf8'));
+
+    expect(result.output).toContain('Environment Constraints');
+    expect(result.output).toContain('Updated topology separatedDeployHost -> ON');
+    expect(result.output).toContain('Updated devHost -> box-a');
+    expect(result.output).toContain('Updated Argo CD constraint offlineOnly -> ON');
+    expect(config.systemGovernance.topology).toEqual(expect.objectContaining({
+      separatedDeployHost: true,
+      devHost: 'box-a',
+    }));
+    expect(config.plugins.items.argocd.constraints).toEqual(expect.objectContaining({
+      offlineOnly: true,
+    }));
+
+    fs.rmSync(result.tmp, { recursive: true, force: true });
   });
 
   test('createTUI launches ruleset wizard flows from the menu', () => {

@@ -58,6 +58,7 @@ describe('assessment helpers', () => {
     expect(assessment.scripts).toEqual(['start', 'test']);
     expect(assessment.hasTests).toBe(true);
     expect(assessment.hasContracts).toBe(true);
+    expect(assessment.pluginSuggestions).toEqual([]);
     expect(assessment.rootEntries).toEqual(expect.arrayContaining([
       { name: 'README.md', kind: 'file' },
       { name: 'contracts', kind: 'dir' },
@@ -168,6 +169,7 @@ describe('assessment helpers', () => {
       devDependencies: ['jest'],
       hasTests: true,
       hasContracts: false,
+      pluginSuggestions: ['helm'],
       rootEntries: [{ name: 'src', kind: 'dir' }],
     }, 'react brownfield repo');
 
@@ -176,6 +178,7 @@ describe('assessment helpers', () => {
     expect(projectContext.recommendedDirectories).toEqual(['src', 'tests', 'docs']);
     expect(projectContext.testing.hasTests).toBe(true);
     expect(projectContext.governance.allowedDirectories).toEqual(['src', 'tests', 'docs']);
+    expect(projectContext.plugins.suggested).toEqual(['helm']);
   });
 
   test('generates and saves project-context artifact', async () => {
@@ -198,5 +201,19 @@ describe('assessment helpers', () => {
       stackSummary: 'Node.js project',
       summary: 'cli brownfield repo',
     }));
+  });
+
+  test('collectProjectAssessment suggests plugins from deterministic repo signals', () => {
+    detectProjectType.mockReturnValue(['node']);
+    getProjectDirs.mockReturnValue(['helm', 'src']);
+    fs.writeFileSync(path.join(tempDir, 'package.json'), JSON.stringify({
+      name: 'platform-tools',
+      dependencies: { 'keycloak-js': '^1.0.0' },
+    }), 'utf8');
+    fs.writeFileSync(path.join(tempDir, 'Chart.yaml'), 'apiVersion: v2\nname: demo\n', 'utf8');
+
+    const assessment = collectProjectAssessment(tempDir);
+
+    expect(assessment.pluginSuggestions).toEqual(expect.arrayContaining(['helm', 'keycloak']));
   });
 });
