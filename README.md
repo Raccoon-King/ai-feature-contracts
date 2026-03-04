@@ -37,6 +37,8 @@ Notes:
 
 ## Quick Start
 
+LLM-focused setup instructions are in [docs/LLM_INSTALL.md](docs/LLM_INSTALL.md).
+
 ```bash
 # Initialize in your project
 cd your-project
