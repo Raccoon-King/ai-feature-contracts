@@ -88,7 +88,7 @@ describe('tui', () => {
 
   test('exports ansi constants and startup art', () => {
     expect(ansi).toHaveProperty('CLEAR_SCREEN');
-    expect(getStartupArt()).toContain('Grabby');
+    expect(getStartupArt()).toContain('██████╗');
   });
 
   test('createMenu returns controls', () => {
@@ -172,7 +172,7 @@ describe('tui', () => {
     const output = runTuiAction(0, ({ fs, path, contractsDir }) => {
       fs.writeFileSync(path.join(contractsDir, 'sample.fc.md'), '**Status:** draft\n', 'utf8');
     });
-    expect(output).toContain('GrabbyAI');
+    expect(output).toContain('██████╗');
     expect(output).toContain('Contracts');
     expect(output).toContain('sample.fc.md');
   });
