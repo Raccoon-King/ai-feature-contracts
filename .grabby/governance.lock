@@ -1,0 +1,13 @@
+governance:
+  version: 2.0.0
+  profile: default
+  rules_version: v1
+  pinned_refs:
+    RULESET:
+      - db-safety@v1
+      - api-compat@v1
+      - fe-deps@v1
+      - git-workflow@v1
+    ENV:
+      - checks@v1
+      - git-commands@v1

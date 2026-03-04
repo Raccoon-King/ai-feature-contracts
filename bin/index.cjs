@@ -56,8 +56,8 @@ const c = {
 };
 
 // Paths
-const PKG_ROOT = path.join(__dirname, '..');
-const CWD = process.cwd();
+const PKG_ROOT = path.resolve(__dirname, '..');
+const CWD = path.resolve(process.cwd());
 
 // Output mode from --output flag
 const OUTPUT_MODE = (() => {
@@ -276,6 +276,69 @@ function watch() {
 
 function agentLint() {
   commandHandlers.agentLint();
+}
+
+function dbDiscover() {
+  commandHandlers.dbDiscover();
+}
+
+function gitStatus() {
+  commandHandlers.gitStatus();
+}
+
+function gitSync() {
+  commandHandlers.gitSync();
+}
+
+function gitStart() {
+  commandHandlers.gitStart(args[0], {
+    type: args.includes('--type') && args[args.indexOf('--type') + 1] ? args[args.indexOf('--type') + 1] : 'feat',
+    publish: args.includes('--publish'),
+  });
+}
+
+function gitUpdate() {
+  commandHandlers.gitUpdate();
+}
+
+function gitPreflight() {
+  commandHandlers.gitPreflight(args[0] || null);
+}
+
+function dbRefresh() {
+  commandHandlers.dbRefresh();
+}
+
+function dbLint() {
+  commandHandlers.dbLint({ strict: args.includes('--strict') });
+}
+
+function apiDiscover() {
+  commandHandlers.apiDiscover();
+}
+
+function apiRefresh() {
+  commandHandlers.apiRefresh();
+}
+
+function apiLint() {
+  commandHandlers.apiLint({ strict: args.includes('--strict') });
+}
+
+function feDiscover() {
+  commandHandlers.feDiscover();
+}
+
+function feRefresh() {
+  commandHandlers.feRefresh();
+}
+
+function feLint() {
+  commandHandlers.feLint({ strict: args.includes('--strict') });
+}
+
+function depsDiscover() {
+  commandHandlers.depsDiscover();
 }
 
 function metrics() {
@@ -1285,6 +1348,21 @@ const commands = {
   session: () => session(args[0]),
   watch,
   'agent:lint': agentLint,
+  'db:discover': dbDiscover,
+  'db:refresh': dbRefresh,
+  'db:lint': dbLint,
+  'git:status': gitStatus,
+  'git:sync': gitSync,
+  'git:start': gitStart,
+  'git:update': gitUpdate,
+  'git:preflight': gitPreflight,
+  'api:discover': apiDiscover,
+  'api:refresh': apiRefresh,
+  'api:lint': apiLint,
+  'fe:discover': feDiscover,
+  'fe:refresh': feRefresh,
+  'fe:lint': feLint,
+  'deps:discover': depsDiscover,
   metrics,
   cicd,
   plugin,

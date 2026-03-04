@@ -769,6 +769,59 @@ Test
   test('createTUI shows cicd setup summary', () => {
     const output = runTuiAction(6);
     expect(output).toContain('CI/CD');
+    expect(output).toContain('GitHub Actions workflow: Missing');
+  });
+
+  test('createTUI generates a selected automation asset through the automation wizard', () => {
+    const fs = require('fs');
+    const path = require('path');
+    const result = runTuiKeys([
+      '\u001B[B',
+      '\u001B[B',
+      '\u001B[B',
+      '\u001B[B',
+      '\u001B[B',
+      '\u001B[B',
+      '\r',
+      '\r',
+      '\r',
+    ], () => {}, { keepTemp: true });
+
+    const workflowPath = path.join(result.tmp, '.github', 'workflows', 'contract-validation.yml');
+    expect(result.output).toContain('Automation');
+    expect(result.output).toContain('Configured GitHub Actions workflow.');
+    expect(fs.existsSync(workflowPath)).toBe(true);
+
+    fs.rmSync(result.tmp, { recursive: true, force: true });
+  });
+
+  test('createTUI imports a selected automation asset through the automation wizard', () => {
+    const fs = require('fs');
+    const path = require('path');
+    const result = runTuiKeys([
+      '\u001B[B',
+      '\u001B[B',
+      '\u001B[B',
+      '\u001B[B',
+      '\u001B[B',
+      '\u001B[B',
+      '\r',
+      '\u001B[B',
+      '\r',
+      '\u001B[B',
+      '\r',
+    ], ({ fs: setupFs, path: setupPath, tmp }) => {
+      setupFs.writeFileSync(setupPath.join(tmp, 'existing-pr.md'), '# Imported Template\n', 'utf8');
+    }, {
+      keepTemp: true,
+      answers: ['existing-pr.md'],
+    });
+
+    const prTemplatePath = path.join(result.tmp, '.github', 'PULL_REQUEST_TEMPLATE.md');
+    expect(result.output).toContain('Imported PR template.');
+    expect(fs.readFileSync(prTemplatePath, 'utf8')).toContain('Imported Template');
+
+    fs.rmSync(result.tmp, { recursive: true, force: true });
   });
 
   test('createTUI shows plugin summary when none are installed', () => {

@@ -54,11 +54,60 @@ references:
       phases:
         - execute
 
+    # DB safety and migration governance.
+    db-safety@v1:
+      file: RULESET_DB_SAFETY.md
+      section: Migration Safety
+      status: active
+      phases:
+        - plan
+        - execute
+
+    api-compat@v1:
+      file: RULESET_API_COMPAT.md
+      section: Breaking Change Policy
+      status: active
+      phases:
+        - plan
+        - execute
+
+    fe-deps@v1:
+      file: RULESET_FE_DEPS.md
+      section: Dependency Policy
+      status: active
+      phases:
+        - plan
+        - execute
+
+    git-workflow@v1:
+      file: RULESET_GIT_WORKFLOW.md
+      section: Safe Defaults
+      status: active
+      phases:
+        - plan
+        - execute
+
   ENV:
     # Default command/runtime environment used in both phases.
     test-runner@v1:
       file: ENV_STACK.md
       section: Commands
+      status: active
+      phases:
+        - plan
+        - execute
+
+    checks@v1:
+      file: ENV_STACK.md
+      section: Checks
+      status: active
+      phases:
+        - plan
+        - execute
+
+    git-commands@v1:
+      file: ENV_STACK.md
+      section: Git Commands
       status: active
       phases:
         - plan

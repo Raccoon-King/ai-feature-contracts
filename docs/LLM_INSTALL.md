@@ -17,6 +17,18 @@ Produce a working `grabby` CLI and a repo-local Grabby setup with:
 
 Use this when you have the Grabby repository available and internet access is allowed for dependency install.
 
+Windows PowerShell:
+
+```powershell
+git clone https://github.com/Raccoon-King/ai-feature-contracts.git
+cd ai-feature-contracts
+npm install
+npm link
+grabby --help
+```
+
+macOS / Linux:
+
 ```bash
 git clone https://github.com/Raccoon-King/ai-feature-contracts.git
 cd ai-feature-contracts
@@ -29,6 +41,17 @@ grabby --help
 
 Build the package on a connected machine:
 
+Windows PowerShell:
+
+```powershell
+git clone https://github.com/Raccoon-King/ai-feature-contracts.git
+cd ai-feature-contracts
+npm ci
+npm pack
+```
+
+macOS / Linux:
+
 ```bash
 git clone https://github.com/Raccoon-King/ai-feature-contracts.git
 cd ai-feature-contracts
@@ -38,12 +61,28 @@ npm pack
 
 Install the generated tarball on the offline machine:
 
+Windows PowerShell:
+
+```powershell
+npm install -g .\grabby-<version>.tgz
+grabby --help
+```
+
+macOS / Linux:
+
 ```bash
 npm install -g ./grabby-<version>.tgz
 grabby --help
 ```
 
 Grabby bundles its runtime dependencies into the package tarball, so the offline install step does not require registry access.
+
+## Platform Notes
+
+- Windows uses `npm.cmd` under the hood for command checks, while macOS and Linux use `npm`.
+- Repo-local path settings should be stored as portable repo-relative paths; Grabby normalizes Windows backslashes when loading config.
+- Core contract workflow commands are intended to behave the same on Windows, macOS, and Linux:
+  `init`, `list`, `validate`, `plan`, `approve`, `execute`, and `audit`.
 
 ## Initialize Grabby In A Target Repository
 

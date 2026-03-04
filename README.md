@@ -4,11 +4,33 @@ CLI-first orchestration for AI-assisted development with feature contracts, pers
 
 ## Installation
 
+Supported developer environments:
+- Windows 10/11 with PowerShell or `cmd`
+- macOS with `zsh` or `bash`
+- Linux with a POSIX shell
+
+Grabby targets Node.js `>=18` and an npm-compatible installation flow on all three platforms.
+
+### From Source
+
+Windows PowerShell:
+
+```powershell
+git clone https://github.com/Raccoon-King/ai-feature-contracts.git
+cd ai-feature-contracts
+npm install
+npm link
+grabby --help
+```
+
+macOS / Linux:
+
 ```bash
 git clone https://github.com/Raccoon-King/ai-feature-contracts.git
 cd ai-feature-contracts
 npm install
 npm link
+grabby --help
 ```
 
 ## Airgapped Installation
@@ -26,6 +48,15 @@ That produces a tarball such as `grabby-2.0.0.tgz` with Grabby's runtime depende
 
 Move the tarball into the airgapped environment, then install from the local file:
 
+Windows PowerShell:
+
+```powershell
+npm install -g .\grabby-2.0.0.tgz
+grabby --help
+```
+
+macOS / Linux:
+
 ```bash
 npm install -g ./grabby-2.0.0.tgz
 grabby --help
@@ -34,6 +65,7 @@ grabby --help
 Notes:
 - No registry access is required during the airgapped install step because the package bundles its runtime dependencies.
 - The connected build machine should be used to refresh the tarball whenever runtime dependencies or Grabby code change.
+- Core CLI workflows are designed to work on Windows, macOS, and Linux without shell-specific rewrites.
 
 ## Quick Start
 
@@ -127,6 +159,11 @@ After `grabby init`, review `contracts/PROJECT-BASELINE.fc.md`, `contracts/SYSTE
 | `grabby approve <file>` | Approve for execution |
 | `grabby start <file> [--type feat\|fix\|chore]` | Create a branch from contract ID/title and write `**Branch:**` |
 | `grabby pr-template <file>` | Print a PR/MR title + body template from contract metadata |
+| `grabby git:status` | Print current branch, dirty state, upstream, and ahead/behind summary |
+| `grabby git:sync` | Fetch `origin` and show divergence without changing branch content |
+| `grabby git:start <file>` | Create a contract-linked branch with safe defaults |
+| `grabby git:update` | Run a guarded branch update flow against the configured base branch |
+| `grabby git:preflight [file]` | Verify branch, freshness, contract plan, and required checks before risky work |
 | `grabby context:lint` | Validate docs/context-index.yaml file references, sections, and token budgets |
 | `grabby policy:check` | Enforce optional contract-required policy from `.grabby/config.json` (CI-focused) |
 | `grabby execute <file>` | Show execution instructions (Phase 2) |
@@ -136,6 +173,16 @@ After `grabby init`, review `contracts/PROJECT-BASELINE.fc.md`, `contracts/SYSTE
 | `grabby agent <name>` | Load an agent and run its menu/workflows |
 | `grabby workflow <name>` | View workflow details directly |
 | `grabby agent:lint` | Validate built-in agent definitions and workflow references |
+| `grabby db:discover` | Scan the repo for DB, migration, and ORM/query signals |
+| `grabby db:refresh` | Generate DB discovery, schema, relations, and code access artifacts |
+| `grabby db:lint` | Validate DB artifacts and report stale or inconsistent outputs |
+| `grabby api:discover` | Discover API spec surfaces and profile-aware API governance inputs |
+| `grabby api:refresh` | Generate `.grabby/be/api.snapshot.json` from source-of-truth API specs |
+| `grabby api:lint` | Validate API snapshot freshness and breaking-change signals |
+| `grabby fe:discover` | Discover FE package/workspace surfaces and profile-aware FE governance inputs |
+| `grabby fe:refresh` | Generate FE dependency, import, and FE-to-BE usage artifacts |
+| `grabby fe:lint` | Validate FE dependency/import/API usage artifacts |
+| `grabby deps:discover` | Generate a repo-wide code dependency graph artifact |
 | `grabby party` | Show the full multi-agent handoff flow |
 | `grabby resume` | List saved workflow progress |
 | `grabby ruleset create [goal]` | Build rulesets from existing project files |
@@ -363,6 +410,10 @@ This system reduces token usage by:
 After `grabby init`, your project will have:
 - `docs/ARCHITECTURE_INDEX.md` - Module map
 - `docs/RULESET_CORE.md` - Coding rules
+- `docs/RULESET_DB_SAFETY.md` - DB safety and migration governance
+- `docs/RULESET_API_COMPAT.md` - API compatibility and breaking-change policy
+- `docs/RULESET_FE_DEPS.md` - Frontend dependency governance
+- `docs/RULESET_GIT_WORKFLOW.md` - Team-safe git workflow defaults and rebase policy
 - `docs/ENV_STACK.md` - Environment config
 - `docs/EXECUTION_PROTOCOL.md` - Workflow
 - `.grabby/config.json` - governance rules, guidance, and Agile planning defaults
@@ -427,3 +478,8 @@ MIT
 - `grabby upgrade-contract <file>`: update pinned contract versions to latest supported set.
 - `grabby metrics summary`: summarize per-feature governance metrics from `contracts/*.metrics.json`.
 - Execution now hard-fails for out-of-plan file edits and restricted directory writes.
+- DB-aware governance artifacts live under `.grabby/db/` after `grabby db:refresh`.
+- API governance artifacts live under `.grabby/be/` after `grabby api:refresh`.
+- FE governance artifacts live under `.grabby/fe/` after `grabby fe:refresh`.
+- Cross-layer dependency graphs live under `.grabby/code/` after `grabby deps:discover`.
+- Git orchestration state lives under `.grabby/git/state.json` after `grabby init` or `grabby git:sync`.

@@ -6,6 +6,8 @@ const {
   createProjectContext,
   createCommandHandlers,
   inferCreateRequest,
+  getNpmExecutable,
+  getNpmRunCommand,
 } = require('../lib/commands.cjs');
 
 const PKG_ROOT = path.join(__dirname, '..');
@@ -139,6 +141,14 @@ describe('Command handlers', () => {
 
     expect(request.name).toBe('unit test');
     expect(request.templateName).toBe('contract');
+  });
+
+  it('uses platform-aware npm executable helpers', () => {
+    expect(getNpmExecutable('win32')).toBe('npm.cmd');
+    expect(getNpmExecutable('darwin')).toBe('npm');
+    expect(getNpmExecutable('linux')).toBe('npm');
+    expect(getNpmRunCommand('lint', 'win32')).toBe('npm.cmd run lint');
+    expect(getNpmRunCommand('test', 'linux')).toBe('npm run test');
   });
 
   it('infers a bug-fix template from natural language', () => {
@@ -1140,16 +1150,30 @@ Archive the root contract safely.
     const handlers = createCommandHandlers({
       context,
       logger,
-      execSyncImpl: (command) => commands.push(command),
+      execSyncImpl: (command) => {
+        commands.push(command);
+        const outputs = {
+          'git rev-parse --is-inside-work-tree': 'true',
+          'git rev-parse --abbrev-ref HEAD': 'main',
+          'git rev-parse --abbrev-ref --symbolic-full-name @{u}': 'origin/main',
+          'git remote get-url origin': 'git@gitlab.com:team/repo.git',
+          'git status --porcelain=v1 --branch': '## main...origin/main',
+          'git rev-list --left-right --count origin/main...HEAD': '0 0',
+          'git stash list': '',
+          'git show-ref --verify refs/heads/fix/FC-123-valid-feature': '',
+          'git checkout -b fix/FC-123-valid-feature': '',
+          'git ls-remote --heads origin fix/FC-123-valid-feature': '',
+        };
+        if (!(command in outputs)) throw new Error(`unexpected ${command}`);
+        return outputs[command];
+      },
     });
 
     const contractPath = writeValidContract(tempDir);
     handlers.start('valid-feature.fc.md', { type: 'fix' });
 
-    expect(commands).toEqual([
-      'git rev-parse --is-inside-work-tree',
-      expect.stringMatching(/^git checkout -b fix\/FC-123-/),
-    ]);
+    expect(commands).toContain('git rev-parse --is-inside-work-tree');
+    expect(commands).toContain('git checkout -b fix/FC-123-valid-feature');
     expect(fs.readFileSync(contractPath, 'utf8')).toContain('**Branch:** fix/FC-123-valid-feature');
     expect(logger.lines.join('\n')).toContain('Created branch fix/FC-123-valid-feature');
   });
@@ -1171,8 +1195,60 @@ Archive the root contract safely.
     handlers.start('valid-feature.fc.md');
 
     expect(exits).toEqual([1]);
-    expect(logger.lines.join('\n')).toContain('Git not available. Create the branch manually.');
+    expect(logger.lines.join('\n')).toContain('Not a git repository');
     expect(logger.lines.join('\n')).toContain('Branch: feat/FC-123-valid-feature');
+  });
+
+  it('prints git status summary, syncs safely, updates with conflict guidance, and runs git preflight', () => {
+    const logger = createLogger();
+    const exits = [];
+    const context = createProjectContext({ cwd: tempDir, pkgRoot: PKG_ROOT });
+    const commands = [];
+    const outputs = {
+      'git rev-parse --is-inside-work-tree': 'true',
+      'git rev-parse --abbrev-ref HEAD': 'feat/FC-123-valid-feature',
+      'git rev-parse --abbrev-ref --symbolic-full-name @{u}': 'origin/feat/FC-123-valid-feature',
+      'git remote get-url origin': 'git@gitlab.com:team/repo.git',
+      'git status --porcelain=v1 --branch': '## feat/FC-123-valid-feature...origin/feat/FC-123-valid-feature [ahead 1, behind 0]',
+      'git rev-list --left-right --count origin/feat/FC-123-valid-feature...HEAD': '0 1',
+      'git stash list': '',
+      'git fetch origin': '',
+      'git rebase origin/main': new Error('conflict'),
+    };
+    const handlers = createCommandHandlers({
+      context,
+      logger,
+      exit: (code) => exits.push(code),
+      execSyncImpl: (command) => {
+        commands.push(command);
+        if (!(command in outputs)) throw new Error(`unexpected ${command}`);
+        const value = outputs[command];
+        if (value instanceof Error) throw value;
+        return value;
+      },
+    });
+
+    writeValidContract(tempDir, 'valid-feature.fc.md', 'approved');
+    fs.writeFileSync(path.join(tempDir, 'contracts', 'FC-123.plan.yaml'), yaml.stringify({
+      status: 'approved',
+      files: [{ action: 'modify', path: 'src/feature.ts' }],
+    }), 'utf8');
+    fs.writeFileSync(path.join(tempDir, 'package.json'), JSON.stringify({
+      scripts: { lint: 'eslint .', test: 'jest' },
+    }, null, 2), 'utf8');
+
+    handlers.gitStatus();
+    handlers.gitSync();
+    handlers.gitUpdate();
+    handlers.gitPreflight('valid-feature.fc.md');
+
+    const output = logger.lines.join('\n');
+    expect(output).toContain('Branch: feat/FC-123-valid-feature');
+    expect(output).toContain('Fetched origin.');
+    expect(output).toContain('Update stopped due to conflicts');
+    expect(output).toContain('Git preflight passed.');
+    expect(exits).toEqual([1]);
+    expect(commands).toContain('git fetch origin');
   });
 
   it('passes policy checks when only contract artifacts changed', () => {
@@ -1660,6 +1736,252 @@ ENV_VERSION: v0
     expect(logger.lines.join('\n')).toContain('FAIL');
     expect(logger.lines.join('\n')).toContain('workflow not found');
     fs.rmSync(customPkgRoot, { recursive: true, force: true });
+  });
+
+  it('writes DB discovery, refresh, lint, and dependency graph artifacts', () => {
+    const logger = createLogger();
+    const context = createProjectContext({ cwd: tempDir, pkgRoot: PKG_ROOT });
+    const handlers = createCommandHandlers({ context, logger });
+
+    fs.writeFileSync(path.join(tempDir, 'package.json'), JSON.stringify({
+      dependencies: { prisma: '^5.0.0' },
+    }, null, 2));
+    fs.mkdirSync(path.join(tempDir, 'prisma', 'migrations', '001_init'), { recursive: true });
+    fs.mkdirSync(path.join(tempDir, 'src', 'repositories'), { recursive: true });
+    fs.writeFileSync(path.join(tempDir, 'prisma', 'schema.prisma'), `
+model User {
+  id Int @id
+}
+`, 'utf8');
+    fs.writeFileSync(path.join(tempDir, 'prisma', 'migrations', '001_init', 'migration.sql'), `
+CREATE TABLE users (
+  id INT PRIMARY KEY
+);
+`, 'utf8');
+    fs.writeFileSync(path.join(tempDir, 'src', 'repositories', 'userRepo.ts'), `
+export async function listUsers(prisma) {
+  return prisma.user.findMany();
+}
+`, 'utf8');
+    fs.writeFileSync(path.join(tempDir, 'src', 'a.ts'), `import './repositories/userRepo';\n`, 'utf8');
+
+    handlers.dbDiscover();
+    handlers.dbRefresh();
+    handlers.dbLint();
+    handlers.depsDiscover();
+
+    expect(fs.existsSync(path.join(tempDir, '.grabby', 'db', 'discovery.json'))).toBe(true);
+    expect(fs.existsSync(path.join(tempDir, '.grabby', 'db', 'schema.snapshot.json'))).toBe(true);
+    expect(fs.existsSync(path.join(tempDir, '.grabby', 'db', 'relations.graph.json'))).toBe(true);
+    expect(fs.existsSync(path.join(tempDir, '.grabby', 'db', 'code_access_map.json'))).toBe(true);
+    expect(fs.existsSync(path.join(tempDir, '.grabby', 'code', 'dependency_graph.json'))).toBe(true);
+  });
+
+  it('writes system inventory plus API and FE artifacts', () => {
+    const logger = createLogger();
+    const context = createProjectContext({ cwd: tempDir, pkgRoot: PKG_ROOT });
+    const handlers = createCommandHandlers({ context, logger });
+
+    fs.writeFileSync(path.join(tempDir, 'package.json'), JSON.stringify({
+      packageManager: 'npm@10.0.0',
+      workspaces: ['apps/*', 'services/*'],
+    }, null, 2));
+    fs.writeFileSync(path.join(tempDir, 'package-lock.json'), '{"lockfileVersion":3}', 'utf8');
+    fs.mkdirSync(path.join(tempDir, 'apps', 'web', 'src', 'generated'), { recursive: true });
+    fs.mkdirSync(path.join(tempDir, 'services', 'api'), { recursive: true });
+    fs.mkdirSync(path.join(tempDir, 'specs'), { recursive: true });
+    fs.writeFileSync(path.join(tempDir, 'apps', 'web', 'package.json'), JSON.stringify({
+      name: '@repo/web',
+      dependencies: { react: '^18.0.0', axios: '^1.7.0' },
+    }, null, 2));
+    fs.writeFileSync(path.join(tempDir, 'services', 'api', 'package.json'), JSON.stringify({
+      name: '@repo/api',
+      dependencies: { express: '^4.0.0' },
+    }, null, 2));
+    fs.writeFileSync(path.join(tempDir, 'apps', 'web', 'src', 'generated', 'client.ts'), 'export function getUsers(){ return fetch("/users"); }', 'utf8');
+    fs.writeFileSync(path.join(tempDir, 'apps', 'web', 'src', 'index.tsx'), 'import axios from "axios"; import { getUsers } from "./generated/client"; export async function run(){ await axios.get("/users"); return getUsers(); }', 'utf8');
+    fs.writeFileSync(path.join(tempDir, 'specs', 'openapi.yaml'), `
+openapi: 3.0.0
+info:
+  title: API
+  version: 1.0.0
+paths:
+  /users:
+    get:
+      operationId: getUsers
+      responses:
+        '200':
+          description: ok
+`, 'utf8');
+
+    handlers.apiDiscover();
+    handlers.apiRefresh();
+    handlers.feDiscover();
+    handlers.feRefresh();
+    handlers.apiLint();
+    handlers.feLint();
+
+    expect(fs.existsSync(path.join(tempDir, '.grabby', 'system.inventory.json'))).toBe(true);
+    expect(fs.existsSync(path.join(tempDir, '.grabby', 'be', 'api.snapshot.json'))).toBe(true);
+    expect(fs.existsSync(path.join(tempDir, '.grabby', 'fe', 'deps.snapshot.json'))).toBe(true);
+    expect(fs.existsSync(path.join(tempDir, '.grabby', 'fe', 'import.graph.json'))).toBe(true);
+    expect(fs.existsSync(path.join(tempDir, '.grabby', 'fe', 'api.usage.map.json'))).toBe(true);
+  });
+
+  it('fails policyCheck when migration changes exist without DB contract metadata or snapshots', () => {
+    const logger = createLogger();
+    const exits = [];
+    const context = createProjectContext({ cwd: tempDir, pkgRoot: PKG_ROOT });
+    const handlers = createCommandHandlers({ context, logger, exit: (code) => exits.push(code) });
+
+    writeValidContract(tempDir, 'db-change.fc.md', 'approved');
+    process.env.GRABBY_CHANGED_FILES = 'prisma/migrations/001_init/migration.sql';
+
+    handlers.policyCheck();
+
+    expect(exits).toEqual([1]);
+    expect(logger.lines.join('\n')).toContain('data-change contract');
+    delete process.env.GRABBY_CHANGED_FILES;
+  });
+
+  it('passes policyCheck for migration changes when DB metadata and snapshots exist', () => {
+    const logger = createLogger();
+    const exits = [];
+    const context = createProjectContext({ cwd: tempDir, pkgRoot: PKG_ROOT });
+    const handlers = createCommandHandlers({ context, logger, exit: (code) => exits.push(code) });
+
+    fs.writeFileSync(path.join(tempDir, 'grabby.config.json'), JSON.stringify({
+      version: '1.0',
+      contracts: { directory: 'contracts', trackingMode: 'tracked' },
+      interactive: { enabled: false, defaultNextAction: null },
+      features: { menuMode: true, startupArt: true, rulesetWizard: true },
+      dbGovernance: { discovery: {}, constraints: { ciDbAccess: 'none', airgapped: false, destructiveMigrationsRequireReview: true, offlineOnlyParsing: true } },
+    }, null, 2));
+    const contractPath = writeValidContract(tempDir, 'db-change.fc.md', 'approved');
+    fs.writeFileSync(contractPath, `${fs.readFileSync(contractPath, 'utf8')}\n**Data Change:** yes\n\n## Data Impact\n- [x] rollback documented\n- [x] migration/backfill documented\n`, 'utf8');
+    fs.writeFileSync(path.join(tempDir, 'contracts', 'FC-123.plan.yaml'), yaml.stringify({
+      status: 'approved',
+      files: [
+        { action: 'modify', path: 'src/feature.ts' },
+        { action: 'modify', path: 'prisma/migrations/001_init/migration.sql' },
+      ],
+    }), 'utf8');
+    fs.mkdirSync(path.join(tempDir, '.grabby', 'db'), { recursive: true });
+    fs.writeFileSync(path.join(tempDir, '.grabby', 'db', 'schema.snapshot.json'), '{}', 'utf8');
+    fs.writeFileSync(path.join(tempDir, '.grabby', 'db', 'relations.graph.json'), '{}', 'utf8');
+    process.env.GRABBY_CHANGED_FILES = 'prisma/migrations/001_init/migration.sql,src/feature.ts';
+
+    handlers.policyCheck();
+
+    expect(exits).toEqual([]);
+    expect(logger.lines.join('\n')).toContain('Policy check passed');
+    delete process.env.GRABBY_CHANGED_FILES;
+  });
+
+  it('fails policyCheck when API specs change without API metadata or snapshot', () => {
+    const logger = createLogger();
+    const exits = [];
+    const context = createProjectContext({ cwd: tempDir, pkgRoot: PKG_ROOT });
+    const handlers = createCommandHandlers({ context, logger, exit: (code) => exits.push(code) });
+
+    writeValidContract(tempDir, 'api-change.fc.md', 'approved');
+    process.env.GRABBY_CHANGED_FILES = 'specs/openapi.yaml';
+
+    handlers.policyCheck();
+
+    expect(exits).toEqual([1]);
+    expect(logger.lines.join('\n')).toContain('api-change contract');
+    delete process.env.GRABBY_CHANGED_FILES;
+  });
+
+  it('fails policyCheck when FE dependencies change without dependency metadata or snapshot', () => {
+    const logger = createLogger();
+    const exits = [];
+    const context = createProjectContext({ cwd: tempDir, pkgRoot: PKG_ROOT });
+    const handlers = createCommandHandlers({ context, logger, exit: (code) => exits.push(code) });
+
+    writeValidContract(tempDir, 'deps-change.fc.md', 'approved');
+    process.env.GRABBY_CHANGED_FILES = 'apps/web/package.json';
+
+    handlers.policyCheck();
+
+    expect(exits).toEqual([1]);
+    expect(logger.lines.join('\n')).toContain('deps-change contract');
+    delete process.env.GRABBY_CHANGED_FILES;
+  });
+
+  it('passes policyCheck for API and FE dependency changes when metadata and snapshots exist', () => {
+    const logger = createLogger();
+    const exits = [];
+    const context = createProjectContext({ cwd: tempDir, pkgRoot: PKG_ROOT });
+    const handlers = createCommandHandlers({ context, logger, exit: (code) => exits.push(code) });
+
+    fs.writeFileSync(path.join(tempDir, 'grabby.config.json'), JSON.stringify({
+      version: '1.0',
+      contracts: { directory: 'contracts', trackingMode: 'tracked' },
+      interactive: { enabled: false, defaultNextAction: null },
+      features: { menuMode: true, startupArt: true, rulesetWizard: true },
+      dbGovernance: { discovery: {}, constraints: { ciDbAccess: 'none', airgapped: false, destructiveMigrationsRequireReview: true, offlineOnlyParsing: true } },
+      systemGovernance: { profile: 'fullstack', roots: { frontendRoots: ['apps/web'], apiSpecRoots: ['specs'] }, rulesetIngestion: { dbSafety: true, apiCompat: true, feDeps: true }, constraints: { airgapped: false, noDbInCi: true, noNetwork: false, noNewDependencies: false, strictBackwardsCompat: true } },
+    }, null, 2));
+    const contractPath = writeValidContract(tempDir, 'api-deps.fc.md', 'approved');
+    fs.writeFileSync(contractPath, `${fs.readFileSync(contractPath, 'utf8')}\n**API Change:** yes\n**Dependency Change:** yes\n**Breaking API Change Approved:** yes\n\n## API Impact\n- [x] compatibility documented\n- [x] versioning documented\n\n## Dependency Impact\n- [x] upgrade strategy documented\n- [x] rollback documented\n`, 'utf8');
+    fs.writeFileSync(path.join(tempDir, 'contracts', 'FC-123.plan.yaml'), yaml.stringify({
+      status: 'approved',
+      files: [
+        { action: 'modify', path: 'specs/openapi.yaml' },
+        { action: 'modify', path: 'apps/web/package.json' },
+      ],
+    }), 'utf8');
+    fs.mkdirSync(path.join(tempDir, '.grabby', 'be'), { recursive: true });
+    fs.mkdirSync(path.join(tempDir, '.grabby', 'fe'), { recursive: true });
+    fs.writeFileSync(path.join(tempDir, '.grabby', 'be', 'api.snapshot.json'), JSON.stringify({ compatibility: { breakingChanges: [] } }, null, 2), 'utf8');
+    fs.writeFileSync(path.join(tempDir, '.grabby', 'fe', 'deps.snapshot.json'), JSON.stringify({ packages: [] }, null, 2), 'utf8');
+    process.env.GRABBY_CHANGED_FILES = 'specs/openapi.yaml,apps/web/package.json';
+
+    handlers.policyCheck();
+
+    expect(exits).toEqual([]);
+    expect(logger.lines.join('\n')).toContain('Policy check passed');
+    delete process.env.GRABBY_CHANGED_FILES;
+  });
+
+  it('blocks execute for DB change contracts without explicit DB metadata or artifacts', () => {
+    const logger = createLogger();
+    const exits = [];
+    const context = createProjectContext({ cwd: tempDir, pkgRoot: PKG_ROOT });
+    const handlers = createCommandHandlers({ context, logger, exit: (code) => exits.push(code) });
+
+    const contractPath = writeValidContract(tempDir, 'db-exec.fc.md', 'approved');
+    fs.writeFileSync(contractPath, `${fs.readFileSync(contractPath, 'utf8')}\nAdd migration for users table.\n`, 'utf8');
+    fs.writeFileSync(path.join(tempDir, 'contracts', 'FC-123.plan.yaml'), yaml.stringify({
+      status: 'approved',
+      files: [{ action: 'modify', path: 'src/feature.ts' }],
+    }), 'utf8');
+
+    handlers.execute('db-exec.fc.md');
+
+    expect(exits).toEqual([1]);
+    expect(logger.lines.join('\n')).toContain('Governance policy failure');
+  });
+
+  it('blocks execute for API and dependency change contracts without required artifacts or approvals', () => {
+    const logger = createLogger();
+    const exits = [];
+    const context = createProjectContext({ cwd: tempDir, pkgRoot: PKG_ROOT });
+    const handlers = createCommandHandlers({ context, logger, exit: (code) => exits.push(code) });
+
+    const contractPath = writeValidContract(tempDir, 'api-deps-exec.fc.md', 'approved');
+    fs.writeFileSync(contractPath, `${fs.readFileSync(contractPath, 'utf8')}\nUpdate OpenAPI payload shape and package.json dependencies.\n`, 'utf8');
+    fs.writeFileSync(path.join(tempDir, 'contracts', 'FC-123.plan.yaml'), yaml.stringify({
+      status: 'approved',
+      files: [{ action: 'modify', path: 'specs/openapi.yaml' }],
+    }), 'utf8');
+
+    handlers.execute('api-deps-exec.fc.md');
+
+    expect(exits).toEqual([1]);
+    expect(logger.lines.join('\n')).toContain('Governance policy failure');
   });
 });
 

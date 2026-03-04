@@ -370,4 +370,30 @@ const path = require('path');
       expect(suggestions).toHaveLength(0);
     });
   });
+
+  describe('discoverRepositoryDependencyGraph', () => {
+    it('builds a repo-wide dependency graph artifact structure', () => {
+      fs.mkdirSync(path.join(tempDir, 'src'), { recursive: true });
+      fs.writeFileSync(path.join(tempDir, 'src', 'a.ts'), `import { b } from './b';\n`, 'utf8');
+      fs.writeFileSync(path.join(tempDir, 'src', 'b.ts'), `const c = require('./c');\n`, 'utf8');
+      fs.writeFileSync(path.join(tempDir, 'src', 'c.ts'), `export const c = true;\n`, 'utf8');
+
+      const graph = depAnalyzer.discoverRepositoryDependencyGraph(tempDir);
+
+      expect(graph.nodes.some((node) => node.id === 'src/a.ts')).toBe(true);
+      expect(graph.edges.some((edge) => edge.from === 'src/a.ts' && edge.to === 'src/b.js')).toBe(true);
+      expect(graph.edges.some((edge) => edge.from === 'src/b.ts' && edge.to === 'src/c.js')).toBe(true);
+    });
+
+    it('writes the dependency graph artifact under .grabby/code', () => {
+      fs.mkdirSync(path.join(tempDir, 'src'), { recursive: true });
+      fs.writeFileSync(path.join(tempDir, 'src', 'a.ts'), `import './b';\n`, 'utf8');
+      fs.writeFileSync(path.join(tempDir, 'src', 'b.ts'), `export const b = true;\n`, 'utf8');
+
+      const result = depAnalyzer.saveRepositoryDependencyGraph(tempDir);
+
+      expect(fs.existsSync(result.outputPath)).toBe(true);
+      expect(result.outputPath).toContain(path.join('.grabby', 'code', 'dependency_graph.json'));
+    });
+  });
 });

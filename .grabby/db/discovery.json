@@ -1,0 +1,25 @@
+{
+  "generatedAt": "2026-03-04T04:41:58.284Z",
+  "root": "C:/Users/jesse/ai-feature-contracts",
+  "languages": [
+    "node"
+  ],
+  "packageManager": null,
+  "databases": [],
+  "migrationTooling": [],
+  "queryStyles": [],
+  "constraints": {},
+  "packageRoots": [],
+  "candidatePaths": {
+    "schemaRoots": [],
+    "migrationRoots": [],
+    "schemaFiles": [],
+    "migrationFiles": [],
+    "codePaths": [
+      ".grabby/db/discovery.json",
+      "lib/db-awareness.cjs",
+      "tests/db-awareness.test.js",
+      "tests/db-ruleset.test.js"
+    ]
+  }
+}

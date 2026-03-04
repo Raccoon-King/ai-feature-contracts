@@ -1,0 +1,2399 @@
+{
+  "generatedAt": "2026-03-04T04:41:57.977Z",
+  "nodes": [
+    {
+      "id": ".grabby/plugins/test-plugin/index.js",
+      "package": "."
+    },
+    {
+      "id": "bin/index.cjs",
+      "package": "."
+    },
+    {
+      "id": "bin/server.cjs",
+      "package": "."
+    },
+    {
+      "id": "lib/agile.cjs",
+      "package": "."
+    },
+    {
+      "id": "lib/ai-complete.cjs",
+      "package": "."
+    },
+    {
+      "id": "lib/api-server.cjs",
+      "package": "."
+    },
+    {
+      "id": "lib/assessment.cjs",
+      "package": "."
+    },
+    {
+      "id": "lib/cicd.cjs",
+      "package": "."
+    },
+    {
+      "id": "lib/commands.cjs",
+      "package": "."
+    },
+    {
+      "id": "lib/complexity.cjs",
+      "package": "."
+    },
+    {
+      "id": "lib/config.cjs",
+      "package": "."
+    },
+    {
+      "id": "lib/contract-levels.cjs",
+      "package": "."
+    },
+    {
+      "id": "lib/core.cjs",
+      "package": "."
+    },
+    {
+      "id": "lib/db-awareness.cjs",
+      "package": "."
+    },
+    {
+      "id": "lib/dependency-analyzer.cjs",
+      "package": "."
+    },
+    {
+      "id": "lib/feature-chat.cjs",
+      "package": "."
+    },
+    {
+      "id": "lib/features.cjs",
+      "package": "."
+    },
+    {
+      "id": "lib/governance-runtime.cjs",
+      "package": "."
+    },
+    {
+      "id": "lib/governance.cjs",
+      "package": "."
+    },
+    {
+      "id": "lib/graphql.cjs",
+      "package": "."
+    },
+    {
+      "id": "lib/id-utils.cjs",
+      "package": "."
+    },
+    {
+      "id": "lib/ignore.cjs",
+      "package": "."
+    },
+    {
+      "id": "lib/interactive-shell.cjs",
+      "package": "."
+    },
+    {
+      "id": "lib/interactive-workflows.cjs",
+      "package": "."
+    },
+    {
+      "id": "lib/interactive.cjs",
+      "package": "."
+    },
+    {
+      "id": "lib/jira.cjs",
+      "package": "."
+    },
+    {
+      "id": "lib/metrics.cjs",
+      "package": "."
+    },
+    {
+      "id": "lib/multi-repo.cjs",
+      "package": "."
+    },
+    {
+      "id": "lib/personas.cjs",
+      "package": "."
+    },
+    {
+      "id": "lib/plugins.cjs",
+      "package": "."
+    },
+    {
+      "id": "lib/progress.cjs",
+      "package": "."
+    },
+    {
+      "id": "lib/ruleset-builder.cjs",
+      "package": "."
+    },
+    {
+      "id": "lib/smart-prompts.cjs",
+      "package": "."
+    },
+    {
+      "id": "lib/task-artifacts.cjs",
+      "package": "."
+    },
+    {
+      "id": "lib/task-brief.cjs",
+      "package": "."
+    },
+    {
+      "id": "lib/ticket-intake.cjs",
+      "package": "."
+    },
+    {
+      "id": "lib/tui.cjs",
+      "package": "."
+    },
+    {
+      "id": "lib/watcher.cjs",
+      "package": "."
+    },
+    {
+      "id": "scripts/build.cjs",
+      "package": "."
+    },
+    {
+      "id": "scripts/lint.cjs",
+      "package": "."
+    },
+    {
+      "id": "tests/agile.test.js",
+      "package": "."
+    },
+    {
+      "id": "tests/ai-complete.test.js",
+      "package": "."
+    },
+    {
+      "id": "tests/api-server.test.js",
+      "package": "."
+    },
+    {
+      "id": "tests/assessment.test.js",
+      "package": "."
+    },
+    {
+      "id": "tests/cicd.test.js",
+      "package": "."
+    },
+    {
+      "id": "tests/cli.test.js",
+      "package": "."
+    },
+    {
+      "id": "tests/commands.test.js",
+      "package": "."
+    },
+    {
+      "id": "tests/complexity.test.js",
+      "package": "."
+    },
+    {
+      "id": "tests/config.test.js",
+      "package": "."
+    },
+    {
+      "id": "tests/contract-levels.test.cjs",
+      "package": "."
+    },
+    {
+      "id": "tests/contract-levels.test.js",
+      "package": "."
+    },
+    {
+      "id": "tests/core.test.js",
+      "package": "."
+    },
+    {
+      "id": "tests/db-awareness.test.js",
+      "package": "."
+    },
+    {
+      "id": "tests/db-ruleset.test.js",
+      "package": "."
+    },
+    {
+      "id": "tests/dependency-analyzer.test.js",
+      "package": "."
+    },
+    {
+      "id": "tests/e2e/cli-commands.test.js",
+      "package": "."
+    },
+    {
+      "id": "tests/e2e/file-generation.test.js",
+      "package": "."
+    },
+    {
+      "id": "tests/feature-chat.test.js",
+      "package": "."
+    },
+    {
+      "id": "tests/feature-close.test.js",
+      "package": "."
+    },
+    {
+      "id": "tests/features-index.test.js",
+      "package": "."
+    },
+    {
+      "id": "tests/features.test.js",
+      "package": "."
+    },
+    {
+      "id": "tests/governance-runtime.test.js",
+      "package": "."
+    },
+    {
+      "id": "tests/governance.test.js",
+      "package": "."
+    },
+    {
+      "id": "tests/graphql.test.js",
+      "package": "."
+    },
+    {
+      "id": "tests/id-utils.test.js",
+      "package": "."
+    },
+    {
+      "id": "tests/ignore.test.js",
+      "package": "."
+    },
+    {
+      "id": "tests/integration/contract-workflow.test.js",
+      "package": "."
+    },
+    {
+      "id": "tests/integration/governance-enforcement.test.js",
+      "package": "."
+    },
+    {
+      "id": "tests/integration/persona-handoff.test.js",
+      "package": "."
+    },
+    {
+      "id": "tests/interactive-shell.test.js",
+      "package": "."
+    },
+    {
+      "id": "tests/interactive-workflows.test.js",
+      "package": "."
+    },
+    {
+      "id": "tests/interactive.test.js",
+      "package": "."
+    },
+    {
+      "id": "tests/jira.test.js",
+      "package": "."
+    },
+    {
+      "id": "tests/metrics.test.js",
+      "package": "."
+    },
+    {
+      "id": "tests/multi-repo.test.js",
+      "package": "."
+    },
+    {
+      "id": "tests/packaging.test.js",
+      "package": "."
+    },
+    {
+      "id": "tests/personas.test.js",
+      "package": "."
+    },
+    {
+      "id": "tests/plugins.test.js",
+      "package": "."
+    },
+    {
+      "id": "tests/progress.test.js",
+      "package": "."
+    },
+    {
+      "id": "tests/router-governance.test.js",
+      "package": "."
+    },
+    {
+      "id": "tests/ruleset-builder.test.js",
+      "package": "."
+    },
+    {
+      "id": "tests/smart-prompts.test.js",
+      "package": "."
+    },
+    {
+      "id": "tests/task-artifacts.test.js",
+      "package": "."
+    },
+    {
+      "id": "tests/task-brief.test.js",
+      "package": "."
+    },
+    {
+      "id": "tests/ticket-intake.test.js",
+      "package": "."
+    },
+    {
+      "id": "tests/tracking-mode.test.js",
+      "package": "."
+    },
+    {
+      "id": "tests/tui.test.js",
+      "package": "."
+    },
+    {
+      "id": "tests/watcher.test.js",
+      "package": "."
+    }
+  ],
+  "edges": [
+    {
+      "from": "bin/index.cjs",
+      "to": "fs",
+      "kind": "package"
+    },
+    {
+      "from": "bin/index.cjs",
+      "to": "lib/ai-complete.cjs",
+      "kind": "relative"
+    },
+    {
+      "from": "bin/index.cjs",
+      "to": "lib/api-server.cjs",
+      "kind": "relative"
+    },
+    {
+      "from": "bin/index.cjs",
+      "to": "lib/cicd.cjs",
+      "kind": "relative"
+    },
+    {
+      "from": "bin/index.cjs",
+      "to": "lib/commands.cjs",
+      "kind": "relative"
+    },
+    {
+      "from": "bin/index.cjs",
+      "to": "lib/config.cjs",
+      "kind": "relative"
+    },
+    {
+      "from": "bin/index.cjs",
+      "to": "lib/contract-levels.cjs",
+      "kind": "relative"
+    },
+    {
+      "from": "bin/index.cjs",
+      "to": "lib/features.cjs",
+      "kind": "relative"
+    },
+    {
+      "from": "bin/index.cjs",
+      "to": "lib/id-utils.cjs",
+      "kind": "relative"
+    },
+    {
+      "from": "bin/index.cjs",
+      "to": "lib/interactive.cjs",
+      "kind": "relative"
+    },
+    {
+      "from": "bin/index.cjs",
+      "to": "lib/jira.cjs",
+      "kind": "relative"
+    },
+    {
+      "from": "bin/index.cjs",
+      "to": "lib/metrics.cjs",
+      "kind": "relative"
+    },
+    {
+      "from": "bin/index.cjs",
+      "to": "lib/multi-repo.cjs",
+      "kind": "relative"
+    },
+    {
+      "from": "bin/index.cjs",
+      "to": "lib/plugins.cjs",
+      "kind": "relative"
+    },
+    {
+      "from": "bin/index.cjs",
+      "to": "lib/ruleset-builder.cjs",
+      "kind": "relative"
+    },
+    {
+      "from": "bin/index.cjs",
+      "to": "lib/tui.cjs",
+      "kind": "relative"
+    },
+    {
+      "from": "bin/index.cjs",
+      "to": "path",
+      "kind": "package"
+    },
+    {
+      "from": "bin/server.cjs",
+      "to": "lib/api-server.cjs",
+      "kind": "relative"
+    },
+    {
+      "from": "bin/server.cjs",
+      "to": "path",
+      "kind": "package"
+    },
+    {
+      "from": "lib/agile.cjs",
+      "to": "path",
+      "kind": "package"
+    },
+    {
+      "from": "lib/ai-complete.cjs",
+      "to": "http",
+      "kind": "package"
+    },
+    {
+      "from": "lib/ai-complete.cjs",
+      "to": "https",
+      "kind": "package"
+    },
+    {
+      "from": "lib/ai-complete.cjs",
+      "to": "lib/smart-prompts.cjs",
+      "kind": "relative"
+    },
+    {
+      "from": "lib/api-server.cjs",
+      "to": "fs",
+      "kind": "package"
+    },
+    {
+      "from": "lib/api-server.cjs",
+      "to": "http",
+      "kind": "package"
+    },
+    {
+      "from": "lib/api-server.cjs",
+      "to": "lib/complexity.cjs",
+      "kind": "relative"
+    },
+    {
+      "from": "lib/api-server.cjs",
+      "to": "lib/core.cjs",
+      "kind": "relative"
+    },
+    {
+      "from": "lib/api-server.cjs",
+      "to": "lib/core.cjs",
+      "kind": "relative"
+    },
+    {
+      "from": "lib/api-server.cjs",
+      "to": "lib/graphql.cjs",
+      "kind": "relative"
+    },
+    {
+      "from": "lib/api-server.cjs",
+      "to": "lib/metrics.cjs",
+      "kind": "relative"
+    },
+    {
+      "from": "lib/api-server.cjs",
+      "to": "path",
+      "kind": "package"
+    },
+    {
+      "from": "lib/api-server.cjs",
+      "to": "url",
+      "kind": "package"
+    },
+    {
+      "from": "lib/assessment.cjs",
+      "to": "fs",
+      "kind": "package"
+    },
+    {
+      "from": "lib/assessment.cjs",
+      "to": "lib/ai-complete.cjs",
+      "kind": "relative"
+    },
+    {
+      "from": "lib/assessment.cjs",
+      "to": "lib/smart-prompts.cjs",
+      "kind": "relative"
+    },
+    {
+      "from": "lib/assessment.cjs",
+      "to": "path",
+      "kind": "package"
+    },
+    {
+      "from": "lib/cicd.cjs",
+      "to": "fs",
+      "kind": "package"
+    },
+    {
+      "from": "lib/cicd.cjs",
+      "to": "path",
+      "kind": "package"
+    },
+    {
+      "from": "lib/cicd.cjs",
+      "to": "yaml",
+      "kind": "package"
+    },
+    {
+      "from": "lib/commands.cjs",
+      "to": "child_process",
+      "kind": "package"
+    },
+    {
+      "from": "lib/commands.cjs",
+      "to": "crypto",
+      "kind": "package"
+    },
+    {
+      "from": "lib/commands.cjs",
+      "to": "fs",
+      "kind": "package"
+    },
+    {
+      "from": "lib/commands.cjs",
+      "to": "lib/agile.cjs",
+      "kind": "relative"
+    },
+    {
+      "from": "lib/commands.cjs",
+      "to": "lib/assessment.cjs",
+      "kind": "relative"
+    },
+    {
+      "from": "lib/commands.cjs",
+      "to": "lib/config.cjs",
+      "kind": "relative"
+    },
+    {
+      "from": "lib/commands.cjs",
+      "to": "lib/core.cjs",
+      "kind": "relative"
+    },
+    {
+      "from": "lib/commands.cjs",
+      "to": "lib/db-awareness.cjs",
+      "kind": "relative"
+    },
+    {
+      "from": "lib/commands.cjs",
+      "to": "lib/dependency-analyzer.cjs",
+      "kind": "relative"
+    },
+    {
+      "from": "lib/commands.cjs",
+      "to": "lib/features.cjs",
+      "kind": "relative"
+    },
+    {
+      "from": "lib/commands.cjs",
+      "to": "lib/governance-runtime.cjs",
+      "kind": "relative"
+    },
+    {
+      "from": "lib/commands.cjs",
+      "to": "lib/governance.cjs",
+      "kind": "relative"
+    },
+    {
+      "from": "lib/commands.cjs",
+      "to": "lib/id-utils.cjs",
+      "kind": "relative"
+    },
+    {
+      "from": "lib/commands.cjs",
+      "to": "lib/ignore.cjs",
+      "kind": "relative"
+    },
+    {
+      "from": "lib/commands.cjs",
+      "to": "lib/personas.cjs",
+      "kind": "relative"
+    },
+    {
+      "from": "lib/commands.cjs",
+      "to": "lib/task-artifacts.cjs",
+      "kind": "relative"
+    },
+    {
+      "from": "lib/commands.cjs",
+      "to": "lib/watcher.cjs",
+      "kind": "relative"
+    },
+    {
+      "from": "lib/commands.cjs",
+      "to": "path",
+      "kind": "package"
+    },
+    {
+      "from": "lib/commands.cjs",
+      "to": "yaml",
+      "kind": "package"
+    },
+    {
+      "from": "lib/config.cjs",
+      "to": "fs",
+      "kind": "package"
+    },
+    {
+      "from": "lib/config.cjs",
+      "to": "path",
+      "kind": "package"
+    },
+    {
+      "from": "lib/contract-levels.cjs",
+      "to": "fs",
+      "kind": "package"
+    },
+    {
+      "from": "lib/contract-levels.cjs",
+      "to": "os",
+      "kind": "package"
+    },
+    {
+      "from": "lib/contract-levels.cjs",
+      "to": "path",
+      "kind": "package"
+    },
+    {
+      "from": "lib/contract-levels.cjs",
+      "to": "yaml",
+      "kind": "package"
+    },
+    {
+      "from": "lib/core.cjs",
+      "to": "fs",
+      "kind": "package"
+    },
+    {
+      "from": "lib/core.cjs",
+      "to": "lib/complexity.cjs",
+      "kind": "relative"
+    },
+    {
+      "from": "lib/core.cjs",
+      "to": "lib/dependency-analyzer.cjs",
+      "kind": "relative"
+    },
+    {
+      "from": "lib/core.cjs",
+      "to": "path",
+      "kind": "package"
+    },
+    {
+      "from": "lib/core.cjs",
+      "to": "yaml",
+      "kind": "package"
+    },
+    {
+      "from": "lib/db-awareness.cjs",
+      "to": "fs",
+      "kind": "package"
+    },
+    {
+      "from": "lib/db-awareness.cjs",
+      "to": "path",
+      "kind": "package"
+    },
+    {
+      "from": "lib/dependency-analyzer.cjs",
+      "to": "fs",
+      "kind": "package"
+    },
+    {
+      "from": "lib/dependency-analyzer.cjs",
+      "to": "path",
+      "kind": "package"
+    },
+    {
+      "from": "lib/feature-chat.cjs",
+      "to": "lib/features.cjs",
+      "kind": "relative"
+    },
+    {
+      "from": "lib/feature-chat.cjs",
+      "to": "readline",
+      "kind": "package"
+    },
+    {
+      "from": "lib/features.cjs",
+      "to": "fs",
+      "kind": "package"
+    },
+    {
+      "from": "lib/features.cjs",
+      "to": "lib/config.cjs",
+      "kind": "relative"
+    },
+    {
+      "from": "lib/features.cjs",
+      "to": "lib/id-utils.cjs",
+      "kind": "relative"
+    },
+    {
+      "from": "lib/features.cjs",
+      "to": "path",
+      "kind": "package"
+    },
+    {
+      "from": "lib/features.cjs",
+      "to": "yaml",
+      "kind": "package"
+    },
+    {
+      "from": "lib/governance-runtime.cjs",
+      "to": "child_process",
+      "kind": "package"
+    },
+    {
+      "from": "lib/governance-runtime.cjs",
+      "to": "fs",
+      "kind": "package"
+    },
+    {
+      "from": "lib/governance-runtime.cjs",
+      "to": "path",
+      "kind": "package"
+    },
+    {
+      "from": "lib/governance-runtime.cjs",
+      "to": "yaml",
+      "kind": "package"
+    },
+    {
+      "from": "lib/governance.cjs",
+      "to": "fs",
+      "kind": "package"
+    },
+    {
+      "from": "lib/governance.cjs",
+      "to": "path",
+      "kind": "package"
+    },
+    {
+      "from": "lib/graphql.cjs",
+      "to": "fs",
+      "kind": "package"
+    },
+    {
+      "from": "lib/graphql.cjs",
+      "to": "path",
+      "kind": "package"
+    },
+    {
+      "from": "lib/id-utils.cjs",
+      "to": "fs",
+      "kind": "package"
+    },
+    {
+      "from": "lib/id-utils.cjs",
+      "to": "path",
+      "kind": "package"
+    },
+    {
+      "from": "lib/ignore.cjs",
+      "to": "fs",
+      "kind": "package"
+    },
+    {
+      "from": "lib/ignore.cjs",
+      "to": "path",
+      "kind": "package"
+    },
+    {
+      "from": "lib/interactive-workflows.cjs",
+      "to": "@testing-library/react",
+      "kind": "package"
+    },
+    {
+      "from": "lib/interactive-workflows.cjs",
+      "to": "@testing-library/react-hooks",
+      "kind": "package"
+    },
+    {
+      "from": "lib/interactive-workflows.cjs",
+      "to": "${f.replace(/\\.tsx?$/, ",
+      "kind": "package"
+    },
+    {
+      "from": "lib/interactive-workflows.cjs",
+      "to": "${f.replace(/\\.tsx?$/, ",
+      "kind": "package"
+    },
+    {
+      "from": "lib/interactive-workflows.cjs",
+      "to": "${f.replace(/\\.tsx?$/, ",
+      "kind": "package"
+    },
+    {
+      "from": "lib/interactive-workflows.cjs",
+      "to": "child_process",
+      "kind": "package"
+    },
+    {
+      "from": "lib/interactive-workflows.cjs",
+      "to": "crypto",
+      "kind": "package"
+    },
+    {
+      "from": "lib/interactive-workflows.cjs",
+      "to": "fs",
+      "kind": "package"
+    },
+    {
+      "from": "lib/interactive-workflows.cjs",
+      "to": "lib/commands.cjs",
+      "kind": "relative"
+    },
+    {
+      "from": "lib/interactive-workflows.cjs",
+      "to": "lib/config.cjs",
+      "kind": "relative"
+    },
+    {
+      "from": "lib/interactive-workflows.cjs",
+      "to": "lib/id-utils.cjs",
+      "kind": "relative"
+    },
+    {
+      "from": "lib/interactive-workflows.cjs",
+      "to": "lib/personas.cjs",
+      "kind": "relative"
+    },
+    {
+      "from": "lib/interactive-workflows.cjs",
+      "to": "lib/progress.cjs",
+      "kind": "relative"
+    },
+    {
+      "from": "lib/interactive-workflows.cjs",
+      "to": "lib/smart-prompts.cjs",
+      "kind": "relative"
+    },
+    {
+      "from": "lib/interactive-workflows.cjs",
+      "to": "lib/task-artifacts.cjs",
+      "kind": "relative"
+    },
+    {
+      "from": "lib/interactive-workflows.cjs",
+      "to": "lib/task-brief.cjs",
+      "kind": "relative"
+    },
+    {
+      "from": "lib/interactive-workflows.cjs",
+      "to": "lib/ticket-intake.cjs",
+      "kind": "relative"
+    },
+    {
+      "from": "lib/interactive-workflows.cjs",
+      "to": "path",
+      "kind": "package"
+    },
+    {
+      "from": "lib/interactive-workflows.cjs",
+      "to": "readline",
+      "kind": "package"
+    },
+    {
+      "from": "lib/interactive-workflows.cjs",
+      "to": "yaml",
+      "kind": "package"
+    },
+    {
+      "from": "lib/interactive.cjs",
+      "to": "lib/interactive-shell.cjs",
+      "kind": "relative"
+    },
+    {
+      "from": "lib/interactive.cjs",
+      "to": "lib/interactive-workflows.cjs",
+      "kind": "relative"
+    },
+    {
+      "from": "lib/jira.cjs",
+      "to": "fs",
+      "kind": "package"
+    },
+    {
+      "from": "lib/jira.cjs",
+      "to": "lib/config.cjs",
+      "kind": "relative"
+    },
+    {
+      "from": "lib/jira.cjs",
+      "to": "lib/id-utils.cjs",
+      "kind": "relative"
+    },
+    {
+      "from": "lib/jira.cjs",
+      "to": "path",
+      "kind": "package"
+    },
+    {
+      "from": "lib/metrics.cjs",
+      "to": "fs",
+      "kind": "package"
+    },
+    {
+      "from": "lib/metrics.cjs",
+      "to": "lib/complexity.cjs",
+      "kind": "relative"
+    },
+    {
+      "from": "lib/metrics.cjs",
+      "to": "lib/core.cjs",
+      "kind": "relative"
+    },
+    {
+      "from": "lib/metrics.cjs",
+      "to": "path",
+      "kind": "package"
+    },
+    {
+      "from": "lib/multi-repo.cjs",
+      "to": "fs",
+      "kind": "package"
+    },
+    {
+      "from": "lib/multi-repo.cjs",
+      "to": "path",
+      "kind": "package"
+    },
+    {
+      "from": "lib/multi-repo.cjs",
+      "to": "yaml",
+      "kind": "package"
+    },
+    {
+      "from": "lib/personas.cjs",
+      "to": "fs",
+      "kind": "package"
+    },
+    {
+      "from": "lib/personas.cjs",
+      "to": "path",
+      "kind": "package"
+    },
+    {
+      "from": "lib/personas.cjs",
+      "to": "yaml",
+      "kind": "package"
+    },
+    {
+      "from": "lib/plugins.cjs",
+      "to": "fs",
+      "kind": "package"
+    },
+    {
+      "from": "lib/plugins.cjs",
+      "to": "path",
+      "kind": "package"
+    },
+    {
+      "from": "lib/plugins.cjs",
+      "to": "yaml",
+      "kind": "package"
+    },
+    {
+      "from": "lib/progress.cjs",
+      "to": "cli-progress",
+      "kind": "package"
+    },
+    {
+      "from": "lib/ruleset-builder.cjs",
+      "to": "fs",
+      "kind": "package"
+    },
+    {
+      "from": "lib/ruleset-builder.cjs",
+      "to": "lib/ai-complete.cjs",
+      "kind": "relative"
+    },
+    {
+      "from": "lib/ruleset-builder.cjs",
+      "to": "path",
+      "kind": "package"
+    },
+    {
+      "from": "lib/ruleset-builder.cjs",
+      "to": "readline",
+      "kind": "package"
+    },
+    {
+      "from": "lib/smart-prompts.cjs",
+      "to": "fs",
+      "kind": "package"
+    },
+    {
+      "from": "lib/smart-prompts.cjs",
+      "to": "path",
+      "kind": "package"
+    },
+    {
+      "from": "lib/task-artifacts.cjs",
+      "to": "lib/core.cjs",
+      "kind": "relative"
+    },
+    {
+      "from": "lib/task-artifacts.cjs",
+      "to": "path",
+      "kind": "package"
+    },
+    {
+      "from": "lib/task-brief.cjs",
+      "to": "lib/core.cjs",
+      "kind": "relative"
+    },
+    {
+      "from": "lib/task-brief.cjs",
+      "to": "path",
+      "kind": "package"
+    },
+    {
+      "from": "lib/ticket-intake.cjs",
+      "to": "lib/id-utils.cjs",
+      "kind": "relative"
+    },
+    {
+      "from": "lib/tui.cjs",
+      "to": "fs",
+      "kind": "package"
+    },
+    {
+      "from": "lib/tui.cjs",
+      "to": "lib/assessment.cjs",
+      "kind": "relative"
+    },
+    {
+      "from": "lib/tui.cjs",
+      "to": "lib/cicd.cjs",
+      "kind": "relative"
+    },
+    {
+      "from": "lib/tui.cjs",
+      "to": "lib/cicd.cjs",
+      "kind": "relative"
+    },
+    {
+      "from": "lib/tui.cjs",
+      "to": "lib/config.cjs",
+      "kind": "relative"
+    },
+    {
+      "from": "lib/tui.cjs",
+      "to": "lib/core.cjs",
+      "kind": "relative"
+    },
+    {
+      "from": "lib/tui.cjs",
+      "to": "lib/core.cjs",
+      "kind": "relative"
+    },
+    {
+      "from": "lib/tui.cjs",
+      "to": "lib/metrics.cjs",
+      "kind": "relative"
+    },
+    {
+      "from": "lib/tui.cjs",
+      "to": "lib/plugins.cjs",
+      "kind": "relative"
+    },
+    {
+      "from": "lib/tui.cjs",
+      "to": "lib/ruleset-builder.cjs",
+      "kind": "relative"
+    },
+    {
+      "from": "lib/tui.cjs",
+      "to": "lib/ruleset-builder.cjs",
+      "kind": "relative"
+    },
+    {
+      "from": "lib/tui.cjs",
+      "to": "lib/watcher.cjs",
+      "kind": "relative"
+    },
+    {
+      "from": "lib/tui.cjs",
+      "to": "path",
+      "kind": "package"
+    },
+    {
+      "from": "lib/tui.cjs",
+      "to": "readline",
+      "kind": "package"
+    },
+    {
+      "from": "lib/tui.cjs",
+      "to": "yaml",
+      "kind": "package"
+    },
+    {
+      "from": "lib/watcher.cjs",
+      "to": "chokidar",
+      "kind": "package"
+    },
+    {
+      "from": "lib/watcher.cjs",
+      "to": "fs",
+      "kind": "package"
+    },
+    {
+      "from": "lib/watcher.cjs",
+      "to": "lib/core.cjs",
+      "kind": "relative"
+    },
+    {
+      "from": "lib/watcher.cjs",
+      "to": "lib/ignore.cjs",
+      "kind": "relative"
+    },
+    {
+      "from": "lib/watcher.cjs",
+      "to": "lib/progress.cjs",
+      "kind": "relative"
+    },
+    {
+      "from": "lib/watcher.cjs",
+      "to": "path",
+      "kind": "package"
+    },
+    {
+      "from": "scripts/build.cjs",
+      "to": "fs",
+      "kind": "package"
+    },
+    {
+      "from": "scripts/build.cjs",
+      "to": "path",
+      "kind": "package"
+    },
+    {
+      "from": "scripts/build.cjs",
+      "to": "vm",
+      "kind": "package"
+    },
+    {
+      "from": "scripts/lint.cjs",
+      "to": "fs",
+      "kind": "package"
+    },
+    {
+      "from": "scripts/lint.cjs",
+      "to": "path",
+      "kind": "package"
+    },
+    {
+      "from": "scripts/lint.cjs",
+      "to": "vm",
+      "kind": "package"
+    },
+    {
+      "from": "scripts/lint.cjs",
+      "to": "yaml",
+      "kind": "package"
+    },
+    {
+      "from": "tests/agile.test.js",
+      "to": "fs",
+      "kind": "package"
+    },
+    {
+      "from": "tests/agile.test.js",
+      "to": "lib/agile.cjs",
+      "kind": "relative"
+    },
+    {
+      "from": "tests/agile.test.js",
+      "to": "os",
+      "kind": "package"
+    },
+    {
+      "from": "tests/agile.test.js",
+      "to": "path",
+      "kind": "package"
+    },
+    {
+      "from": "tests/ai-complete.test.js",
+      "to": "events",
+      "kind": "package"
+    },
+    {
+      "from": "tests/ai-complete.test.js",
+      "to": "http",
+      "kind": "package"
+    },
+    {
+      "from": "tests/ai-complete.test.js",
+      "to": "https",
+      "kind": "package"
+    },
+    {
+      "from": "tests/ai-complete.test.js",
+      "to": "lib/ai-complete.cjs",
+      "kind": "relative"
+    },
+    {
+      "from": "tests/api-server.test.js",
+      "to": "fs",
+      "kind": "package"
+    },
+    {
+      "from": "tests/api-server.test.js",
+      "to": "http",
+      "kind": "package"
+    },
+    {
+      "from": "tests/api-server.test.js",
+      "to": "lib/api-server.cjs",
+      "kind": "relative"
+    },
+    {
+      "from": "tests/api-server.test.js",
+      "to": "os",
+      "kind": "package"
+    },
+    {
+      "from": "tests/api-server.test.js",
+      "to": "path",
+      "kind": "package"
+    },
+    {
+      "from": "tests/assessment.test.js",
+      "to": "fs",
+      "kind": "package"
+    },
+    {
+      "from": "tests/assessment.test.js",
+      "to": "lib/ai-complete.cjs",
+      "kind": "relative"
+    },
+    {
+      "from": "tests/assessment.test.js",
+      "to": "lib/assessment.cjs",
+      "kind": "relative"
+    },
+    {
+      "from": "tests/assessment.test.js",
+      "to": "lib/smart-prompts.cjs",
+      "kind": "relative"
+    },
+    {
+      "from": "tests/assessment.test.js",
+      "to": "os",
+      "kind": "package"
+    },
+    {
+      "from": "tests/assessment.test.js",
+      "to": "path",
+      "kind": "package"
+    },
+    {
+      "from": "tests/cicd.test.js",
+      "to": "fs",
+      "kind": "package"
+    },
+    {
+      "from": "tests/cicd.test.js",
+      "to": "lib/cicd.cjs",
+      "kind": "relative"
+    },
+    {
+      "from": "tests/cicd.test.js",
+      "to": "os",
+      "kind": "package"
+    },
+    {
+      "from": "tests/cicd.test.js",
+      "to": "path",
+      "kind": "package"
+    },
+    {
+      "from": "tests/cli.test.js",
+      "to": "child_process",
+      "kind": "package"
+    },
+    {
+      "from": "tests/cli.test.js",
+      "to": "fs",
+      "kind": "package"
+    },
+    {
+      "from": "tests/cli.test.js",
+      "to": "os",
+      "kind": "package"
+    },
+    {
+      "from": "tests/cli.test.js",
+      "to": "path",
+      "kind": "package"
+    },
+    {
+      "from": "tests/cli.test.js",
+      "to": "yaml",
+      "kind": "package"
+    },
+    {
+      "from": "tests/commands.test.js",
+      "to": "fs",
+      "kind": "package"
+    },
+    {
+      "from": "tests/commands.test.js",
+      "to": "lib/commands.cjs",
+      "kind": "relative"
+    },
+    {
+      "from": "tests/commands.test.js",
+      "to": "lib/commands.cjs",
+      "kind": "relative"
+    },
+    {
+      "from": "tests/commands.test.js",
+      "to": "lib/watcher.cjs",
+      "kind": "relative"
+    },
+    {
+      "from": "tests/commands.test.js",
+      "to": "os",
+      "kind": "package"
+    },
+    {
+      "from": "tests/commands.test.js",
+      "to": "path",
+      "kind": "package"
+    },
+    {
+      "from": "tests/commands.test.js",
+      "to": "tests/repositories/userRepo.js",
+      "kind": "relative"
+    },
+    {
+      "from": "tests/commands.test.js",
+      "to": "yaml",
+      "kind": "package"
+    },
+    {
+      "from": "tests/complexity.test.js",
+      "to": "lib/complexity.cjs",
+      "kind": "relative"
+    },
+    {
+      "from": "tests/config.test.js",
+      "to": "fs",
+      "kind": "package"
+    },
+    {
+      "from": "tests/config.test.js",
+      "to": "lib/config.cjs",
+      "kind": "relative"
+    },
+    {
+      "from": "tests/config.test.js",
+      "to": "lib/config.cjs",
+      "kind": "relative"
+    },
+    {
+      "from": "tests/config.test.js",
+      "to": "lib/config.cjs",
+      "kind": "relative"
+    },
+    {
+      "from": "tests/config.test.js",
+      "to": "lib/config.cjs",
+      "kind": "relative"
+    },
+    {
+      "from": "tests/config.test.js",
+      "to": "os",
+      "kind": "package"
+    },
+    {
+      "from": "tests/config.test.js",
+      "to": "path",
+      "kind": "package"
+    },
+    {
+      "from": "tests/contract-levels.test.cjs",
+      "to": "fs",
+      "kind": "package"
+    },
+    {
+      "from": "tests/contract-levels.test.cjs",
+      "to": "lib/contract-levels.cjs",
+      "kind": "relative"
+    },
+    {
+      "from": "tests/contract-levels.test.cjs",
+      "to": "os",
+      "kind": "package"
+    },
+    {
+      "from": "tests/contract-levels.test.cjs",
+      "to": "path",
+      "kind": "package"
+    },
+    {
+      "from": "tests/contract-levels.test.js",
+      "to": "fs",
+      "kind": "package"
+    },
+    {
+      "from": "tests/contract-levels.test.js",
+      "to": "lib/contract-levels.cjs",
+      "kind": "relative"
+    },
+    {
+      "from": "tests/contract-levels.test.js",
+      "to": "os",
+      "kind": "package"
+    },
+    {
+      "from": "tests/contract-levels.test.js",
+      "to": "path",
+      "kind": "package"
+    },
+    {
+      "from": "tests/contract-levels.test.js",
+      "to": "yaml",
+      "kind": "package"
+    },
+    {
+      "from": "tests/core.test.js",
+      "to": "fs",
+      "kind": "package"
+    },
+    {
+      "from": "tests/core.test.js",
+      "to": "lib/core.cjs",
+      "kind": "relative"
+    },
+    {
+      "from": "tests/core.test.js",
+      "to": "os",
+      "kind": "package"
+    },
+    {
+      "from": "tests/core.test.js",
+      "to": "path",
+      "kind": "package"
+    },
+    {
+      "from": "tests/db-awareness.test.js",
+      "to": "fs",
+      "kind": "package"
+    },
+    {
+      "from": "tests/db-awareness.test.js",
+      "to": "lib/db-awareness.cjs",
+      "kind": "relative"
+    },
+    {
+      "from": "tests/db-awareness.test.js",
+      "to": "os",
+      "kind": "package"
+    },
+    {
+      "from": "tests/db-awareness.test.js",
+      "to": "path",
+      "kind": "package"
+    },
+    {
+      "from": "tests/db-ruleset.test.js",
+      "to": "fs",
+      "kind": "package"
+    },
+    {
+      "from": "tests/db-ruleset.test.js",
+      "to": "path",
+      "kind": "package"
+    },
+    {
+      "from": "tests/db-ruleset.test.js",
+      "to": "yaml",
+      "kind": "package"
+    },
+    {
+      "from": "tests/dependency-analyzer.test.js",
+      "to": "fs",
+      "kind": "package"
+    },
+    {
+      "from": "tests/dependency-analyzer.test.js",
+      "to": "fs",
+      "kind": "package"
+    },
+    {
+      "from": "tests/dependency-analyzer.test.js",
+      "to": "lib/dependency-analyzer.cjs",
+      "kind": "relative"
+    },
+    {
+      "from": "tests/dependency-analyzer.test.js",
+      "to": "lodash",
+      "kind": "package"
+    },
+    {
+      "from": "tests/dependency-analyzer.test.js",
+      "to": "os",
+      "kind": "package"
+    },
+    {
+      "from": "tests/dependency-analyzer.test.js",
+      "to": "path",
+      "kind": "package"
+    },
+    {
+      "from": "tests/dependency-analyzer.test.js",
+      "to": "path",
+      "kind": "package"
+    },
+    {
+      "from": "tests/dependency-analyzer.test.js",
+      "to": "tests/a.js",
+      "kind": "relative"
+    },
+    {
+      "from": "tests/dependency-analyzer.test.js",
+      "to": "tests/b.js",
+      "kind": "relative"
+    },
+    {
+      "from": "tests/dependency-analyzer.test.js",
+      "to": "tests/b.js",
+      "kind": "relative"
+    },
+    {
+      "from": "tests/dependency-analyzer.test.js",
+      "to": "tests/b.js",
+      "kind": "relative"
+    },
+    {
+      "from": "tests/dependency-analyzer.test.js",
+      "to": "tests/b.js",
+      "kind": "relative"
+    },
+    {
+      "from": "tests/dependency-analyzer.test.js",
+      "to": "tests/b.js",
+      "kind": "relative"
+    },
+    {
+      "from": "tests/dependency-analyzer.test.js",
+      "to": "tests/b.js",
+      "kind": "relative"
+    },
+    {
+      "from": "tests/dependency-analyzer.test.js",
+      "to": "tests/c.js",
+      "kind": "relative"
+    },
+    {
+      "from": "tests/dependency-analyzer.test.js",
+      "to": "tests/c.js",
+      "kind": "relative"
+    },
+    {
+      "from": "tests/dependency-analyzer.test.js",
+      "to": "tests/c.js",
+      "kind": "relative"
+    },
+    {
+      "from": "tests/e2e/cli-commands.test.js",
+      "to": "child_process",
+      "kind": "package"
+    },
+    {
+      "from": "tests/e2e/cli-commands.test.js",
+      "to": "fs",
+      "kind": "package"
+    },
+    {
+      "from": "tests/e2e/cli-commands.test.js",
+      "to": "os",
+      "kind": "package"
+    },
+    {
+      "from": "tests/e2e/cli-commands.test.js",
+      "to": "path",
+      "kind": "package"
+    },
+    {
+      "from": "tests/e2e/file-generation.test.js",
+      "to": "fs",
+      "kind": "package"
+    },
+    {
+      "from": "tests/e2e/file-generation.test.js",
+      "to": "lib/agile.cjs",
+      "kind": "relative"
+    },
+    {
+      "from": "tests/e2e/file-generation.test.js",
+      "to": "lib/core.cjs",
+      "kind": "relative"
+    },
+    {
+      "from": "tests/e2e/file-generation.test.js",
+      "to": "lib/task-brief.cjs",
+      "kind": "relative"
+    },
+    {
+      "from": "tests/e2e/file-generation.test.js",
+      "to": "os",
+      "kind": "package"
+    },
+    {
+      "from": "tests/e2e/file-generation.test.js",
+      "to": "path",
+      "kind": "package"
+    },
+    {
+      "from": "tests/e2e/file-generation.test.js",
+      "to": "yaml",
+      "kind": "package"
+    },
+    {
+      "from": "tests/feature-chat.test.js",
+      "to": "fs",
+      "kind": "package"
+    },
+    {
+      "from": "tests/feature-chat.test.js",
+      "to": "lib/feature-chat.cjs",
+      "kind": "relative"
+    },
+    {
+      "from": "tests/feature-chat.test.js",
+      "to": "lib/features.cjs",
+      "kind": "relative"
+    },
+    {
+      "from": "tests/feature-chat.test.js",
+      "to": "os",
+      "kind": "package"
+    },
+    {
+      "from": "tests/feature-chat.test.js",
+      "to": "path",
+      "kind": "package"
+    },
+    {
+      "from": "tests/feature-chat.test.js",
+      "to": "readline",
+      "kind": "package"
+    },
+    {
+      "from": "tests/feature-close.test.js",
+      "to": "fs",
+      "kind": "package"
+    },
+    {
+      "from": "tests/feature-close.test.js",
+      "to": "lib/features.cjs",
+      "kind": "relative"
+    },
+    {
+      "from": "tests/feature-close.test.js",
+      "to": "os",
+      "kind": "package"
+    },
+    {
+      "from": "tests/feature-close.test.js",
+      "to": "path",
+      "kind": "package"
+    },
+    {
+      "from": "tests/feature-close.test.js",
+      "to": "yaml",
+      "kind": "package"
+    },
+    {
+      "from": "tests/features-index.test.js",
+      "to": "fs",
+      "kind": "package"
+    },
+    {
+      "from": "tests/features-index.test.js",
+      "to": "lib/features.cjs",
+      "kind": "relative"
+    },
+    {
+      "from": "tests/features-index.test.js",
+      "to": "os",
+      "kind": "package"
+    },
+    {
+      "from": "tests/features-index.test.js",
+      "to": "path",
+      "kind": "package"
+    },
+    {
+      "from": "tests/features.test.js",
+      "to": "fs",
+      "kind": "package"
+    },
+    {
+      "from": "tests/features.test.js",
+      "to": "lib/features.cjs",
+      "kind": "relative"
+    },
+    {
+      "from": "tests/features.test.js",
+      "to": "os",
+      "kind": "package"
+    },
+    {
+      "from": "tests/features.test.js",
+      "to": "path",
+      "kind": "package"
+    },
+    {
+      "from": "tests/features.test.js",
+      "to": "yaml",
+      "kind": "package"
+    },
+    {
+      "from": "tests/governance-runtime.test.js",
+      "to": "fs",
+      "kind": "package"
+    },
+    {
+      "from": "tests/governance-runtime.test.js",
+      "to": "lib/governance-runtime.cjs",
+      "kind": "relative"
+    },
+    {
+      "from": "tests/governance-runtime.test.js",
+      "to": "os",
+      "kind": "package"
+    },
+    {
+      "from": "tests/governance-runtime.test.js",
+      "to": "path",
+      "kind": "package"
+    },
+    {
+      "from": "tests/governance-runtime.test.js",
+      "to": "yaml",
+      "kind": "package"
+    },
+    {
+      "from": "tests/governance.test.js",
+      "to": "fs",
+      "kind": "package"
+    },
+    {
+      "from": "tests/governance.test.js",
+      "to": "lib/governance.cjs",
+      "kind": "relative"
+    },
+    {
+      "from": "tests/governance.test.js",
+      "to": "os",
+      "kind": "package"
+    },
+    {
+      "from": "tests/governance.test.js",
+      "to": "path",
+      "kind": "package"
+    },
+    {
+      "from": "tests/graphql.test.js",
+      "to": "fs",
+      "kind": "package"
+    },
+    {
+      "from": "tests/graphql.test.js",
+      "to": "lib/graphql.cjs",
+      "kind": "relative"
+    },
+    {
+      "from": "tests/graphql.test.js",
+      "to": "os",
+      "kind": "package"
+    },
+    {
+      "from": "tests/graphql.test.js",
+      "to": "path",
+      "kind": "package"
+    },
+    {
+      "from": "tests/id-utils.test.js",
+      "to": "fs",
+      "kind": "package"
+    },
+    {
+      "from": "tests/id-utils.test.js",
+      "to": "lib/commands.cjs",
+      "kind": "relative"
+    },
+    {
+      "from": "tests/id-utils.test.js",
+      "to": "lib/id-utils.cjs",
+      "kind": "relative"
+    },
+    {
+      "from": "tests/id-utils.test.js",
+      "to": "os",
+      "kind": "package"
+    },
+    {
+      "from": "tests/id-utils.test.js",
+      "to": "path",
+      "kind": "package"
+    },
+    {
+      "from": "tests/ignore.test.js",
+      "to": "fs",
+      "kind": "package"
+    },
+    {
+      "from": "tests/ignore.test.js",
+      "to": "lib/ignore.cjs",
+      "kind": "relative"
+    },
+    {
+      "from": "tests/ignore.test.js",
+      "to": "os",
+      "kind": "package"
+    },
+    {
+      "from": "tests/ignore.test.js",
+      "to": "path",
+      "kind": "package"
+    },
+    {
+      "from": "tests/integration/contract-workflow.test.js",
+      "to": "fs",
+      "kind": "package"
+    },
+    {
+      "from": "tests/integration/contract-workflow.test.js",
+      "to": "lib/core.cjs",
+      "kind": "relative"
+    },
+    {
+      "from": "tests/integration/contract-workflow.test.js",
+      "to": "os",
+      "kind": "package"
+    },
+    {
+      "from": "tests/integration/contract-workflow.test.js",
+      "to": "path",
+      "kind": "package"
+    },
+    {
+      "from": "tests/integration/contract-workflow.test.js",
+      "to": "yaml",
+      "kind": "package"
+    },
+    {
+      "from": "tests/integration/governance-enforcement.test.js",
+      "to": "fs",
+      "kind": "package"
+    },
+    {
+      "from": "tests/integration/governance-enforcement.test.js",
+      "to": "lib/core.cjs",
+      "kind": "relative"
+    },
+    {
+      "from": "tests/integration/governance-enforcement.test.js",
+      "to": "lib/governance-runtime.cjs",
+      "kind": "relative"
+    },
+    {
+      "from": "tests/integration/governance-enforcement.test.js",
+      "to": "os",
+      "kind": "package"
+    },
+    {
+      "from": "tests/integration/governance-enforcement.test.js",
+      "to": "path",
+      "kind": "package"
+    },
+    {
+      "from": "tests/integration/governance-enforcement.test.js",
+      "to": "yaml",
+      "kind": "package"
+    },
+    {
+      "from": "tests/integration/persona-handoff.test.js",
+      "to": "fs",
+      "kind": "package"
+    },
+    {
+      "from": "tests/integration/persona-handoff.test.js",
+      "to": "lib/core.cjs",
+      "kind": "relative"
+    },
+    {
+      "from": "tests/integration/persona-handoff.test.js",
+      "to": "lib/personas.cjs",
+      "kind": "relative"
+    },
+    {
+      "from": "tests/integration/persona-handoff.test.js",
+      "to": "os",
+      "kind": "package"
+    },
+    {
+      "from": "tests/integration/persona-handoff.test.js",
+      "to": "path",
+      "kind": "package"
+    },
+    {
+      "from": "tests/interactive-shell.test.js",
+      "to": "lib/interactive-shell.cjs",
+      "kind": "relative"
+    },
+    {
+      "from": "tests/interactive-workflows.test.js",
+      "to": "child_process",
+      "kind": "package"
+    },
+    {
+      "from": "tests/interactive-workflows.test.js",
+      "to": "fs",
+      "kind": "package"
+    },
+    {
+      "from": "tests/interactive-workflows.test.js",
+      "to": "lib/interactive-workflows.cjs",
+      "kind": "relative"
+    },
+    {
+      "from": "tests/interactive-workflows.test.js",
+      "to": "os",
+      "kind": "package"
+    },
+    {
+      "from": "tests/interactive-workflows.test.js",
+      "to": "path",
+      "kind": "package"
+    },
+    {
+      "from": "tests/interactive-workflows.test.js",
+      "to": "readline",
+      "kind": "package"
+    },
+    {
+      "from": "tests/interactive-workflows.test.js",
+      "to": "yaml",
+      "kind": "package"
+    },
+    {
+      "from": "tests/interactive.test.js",
+      "to": "lib/interactive.cjs",
+      "kind": "relative"
+    },
+    {
+      "from": "tests/interactive.test.js",
+      "to": "lib/interactive.cjs",
+      "kind": "relative"
+    },
+    {
+      "from": "tests/interactive.test.js",
+      "to": "path",
+      "kind": "package"
+    },
+    {
+      "from": "tests/jira.test.js",
+      "to": "fs",
+      "kind": "package"
+    },
+    {
+      "from": "tests/jira.test.js",
+      "to": "lib/jira.cjs",
+      "kind": "relative"
+    },
+    {
+      "from": "tests/jira.test.js",
+      "to": "os",
+      "kind": "package"
+    },
+    {
+      "from": "tests/jira.test.js",
+      "to": "path",
+      "kind": "package"
+    },
+    {
+      "from": "tests/metrics.test.js",
+      "to": "fs",
+      "kind": "package"
+    },
+    {
+      "from": "tests/metrics.test.js",
+      "to": "lib/metrics.cjs",
+      "kind": "relative"
+    },
+    {
+      "from": "tests/metrics.test.js",
+      "to": "os",
+      "kind": "package"
+    },
+    {
+      "from": "tests/metrics.test.js",
+      "to": "path",
+      "kind": "package"
+    },
+    {
+      "from": "tests/multi-repo.test.js",
+      "to": "fs",
+      "kind": "package"
+    },
+    {
+      "from": "tests/multi-repo.test.js",
+      "to": "lib/multi-repo.cjs",
+      "kind": "relative"
+    },
+    {
+      "from": "tests/multi-repo.test.js",
+      "to": "os",
+      "kind": "package"
+    },
+    {
+      "from": "tests/multi-repo.test.js",
+      "to": "path",
+      "kind": "package"
+    },
+    {
+      "from": "tests/packaging.test.js",
+      "to": "fs",
+      "kind": "package"
+    },
+    {
+      "from": "tests/packaging.test.js",
+      "to": "path",
+      "kind": "package"
+    },
+    {
+      "from": "tests/personas.test.js",
+      "to": "fs",
+      "kind": "package"
+    },
+    {
+      "from": "tests/personas.test.js",
+      "to": "lib/personas.cjs",
+      "kind": "relative"
+    },
+    {
+      "from": "tests/personas.test.js",
+      "to": "lib/task-brief.cjs",
+      "kind": "relative"
+    },
+    {
+      "from": "tests/personas.test.js",
+      "to": "os",
+      "kind": "package"
+    },
+    {
+      "from": "tests/personas.test.js",
+      "to": "path",
+      "kind": "package"
+    },
+    {
+      "from": "tests/plugins.test.js",
+      "to": "fs",
+      "kind": "package"
+    },
+    {
+      "from": "tests/plugins.test.js",
+      "to": "lib/plugins.cjs",
+      "kind": "relative"
+    },
+    {
+      "from": "tests/plugins.test.js",
+      "to": "os",
+      "kind": "package"
+    },
+    {
+      "from": "tests/plugins.test.js",
+      "to": "path",
+      "kind": "package"
+    },
+    {
+      "from": "tests/progress.test.js",
+      "to": "lib/progress.cjs",
+      "kind": "relative"
+    },
+    {
+      "from": "tests/router-governance.test.js",
+      "to": "fs",
+      "kind": "package"
+    },
+    {
+      "from": "tests/router-governance.test.js",
+      "to": "lib/governance-runtime.cjs",
+      "kind": "relative"
+    },
+    {
+      "from": "tests/router-governance.test.js",
+      "to": "os",
+      "kind": "package"
+    },
+    {
+      "from": "tests/router-governance.test.js",
+      "to": "path",
+      "kind": "package"
+    },
+    {
+      "from": "tests/router-governance.test.js",
+      "to": "yaml",
+      "kind": "package"
+    },
+    {
+      "from": "tests/ruleset-builder.test.js",
+      "to": "fs",
+      "kind": "package"
+    },
+    {
+      "from": "tests/ruleset-builder.test.js",
+      "to": "lib/ai-complete.cjs",
+      "kind": "relative"
+    },
+    {
+      "from": "tests/ruleset-builder.test.js",
+      "to": "lib/ruleset-builder.cjs",
+      "kind": "relative"
+    },
+    {
+      "from": "tests/ruleset-builder.test.js",
+      "to": "os",
+      "kind": "package"
+    },
+    {
+      "from": "tests/ruleset-builder.test.js",
+      "to": "path",
+      "kind": "package"
+    },
+    {
+      "from": "tests/ruleset-builder.test.js",
+      "to": "readline",
+      "kind": "package"
+    },
+    {
+      "from": "tests/smart-prompts.test.js",
+      "to": "fs",
+      "kind": "package"
+    },
+    {
+      "from": "tests/smart-prompts.test.js",
+      "to": "lib/smart-prompts.cjs",
+      "kind": "relative"
+    },
+    {
+      "from": "tests/smart-prompts.test.js",
+      "to": "os",
+      "kind": "package"
+    },
+    {
+      "from": "tests/smart-prompts.test.js",
+      "to": "path",
+      "kind": "package"
+    },
+    {
+      "from": "tests/task-artifacts.test.js",
+      "to": "lib/task-artifacts.cjs",
+      "kind": "relative"
+    },
+    {
+      "from": "tests/task-artifacts.test.js",
+      "to": "path",
+      "kind": "package"
+    },
+    {
+      "from": "tests/task-brief.test.js",
+      "to": "fs",
+      "kind": "package"
+    },
+    {
+      "from": "tests/task-brief.test.js",
+      "to": "lib/task-brief.cjs",
+      "kind": "relative"
+    },
+    {
+      "from": "tests/task-brief.test.js",
+      "to": "os",
+      "kind": "package"
+    },
+    {
+      "from": "tests/task-brief.test.js",
+      "to": "path",
+      "kind": "package"
+    },
+    {
+      "from": "tests/ticket-intake.test.js",
+      "to": "lib/ticket-intake.cjs",
+      "kind": "relative"
+    },
+    {
+      "from": "tests/tracking-mode.test.js",
+      "to": "fs",
+      "kind": "package"
+    },
+    {
+      "from": "tests/tracking-mode.test.js",
+      "to": "lib/config.cjs",
+      "kind": "relative"
+    },
+    {
+      "from": "tests/tracking-mode.test.js",
+      "to": "lib/features.cjs",
+      "kind": "relative"
+    },
+    {
+      "from": "tests/tracking-mode.test.js",
+      "to": "os",
+      "kind": "package"
+    },
+    {
+      "from": "tests/tracking-mode.test.js",
+      "to": "path",
+      "kind": "package"
+    },
+    {
+      "from": "tests/tui.test.js",
+      "to": "events",
+      "kind": "package"
+    },
+    {
+      "from": "tests/tui.test.js",
+      "to": "fs",
+      "kind": "package"
+    },
+    {
+      "from": "tests/tui.test.js",
+      "to": "fs",
+      "kind": "package"
+    },
+    {
+      "from": "tests/tui.test.js",
+      "to": "fs",
+      "kind": "package"
+    },
+    {
+      "from": "tests/tui.test.js",
+      "to": "fs",
+      "kind": "package"
+    },
+    {
+      "from": "tests/tui.test.js",
+      "to": "fs",
+      "kind": "package"
+    },
+    {
+      "from": "tests/tui.test.js",
+      "to": "fs",
+      "kind": "package"
+    },
+    {
+      "from": "tests/tui.test.js",
+      "to": "lib/commands.cjs",
+      "kind": "relative"
+    },
+    {
+      "from": "tests/tui.test.js",
+      "to": "lib/ruleset-builder.cjs",
+      "kind": "relative"
+    },
+    {
+      "from": "tests/tui.test.js",
+      "to": "lib/tui.cjs",
+      "kind": "relative"
+    },
+    {
+      "from": "tests/tui.test.js",
+      "to": "lib/watcher.cjs",
+      "kind": "relative"
+    },
+    {
+      "from": "tests/tui.test.js",
+      "to": "os",
+      "kind": "package"
+    },
+    {
+      "from": "tests/tui.test.js",
+      "to": "os",
+      "kind": "package"
+    },
+    {
+      "from": "tests/tui.test.js",
+      "to": "path",
+      "kind": "package"
+    },
+    {
+      "from": "tests/tui.test.js",
+      "to": "path",
+      "kind": "package"
+    },
+    {
+      "from": "tests/tui.test.js",
+      "to": "path",
+      "kind": "package"
+    },
+    {
+      "from": "tests/tui.test.js",
+      "to": "path",
+      "kind": "package"
+    },
+    {
+      "from": "tests/tui.test.js",
+      "to": "path",
+      "kind": "package"
+    },
+    {
+      "from": "tests/tui.test.js",
+      "to": "path",
+      "kind": "package"
+    },
+    {
+      "from": "tests/tui.test.js",
+      "to": "readline",
+      "kind": "package"
+    },
+    {
+      "from": "tests/watcher.test.js",
+      "to": "chokidar",
+      "kind": "package"
+    },
+    {
+      "from": "tests/watcher.test.js",
+      "to": "fs",
+      "kind": "package"
+    },
+    {
+      "from": "tests/watcher.test.js",
+      "to": "lib/watcher.cjs",
+      "kind": "relative"
+    },
+    {
+      "from": "tests/watcher.test.js",
+      "to": "os",
+      "kind": "package"
+    },
+    {
+      "from": "tests/watcher.test.js",
+      "to": "path",
+      "kind": "package"
+    }
+  ]
+}

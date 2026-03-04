@@ -1,0 +1,40 @@
+{
+  "generatedAt": "2026-03-04T05:02:22.634Z",
+  "root": "C:/Users/CodexSandboxOffline/.codex/.sandbox/cwd/c2152b5a2d55dedd",
+  "profile": "api-service",
+  "packageManager": "npm",
+  "monorepoTool": null,
+  "languages": [
+    "node"
+  ],
+  "frontend": {
+    "roots": [],
+    "frameworks": [],
+    "manifests": [],
+    "lockfiles": [
+      "package-lock.json"
+    ]
+  },
+  "backend": {
+    "roots": [],
+    "frameworks": [],
+    "manifests": []
+  },
+  "api": {
+    "styles": [],
+    "specFiles": []
+  },
+  "db": {
+    "schemaAndMigrationFiles": []
+  },
+  "packageRoots": [
+    "."
+  ],
+  "constraints": {},
+  "rulesets": {
+    "recommended": [
+      "db-safety@v1",
+      "api-compat@v1"
+    ]
+  }
+}

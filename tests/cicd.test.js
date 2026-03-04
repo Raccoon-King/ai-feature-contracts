@@ -119,6 +119,20 @@ describe('CI/CD Module', () => {
     });
   });
 
+  describe('generateGrabbyAutomationConfig', () => {
+    it('supports guided command overrides for automation config', () => {
+      const result = cicd.generateGrabbyAutomationConfig({
+        validateCommand: 'grabby validate contracts/AUTO-1.fc.md',
+        lintCommand: 'pnpm lint',
+        testCommand: 'pnpm test',
+      });
+
+      expect(result).toContain('grabby validate contracts/AUTO-1.fc.md');
+      expect(result).toContain('pnpm lint');
+      expect(result).toContain('pnpm test');
+    });
+  });
+
   describe('generateCICDFiles', () => {
     it('should generate CI/CD files and return array', () => {
       const result = cicd.generateCICDFiles(tempDir);
@@ -139,6 +153,14 @@ describe('CI/CD Module', () => {
 
       const prPath = path.join(tempDir, '.github', 'PULL_REQUEST_TEMPLATE.md');
       expect(fs.existsSync(prPath)).toBe(true);
+    });
+
+    it('should write grabby automation config', () => {
+      cicd.generateCICDFiles(tempDir);
+
+      const configPath = path.join(tempDir, '.grabby', 'config.yaml');
+      expect(fs.existsSync(configPath)).toBe(true);
+      expect(fs.readFileSync(configPath, 'utf8')).toContain('automation:');
     });
 
     it('should return generated file info', () => {
@@ -182,9 +204,55 @@ describe('CI/CD Module', () => {
 
       expect(Array.isArray(result.checks)).toBe(true);
       expect(result.checks.length).toBeGreaterThan(0);
+      expect(result.checks.map((check) => check.key)).toEqual(expect.arrayContaining([
+        'workflow',
+        'pr-template',
+        'pre-commit',
+        'grabby-config',
+      ]));
       expect(result.checks[0]).toHaveProperty('name');
       expect(result.checks[0]).toHaveProperty('exists');
       expect(result.checks[0]).toHaveProperty('path');
+    });
+  });
+
+  describe('configureAutomationFile', () => {
+    it('generates a single selected automation file', () => {
+      const result = cicd.configureAutomationFile(tempDir, 'workflow');
+
+      expect(result.created).toBe(true);
+      expect(fs.existsSync(path.join(tempDir, '.github', 'workflows', 'contract-validation.yml'))).toBe(true);
+    });
+
+    it('imports PR template content from an existing file', () => {
+      const source = path.join(tempDir, 'existing-pr.md');
+      fs.writeFileSync(source, '# Imported PR Template\n', 'utf8');
+
+      const result = cicd.configureAutomationFile(tempDir, 'pr-template', {
+        mode: 'import',
+        importPath: 'existing-pr.md',
+      });
+
+      expect(result.created).toBe(true);
+      expect(fs.readFileSync(path.join(tempDir, '.github', 'PULL_REQUEST_TEMPLATE.md'), 'utf8')).toContain('Imported PR Template');
+    });
+
+    it('converts imported JSON config into YAML for grabby automation config', () => {
+      const source = path.join(tempDir, 'automation.json');
+      fs.writeFileSync(source, JSON.stringify({
+        commands: {
+          lint: 'pnpm lint',
+        },
+      }, null, 2));
+
+      cicd.configureAutomationFile(tempDir, 'grabby-config', {
+        mode: 'import',
+        importPath: 'automation.json',
+      });
+
+      const content = fs.readFileSync(path.join(tempDir, '.grabby', 'config.yaml'), 'utf8');
+      expect(content).toContain('commands:');
+      expect(content).toContain('pnpm lint');
     });
   });
 

@@ -1,7 +1,7 @@
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
-const { initConfig, loadConfig, setConfigValue, validateConfig, resolveEnv, getTrackingMode, getContractsDirectory } = require('../lib/config.cjs');
+const { initConfig, loadConfig, setConfigValue, validateConfig, resolveEnv, getTrackingMode, getContractsDirectory, normalizeConfig, normalizePortablePath } = require('../lib/config.cjs');
 
 describe('config', () => {
   let dir;
@@ -41,6 +41,12 @@ describe('config', () => {
   test('resolveEnv resolves variable', () => {
     process.env.TEST_ENV_VAR = 'abc';
     expect(resolveEnv('${TEST_ENV_VAR}')).toBe('abc');
+  });
+
+  test('normalizePortablePath normalizes Windows and POSIX path variants', () => {
+    expect(normalizePortablePath('apps\\web\\')).toBe('apps/web');
+    expect(normalizePortablePath('./docs//rules/')).toBe('./docs/rules');
+    expect(normalizePortablePath('C:\\repo\\')).toBe('C:/repo');
   });
 
   test('defaults contract tracking mode to tracked', () => {
@@ -196,5 +202,115 @@ describe('config', () => {
     const result = validateConfig(cfg);
     expect(result.valid).toBe(false);
     expect(result.errors).toContain('features.menuMode must be true or false');
+  });
+
+  test('validateConfig accepts db governance overrides and rejects invalid values', () => {
+    initConfig(dir);
+    const cfg = loadConfig(dir);
+    setConfigValue(cfg, 'dbGovernance.strictArtifactLint', 'true');
+    setConfigValue(cfg, 'dbGovernance.discovery.packageRoots', '["packages/api"]');
+    setConfigValue(cfg, 'dbGovernance.constraints.ciDbAccess', 'read-only');
+
+    expect(validateConfig(cfg).valid).toBe(true);
+
+    cfg.dbGovernance.discovery.schemaRoots = 'db/schema';
+    cfg.dbGovernance.constraints.airgapped = 'sometimes';
+    cfg.dbGovernance.constraints.ciDbAccess = 'maybe';
+    const result = validateConfig(cfg);
+    expect(result.valid).toBe(false);
+    expect(result.errors).toEqual(expect.arrayContaining([
+      'dbGovernance.discovery.schemaRoots must be an array',
+      'dbGovernance.constraints.airgapped must be true or false',
+      'dbGovernance.constraints.ciDbAccess must be one of: unspecified, none, read-only, full',
+    ]));
+  });
+
+  test('validateConfig accepts system governance profile settings and rejects invalid values', () => {
+    initConfig(dir);
+    const cfg = loadConfig(dir);
+    setConfigValue(cfg, 'systemGovernance.profile', 'fullstack');
+    setConfigValue(cfg, 'systemGovernance.roots.frontendRoots', '["apps/web"]');
+    setConfigValue(cfg, 'systemGovernance.rulesetIngestion.apiCompat', 'true');
+    setConfigValue(cfg, 'systemGovernance.constraints.noNetwork', 'true');
+
+    expect(validateConfig(cfg).valid).toBe(true);
+
+    cfg.systemGovernance.profile = 'desktop';
+    cfg.systemGovernance.roots.apiSpecRoots = 'specs';
+    cfg.systemGovernance.rulesetIngestion.feDeps = 'sometimes';
+    cfg.systemGovernance.constraints.strictBackwardsCompat = 'strict';
+    const result = validateConfig(cfg);
+    expect(result.valid).toBe(false);
+    expect(result.errors).toEqual(expect.arrayContaining([
+      'systemGovernance.profile must be one of: auto, web-ui, api-service, fullstack',
+      'systemGovernance.roots.apiSpecRoots must be an array',
+      'systemGovernance.rulesetIngestion.feDeps must be true or false',
+      'systemGovernance.constraints.strictBackwardsCompat must be true or false',
+    ]));
+  });
+
+  test('validateConfig accepts git governance settings and rejects invalid values', () => {
+    initConfig(dir);
+    const cfg = loadConfig(dir);
+    setConfigValue(cfg, 'gitGovernance.hosting', 'both');
+    setConfigValue(cfg, 'gitGovernance.updateStrategy', 'rebase');
+    setConfigValue(cfg, 'gitGovernance.protectedBranches', '["main","release"]');
+    setConfigValue(cfg, 'gitGovernance.allowForcePush', 'false');
+    setConfigValue(cfg, 'gitGovernance.requiredChecks', '["lint","test","guard"]');
+    setConfigValue(cfg, 'gitGovernance.freshnessThresholdBehind', '1');
+
+    expect(validateConfig(cfg).valid).toBe(true);
+
+    cfg.gitGovernance.hosting = 'bitbucket';
+    cfg.gitGovernance.updateStrategy = 'cherry-pick';
+    cfg.gitGovernance.collaborationModel = 'surprise';
+    cfg.gitGovernance.protectedBranches = 'main';
+    cfg.gitGovernance.allowRebaseAfterReviewOpen = 'sometimes';
+    cfg.gitGovernance.requiredChecks = 'lint';
+    cfg.gitGovernance.freshnessThresholdBehind = -1;
+    const result = validateConfig(cfg);
+    expect(result.valid).toBe(false);
+    expect(result.errors).toEqual(expect.arrayContaining([
+      'gitGovernance.hosting must be one of: gitlab, github, both',
+      'gitGovernance.updateStrategy must be one of: repo-default, rebase, merge, squash',
+      'gitGovernance.collaborationModel must be one of: repo-default, forks, shared-branches',
+      'gitGovernance.protectedBranches must be an array',
+      'gitGovernance.allowRebaseAfterReviewOpen must be true or false',
+      'gitGovernance.requiredChecks must be an array',
+      'gitGovernance.freshnessThresholdBehind must be a non-negative integer',
+    ]));
+  });
+
+  test('loadConfig and saveConfig normalize platform-sensitive path arrays', () => {
+    initConfig(dir);
+    const cfg = loadConfig(dir);
+    cfg.contracts.directory = 'contracts\\active\\';
+    cfg.contracts.templates = '.grabby\\templates\\';
+    cfg.dbGovernance.discovery.packageRoots = ['packages\\api\\'];
+    cfg.systemGovernance.roots.frontendRoots = ['apps\\web\\'];
+
+    require('../lib/config.cjs').saveConfig(cfg, dir);
+
+    const loaded = loadConfig(dir);
+    expect(loaded.contracts.directory).toBe('contracts/active');
+    expect(loaded.contracts.templates).toBe('.grabby/templates');
+    expect(loaded.dbGovernance.discovery.packageRoots).toEqual(['packages/api']);
+    expect(loaded.systemGovernance.roots.frontendRoots).toEqual(['apps/web']);
+  });
+
+  test('normalizeConfig leaves non-path settings intact while normalizing path fields', () => {
+    const normalized = normalizeConfig({
+      contracts: { directory: 'contracts\\', templates: '.grabby\\templates\\' },
+      dbGovernance: { discovery: { packageRoots: ['packages\\api\\'] } },
+      systemGovernance: { profile: 'fullstack', roots: { backendRoots: ['services\\api\\'] } },
+      gitGovernance: { defaultBranch: 'main', freshnessThresholdBehind: 1 },
+    });
+
+    expect(normalized.contracts.directory).toBe('contracts');
+    expect(normalized.contracts.templates).toBe('.grabby/templates');
+    expect(normalized.dbGovernance.discovery.packageRoots).toEqual(['packages/api']);
+    expect(normalized.systemGovernance.roots.backendRoots).toEqual(['services/api']);
+    expect(normalized.gitGovernance.defaultBranch).toBe('main');
+    expect(normalized.gitGovernance.freshnessThresholdBehind).toBe(1);
   });
 });

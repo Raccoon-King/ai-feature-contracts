@@ -584,7 +584,87 @@ Track child contracts to completion.
     });
   });
 
+  describe('DB impact validation', () => {
+    it('warns when DB-affecting contracts omit explicit data-change metadata', () => {
+      const content = `# FC: DB Change
+## Objective
+Add database migration for users.
+
+## Scope
+- Add migration
+
+## Directories
+**Allowed:** \`src/\`
+
+## Files
+| Action | Path | Reason |
+|--------|------|--------|
+| modify | \`prisma/migrations/001_init/migration.sql\` | schema |
+
+## Done When
+- [ ] Tests pass (80%+ coverage)
+- [ ] Lint passes
+`;
+
+      const result = core.validateContract(content);
+      expect(result.warnings).toContain('DB-affecting feature should declare **Data Change:** yes');
+      expect(result.warnings).toContain('DB-affecting feature should include a Data Impact section');
+    });
+  });
+
   describe('Checklist Detection', () => {
+    it('should warn when API-affecting features omit API metadata', () => {
+      const content = `## Objective
+Update OpenAPI payload shape.
+
+## Scope
+- Update endpoint contract
+
+## Directories
+**Allowed:** \`specs/\`, \`tests/\`
+
+## Files
+| Action | Path | Reason |
+|--------|------|--------|
+| modify | \`specs/openapi.yaml\` | api spec |
+| modify | \`tests/api.test.js\` | tests |
+
+## Done When
+- [ ] Tests pass (80%+ coverage)
+- [ ] Lint passes
+`;
+
+      const result = core.validateContract(content);
+      expect(result.warnings).toContain('API-affecting feature should declare **API Change:** yes');
+      expect(result.warnings).toContain('API-affecting feature should include an API Impact section');
+    });
+
+    it('should warn when dependency-affecting features omit dependency metadata', () => {
+      const content = `## Objective
+Upgrade package.json dependencies.
+
+## Scope
+- Update dependency policy
+
+## Directories
+**Allowed:** \`apps/web/\`, \`tests/\`
+
+## Files
+| Action | Path | Reason |
+|--------|------|--------|
+| modify | \`apps/web/package.json\` | deps |
+| modify | \`tests/fe-deps.test.js\` | tests |
+
+## Done When
+- [ ] Tests pass (80%+ coverage)
+- [ ] Lint passes
+`;
+
+      const result = core.validateContract(content);
+      expect(result.warnings).toContain('Dependency-affecting feature should declare **Dependency Change:** yes');
+      expect(result.warnings).toContain('Dependency-affecting feature should include a Dependency Impact section');
+    });
+
     it('should treat checked Done When and Security items as checklist items', () => {
       const content = `## Objective
 Test

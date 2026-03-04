@@ -1,0 +1,11 @@
+{
+  "generatedAt": "2026-03-04T05:02:22.762Z",
+  "profile": "api-service",
+  "packageManager": "npm",
+  "monorepoTool": null,
+  "packages": [],
+  "lockfiles": [],
+  "warnings": [
+    "No frontend package manifests discovered."
+  ]
+}

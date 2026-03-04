@@ -434,4 +434,462 @@ entries:
       while execution happens through smaller completion-sized contracts.
     type: FEATURE_CONTRACT
     closedAt: 2026-03-04T03:59:27.483Z
-lastUpdated: 2026-03-04T03:59:27.495Z
+  - id: GRAB-DB-216
+    title: DB artifact linting
+    objective: Add deterministic linting for DB discovery/snapshot/access artifacts.
+    type: FEATURE_CONTRACT
+    files:
+      - lib/db-awareness.cjs
+      - lib/commands.cjs
+      - bin/index.cjs
+      - tests/db-awareness.test.js
+      - contracts/GRAB-DB-216.fc.md
+    closedAt: 2026-03-04T04:47:19.553Z
+  - id: GRAB-DB-212
+    title: Schema snapshot and relations graph
+    objective: Generate deterministic schema and relationship artifacts from schema
+      and migration files.
+    type: FEATURE_CONTRACT
+    files:
+      - lib/db-awareness.cjs
+      - lib/commands.cjs
+      - bin/index.cjs
+      - tests/db-awareness.test.js
+      - contracts/GRAB-DB-212.fc.md
+    closedAt: 2026-03-04T04:47:19.633Z
+  - id: GRAB-DB-213
+    title: Stable db-safety ruleset
+    objective: Add the stable `db-safety@v1` ruleset and index/pin it for governance.
+    type: FEATURE_CONTRACT
+    files:
+      - docs/RULESET_DB_SAFETY.md
+      - docs/context-index.yaml
+      - .grabby/governance.lock
+      - tests/db-ruleset.test.js
+      - contracts/GRAB-DB-213.fc.md
+    closedAt: 2026-03-04T04:47:19.862Z
+  - id: GRAB-DB-217
+    title: CI migration gating
+    objective: Require data-change governance and refreshed DB artifacts when schema
+      or migration files change.
+    type: FEATURE_CONTRACT
+    files:
+      - lib/commands.cjs
+      - lib/cicd.cjs
+      - tests/commands.test.js
+      - contracts/GRAB-DB-217.fc.md
+    closedAt: 2026-03-04T04:47:20.549Z
+  - id: GRAB-DB-211
+    title: DB discovery foundations
+    objective: Add deterministic DB discovery that inventories languages, DB
+      tooling, migration paths, ORM/query signals, and candidate code locations
+      without liv...
+    type: FEATURE_CONTRACT
+    files:
+      - lib/db-awareness.cjs
+      - lib/commands.cjs
+      - bin/index.cjs
+      - tests/db-awareness.test.js
+      - contracts/GRAB-DB-211.fc.md
+    closedAt: 2026-03-04T04:47:20.632Z
+  - id: GRAB-DB-215
+    title: Repo dependency graph discovery
+    objective: Add repo-wide dependency graph discovery with a deterministic JSON
+      artifact.
+    type: FEATURE_CONTRACT
+    files:
+      - lib/dependency-analyzer.cjs
+      - lib/commands.cjs
+      - bin/index.cjs
+      - tests/dependency-analyzer.test.js
+      - contracts/GRAB-DB-215.fc.md
+    closedAt: 2026-03-04T04:47:21.231Z
+  - id: GRAB-DB-218
+    title: Execution and audit DB policy
+    objective: Enforce DB-safety policy during execute and audit for data-affecting
+      contracts.
+    type: FEATURE_CONTRACT
+    files:
+      - lib/commands.cjs
+      - lib/core.cjs
+      - tests/commands.test.js
+      - tests/core.test.js
+      - contracts/GRAB-DB-218.fc.md
+    closedAt: 2026-03-04T04:47:21.608Z
+  - id: GRAB-DB-219
+    title: Multi-repo rollout and developer-owned constraints
+    objective: Support package-scoped DB analysis and developer-owned constraints
+      for incremental rollout across multiple repos.
+    type: FEATURE_CONTRACT
+    files:
+      - lib/config.cjs
+      - lib/db-awareness.cjs
+      - lib/dependency-analyzer.cjs
+      - tests/config.test.js
+      - tests/db-awareness.test.js
+      - tests/dependency-analyzer.test.js
+      - contracts/GRAB-DB-219.fc.md
+    closedAt: 2026-03-04T04:47:21.767Z
+  - id: FC-1772597818229
+    title: automation setup wizards for GitHub Actions, PR templates...
+    objective: Add a menu-driven automation wizard so developers can review missing
+      automation surfaces and scaffold one item at a time with clear prompts.
+      Keep t...
+    type: FEATURE_CONTRACT
+    files:
+      - lib/cicd.cjs
+      - lib/tui.cjs
+      - bin/index.cjs
+      - tests/cicd.test.js
+      - tests/tui.test.js
+      - contracts/automation-setup-wizards-for-github-actions-pr-templates-hooks-and-config.fc.md
+    closedAt: 2026-03-04T04:49:03.420Z
+  - id: GRAB-DB-201
+    title: DB and code relationship awareness umbrella
+    objective: Track the phased rollout of deterministic DB discovery, relationship
+      analysis, code access mapping, dependency graphing, and DB safety
+      enforcement ...
+    type: FEATURE_CONTRACT
+    closedAt: 2026-03-04T04:49:03.518Z
+  - id: GRAB-SYS-101
+    title: System Inventory And Profile Detection
+    objective: Add deterministic repo assessment for FE/BE/API/DB surfaces and
+      profile detection.
+    type: FEATURE_CONTRACT
+    files:
+      - lib/system-awareness.cjs
+      - lib/commands.cjs
+      - tests/system-awareness.test.js
+      - tests/commands.test.js
+    closedAt: 2026-03-04T05:09:03.952Z
+  - id: GRAB-SYS-102
+    title: Stable Governance Rulesets And Context Index
+    objective: Add pinned API compatibility, FE dependency, and checks environment
+      refs to stable governance.
+    type: FEATURE_CONTRACT
+    files:
+      - docs/RULESET_API_COMPAT.md
+      - docs/RULESET_FE_DEPS.md
+      - docs/context-index.yaml
+      - docs/ENV_STACK.md
+      - .grabby/governance.lock
+      - tests/db-ruleset.test.js
+    closedAt: 2026-03-04T05:09:04.219Z
+  - id: GRAB-SYS-103
+    title: CLI Scaffolding For System Snapshots
+    objective: Add deterministic CLI entrypoints for FE, API, DB, and dependency
+      governance artifacts.
+    type: FEATURE_CONTRACT
+    files:
+      - lib/commands.cjs
+      - bin/index.cjs
+      - README.md
+      - tests/commands.test.js
+    closedAt: 2026-03-04T05:09:04.619Z
+  - id: GRAB-SYS-104
+    title: DB Schema Snapshot And Relations Graph
+    objective: Generate deterministic DB structure and relationship artifacts from
+      schema and migration sources.
+    type: FEATURE_CONTRACT
+    files:
+      - lib/db-awareness.cjs
+      - lib/commands.cjs
+      - tests/db-awareness.test.js
+      - tests/commands.test.js
+    closedAt: 2026-03-04T05:09:05.022Z
+  - id: GRAB-SYS-105
+    title: Backend To DB Access Map
+    objective: Generate deterministic BE-to-DB access mapping from repositories,
+      DAOs, ORM calls, and SQL patterns.
+    type: FEATURE_CONTRACT
+    files:
+      - lib/db-awareness.cjs
+      - tests/db-awareness.test.js
+    closedAt: 2026-03-04T05:09:05.447Z
+  - id: GRAB-SYS-106
+    title: Frontend Dependency Snapshot
+    objective: Generate deterministic FE dependency inventory from manifests and
+      lockfiles.
+    type: FEATURE_CONTRACT
+    files:
+      - lib/system-awareness.cjs
+      - lib/commands.cjs
+      - tests/system-awareness.test.js
+      - tests/commands.test.js
+    closedAt: 2026-03-04T05:09:05.836Z
+  - id: GRAB-SYS-107
+    title: Frontend And Overall Dependency Graphs
+    objective: Generate FE import graphs and overall module dependency graphs to
+      expose coupling drift.
+    type: FEATURE_CONTRACT
+    files:
+      - lib/system-awareness.cjs
+      - lib/dependency-analyzer.cjs
+      - lib/commands.cjs
+      - tests/system-awareness.test.js
+      - tests/dependency-analyzer.test.js
+    closedAt: 2026-03-04T05:09:06.270Z
+  - id: GRAB-SYS-108
+    title: API Surface Snapshot
+    objective: Generate deterministic API surface snapshots from OpenAPI, GraphQL,
+      and proto source-of-truth files.
+    type: FEATURE_CONTRACT
+    files:
+      - lib/system-awareness.cjs
+      - lib/commands.cjs
+      - tests/system-awareness.test.js
+      - tests/commands.test.js
+    closedAt: 2026-03-04T05:09:06.696Z
+  - id: GRAB-SYS-109
+    title: Frontend To Backend Surface Map
+    objective: Map FE call sites to backend API operations where deterministic
+      matching is possible.
+    type: FEATURE_CONTRACT
+    files:
+      - lib/system-awareness.cjs
+      - tests/system-awareness.test.js
+    closedAt: 2026-03-04T05:09:07.158Z
+  - id: GRAB-SYS-110
+    title: Snapshot Linting Across DB API And FE
+    objective: Validate snapshot freshness and consistency across DB, API, and FE
+      governance artifacts.
+    type: FEATURE_CONTRACT
+    files:
+      - lib/db-awareness.cjs
+      - lib/system-awareness.cjs
+      - lib/commands.cjs
+      - tests/db-awareness.test.js
+      - tests/system-awareness.test.js
+      - tests/commands.test.js
+    closedAt: 2026-03-04T05:09:07.571Z
+  - id: GRAB-SYS-111
+    title: CI Change Gates For DB API And FE Dependency Changes
+    objective: Enforce change-gated governance for migrations, API specs, and FE
+      dependency manifests.
+    type: FEATURE_CONTRACT
+    files:
+      - lib/commands.cjs
+      - tests/commands.test.js
+    closedAt: 2026-03-04T05:09:08.144Z
+  - id: GRAB-SYS-112
+    title: Execute And Audit Governance Policy
+    objective: Block execution and audit closure when DB/API/dependency policy
+      metadata or approvals are missing.
+    type: FEATURE_CONTRACT
+    files:
+      - lib/commands.cjs
+      - lib/core.cjs
+      - tests/commands.test.js
+      - tests/core.test.js
+    closedAt: 2026-03-04T05:09:08.798Z
+  - id: GRAB-SYS-113
+    title: Profile Aware Multi Repo Config
+    objective: Add profile-aware config and roots so the governance model works
+      across web-ui, api-service, and fullstack repos.
+    type: FEATURE_CONTRACT
+    files:
+      - lib/config.cjs
+      - lib/system-awareness.cjs
+      - tests/config.test.js
+      - tests/system-awareness.test.js
+    closedAt: 2026-03-04T05:09:09.362Z
+  - id: GRAB-SYS-114
+    title: Brownfield Init Discovery And Ruleset Proposal
+    objective: Make init generate system inventory and propose profile-appropriate
+      governance.
+    type: FEATURE_CONTRACT
+    files:
+      - lib/commands.cjs
+      - lib/system-awareness.cjs
+      - tests/commands.test.js
+    closedAt: 2026-03-04T05:09:09.918Z
+  - id: GRAB-SYS-115
+    title: Managed Router Rule Classification Hints
+    objective: Install router guidance so assistants route DB, API, and dependency
+      sensitive work into the Grabby method.
+    type: FEATURE_CONTRACT
+    files:
+      - lib/commands.cjs
+      - tests/commands.test.js
+      - README.md
+    closedAt: 2026-03-04T05:09:10.441Z
+  - id: GRAB-SYS-116
+    title: Interactive Governance Breakpoints For System Sensitive Work
+    objective: Use generated system artifacts to frame safer interactive breakpoints
+      and role suggestions.
+    type: FEATURE_CONTRACT
+    files:
+      - lib/commands.cjs
+      - tests/commands.test.js
+      - tests/interactive-workflows.test.js
+    closedAt: 2026-03-04T05:09:10.916Z
+  - id: GRAB-GIT-101
+    title: Safe Git Status Inspection
+    objective: Add deterministic git workspace inspection and `grabby git:status` so
+      Grabby can report branch, workspace cleanliness, stash presence, upstream
+      sta...
+    type: feat
+    files:
+      - lib/git-workflow.cjs
+      - lib/commands.cjs
+      - bin/index.cjs
+      - tests/git-workflow.test.js
+    closedAt: 2026-03-04T05:32:09.280Z
+  - id: GRAB-GIT-102
+    title: Safe Remote Sync Checks
+    objective: Add `grabby git:sync` so Grabby fetches `origin`, records lightweight
+      sync state, and shows divergence without changing the working branch by
+      default.
+    type: feat
+    files:
+      - lib/git-workflow.cjs
+      - lib/commands.cjs
+      - bin/index.cjs
+      - tests/git-workflow.test.js
+    closedAt: 2026-03-04T05:32:09.651Z
+  - id: GRAB-GIT-103
+    title: Contract-Linked Branch Creation
+    objective: Add `grabby git:start <contract>` so Grabby creates contract-linked
+      branches named `<type>/<ID>-<slug>` and records the branch on the
+      governing con...
+    type: feat
+    files:
+      - lib/git-workflow.cjs
+      - lib/commands.cjs
+      - bin/index.cjs
+      - tests/git-workflow.test.js
+      - tests/id-utils.test.js
+    closedAt: 2026-03-04T05:32:10.062Z
+  - id: GRAB-GIT-104
+    title: Stable Git Governance Rules
+    objective: Add stable git governance refs and repo config/state support so
+      Grabby can apply conservative branch protection, update strategy, and
+      command polic...
+    type: feat
+    files:
+      - docs/RULESET_GIT_WORKFLOW.md
+      - docs/ENV_STACK.md
+      - docs/context-index.yaml
+      - .grabby/governance.lock
+      - lib/config.cjs
+      - tests/config.test.js
+      - tests/db-ruleset.test.js
+    closedAt: 2026-03-04T05:32:10.315Z
+  - id: GRAB-GIT-105
+    title: Safe Branch Update Workflow
+    objective: Add `grabby git:update` so Grabby can run a guarded branch update
+      flow that fetches remote state, refuses dirty or protected branches, and
+      stops cl...
+    type: feat
+    files:
+      - lib/git-workflow.cjs
+      - lib/commands.cjs
+      - bin/index.cjs
+      - tests/git-workflow.test.js
+      - tests/commands.test.js
+    closedAt: 2026-03-04T05:32:10.578Z
+  - id: GRAB-GIT-106
+    title: Git Preflight Gate
+    objective: Add `grabby git:preflight` so Grabby can validate branch identity,
+      freshness, contract/plan presence, and known checks before
+      execute-sensitive or ...
+    type: feat
+    files:
+      - lib/git-workflow.cjs
+      - lib/commands.cjs
+      - bin/index.cjs
+      - lib/config.cjs
+      - tests/git-workflow.test.js
+      - tests/commands.test.js
+    closedAt: 2026-03-04T05:32:10.863Z
+  - id: GRAB-GIT-107
+    title: Conflict And Rewrite Guardrails
+    objective: Add conflict-handling guidance, review-open warnings, and
+      history-rewrite risk detection to Grabby's git orchestration so risky
+      states stop with cl...
+    type: feat
+    files:
+      - lib/git-workflow.cjs
+      - lib/commands.cjs
+      - tests/git-workflow.test.js
+      - tests/commands.test.js
+    closedAt: 2026-03-04T05:32:11.136Z
+  - id: GRAB-GIT-108
+    title: Interactive And Scripted Git Flow Parity
+    objective: Make Grabby's git commands behave safely in both guided interactive
+      mode and deterministic non-interactive mode, with clear pause points
+      before ris...
+    type: feat
+    files:
+      - lib/commands.cjs
+      - lib/interactive-shell.cjs
+      - tests/git-workflow.test.js
+      - tests/interactive-shell.test.js
+    closedAt: 2026-03-04T05:32:11.401Z
+  - id: GRAB-GIT-109
+    title: Offline MR And PR Templates
+    objective: Extend Grabby's merge request and pull request template generation so
+      contract identity, branch, plan, and audit artifacts are summarized
+      consisten...
+    type: feat
+    files:
+      - lib/commands.cjs
+      - lib/git-workflow.cjs
+      - tests/commands.test.js
+      - README.md
+    closedAt: 2026-03-04T05:32:11.652Z
+  - id: GRAB-GIT-110
+    title: Git Freshness CI Policy
+    objective: Add configurable git freshness and protected-branch policy checks
+      that can be reused in CI and local preflight without mutating repository
+      state.
+    type: feat
+    files:
+      - lib/git-workflow.cjs
+      - lib/commands.cjs
+      - lib/config.cjs
+      - tests/git-workflow.test.js
+      - tests/commands.test.js
+    closedAt: 2026-03-04T05:32:11.913Z
+  - id: GRAB-GIT-111
+    title: Repo-Profile-Aware Git Governance
+    objective: Extend Grabby's git governance config so monorepos, many-repo fleets,
+      forks, and shared-branch models can opt into conservative defaults without
+      ha...
+    type: feat
+    files:
+      - lib/config.cjs
+      - lib/git-workflow.cjs
+      - tests/config.test.js
+      - tests/git-workflow.test.js
+    closedAt: 2026-03-04T05:32:12.169Z
+  - id: GRAB-GIT-112
+    title: Contract Lifecycle Git Integration
+    objective: Integrate Grabby's git orchestration with the contract lifecycle so
+      branch identity, preflight, merge-request context, and archive history all
+      rema...
+    type: feat
+    files:
+      - lib/commands.cjs
+      - lib/git-workflow.cjs
+      - lib/interactive-shell.cjs
+      - tests/commands.test.js
+      - tests/git-workflow.test.js
+    closedAt: 2026-03-04T05:32:12.440Z
+  - id: GRAB-ENV-201
+    title: Cross-Platform Install And Runtime Reliability
+    objective: Make Grabby installable and functional across common developer
+      environments on Windows, macOS, and Linux, with deterministic setup, clear
+      fallbacks...
+    type: feat
+    files:
+      - lib/commands.cjs
+      - lib/config.cjs
+      - bin/index.cjs
+      - README.md
+      - docs/LLM_INSTALL.md
+      - tests/commands.test.js
+      - tests/config.test.js
+      - tests/packaging.test.js
+    closedAt: 2026-03-04T05:37:35.438Z
+lastUpdated: 2026-03-04T05:37:35.471Z

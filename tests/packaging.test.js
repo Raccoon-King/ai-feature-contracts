@@ -30,6 +30,14 @@ describe('offline packaging metadata', () => {
     expect(readme).toContain('## Airgapped Installation');
     expect(readme).toContain('npm pack');
     expect(readme).toContain('npm install -g ./grabby-2.0.0.tgz');
+    expect(readme).toContain('npm install -g .\\grabby-2.0.0.tgz');
     expect(readme).toContain('bundles its runtime dependencies');
+  });
+
+  it('documents Windows, macOS, and Linux support explicitly', () => {
+    expect(readme).toContain('Windows 10/11');
+    expect(readme).toContain('macOS');
+    expect(readme).toContain('Linux');
+    expect(readme).toContain('Node.js `>=18`');
   });
 });
