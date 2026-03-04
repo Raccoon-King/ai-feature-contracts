@@ -394,6 +394,8 @@ describe('Interactive shell', () => {
           name: 'generate-plan',
           description: 'Build a plan',
           agent: 'strategist',
+          progress: { status: 'in_progress' },
+          nextStep: { goal: 'Write plan' },
           steps: [{ goal: 'Read contract' }, { goal: 'Write plan' }],
         }),
       },
@@ -401,6 +403,8 @@ describe('Interactive shell', () => {
 
     await detailHandlers.workflow();
     expect(logger.lines.join('\n')).toContain('Workflow: generate-plan');
+    expect(logger.lines.join('\n')).toContain('Status: in_progress');
+    expect(logger.lines.join('\n')).toContain('Next Step: Write plan');
     expect(logger.lines.join('\n')).toContain('1. Read contract');
   });
 
@@ -442,6 +446,9 @@ describe('Interactive shell', () => {
           workflow: 'generate-plan',
           step: 2,
           timestamp: new Date().toISOString(),
+          status: 'paused',
+          nextStep: 'Write plan',
+          resumeCommand: 'grabby agent strategist generate-plan demo.fc.md',
         }],
       },
     });
@@ -449,6 +456,9 @@ describe('Interactive shell', () => {
     resumed.resume();
     expect(logger.lines.join('\n')).toContain('Saved Progress');
     expect(logger.lines.join('\n')).toContain('generate-plan');
+    expect(logger.lines.join('\n')).toContain('Status: paused');
+    expect(logger.lines.join('\n')).toContain('Next: Write plan');
+    expect(logger.lines.join('\n')).toContain('Resume: grabby agent strategist generate-plan demo.fc.md');
   });
 
   it('renders help and delegates resolveContract', () => {

@@ -1,0 +1,3 @@
+- Identify the highest-risk behavior change in scope
+- Add or update deterministic tests before audit
+- Record unresolved verification gaps explicitly

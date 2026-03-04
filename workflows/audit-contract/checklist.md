@@ -1,0 +1,3 @@
+- Verify planned files exist or were intentionally updated
+- Confirm lint/build/test outcomes are captured
+- Check remaining done-when items before closing the contract

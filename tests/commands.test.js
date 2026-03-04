@@ -344,6 +344,7 @@ Archive me
     expect(planData.execution_guard).toBe('passed');
     expect(logger.lines.join('\n')).toContain('create: tests/new-cli.test.js');
     expect(logger.lines.join('\n')).toContain('modify: tests/cli.test.js');
+    expect(logger.lines.join('\n')).toContain('Verification Checklist:');
   });
 
   it('audits files and reports lint/build outcomes', () => {
@@ -384,6 +385,7 @@ Archive me
 
     const npmCommand = process.platform === 'win32' ? 'npm.cmd' : 'npm';
     expect(commands).toEqual([`${npmCommand} run lint`, `${npmCommand} run build`]);
+    expect(logger.lines.join('\n')).toContain('Audit Checklist:');
     expect(logger.lines.join('\n')).toContain('Lint: passed');
     expect(logger.lines.join('\n')).toContain('Build: failed');
     expect(logger.lines.join('\n')).toContain('src/feature.ts');
@@ -540,16 +542,20 @@ Archive me
     await handlers.init();
 
     expect(fs.existsSync(path.join(tempDir, '.grabby', 'config.json'))).toBe(true);
+    expect(fs.existsSync(path.join(tempDir, '.grabby', 'project-context.json'))).toBe(true);
     expect(fs.existsSync(path.join(tempDir, '.grabbyignore'))).toBe(true);
     expect(fs.existsSync(path.join(tempDir, 'contracts', 'SYSTEM-BASELINE.fc.md'))).toBe(true);
     expect(fs.existsSync(path.join(tempDir, 'contracts', 'PROJECT-BASELINE.fc.md'))).toBe(true);
     expect(fs.readFileSync(path.join(tempDir, 'contracts', 'README.md'), 'utf8')).toContain('## Baseline Contracts');
     expect(fs.readFileSync(path.join(tempDir, 'contracts', 'PROJECT-BASELINE.fc.md'), 'utf8')).toContain('React application');
     expect(logger.lines.join('\n')).toContain('.grabby/config.json');
+    expect(logger.lines.join('\n')).toContain('.grabby/project-context.json');
     expect(logger.lines.join('\n')).toContain('Baseline assessment:');
+    expect(logger.lines.join('\n')).toContain('Context summary:');
     expect(logger.lines.join('\n')).toContain('Setup summary');
     expect(logger.lines.join('\n')).toContain('Mode: brownfield');
     expect(logger.lines.join('\n')).toContain('Review contracts/PROJECT-BASELINE.fc.md and contracts/SYSTEM-BASELINE.fc.md');
+    expect(logger.lines.join('\n')).toContain('Review .grabby/project-context.json');
   });
 
   it('preserves existing baseline contracts during init', async () => {
@@ -1602,6 +1608,58 @@ ENV_VERSION: v0
       debounceMs: 5,
     }));
     jest.dontMock('../lib/watcher.cjs');
+  });
+
+  it('lints built-in agent definitions successfully', () => {
+    const logger = createLogger();
+    const context = createProjectContext({ cwd: tempDir, pkgRoot: PKG_ROOT });
+    const handlers = createCommandHandlers({ context, logger });
+
+    handlers.agentLint();
+
+    const output = logger.lines.join('\n');
+    expect(output).toContain('OK');
+    expect(output).toContain('agents/analyst.agent.yaml');
+  });
+
+  it('fails agent lint when a custom agent definition is invalid', () => {
+    const logger = createLogger();
+    const exits = [];
+    const customPkgRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'grabby-agent-lint-'));
+    const agentsDir = path.join(customPkgRoot, 'agents');
+    const workflowsDir = path.join(customPkgRoot, 'workflows');
+    fs.mkdirSync(agentsDir, { recursive: true });
+    fs.mkdirSync(workflowsDir, { recursive: true });
+    fs.writeFileSync(path.join(agentsDir, 'broken.agent.yaml'), `agent:
+  metadata:
+    id: agents/broken
+    name: Broken
+    title: Broken Agent
+    icon: "!"
+    capabilities: broken
+  persona:
+    role: Broken
+    identity: Broken identity
+    communication_style: terse
+    principles:
+      - test
+  greeting: Hello
+  menu:
+    - trigger: BK
+      command: broken
+      workflow: workflows/missing/workflow.yaml
+      description: broken
+`, 'utf8');
+
+    const context = createProjectContext({ cwd: tempDir, pkgRoot: customPkgRoot });
+    const handlers = createCommandHandlers({ context, logger, exit: (code) => exits.push(code) });
+
+    handlers.agentLint();
+
+    expect(exits).toEqual([1]);
+    expect(logger.lines.join('\n')).toContain('FAIL');
+    expect(logger.lines.join('\n')).toContain('workflow not found');
+    fs.rmSync(customPkgRoot, { recursive: true, force: true });
   });
 });
 

@@ -81,6 +81,7 @@ grabby audit login-redirect-bug.fc.md
 For an existing repository, start with `grabby init` from the repo root. Grabby will preserve existing project files, install its repo-local guidance, and print a setup summary showing:
 - what it created
 - what it preserved
+- the generated `.grabby/project-context.json` brownfield context snapshot
 - the next brownfield-safe steps
 
 Recommended brownfield flow:
@@ -98,7 +99,7 @@ grabby ticket "fix login redirect bug"
 grabby task "fix login redirect bug"
 ```
 
-After `grabby init`, review `contracts/PROJECT-BASELINE.fc.md` and `contracts/SYSTEM-BASELINE.fc.md` before starting implementation work in an existing codebase.
+After `grabby init`, review `contracts/PROJECT-BASELINE.fc.md`, `contracts/SYSTEM-BASELINE.fc.md`, and `.grabby/project-context.json` before starting implementation work in an existing codebase.
 
 ## Commands
 
@@ -132,6 +133,7 @@ After `grabby init`, review `contracts/PROJECT-BASELINE.fc.md` and `contracts/SY
 | `grabby quick` | Create or implement quick specs |
 | `grabby agent <name>` | Load an agent and run its menu/workflows |
 | `grabby workflow <name>` | View workflow details directly |
+| `grabby agent:lint` | Validate built-in agent definitions and workflow references |
 | `grabby party` | Show the full multi-agent handoff flow |
 | `grabby resume` | List saved workflow progress |
 | `grabby ruleset create [goal]` | Build rulesets from existing project files |
@@ -164,6 +166,7 @@ In a brownfield repo, `grabby init` is idempotent:
 - existing docs and local override files are preserved
 - managed router files are refreshed in place
 - baseline contracts are created once and then preserved on reruns
+- `.grabby/project-context.json` is refreshed as the current brownfield summary artifact
 - the setup summary tells you exactly what changed
 
 ## Ticket Key Awareness

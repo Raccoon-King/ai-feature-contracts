@@ -274,6 +274,10 @@ function watch() {
   commandHandlers.watch({ logger: console });
 }
 
+function agentLint() {
+  commandHandlers.agentLint();
+}
+
 function metrics() {
   if (args[0] === 'summary') {
     commandHandlers.metricsSummary();
@@ -1280,6 +1284,7 @@ const commands = {
   prompt: () => promptBundle(args[0]),
   session: () => session(args[0]),
   watch,
+  'agent:lint': agentLint,
   metrics,
   cicd,
   plugin,

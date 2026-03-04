@@ -1,5 +1,13 @@
+const fs = require('fs');
+const os = require('os');
 const path = require('path');
-const { selectPersonaForTask, selectPersonaForStage, deriveWorkflowRoles } = require('../lib/personas.cjs');
+const {
+  selectPersonaForTask,
+  selectPersonaForStage,
+  deriveWorkflowRoles,
+  validateAgentDefinition,
+  lintAgentDefinitions,
+} = require('../lib/personas.cjs');
 const { buildTaskBrief, getTaskBriefPath } = require('../lib/task-brief.cjs');
 
 describe('Persona selection', () => {
@@ -164,5 +172,76 @@ describe('Task brief', () => {
     expect(brief).toContain('## Scope Breakdown');
     expect(brief).toContain('Stay inside src/tests');
     expect(brief).toContain('`grabby quick`');
+  });
+});
+
+describe('Agent schema validation', () => {
+  it('accepts built-in agent definitions', () => {
+    const result = lintAgentDefinitions();
+
+    expect(result.valid).toBe(true);
+    expect(result.results.length).toBeGreaterThan(0);
+    expect(result.results.every((entry) => entry.valid)).toBe(true);
+  });
+
+  it('fails invalid agent definitions with actionable errors', () => {
+    const invalid = validateAgentDefinition({
+      agent: {
+        metadata: {
+          name: 'Broken',
+        },
+        persona: {},
+        menu: [{}],
+      },
+    }, {
+      fileName: 'broken.agent.yaml',
+      agentsDir: path.join('C:', 'repo', 'agents'),
+      workflowsDir: path.join('C:', 'repo', 'workflows'),
+    });
+
+    expect(invalid.valid).toBe(false);
+    expect(invalid.errors).toEqual(expect.arrayContaining([
+      'agent.metadata.id is required',
+      'agent.metadata.title is required',
+      'agent.persona.role is required',
+      'agent.persona.principles must contain at least one item',
+      'agent.menu[0].trigger is required',
+    ]));
+  });
+
+  it('reports parse and workflow errors from lint results', () => {
+    const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'grabby-agents-'));
+    const agentsDir = path.join(tempDir, 'agents');
+    const workflowsDir = path.join(tempDir, 'workflows');
+    fs.mkdirSync(agentsDir, { recursive: true });
+    fs.mkdirSync(workflowsDir, { recursive: true });
+
+    fs.writeFileSync(path.join(agentsDir, 'broken.agent.yaml'), `agent:
+  metadata:
+    id: agents/broken
+    name: Broken
+    title: Broken Agent
+    icon: "!"
+    capabilities: broken
+  persona:
+    role: Broken
+    identity: Broken identity
+    communication_style: terse
+    principles:
+      - test
+  greeting: Hello
+  menu:
+    - trigger: BK
+      command: broken
+      workflow: workflows/missing/workflow.yaml
+      description: broken
+`, 'utf8');
+
+    const result = lintAgentDefinitions({ agentsDir, workflowsDir });
+
+    expect(result.valid).toBe(false);
+    expect(result.results[0].errors).toContain('agent.menu[0].workflow not found: workflows/missing/workflow.yaml');
+
+    fs.rmSync(tempDir, { recursive: true, force: true });
   });
 });

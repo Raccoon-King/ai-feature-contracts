@@ -407,6 +407,7 @@ describe('Workflow Metadata Functions', () => {
       workflows.forEach((wf) => {
         expect(wf.name).toBeDefined();
         expect(wf.description).toBeDefined();
+        expect(typeof wf.stepCount).toBe('number');
       });
     });
 
@@ -423,6 +424,11 @@ describe('Workflow Metadata Functions', () => {
       expect(details).not.toBeNull();
       expect(details.name).toBeDefined();
       expect(details.description).toBeDefined();
+      expect(Array.isArray(details.steps)).toBe(true);
+      expect(details.steps[0]).toEqual(expect.objectContaining({
+        id: expect.any(String),
+        goal: expect.any(String),
+      }));
     });
 
     it('should return null for non-existent workflow', () => {
@@ -536,6 +542,34 @@ Test objective
     createTestContract('valid', validContract);
     // Contract is created successfully - validation happens in the workflow
     expect(fs.existsSync(path.join(contractsDir, 'valid.fc.md'))).toBe(true);
+  });
+
+  it('includes saved workflow progress in workflow details and list output', () => {
+    const progressDir = path.join(tempDir, '.grabby-progress');
+    fs.mkdirSync(progressDir, { recursive: true });
+    fs.writeFileSync(path.join(progressDir, 'create-contract.json'), JSON.stringify({
+      workflow: 'create-contract',
+      timestamp: new Date().toISOString(),
+      data: {
+        status: 'paused',
+        currentStep: 1,
+        nextStep: 'Define boundaries and constraints',
+        resumeCommand: 'grabby agent architect create-contract',
+      },
+    }), 'utf8');
+
+    const details = runtime.getWorkflowDetails('create-contract');
+    const metadata = runtime.listWorkflowMetadata().find((entry) => entry.name === 'create-contract');
+
+    expect(details.progress).toEqual(expect.objectContaining({
+      status: 'paused',
+      currentStep: 1,
+    }));
+    expect(details.nextStep).toEqual(expect.objectContaining({
+      goal: expect.any(String),
+    }));
+    expect(metadata.progress).toEqual(expect.objectContaining({ status: 'paused' }));
+    expect(metadata.nextStep).toBeTruthy();
   });
 });
 
@@ -1372,6 +1406,7 @@ Generate tests.
     await runtime.executeAgentCommand('tester', 'test-suite', ['testable.fc.md']);
 
     const output = consoleSpy.mock.calls.map((call) => call.join(' ')).join('\n');
+    expect(output).toContain('Verification checklist:');
     expect(output).toContain('src/tests/useLogin.test.ts');
     expect(output).toContain('src/tests/LoginPanel.test.ts');
     expect(output).toContain('session.test.ts');
@@ -1568,7 +1603,9 @@ Audit the workflow.
     const plan = yaml.parse(fs.readFileSync(path.join(contractsDir, 'audited.plan.yaml'), 'utf8'));
     expect(plan.status).toBe('complete');
     expect(execSpy).toHaveBeenCalledTimes(3);
-    expect(consoleSpy.mock.calls.map((call) => call.join(' ')).join('\n')).toContain('Audit passed! Contract marked complete.');
+    const output = consoleSpy.mock.calls.map((call) => call.join(' ')).join('\n');
+    expect(output).toContain('Audit checklist:');
+    expect(output).toContain('Audit passed! Contract marked complete.');
 
     mockRl.restore();
     consoleSpy.mockRestore();

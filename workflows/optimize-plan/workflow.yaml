@@ -1,0 +1,12 @@
+name: optimize-plan
+description: Reorder or refine an existing execution plan for better sequencing
+agent: plan-strategist
+
+steps:
+  - goal: Load the current plan and inspect dependency order
+  - goal: Offer deterministic optimization options for file sequencing
+  - goal: Persist the optimized order and explain what changed
+
+output:
+  type: plan
+  format: yaml

@@ -408,4 +408,30 @@ entries:
       - tests/tui.test.js
       - contracts/GRAB-UX-002.fc.md
     closedAt: 2026-03-04T03:38:32.343Z
-lastUpdated: 2026-03-04T03:38:32.353Z
+  - id: IMP-211
+    title: Add Agent Schema Validation and Linting
+    objective: Formalize Grabby's agent-definition model so agent files, prompts,
+      menu entries, and routing metadata can be validated before they break
+      workflows.
+    type: FEATURE_CONTRACT
+    closedAt: 2026-03-04T03:59:12.814Z
+  - id: IMP-214
+    title: Improve Help, Routing, and Next-Step Guidance
+    objective: Make Grabby's help and menu layers smarter about current repo state,
+      installed capabilities, and recommended next actions.
+    type: FEATURE_CONTRACT
+    closedAt: 2026-03-04T03:59:12.843Z
+  - id: IMP-215
+    title: Add Checklist-Driven Verification and Review Prompts
+    objective: Introduce reusable checklist-driven review prompts so Grabby's
+      verification and audit stages are more explicit, consistent, and
+      role-aware.
+    type: FEATURE_CONTRACT
+    closedAt: 2026-03-04T03:59:12.941Z
+  - id: IMP-201
+    title: BMAD Pattern Integration Umbrella
+    objective: Track the BMAD-to-Grabby integration roadmap at the umbrella level
+      while execution happens through smaller completion-sized contracts.
+    type: FEATURE_CONTRACT
+    closedAt: 2026-03-04T03:59:27.483Z
+lastUpdated: 2026-03-04T03:59:27.495Z

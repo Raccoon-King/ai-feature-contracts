@@ -205,6 +205,29 @@ describe('tui', () => {
     fs.rmSync(result.tmp, { recursive: true, force: true });
   });
 
+  test('createTUI surfaces brownfield project context in the home menu and setup wizard', () => {
+    const output = runTuiKeys([
+      '\u001B[B',
+      '\r',
+      '\u001B[B',
+      '\u001B[B',
+      '\u001B[B',
+      '\u001B[B',
+      '\r',
+    ], ({ fs, path, grabbyDir }) => {
+      fs.writeFileSync(path.join(grabbyDir, 'project-context.json'), JSON.stringify({
+        stackSummary: 'Node.js project',
+        summary: 'existing CLI repo',
+        recommendedDirectories: ['lib', 'tests'],
+        testing: { signals: ['test'] },
+      }, null, 2));
+    });
+
+    expect(output).toContain('Brownfield context: Node.js project | Dirs: lib, tests');
+    expect(output).toContain('Review Brownfield Context');
+    expect(output).toContain('Node.js project | lib, tests');
+  });
+
   test('createTUI shows guided create flow messaging', () => {
     const output = runTuiAction(2);
     expect(output).toContain('Contract Workflow');

@@ -1,0 +1,12 @@
+name: quick-dev
+description: Fast-track implementation workflow for an existing quick spec
+agent: quick-flow
+
+steps:
+  - goal: Read the quick spec and confirm the scope is still bounded
+  - goal: Implement the minimal change and required tests
+  - goal: Report the next safe follow-up or escalation path
+
+output:
+  type: implementation
+  format: markdown

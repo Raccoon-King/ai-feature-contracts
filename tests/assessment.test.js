@@ -14,6 +14,8 @@ const {
   collectProjectAssessment,
   generateBaselineContracts,
   buildProjectBaselineContract,
+  deriveProjectContext,
+  generateProjectContextArtifact,
 } = require('../lib/assessment.cjs');
 const { detectProjectType, getProjectDirs } = require('../lib/smart-prompts.cjs');
 const { summarizeProjectAssessment } = require('../lib/ai-complete.cjs');
@@ -153,5 +155,48 @@ describe('assessment helpers', () => {
 
     expect(skipped.created).toEqual([]);
     expect(skipped.skipped).toEqual(['SYSTEM-BASELINE.fc.md', 'PROJECT-BASELINE.fc.md']);
+  });
+
+  test('derives a reusable project-context artifact from assessment data', () => {
+    const projectContext = deriveProjectContext({
+      packageName: 'demo-app',
+      stackSummary: 'React application',
+      projectTypes: ['react'],
+      projectDirs: ['src', 'tests', 'docs'],
+      scripts: ['lint', 'test'],
+      dependencies: ['react'],
+      devDependencies: ['jest'],
+      hasTests: true,
+      hasContracts: false,
+      rootEntries: [{ name: 'src', kind: 'dir' }],
+    }, 'react brownfield repo');
+
+    expect(projectContext.stackSummary).toBe('React application');
+    expect(projectContext.summary).toBe('react brownfield repo');
+    expect(projectContext.recommendedDirectories).toEqual(['src', 'tests', 'docs']);
+    expect(projectContext.testing.hasTests).toBe(true);
+    expect(projectContext.governance.allowedDirectories).toEqual(['src', 'tests', 'docs']);
+  });
+
+  test('generates and saves project-context artifact', async () => {
+    detectProjectType.mockReturnValue(['node']);
+    getProjectDirs.mockReturnValue(['lib', 'tests']);
+    summarizeProjectAssessment.mockResolvedValue('cli brownfield repo');
+    fs.writeFileSync(path.join(tempDir, 'package.json'), JSON.stringify({
+      name: 'cli-tool',
+      scripts: { test: 'jest' },
+      dependencies: { chalk: '^5.0.0' },
+    }), 'utf8');
+
+    const result = await generateProjectContextArtifact({ cwd: tempDir });
+
+    expect(result.summary).toBe('cli brownfield repo');
+    expect(path.relative(tempDir, result.outputPath).replace(/\\/g, '/')).toBe('.grabby/project-context.json');
+    expect(fs.existsSync(result.outputPath)).toBe(true);
+    expect(JSON.parse(fs.readFileSync(result.outputPath, 'utf8'))).toEqual(expect.objectContaining({
+      packageName: 'cli-tool',
+      stackSummary: 'Node.js project',
+      summary: 'cli brownfield repo',
+    }));
   });
 });

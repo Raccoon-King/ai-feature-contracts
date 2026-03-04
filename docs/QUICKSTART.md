@@ -9,6 +9,7 @@ For an existing repository, treat this as a brownfield setup flow: run `grabby i
    Brownfield note:
    - existing docs and local overrides are preserved
    - managed Grabby router files are refreshed
+   - `.grabby/project-context.json` is refreshed with the current brownfield summary
    - the setup summary shows what was created, updated, and preserved
 2. Create contract:
    ```bash

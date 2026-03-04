@@ -20,6 +20,7 @@ const {
   createFallbackRuleset,
   resolveInputFiles,
   summarizeFiles,
+  discoverRulesetCandidates,
 } = require('../lib/ruleset-builder.cjs');
 
 describe('ruleset builder helpers', () => {
@@ -83,6 +84,20 @@ describe('ruleset builder helpers', () => {
     expect(content).toContain('- README.md');
   });
 
+  it('discovers useful existing ruleset source candidates', () => {
+    fs.mkdirSync(path.join(tempDir, '.codex', 'rules'), { recursive: true });
+    fs.writeFileSync(path.join(tempDir, 'AGENTS.md'), '# agents\n', 'utf8');
+
+    const candidates = discoverRulesetCandidates(tempDir);
+
+    expect(candidates).toEqual(expect.arrayContaining([
+      'README.md',
+      'docs',
+      '.codex/rules',
+      'AGENTS.md',
+    ]));
+  });
+
   it('creates an imported ruleset without a provider under docs/rulesets', async () => {
     getAvailableProvider.mockReturnValue(null);
     const logger = { log: jest.fn() };
@@ -144,12 +159,14 @@ describe('ruleset builder helpers', () => {
   it('runs the import wizard interactively', async () => {
     answers = ['1', 'Ingest existing standards', 'Imported Rules', 'README.md, docs'];
     getAvailableProvider.mockReturnValue(null);
+    const logger = { log: jest.fn() };
 
-    const outPath = await runRulesetWizard(tempDir, { logger: { log: () => {} } });
+    const outPath = await runRulesetWizard(tempDir, { logger });
 
     expect(path.relative(tempDir, outPath).replace(/\\/g, '/')).toBe('docs/rulesets/imported-rules.ruleset.md');
     expect(readline.createInterface).toHaveBeenCalled();
     expect(close).toHaveBeenCalled();
+    expect(logger.log).toHaveBeenCalledWith(expect.stringContaining('Suggested inputs: README.md, docs'));
   });
 
   it('runs the local ruleset wizard interactively', async () => {
