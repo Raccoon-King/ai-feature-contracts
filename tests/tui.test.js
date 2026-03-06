@@ -245,8 +245,6 @@ describe('tui', () => {
       '\r',
       '\u001B[B',
       '\u001B[B',
-      '\u001B[B',
-      '\u001B[B',
       '\r',
     ], ({ fs, path, grabbyDir }) => {
       fs.writeFileSync(path.join(grabbyDir, 'project-context.json'), JSON.stringify({
@@ -270,10 +268,6 @@ describe('tui', () => {
     const output = runTuiKeys([
       '\u001B[B',
       '\r',
-      '\u001B[B',
-      '\u001B[B',
-      '\u001B[B',
-      '\u001B[B',
       '\u001B[B',
       '\u001B[B',
       '\u001B[B',
