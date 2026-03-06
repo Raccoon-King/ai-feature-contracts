@@ -168,6 +168,40 @@ describe('tui', () => {
     Object.defineProperty(process, 'stdin', { value: originalStdin, configurable: true });
   });
 
+  test('createMenu treats Escape as back when Back action exists', () => {
+    const rl = { close: jest.fn() };
+    const onSelect = jest.fn();
+    const onExit = jest.fn();
+    const stdin = new EventEmitter();
+    stdin.setRawMode = jest.fn();
+    stdin.resume = jest.fn();
+    stdin.removeListener = jest.fn();
+    const stdoutWrite = jest.spyOn(process.stdout, 'write').mockImplementation(() => true);
+    const consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
+    const createInterfaceSpy = jest.spyOn(readline, 'createInterface').mockReturnValue(rl);
+    const originalStdin = process.stdin;
+
+    Object.defineProperty(process, 'stdin', { value: stdin, configurable: true });
+
+    const menu = createMenu({
+      items: [{ label: 'One', action: 'one' }, { label: 'Back', action: 'back' }],
+      onSelect,
+      onExit,
+    });
+
+    menu.start();
+    stdin.emit('data', Buffer.from('\u001B'));
+
+    expect(onSelect).toHaveBeenCalledWith({ label: 'Back', action: 'back' }, 1);
+    expect(onExit).not.toHaveBeenCalled();
+    expect(rl.close).toHaveBeenCalled();
+
+    stdoutWrite.mockRestore();
+    consoleSpy.mockRestore();
+    createInterfaceSpy.mockRestore();
+    Object.defineProperty(process, 'stdin', { value: originalStdin, configurable: true });
+  });
+
   test('createTUI renders startup art and contract list', () => {
     const output = runTuiAction(0, ({ fs, path, contractsDir }) => {
       fs.writeFileSync(path.join(contractsDir, 'sample.fc.md'), '**Status:** draft\n', 'utf8');
