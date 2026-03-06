@@ -211,12 +211,13 @@ describe('tui', () => {
     expect(output).toContain('sample.fc.md');
   });
 
-  test('createTUI runs the setup wizard and applies recommended defaults', () => {
+  test('createTUI quick setup routes through path chooser and applies defaults', () => {
     const fs = require('fs');
     const path = require('path');
 
     const result = runTuiKeys([
       '\u001B[B',
+      '\r',
       '\r',
       '\r',
     ], ({ fs: setupFs, tmp: setupTmp }) => {
@@ -230,6 +231,7 @@ describe('tui', () => {
 
     const config = JSON.parse(fs.readFileSync(path.join(result.tmp, 'grabby.config.json'), 'utf8'));
     expect(result.output).toContain('Setup Wizard');
+    expect(result.output).toContain('Quick Setup Path');
     expect(result.output).toContain('Applied recommended setup defaults.');
     expect(config.interactive.enabled).toBe(true);
     expect(config.features.menuMode).toBe(true);
@@ -243,6 +245,7 @@ describe('tui', () => {
     const output = runTuiKeys([
       '\u001B[B',
       '\r',
+      '\u001B[B',
       '\u001B[B',
       '\u001B[B',
       '\r',
@@ -271,11 +274,47 @@ describe('tui', () => {
       '\u001B[B',
       '\u001B[B',
       '\u001B[B',
+      '\u001B[B',
       '\r',
     ], () => {}, { commandHandlers });
 
     expect(output).toContain('Check for Grabby Updates');
     expect(commandHandlers.updateGrabby).toHaveBeenCalledWith({ checkOnly: true });
+  });
+
+  test('createTUI runs interactive brownfield init from setup wizard', () => {
+    const commandHandlers = {
+      init: jest.fn(),
+    };
+
+    const output = runTuiKeys([
+      '\u001B[B',
+      '\r',
+      '\u001B[B',
+      '\r',
+    ], () => {}, { commandHandlers });
+
+    expect(output).toContain('Run Brownfield Init (Interactive)');
+    expect(output).toContain('Interactive brownfield initialization completed.');
+    expect(commandHandlers.init).toHaveBeenCalledWith({ interactive: true });
+  });
+
+  test('createTUI runs standard init from quick setup path', () => {
+    const commandHandlers = {
+      init: jest.fn(),
+    };
+
+    const output = runTuiKeys([
+      '\u001B[B',
+      '\r',
+      '\r',
+      '\u001B[B',
+      '\r',
+    ], () => {}, { commandHandlers });
+
+    expect(output).toContain('Quick Setup Path');
+    expect(output).toContain('Standard initialization completed.');
+    expect(commandHandlers.init).toHaveBeenCalledWith({ interactive: false });
   });
 
   test('createTUI shows guided create flow messaging', () => {
