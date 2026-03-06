@@ -157,10 +157,11 @@ describe('assessment helpers', () => {
     });
 
     expect(created.summary).toBe('generated summary');
-    expect(created.created).toEqual(['SYSTEM-BASELINE.fc.md', 'PROJECT-BASELINE.fc.md']);
+    expect(created.created).toEqual(['SYSTEM-BASELINE.fc.md', 'PROJECT-BASELINE.fc.md', 'SETUP-BASELINE.fc.md']);
     expect(created.skipped).toEqual([]);
     expect(fs.readFileSync(path.join(tempDir, 'contracts', 'SYSTEM-BASELINE.fc.md'), 'utf8')).toContain('Summary: generated summary');
     expect(fs.readFileSync(path.join(tempDir, 'contracts', 'PROJECT-BASELINE.fc.md'), 'utf8')).toContain('Package/Application: `cli-tool`');
+    expect(fs.readFileSync(path.join(tempDir, 'contracts', 'SETUP-BASELINE.fc.md'), 'utf8')).toContain('deterministic setup validation');
 
     const skipped = await generateBaselineContracts({
       cwd: tempDir,
@@ -169,7 +170,7 @@ describe('assessment helpers', () => {
     });
 
     expect(skipped.created).toEqual([]);
-    expect(skipped.skipped).toEqual(['SYSTEM-BASELINE.fc.md', 'PROJECT-BASELINE.fc.md']);
+    expect(skipped.skipped).toEqual(['SYSTEM-BASELINE.fc.md', 'PROJECT-BASELINE.fc.md', 'SETUP-BASELINE.fc.md']);
   });
 
   test('derives a reusable project-context artifact from assessment data', () => {

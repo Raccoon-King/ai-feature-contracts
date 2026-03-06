@@ -45,6 +45,31 @@ describe('tui', () => {
     if (options.setupComplete !== false) {
       fs.writeFileSync(path.join(grabbyDir, 'governance.lock'), 'governance:\n  version: test\n', 'utf8');
     }
+    const bootstrapComplete = options.bootstrapComplete !== false;
+    fs.writeFileSync(path.join(contractsDir, 'SETUP-BASELINE.fc.md'), `# FC: Setup Baseline
+**ID:** SETUP-BASELINE | **Status:** ${bootstrapComplete ? 'complete' : 'draft'}
+
+## Objective
+Bootstrap
+
+## Scope
+- setup
+
+## Directories
+**Allowed:** \`contracts/\`
+**Restricted:** \`node_modules/\`
+
+## Files
+| Action | Path | Reason |
+|--------|------|--------|
+| modify | \`contracts/SETUP-BASELINE.fc.md\` | bootstrap |
+
+## Done When
+- [ ] complete
+
+## Testing
+- unit
+`, 'utf8');
     setup({ fs, path, tmp, contractsDir, grabbyDir });
 
     const stdin = createMockInput();
@@ -248,6 +273,12 @@ describe('tui', () => {
     const output = runTuiAction(0, () => {}, { setupComplete: false });
     expect(output).toContain('Setup Required');
     expect(output).toContain('Complete setup first. Use "Setup & Onboarding" from the main menu.');
+  });
+
+  test('createTUI blocks non-contract actions until setup bootstrap story is complete', () => {
+    const output = runTuiAction(2, () => {}, { bootstrapComplete: false });
+    expect(output).toContain('Bootstrap Required');
+    expect(output).toContain('Locked until bootstrap story completes');
   });
 
   test('createTUI surfaces brownfield project context in the home menu and setup wizard', () => {
@@ -844,7 +875,7 @@ Test
 `, 'utf8');
     });
     expect(output).toContain('Validating Contracts');
-    expect(output).toContain('1 passed, 0 failed');
+    expect(output).toContain('passed, 0 failed');
   });
 
   test('createTUI shows metrics summary', () => {

@@ -1,0 +1,13 @@
+version: 1
+automation:
+  workflow: .github/workflows/contract-validation.yml
+  prTemplate: .github/PULL_REQUEST_TEMPLATE.md
+  preCommitHook: .git/hooks/pre-commit
+commands:
+  validate: grabby validate contracts/<ID>.fc.md
+  plan: grabby plan contracts/<ID>.fc.md
+  approve: grabby approve contracts/<ID>.fc.md
+  execute: grabby execute contracts/<ID>.fc.md
+  audit: grabby audit contracts/<ID>.fc.md
+  lint: npm run lint
+  test: npm test -- --runInBand

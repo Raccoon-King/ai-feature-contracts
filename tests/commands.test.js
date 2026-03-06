@@ -672,6 +672,7 @@ Capture baseline context.
     expect(fs.existsSync(path.join(tempDir, '.grabbyignore'))).toBe(true);
     expect(fs.existsSync(path.join(tempDir, 'contracts', 'SYSTEM-BASELINE.fc.md'))).toBe(true);
     expect(fs.existsSync(path.join(tempDir, 'contracts', 'PROJECT-BASELINE.fc.md'))).toBe(true);
+    expect(fs.existsSync(path.join(tempDir, 'contracts', 'SETUP-BASELINE.fc.md'))).toBe(true);
     expect(fs.readFileSync(path.join(tempDir, 'contracts', 'README.md'), 'utf8')).toContain('## Baseline Contracts');
     expect(fs.readFileSync(path.join(tempDir, 'contracts', 'PROJECT-BASELINE.fc.md'), 'utf8')).toContain('React application');
     expect(logger.lines.join('\n')).toContain('.grabby/config.json');
@@ -680,7 +681,7 @@ Capture baseline context.
     expect(logger.lines.join('\n')).toContain('Context summary:');
     expect(logger.lines.join('\n')).toContain('Setup summary');
     expect(logger.lines.join('\n')).toContain('Mode: brownfield');
-    expect(logger.lines.join('\n')).toContain('Review contracts/PROJECT-BASELINE.fc.md and contracts/SYSTEM-BASELINE.fc.md');
+    expect(logger.lines.join('\n')).toContain('contracts/SETUP-BASELINE.fc.md');
     expect(logger.lines.join('\n')).toContain('Review .grabby/project-context.json');
   });
 
@@ -730,6 +731,7 @@ Capture baseline context.
 
     expect(fs.readFileSync(path.join(contractsDir, 'SYSTEM-BASELINE.fc.md'), 'utf8')).toBe('# existing system baseline\n');
     expect(fs.existsSync(path.join(contractsDir, 'PROJECT-BASELINE.fc.md'))).toBe(true);
+    expect(fs.existsSync(path.join(contractsDir, 'SETUP-BASELINE.fc.md'))).toBe(true);
     expect(logger.lines.join('\n')).toContain('Preserved existing contracts/SYSTEM-BASELINE.fc.md');
     expect(logger.lines.join('\n')).toContain('Preserved:');
   });

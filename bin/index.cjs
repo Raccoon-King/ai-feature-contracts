@@ -1404,6 +1404,59 @@ const commands = {
   '--help': help
 };
 
+function getSetupBaselinePath() {
+  return path.join(projectContext.contractsDir, 'SETUP-BASELINE.fc.md');
+}
+
+function hasSetupBaseline() {
+  return fs.existsSync(getSetupBaselinePath());
+}
+
+function isSetupBaselineComplete() {
+  const setupBaselinePath = getSetupBaselinePath();
+  if (!hasSetupBaseline()) {
+    return false;
+  }
+  const content = fs.readFileSync(setupBaselinePath, 'utf8');
+  const status = String(content.match(/\*\*Status:\*\*\s*([^\n\r|]+)/i)?.[1] || '').trim().toLowerCase();
+  return status === 'complete' || status === 'completed';
+}
+
+function isSetupBaselineTarget(input) {
+  if (!input) return false;
+  const normalized = String(input).replace(/\\/g, '/').trim().toUpperCase();
+  return normalized === 'SETUP-BASELINE'
+    || normalized === 'SETUP-BASELINE.FC.MD'
+    || normalized.endsWith('/SETUP-BASELINE.FC.MD');
+}
+
+function isBootstrapCommandAllowed(commandName, commandArgs) {
+  if (!commandName) {
+    return true;
+  }
+  if (['help', '-h', '--help', 'init', 'tui', 'list'].includes(commandName)) {
+    return true;
+  }
+  if (['validate', 'plan', 'approve', 'execute', 'run', 'audit'].includes(commandName)) {
+    const target = commandName === 'run' ? getFirstPositionalArg(commandArgs) : commandArgs[0];
+    return isSetupBaselineTarget(target);
+  }
+  return false;
+}
+
+if (hasSetupBaseline() && !isSetupBaselineComplete() && !isBootstrapCommandAllowed(cmd, args)) {
+  console.log(c.error('[GRABBY] Bootstrap gate active.'));
+  console.log(c.warn('Complete contracts/SETUP-BASELINE.fc.md with an LLM workflow before using other Grabby commands.'));
+  console.log('');
+  console.log('Run this sequence:');
+  console.log('  grabby validate SETUP-BASELINE.fc.md');
+  console.log('  grabby plan SETUP-BASELINE.fc.md');
+  console.log('  grabby approve SETUP-BASELINE.fc.md');
+  console.log('  grabby execute SETUP-BASELINE.fc.md --yes');
+  console.log('  grabby audit SETUP-BASELINE.fc.md --yes');
+  process.exit(1);
+}
+
 // Handle async commands
 const command = shouldLaunchMenuByDefault ? tui : (commands[cmd] || help);
 const result = command();
