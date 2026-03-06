@@ -846,6 +846,30 @@ Archive this feature
     expect(logger.lines.join('\n')).toContain('Archived feature ARCH-1');
   });
 
+  it('runs garbage collection after close and archives remaining completed stories', () => {
+    const logger = createLogger();
+    const context = createProjectContext({ cwd: tempDir, pkgRoot: PKG_ROOT });
+    const handlers = createCommandHandlers({ context, logger });
+    const activeDir = path.join(tempDir, 'contracts', 'active');
+    fs.mkdirSync(activeDir, { recursive: true });
+
+    fs.writeFileSync(path.join(activeDir, 'ARCH-MAIN-1.fc.md'), `# Feature Contract: Main
+**ID:** ARCH-MAIN-1 | **Status:** completed
+`, 'utf8');
+    fs.writeFileSync(path.join(activeDir, 'ARCH-MAIN-1.plan.yaml'), 'status: complete\n', 'utf8');
+
+    fs.writeFileSync(path.join(activeDir, 'ARCH-OTHER-2.fc.md'), `# Feature Contract: Other
+**ID:** ARCH-OTHER-2 | **Status:** completed
+`, 'utf8');
+    fs.writeFileSync(path.join(activeDir, 'ARCH-OTHER-2.plan.yaml'), 'status: complete\n', 'utf8');
+
+    handlers.featureClose('ARCH-MAIN-1');
+
+    expect(fs.existsSync(path.join(activeDir, 'ARCH-MAIN-1.fc.md'))).toBe(false);
+    expect(fs.existsSync(path.join(activeDir, 'ARCH-OTHER-2.fc.md'))).toBe(false);
+    expect(logger.lines.join('\n')).toContain('Garbage collector archived 1 additional completed story.');
+  });
+
   it('pauses feature close at the archive confirmation breakpoint when interactive mode is enabled', () => {
     const logger = createLogger();
     const context = createProjectContext({ cwd: tempDir, pkgRoot: PKG_ROOT });

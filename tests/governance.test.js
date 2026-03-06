@@ -76,6 +76,9 @@ describe('Governance', () => {
     expect(prompt).toContain('## Plan');
     expect(prompt).toContain('## Backlog');
     expect(prompt).toContain('## LLM Instructions');
+    expect(prompt).toContain('Fibonacci points only: 0.5, 1, 2, 3, 5, 8, 13');
+    expect(prompt).toContain('0.5 day, 1 day, 3 days, 5 days, 2 weeks');
+    expect(prompt).toContain('display a post-feature ticket');
   });
 });
 

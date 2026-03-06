@@ -261,4 +261,22 @@ Archive slug named story.
 
     expect(() => features.createArchiveBundle('GRAB-ARCH-3', tempDir)).toThrow('Contract ID mismatch');
   });
+
+  it('garbageCollectCompletedStories archives all completed non-baseline stories', () => {
+    writeCompletedFeature('GRAB-GC-A');
+    writeCompletedFeature('GRAB-GC-B');
+    fs.writeFileSync(path.join(activeDir, 'SETUP-BASELINE.fc.md'), `# FC: Setup Baseline
+**ID:** SETUP-BASELINE | **Status:** complete
+`, 'utf8');
+
+    const result = features.garbageCollectCompletedStories(tempDir, {
+      closedAt: '2026-03-06T00:00:00.000Z',
+    });
+
+    expect(result.archived.map((entry) => entry.id)).toEqual(['GRAB-GC-A', 'GRAB-GC-B']);
+    expect(result.failed).toEqual([]);
+    expect(fs.existsSync(path.join(activeDir, 'GRAB-GC-A.fc.md'))).toBe(false);
+    expect(fs.existsSync(path.join(activeDir, 'GRAB-GC-B.fc.md'))).toBe(false);
+    expect(fs.existsSync(path.join(activeDir, 'SETUP-BASELINE.fc.md'))).toBe(true);
+  });
 });

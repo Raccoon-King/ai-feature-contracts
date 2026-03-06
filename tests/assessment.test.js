@@ -161,7 +161,10 @@ describe('assessment helpers', () => {
     expect(created.skipped).toEqual([]);
     expect(fs.readFileSync(path.join(tempDir, 'contracts', 'SYSTEM-BASELINE.fc.md'), 'utf8')).toContain('Summary: generated summary');
     expect(fs.readFileSync(path.join(tempDir, 'contracts', 'PROJECT-BASELINE.fc.md'), 'utf8')).toContain('Package/Application: `cli-tool`');
-    expect(fs.readFileSync(path.join(tempDir, 'contracts', 'SETUP-BASELINE.fc.md'), 'utf8')).toContain('deterministic setup validation');
+    const setupBaseline = fs.readFileSync(path.join(tempDir, 'contracts', 'SETUP-BASELINE.fc.md'), 'utf8');
+    expect(setupBaseline).toContain('deterministic setup validation');
+    expect(setupBaseline).toContain('Fibonacci points only');
+    expect(setupBaseline).toContain('Post-Feature Ticket Format');
 
     const skipped = await generateBaselineContracts({
       cwd: tempDir,
