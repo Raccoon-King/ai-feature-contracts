@@ -104,6 +104,20 @@ describe('assessment helpers', () => {
     expect(collectProjectAssessment(tempDir).stackSummary).toBe('Rust project');
   });
 
+  test('collectProjectAssessment detects nested Go projects and singular test directories', () => {
+    detectProjectType.mockReturnValue([]);
+    getProjectDirs.mockReturnValue([]);
+    fs.mkdirSync(path.join(tempDir, 'go-proxy'), { recursive: true });
+    fs.writeFileSync(path.join(tempDir, 'go-proxy', 'go.mod'), 'module example.com/go-proxy\n', 'utf8');
+    fs.mkdirSync(path.join(tempDir, 'test'), { recursive: true });
+
+    const assessment = collectProjectAssessment(tempDir);
+
+    expect(assessment.projectTypes).toContain('go');
+    expect(assessment.stackSummary).toBe('Go project');
+    expect(assessment.hasTests).toBe(true);
+  });
+
   test('buildProjectBaselineContract falls back when no common directories or dependencies exist', () => {
     const contract = buildProjectBaselineContract({
       packageName: '',

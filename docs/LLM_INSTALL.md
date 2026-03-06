@@ -27,6 +27,12 @@ npm link
 grabby --help
 ```
 
+If PowerShell execution policy blocks `grabby` (`*.ps1 cannot be loaded`), use the Windows shim explicitly:
+
+```powershell
+grabby.cmd --help
+```
+
 macOS / Linux:
 
 ```bash
@@ -68,6 +74,12 @@ npm install -g .\grabby-<version>.tgz
 grabby --help
 ```
 
+If `grabby` is blocked by execution policy, run:
+
+```powershell
+grabby.cmd --help
+```
+
 macOS / Linux:
 
 ```bash
@@ -95,6 +107,15 @@ cd <target-repo>
 grabby init --interactive
 grabby list
 grabby agent:lint
+```
+
+Windows PowerShell fallback when `grabby` is blocked:
+
+```powershell
+cd <target-repo>
+grabby.cmd init --interactive
+grabby.cmd list
+grabby.cmd agent:lint
 ```
 
 Expected results:
@@ -173,6 +194,7 @@ Useful checks after setup:
 
 ```bash
 grabby --help
+grabby update --check
 grabby list
 grabby agent:lint
 ```

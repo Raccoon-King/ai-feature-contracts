@@ -62,4 +62,20 @@ entries:
       - tests/tui.test.js
       - tests/commands.test.js
     closedAt: 2026-03-04T15:30:29.690Z
-lastUpdated: 2026-03-04T15:30:29.693Z
+  - id: INSTALL-301
+    title: Run Grabby install/init via the actual commandline menu i...
+    objective: Run Grabby install/init via the actual commandline menu in
+      C:\Users\jesse\local-llm-proxy\keycloak-proxy-anythingllm, capture issues,
+      fix install/d...
+    type: feat
+    files:
+      - lib/tui.cjs
+      - lib/commands.cjs
+      - lib/assessment.cjs
+      - lib/config.cjs
+      - tests/tui.test.js
+      - tests/commands.test.js
+      - tests/assessment.test.js
+      - docs/LLM_INSTALL.md
+    closedAt: 2026-03-06T00:52:31.225Z
+lastUpdated: 2026-03-06T00:52:31.229Z

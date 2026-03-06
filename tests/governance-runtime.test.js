@@ -409,6 +409,21 @@ describe('validateExecutionScope', () => {
     // Mock git status output would show this file
     // In real scenario, this would be detected by git status --porcelain
   });
+
+  it('should ignore contract lifecycle artifacts during execution scope validation', () => {
+    const result = governanceRuntime.validateExecutionScope({
+      cwd: tempDir,
+      planData: { files: [] },
+      contractContent: `## Directories
+**Allowed:** \`src/\`
+**Restricted:** \`backend/\``,
+      changedFiles: ['contracts/PROJECT-BASELINE.plan.yaml'],
+    });
+
+    expect(result.valid).toBe(true);
+    expect(result.violations.length).toBe(0);
+    expect(result.changedFiles.length).toBe(0);
+  });
 });
 
 // ============================================================================

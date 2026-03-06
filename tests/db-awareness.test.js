@@ -118,6 +118,7 @@ export async function createUser(db) {
     expect(fs.existsSync(result.paths.relationsGraphPath)).toBe(true);
     expect(fs.existsSync(result.paths.codeAccessMapPath)).toBe(true);
     expect(lint.errors).toHaveLength(0);
+    expect(lint.warnings.some((warning) => warning.includes('Stale schema snapshot'))).toBe(false);
   });
 
   test('reports stale snapshot artifacts when source files changed after refresh', () => {

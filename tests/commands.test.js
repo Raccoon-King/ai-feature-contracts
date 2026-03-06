@@ -302,6 +302,122 @@ Archive me
     expect(logger.lines.join('\n')).toContain('Completed features must not remain in contracts/active/');
   });
 
+  it('validates baseline contracts without requiring work-item IDs', () => {
+    const logger = createLogger();
+    const exits = [];
+    const context = createProjectContext({ cwd: tempDir, pkgRoot: PKG_ROOT });
+    const handlers = createCommandHandlers({
+      context,
+      logger,
+      exit: (code) => exits.push(code),
+    });
+
+    const contractsDir = path.join(tempDir, 'contracts');
+    fs.mkdirSync(contractsDir, { recursive: true });
+    fs.writeFileSync(path.join(contractsDir, 'PROJECT-BASELINE.fc.md'), `# FC: Project Baseline
+**Status:** draft
+
+## Objective
+Capture baseline context.
+
+## Scope
+- Record stack and structure
+
+## Non-Goals
+- Implement feature work
+
+## Directories
+**Allowed:** \`contracts/\`
+**Restricted:** \`node_modules/\`
+
+## Files
+| Action | Path | Reason |
+|--------|------|--------|
+| create | \`contracts/PROJECT-BASELINE.fc.md\` | baseline |
+
+## Dependencies
+- Allowed: existing packages only
+- Banned: moment, lodash, jquery
+
+## Security Considerations
+- [ ] None
+
+## Code Quality
+- [ ] Manual review completed
+
+## Done When
+- [ ] Baseline is reviewed
+- [ ] Lint passes
+
+## Testing
+- Manual
+`, 'utf8');
+
+    handlers.validate('PROJECT-BASELINE.fc.md');
+
+    expect(exits).toHaveLength(0);
+    expect(logger.lines.join('\n')).toContain('Baseline contract detected: skipping work-item ID filename enforcement.');
+    expect(logger.lines.join('\n')).toContain('Validation passed');
+  });
+
+  it('plans baseline contracts without requiring work-item IDs', () => {
+    const logger = createLogger();
+    const exits = [];
+    const context = createProjectContext({ cwd: tempDir, pkgRoot: PKG_ROOT });
+    const handlers = createCommandHandlers({
+      context,
+      logger,
+      exit: (code) => exits.push(code),
+    });
+
+    const contractsDir = path.join(tempDir, 'contracts');
+    fs.mkdirSync(contractsDir, { recursive: true });
+    fs.writeFileSync(path.join(contractsDir, 'PROJECT-BASELINE.fc.md'), `# FC: Project Baseline
+**Status:** draft
+
+## Objective
+Capture baseline context.
+
+## Scope
+- Record stack and structure
+
+## Non-Goals
+- Implement feature work
+
+## Directories
+**Allowed:** \`contracts/\`
+**Restricted:** \`node_modules/\`
+
+## Files
+| Action | Path | Reason |
+|--------|------|--------|
+| create | \`contracts/PROJECT-BASELINE.fc.md\` | baseline |
+
+## Dependencies
+- Allowed: existing packages only
+- Banned: moment, lodash, jquery
+
+## Security Considerations
+- [ ] None
+
+## Code Quality
+- [ ] Manual review completed
+
+## Done When
+- [ ] Baseline is reviewed
+- [ ] Lint passes
+
+## Testing
+- Manual
+`, 'utf8');
+
+    handlers.plan('PROJECT-BASELINE.fc.md');
+
+    expect(exits).toHaveLength(0);
+    expect(fs.existsSync(path.join(contractsDir, 'PROJECT-BASELINE.plan.yaml'))).toBe(true);
+    expect(logger.lines.join('\n')).toContain('Baseline contract detected: using baseline filename as canonical ID.');
+  });
+
   it('fails approval when no plan file exists yet', () => {
     const logger = createLogger();
     const exits = [];
@@ -592,6 +708,9 @@ Archive me
       source: 'builtin',
     }));
     expect(logger.lines.join('\n')).toContain('Suggested plugins: helm, keycloak');
+    const summaryLines = logger.lines.filter((line) => line.startsWith('  Created:') || line.startsWith('  Updated:'));
+    const repoConfigMentions = (summaryLines.join('\n').match(/grabby\.config\.json/g) || []).length;
+    expect(repoConfigMentions).toBe(1);
   });
 
   it('preserves existing baseline contracts during init', async () => {
@@ -894,6 +1013,28 @@ Archive the root contract safely.
     expect(output).toContain('ACTIVE-MIX-1.fc.md');
     expect(output).toContain('ID: ROOT-MIX-1 | Status: draft');
     expect(output).toContain('ID: ACTIVE-MIX-1 | Status: approved');
+  });
+
+  it('lists baseline contracts that do not declare work-item IDs', () => {
+    const logger = createLogger();
+    const context = createProjectContext({ cwd: tempDir, pkgRoot: PKG_ROOT });
+    const handlers = createCommandHandlers({ context, logger });
+    const rootContractsDir = path.join(tempDir, 'contracts');
+    fs.mkdirSync(rootContractsDir, { recursive: true });
+    fs.writeFileSync(path.join(rootContractsDir, 'SYSTEM-BASELINE.fc.md'), `# FC: System Baseline
+**Status:** draft
+`, 'utf8');
+    fs.writeFileSync(path.join(rootContractsDir, 'PROJECT-BASELINE.fc.md'), `# FC: Project Baseline
+**Status:** draft
+`, 'utf8');
+
+    handlers.list();
+
+    const output = logger.lines.join('\n');
+    expect(output).toContain('SYSTEM-BASELINE.fc.md');
+    expect(output).toContain('PROJECT-BASELINE.fc.md');
+    expect(output).toContain('ID: SYSTEM-BASELINE | Status: draft');
+    expect(output).toContain('ID: PROJECT-BASELINE | Status: draft');
   });
 
   it('records explicit keep dispositions for hanging contracts', () => {
@@ -1298,6 +1439,68 @@ Archive the root contract safely.
     expect(output).toContain('Git preflight passed.');
     expect(exits).toEqual([1]);
     expect(commands).toContain('git fetch origin');
+  });
+
+  it('checks for Grabby updates without applying changes', () => {
+    const logger = createLogger();
+    const commands = [];
+    const context = createProjectContext({ cwd: tempDir, pkgRoot: PKG_ROOT });
+    const handlers = createCommandHandlers({
+      context,
+      logger,
+      execSyncImpl: (command) => {
+        commands.push(command);
+        if (command.includes('list -g grabby')) {
+          return JSON.stringify({ dependencies: { grabby: { version: '1.0.0' } } });
+        }
+        if (command.includes('view grabby version')) {
+          return JSON.stringify('2.0.0');
+        }
+        return '';
+      },
+    });
+
+    handlers.updateGrabby({ checkOnly: true });
+
+    const npmCommand = process.platform === 'win32' ? 'npm.cmd' : 'npm';
+    expect(commands).toEqual([
+      `${npmCommand} list -g grabby --depth=0 --json`,
+      `${npmCommand} view grabby version --json`,
+    ]);
+    expect(logger.lines.join('\n')).toContain('Grabby update status');
+    expect(logger.lines.join('\n')).toContain('Installed: 1.0.0');
+    expect(logger.lines.join('\n')).toContain('Latest: 2.0.0');
+    expect(logger.lines.join('\n')).toContain('grabby update --yes');
+  });
+
+  it('applies Grabby updates when explicitly approved', () => {
+    const logger = createLogger();
+    const commands = [];
+    const context = createProjectContext({ cwd: tempDir, pkgRoot: PKG_ROOT });
+    const handlers = createCommandHandlers({
+      context,
+      logger,
+      execSyncImpl: (command) => {
+        commands.push(command);
+        if (command.includes('list -g grabby')) {
+          return JSON.stringify({ dependencies: { grabby: { version: '1.0.0' } } });
+        }
+        if (command.includes('view grabby version')) {
+          return JSON.stringify('2.0.0');
+        }
+        return '';
+      },
+    });
+
+    handlers.updateGrabby({ yes: true });
+
+    const npmCommand = process.platform === 'win32' ? 'npm.cmd' : 'npm';
+    expect(commands).toEqual([
+      `${npmCommand} list -g grabby --depth=0 --json`,
+      `${npmCommand} view grabby version --json`,
+      `${npmCommand} install -g grabby@latest`,
+    ]);
+    expect(logger.lines.join('\n')).toContain('Grabby updated successfully.');
   });
 
   it('passes policy checks when only contract artifacts changed', () => {

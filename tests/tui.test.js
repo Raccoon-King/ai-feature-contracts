@@ -228,6 +228,28 @@ describe('tui', () => {
     expect(output).toContain('Node.js project | lib, tests');
   });
 
+  test('createTUI runs Grabby update checks from setup wizard', () => {
+    const commandHandlers = {
+      updateGrabby: jest.fn(),
+    };
+
+    const output = runTuiKeys([
+      '\u001B[B',
+      '\r',
+      '\u001B[B',
+      '\u001B[B',
+      '\u001B[B',
+      '\u001B[B',
+      '\u001B[B',
+      '\u001B[B',
+      '\u001B[B',
+      '\r',
+    ], () => {}, { commandHandlers });
+
+    expect(output).toContain('Check for Grabby Updates');
+    expect(commandHandlers.updateGrabby).toHaveBeenCalledWith({ checkOnly: true });
+  });
+
   test('createTUI shows guided create flow messaging', () => {
     const output = runTuiAction(2);
     expect(output).toContain('Contract Workflow');

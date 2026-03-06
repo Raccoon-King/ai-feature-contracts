@@ -114,6 +114,13 @@ function init() {
   commandHandlers.init({ interactive: args.includes('--interactive') });
 }
 
+function update() {
+  commandHandlers.updateGrabby({
+    checkOnly: args.includes('--check'),
+    yes: args.includes('--yes'),
+  });
+}
+
 function initHooks() {
   commandHandlers.initHooks();
 }
@@ -1327,6 +1334,7 @@ const shouldLaunchMenuByDefault = !cmd
 
 const commands = {
   init,
+  update,
   'init-hooks': initHooks,
   create: () => create(args.join(' ').replace(/--output.*$/, '').trim() || 'new-feature'),
   validate: () => validate(args[0]),
