@@ -1466,6 +1466,7 @@ Archive the root contract safely.
     expect(commands).toEqual([
       `${npmCommand} list -g grabby --depth=0 --json`,
       `${npmCommand} view grabby version --json`,
+      `${npmCommand} view grabby name description bin --json`,
     ]);
     expect(logger.lines.join('\n')).toContain('Grabby update status');
     expect(logger.lines.join('\n')).toContain('Installed: 1.0.0');
@@ -1498,9 +1499,45 @@ Archive the root contract safely.
     expect(commands).toEqual([
       `${npmCommand} list -g grabby --depth=0 --json`,
       `${npmCommand} view grabby version --json`,
+      `${npmCommand} view grabby name description bin --json`,
       `${npmCommand} install -g grabby@latest`,
     ]);
     expect(logger.lines.join('\n')).toContain('Grabby updated successfully.');
+  });
+
+  it('uses local-source refresh when npm grabby metadata is incompatible', () => {
+    const logger = createLogger();
+    const commands = [];
+    const context = createProjectContext({ cwd: tempDir, pkgRoot: PKG_ROOT });
+    const handlers = createCommandHandlers({
+      context,
+      logger,
+      execSyncImpl: (command) => {
+        commands.push(command);
+        if (command.includes('list -g grabby')) {
+          return JSON.stringify({ dependencies: { grabby: { version: '2.0.0' } } });
+        }
+        if (command.includes('view grabby version')) {
+          return JSON.stringify('0.2.2');
+        }
+        if (command.includes('view grabby name description bin')) {
+          return JSON.stringify({
+            name: 'grabby',
+            description: 'Enhanced request library with some specific cases',
+            bin: {},
+          });
+        }
+        return '';
+      },
+    });
+
+    handlers.updateGrabby({ yes: true });
+
+    const npmCommand = process.platform === 'win32' ? 'npm.cmd' : 'npm';
+    expect(commands).toContain(`${npmCommand} install -g ${PKG_ROOT}`);
+    expect(logger.lines.join('\n')).toContain('Latest: n/a (registry package unrelated)');
+    expect(logger.lines.join('\n')).toContain('Automatic registry update is disabled');
+    expect(logger.lines.join('\n')).toContain('Grabby refreshed from local source successfully.');
   });
 
   it('passes policy checks when only contract artifacts changed', () => {
