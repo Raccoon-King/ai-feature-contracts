@@ -42,6 +42,9 @@ describe('tui', () => {
     const grabbyDir = path.join(tmp, '.grabby');
     fs.mkdirSync(contractsDir, { recursive: true });
     fs.mkdirSync(grabbyDir, { recursive: true });
+    if (options.setupComplete !== false) {
+      fs.writeFileSync(path.join(grabbyDir, 'governance.lock'), 'governance:\n  version: test\n', 'utf8');
+    }
     setup({ fs, path, tmp, contractsDir, grabbyDir });
 
     const stdin = createMockInput();
@@ -239,6 +242,12 @@ describe('tui', () => {
     expect(config.features.rulesetWizard).toBe(true);
 
     fs.rmSync(result.tmp, { recursive: true, force: true });
+  });
+
+  test('createTUI blocks post-setup actions before setup is completed', () => {
+    const output = runTuiAction(0, () => {}, { setupComplete: false });
+    expect(output).toContain('Setup Required');
+    expect(output).toContain('Complete setup first. Use "Setup & Onboarding" from the main menu.');
   });
 
   test('createTUI surfaces brownfield project context in the home menu and setup wizard', () => {
@@ -721,6 +730,7 @@ Do not complete yet.
     const grabbyDir = path.join(tmp, '.grabby');
     fs.mkdirSync(contractsDir, { recursive: true });
     fs.mkdirSync(grabbyDir, { recursive: true });
+    fs.writeFileSync(path.join(grabbyDir, 'governance.lock'), 'governance:\n  version: test\n', 'utf8');
 
     fs.writeFileSync(path.join(contractsDir, 'guarded.fc.md'), `# FC: Guarded
 **ID:** GUARD-1 | **Status:** approved
@@ -947,6 +957,31 @@ Test
     fs.rmSync(result.tmp, { recursive: true, force: true });
   });
 
+  test('createTUI toggles a plugin with spacebar in plugin manager', () => {
+    const fs = require('fs');
+    const path = require('path');
+    const result = runTuiKeys([
+      '\u001B[B',
+      '\u001B[B',
+      '\u001B[B',
+      '\u001B[B',
+      '\u001B[B',
+      '\u001B[B',
+      '\u001B[B',
+      '\r',
+      ' ',
+    ], () => {}, { keepTemp: true });
+
+    const config = JSON.parse(fs.readFileSync(path.join(result.tmp, 'grabby.config.json'), 'utf8'));
+    const firstPluginKey = Object.keys(config.plugins.items)[0];
+    expect(config.plugins.items[firstPluginKey]).toEqual(expect.objectContaining({
+      enabled: true,
+      mode: 'active',
+    }));
+
+    fs.rmSync(result.tmp, { recursive: true, force: true });
+  });
+
   test('createTUI toggles settings in repo config', () => {
     const output = runTuiKeys([
       '\u001B[B',
@@ -961,6 +996,28 @@ Test
       '\r',
     ]);
     expect(output).toContain('Updated interactive.enabled -> ON');
+  });
+
+  test('createTUI toggles settings with spacebar', () => {
+    const fs = require('fs');
+    const path = require('path');
+    const result = runTuiKeys([
+      '\u001B[B',
+      '\u001B[B',
+      '\u001B[B',
+      '\u001B[B',
+      '\u001B[B',
+      '\u001B[B',
+      '\u001B[B',
+      '\u001B[B',
+      '\r',
+      ' ',
+    ], () => {}, { keepTemp: true });
+
+    const config = JSON.parse(fs.readFileSync(path.join(result.tmp, 'grabby.config.json'), 'utf8'));
+    expect(config.interactive.enabled).toBe(true);
+
+    fs.rmSync(result.tmp, { recursive: true, force: true });
   });
 
   test('createTUI configures environment constraints and plugin restrictions from settings', () => {
