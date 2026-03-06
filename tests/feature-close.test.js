@@ -200,6 +200,59 @@ Archive the root contract.
     });
   });
 
+  it('closes slug-named stories and removes sibling artifacts by file stem', () => {
+    const slug = 'login-redirect-story';
+    const id = 'GRAB-SLUG-1';
+    fs.writeFileSync(path.join(activeDir, `${slug}.fc.md`), `# FC: Slug Layout
+**ID:** ${id} | **Status:** complete
+
+## Objective
+Archive slug named story.
+
+## Scope
+- Keep slug-named artifacts in sync.
+
+## Directories
+**Allowed:** \`contracts/\`
+**Restricted:** \`node_modules/\`
+
+## Files
+| Action | Path | Reason |
+|--------|------|--------|
+| modify | \`contracts/active/${slug}.fc.md\` | contract |
+
+## Dependencies
+- Allowed: existing packages only
+- Banned: moment, lodash, jquery
+
+## Security Considerations
+- [ ] None
+
+## Done When
+- [ ] Tests pass (80%+ coverage)
+
+## Testing
+- Unit
+`, 'utf8');
+    fs.writeFileSync(path.join(activeDir, `${slug}.plan.yaml`), yaml.stringify({
+      files: [{ path: `contracts/active/${slug}.fc.md` }],
+    }), 'utf8');
+    fs.writeFileSync(path.join(activeDir, `${slug}.audit.md`), '# audit\n', 'utf8');
+    fs.writeFileSync(path.join(activeDir, `${slug}.brief.md`), '# brief\n', 'utf8');
+    fs.writeFileSync(path.join(activeDir, `${slug}.backlog.yaml`), 'epics: []\n', 'utf8');
+
+    const result = features.createArchiveBundle(id, tempDir);
+
+    expect(fs.existsSync(path.join(activeDir, `${slug}.fc.md`))).toBe(false);
+    expect(fs.existsSync(path.join(activeDir, `${slug}.plan.yaml`))).toBe(false);
+    expect(fs.existsSync(path.join(activeDir, `${slug}.audit.md`))).toBe(false);
+    expect(fs.existsSync(path.join(activeDir, `${slug}.brief.md`))).toBe(false);
+    expect(fs.existsSync(path.join(activeDir, `${slug}.backlog.yaml`))).toBe(false);
+    expect(result.historyFile).toBe('.grabby/history/history-001.yaml');
+    const history = yaml.parse(fs.readFileSync(path.join(tempDir, result.historyFile), 'utf8'));
+    expect(history.entries[0].id).toBe(id);
+  });
+
   it('enforces ID mismatch safety', () => {
     writeCompletedFeature('GRAB-ARCH-3');
     const contractPath = path.join(activeDir, 'GRAB-ARCH-3.fc.md');

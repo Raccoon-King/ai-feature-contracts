@@ -1109,6 +1109,7 @@ Archive the root contract safely.
     expect(fs.existsSync(path.join(activeDir, 'ARCH-GC-2.prompt.md'))).toBe(false);
     expect(fs.existsSync(path.join(activeDir, 'ARCH-GC-2.session.json'))).toBe(false);
     expect(logger.lines.join('\n')).toContain('Archived hanging feature ARCH-GC-2');
+    expect(logger.lines.join('\n')).toContain('History: .grabby/history/history-001.yaml');
   });
 
   it('generates an agile backlog from a valid contract', () => {
