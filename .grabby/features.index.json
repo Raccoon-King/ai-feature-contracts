@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-06T00:52:31.277Z",
+  "generatedAt": "2026-03-07T15:32:41.298Z",
   "trackingMode": "tracked",
   "features": [
     {
@@ -56,6 +56,111 @@
         "package.json",
         "README.md",
         "tests/packaging.test.js"
+      ]
+    },
+    {
+      "id": "BMAD-201",
+      "title": "BMAD-201",
+      "status": "archived",
+      "archivePath": ".grabby/history/history-002.yaml",
+      "closedAt": "2026-03-07T15:32:39.829Z",
+      "objective": "Define and stage BMAD logic imports into Grabby through bounded, testable stories **Data Change:** yes",
+      "type": "feat",
+      "files": [
+        "contracts/BMAD-201.stories.md"
+      ]
+    },
+    {
+      "id": "BMAD-211",
+      "title": "BMAD-211",
+      "status": "archived",
+      "archivePath": ".grabby/history/history-002.yaml",
+      "closedAt": "2026-03-07T15:32:40.049Z",
+      "objective": "Implement stage-aware help recommendations that react to repository artifact state and governance gates.",
+      "type": "feat",
+      "files": [
+        "lib/interactive-shell.cjs",
+        "lib/commands.cjs",
+        "tests/help-adaptive-routing.test.js",
+        "README.md"
+      ]
+    },
+    {
+      "id": "BMAD-212",
+      "title": "BMAD-212",
+      "status": "archived",
+      "archivePath": ".grabby/history/history-002.yaml",
+      "closedAt": "2026-03-07T15:32:40.279Z",
+      "objective": "Introduce BMAD-inspired quick-flow guardrails that escalate oversized work and enforce a lightweight review loop.",
+      "type": "feat",
+      "files": [
+        "workflows/quick-flow/workflow.yaml",
+        "workflows/quick-dev/workflow.yaml",
+        "lib/interactive-workflows.cjs",
+        "tests/quick-flow-guardrails.test.js",
+        "docs/EXECUTION_PROTOCOL.md"
+      ]
+    },
+    {
+      "id": "BMAD-213",
+      "title": "BMAD-213",
+      "status": "archived",
+      "archivePath": ".grabby/history/history-002.yaml",
+      "closedAt": "2026-03-07T15:32:40.532Z",
+      "objective": "Introduce a lightweight, optional progress artifact aligned to contract execution stages.",
+      "type": "feat",
+      "files": [
+        "workflows/sprint-status/workflow.yaml",
+        "lib/interactive-workflows.cjs",
+        "lib/interactive-shell.cjs",
+        "tests/sprint-status-workflow.test.js",
+        "docs/EXECUTION_PROTOCOL.md"
+      ]
+    },
+    {
+      "id": "BMAD-214",
+      "title": "BMAD-214",
+      "status": "archived",
+      "archivePath": ".grabby/history/history-002.yaml",
+      "closedAt": "2026-03-07T15:32:40.777Z",
+      "objective": "Add deterministic verification tiers with evidence requirements integrated into existing audit flow.",
+      "type": "feat",
+      "files": [
+        "agents/test-engineer.agent.yaml",
+        "workflows/test-engineer/workflow.yaml",
+        "lib/commands.cjs",
+        "tests/verification-tiering.test.js",
+        "docs/AGENT_ARCHITECTURE.md"
+      ]
+    },
+    {
+      "id": "BMAD-215",
+      "title": "BMAD-215",
+      "status": "archived",
+      "archivePath": ".grabby/history/history-002.yaml",
+      "closedAt": "2026-03-07T15:32:41.026Z",
+      "objective": "Gate new BMAD-derived behavior behind explicit config flags and publish upgrade guidance. **Data Change:** yes",
+      "type": "feat",
+      "files": [
+        "lib/config.cjs",
+        "lib/commands.cjs",
+        "grabby.config.example.json",
+        "docs/BMAD_UPGRADE.md",
+        "tests/bmad-compatibility-flags.test.js"
+      ]
+    },
+    {
+      "id": "BMAD-216",
+      "title": "BMAD-216",
+      "status": "archived",
+      "archivePath": ".grabby/history/history-002.yaml",
+      "closedAt": "2026-03-07T15:32:41.248Z",
+      "objective": "Create canonical decision artifacts that prioritize BMAD logic imports by measurable value.",
+      "type": "feat",
+      "files": [
+        "contracts/BMAD-216.import-matrix.md",
+        "contracts/BMAD-216.rubric.md",
+        "contracts/BMAD-201.stories.md"
       ]
     },
     {

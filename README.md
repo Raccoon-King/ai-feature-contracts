@@ -217,6 +217,25 @@ When enabled:
 - `quickFlowGuardrails`: quick flow applies complexity escalation and adversarial review loop guidance.
 - `riskTieredVerification`: execution/audit outputs include verification tier and rationale.
 
+## LLM Context Weight
+
+Use `llmContext` in `grabby.config.json` to keep prompts lean:
+
+```json
+{
+  "llmContext": {
+    "mode": "lean",
+    "planTokenBudget": 700,
+    "executeTokenBudget": 1000,
+    "explicitOnly": true,
+    "maxSections": 2,
+    "useDefaults": false
+  }
+}
+```
+
+`lean` mode only resolves explicitly referenced context sections and uses tighter token budgets.
+
 ## What `grabby init` Creates
 
 `grabby init` prepares the current repo with:

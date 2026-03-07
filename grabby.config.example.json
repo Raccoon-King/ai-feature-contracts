@@ -137,5 +137,14 @@
     "adaptiveHelp": false,
     "quickFlowGuardrails": false,
     "riskTieredVerification": false
+  },
+
+  "llmContext": {
+    "mode": "standard",
+    "planTokenBudget": 1200,
+    "executeTokenBudget": 1800,
+    "explicitOnly": false,
+    "maxSections": 3,
+    "useDefaults": true
   }
 }

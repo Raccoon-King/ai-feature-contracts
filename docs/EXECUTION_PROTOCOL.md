@@ -231,6 +231,28 @@ OK Build succeeds
 @context ENV_STACK_v1
 ```
 
+## Lean Context Mode
+
+To reduce LLM prompt weight in large repos, configure:
+
+```json
+{
+  "llmContext": {
+    "mode": "lean",
+    "planTokenBudget": 700,
+    "executeTokenBudget": 1000,
+    "explicitOnly": true,
+    "maxSections": 2,
+    "useDefaults": false
+  }
+}
+```
+
+Effects:
+- Plan/execute resolve fewer context sections.
+- Only explicit `Context Refs` are used when `explicitOnly=true`.
+- Default fallback refs can be disabled with `useDefaults=false`.
+
 ## Ticket Shape
 
 Canonical intake format:
