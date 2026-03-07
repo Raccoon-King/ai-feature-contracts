@@ -1,0 +1,32 @@
+contract: BMAD-216.fc.md
+phase: plan
+timestamp: 2026-03-07T06:16:40.517Z
+context:
+  - ARCH:auth-module@v1
+  - RULESET:imports@v1
+  - ENV:test-runner@v1
+context_token_usage: 10
+context_token_budget: 1200
+files:
+  - action: create
+    path: contracts/BMAD-216.import-matrix.md
+    reason: Capability mapping and adoption decisions
+  - action: create
+    path: contracts/BMAD-216.rubric.md
+    reason: Scoring rubric and prioritization outcomes
+  - action: modify
+    path: contracts/BMAD-201.stories.md
+    reason: Update story ordering and references from rubric output
+rules:
+  - §typescript
+  - §hooks
+  - §testing
+risks:
+  - State synchronization
+  - Type coverage
+  - Edge cases
+status: approved
+approval_token_required: Approved
+execution_mode: plan_only
+approved_at: 2026-03-07T06:20:35.205Z
+approval_token: Approved

@@ -12,6 +12,7 @@ steps:
     goal: Rapidly capture change requirements
   - file: steps/step-02-confirm.md
     goal: Confirm scope is bounded and proceed
+  - goal: Evaluate complexity threshold and escalate to full flow when risk exceeds quick-flow bounds
 
 output:
   type: quick-contract

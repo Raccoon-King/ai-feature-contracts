@@ -5,6 +5,8 @@ agent: quick-flow
 steps:
   - goal: Read the quick spec and confirm the scope is still bounded
   - goal: Implement the minimal change and required tests
+  - goal: Run self-check and adversarial review; classify findings (blocker, major, minor)
+  - goal: If blocker findings exist, loop once for remediation before completion
   - goal: Report the next safe follow-up or escalation path
 
 output:

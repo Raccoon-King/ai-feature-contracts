@@ -1,0 +1,35 @@
+contract: BMAD-211.fc.md
+phase: plan
+timestamp: 2026-03-07T06:16:39.600Z
+context:
+  - ARCH:auth-module@v1
+  - RULESET:imports@v1
+  - ENV:test-runner@v1
+context_token_usage: 10
+context_token_budget: 1200
+files:
+  - action: modify
+    path: lib/interactive-shell.cjs
+    reason: Add adaptive help output sections and ranked recommendations
+  - action: modify
+    path: lib/commands.cjs
+    reason: Reuse/centralize recommendation logic for CLI consistency
+  - action: create
+    path: tests/help-adaptive-routing.test.js
+    reason: Verify recommendation behavior by artifact state
+  - action: modify
+    path: README.md
+    reason: Document adaptive help behavior and usage expectations
+rules:
+  - §typescript
+  - §hooks
+  - §testing
+risks:
+  - State synchronization
+  - Type coverage
+  - Edge cases
+status: approved
+approval_token_required: Approved
+execution_mode: plan_only
+approved_at: 2026-03-07T06:20:35.365Z
+approval_token: Approved

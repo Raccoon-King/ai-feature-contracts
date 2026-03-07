@@ -198,6 +198,25 @@ Grabby uses BMAD-style personalities in the CLI:
 - `Flash`: quick bounded work
 - `Conductor`: orchestrates the full handoff
 
+## BMAD-Derived Optional Features
+
+Grabby can enable selected BMAD-inspired behaviors through `bmadFeatures` in `grabby.config.json`:
+
+```json
+{
+  "bmadFeatures": {
+    "adaptiveHelp": true,
+    "quickFlowGuardrails": true,
+    "riskTieredVerification": true
+  }
+}
+```
+
+When enabled:
+- `adaptiveHelp`: `grabby help` shows stage-aware `Suggested Now` guidance.
+- `quickFlowGuardrails`: quick flow applies complexity escalation and adversarial review loop guidance.
+- `riskTieredVerification`: execution/audit outputs include verification tier and rationale.
+
 ## What `grabby init` Creates
 
 `grabby init` prepares the current repo with:

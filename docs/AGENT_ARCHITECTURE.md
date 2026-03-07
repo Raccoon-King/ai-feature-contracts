@@ -62,6 +62,7 @@ keywords.
 - Inputs: Implemented changes, contract scope, quality thresholds
 - Outputs: Verification-ready evidence and test artifacts
 - Does not own: Final audit disposition or scope expansion
+- Verification depth: can be tiered (`basic`, `standard`, `high-risk`) when risk-tier mode is enabled
 
 ### Auditor
 

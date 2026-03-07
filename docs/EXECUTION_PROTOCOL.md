@@ -191,6 +191,16 @@ Grabby supports two contract tracking modes via `contracts.trackingMode` in `gra
 - Follow `RULESET_CORE` patterns
 - Before commit, run `grabby guard <contract.fc.md>` to verify plan/contract scope alignment
 
+## Quick Flow Guardrails (Optional)
+
+When `bmadFeatures.quickFlowGuardrails=true`:
+- Quick spec evaluates complexity and risk signals.
+- Oversized/high-risk requests recommend escalation to `grabby task` or `grabby orchestrate`.
+- Quick dev guidance includes self-check and adversarial review loop with finding severities:
+  - `blocker`
+  - `major`
+  - `minor`
+
 
 ## Execution Guard and Pre-Commit Enforcement
 

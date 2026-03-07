@@ -1,0 +1,12 @@
+name: sprint-status
+description: Optional contract-linked sprint and story readiness summary
+agent: strategist
+
+steps:
+  - goal: Detect whether a sprint/status artifact is present for the active contract
+  - goal: Summarize current progress by epic/task/story status
+  - goal: Emit readiness result as PASS, CONCERNS, or FAIL with next action
+
+output:
+  type: status-summary
+  format: markdown

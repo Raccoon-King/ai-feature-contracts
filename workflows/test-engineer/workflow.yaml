@@ -3,9 +3,10 @@ description: Verification-stage workflow for regression coverage and test readin
 agent: test-engineer
 
 steps:
+  - goal: Determine verification tier (basic, standard, high-risk) from contract risk signals
   - goal: Identify testable changes and missing verification coverage
   - goal: Generate or review test templates for scoped files
-  - goal: Prepare the contract for audit with explicit verification evidence
+  - goal: Prepare the contract for audit with explicit tiered verification evidence
 
 output:
   type: verification

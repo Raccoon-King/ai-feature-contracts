@@ -43,6 +43,13 @@ When the user asks to implement, add, create, build, fix, refactor, or change fu
 - If a directory is restricted, do not create or edit files there.
 - If blocked, stop and report the issue.
 
+## Change Classification Hints
+
+- If migrations, schema files, or backfills are involved, route the work as a data-change contract.
+- If OpenAPI, GraphQL, proto, payload shapes, or versioned endpoints change, route the work as an api-change contract.
+- If `package.json`, workspace manifests, or lockfiles change, route the work as a deps-change contract.
+- Use generated Grabby artifacts under `.grabby/` as evidence when classifying risk.
+
 ## ID Normalization
 
 Work item IDs must match `[A-Z][A-Z0-9]+-\d+` and are normalized to uppercase.
