@@ -1,0 +1,37 @@
+contract: GRAB-305.fc.md
+phase: plan
+timestamp: 2026-03-07T16:21:35.928Z
+context: []
+context_token_usage: 0
+context_token_budget: 700
+files:
+  - action: create
+    path: lib/contract-schema.cjs
+    reason: Schema validation engine
+  - action: create
+    path: docs/contract-schema.yaml
+    reason: Human-readable schema definition
+  - action: modify
+    path: lib/core.cjs
+    reason: Use schema validator in validateContract()
+  - action: modify
+    path: lib/config.cjs
+    reason: Add validation config (thresholds, rules)
+  - action: create
+    path: tests/contract-validation.test.js
+    reason: Comprehensive validation tests
+rules:
+  - §typescript
+  - §hooks
+  - §testing
+risks:
+  - State synchronization
+  - Type coverage
+  - Edge cases
+status: executing
+approval_token_required: Approved
+execution_mode: plan_only
+approved_at: 2026-03-07T16:21:46.734Z
+approval_token: Approved
+executed_at: 2026-03-07T16:23:35.121Z
+execution_guard: passed

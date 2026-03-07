@@ -32,7 +32,11 @@
       "Bash(grabby feature:close:*)",
       "Bash(grabby quick)",
       "Bash(npm run grabby:*)",
-      "Bash(npx grabby:*)"
+      "Bash(npx grabby:*)",
+      "Bash(find:*)",
+      "Bash(for fc in contracts/GRAB-30*.fc.md contracts/GRAB-31*.fc.md)",
+      "Bash(do echo \"=== Validating $fc ===\")",
+      "Bash(done)"
     ]
   }
 }

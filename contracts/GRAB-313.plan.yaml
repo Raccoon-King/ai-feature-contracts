@@ -1,0 +1,37 @@
+contract: GRAB-313.fc.md
+phase: plan
+timestamp: 2026-03-07T16:21:40.699Z
+context: []
+context_token_usage: 0
+context_token_budget: 700
+files:
+  - action: modify
+    path: tests/api-server.test.js
+    reason: Add error path and security tests
+  - action: create
+    path: tests/features.test.js
+    reason: Add features.cjs coverage
+  - action: modify
+    path: tests/interactive-shell.test.js
+    reason: Add comprehensive coverage
+  - action: modify
+    path: tests/features-index.test.js
+    reason: Fix failing test
+  - action: create
+    path: tests/e2e-workflow.test.js
+    reason: Full workflow integration test
+rules:
+  - §typescript
+  - §hooks
+  - §testing
+risks:
+  - State synchronization
+  - Type coverage
+  - Edge cases
+status: executing
+approval_token_required: Approved
+execution_mode: plan_only
+approved_at: 2026-03-07T16:21:52.750Z
+approval_token: Approved
+executed_at: 2026-03-07T16:23:40.846Z
+execution_guard: passed

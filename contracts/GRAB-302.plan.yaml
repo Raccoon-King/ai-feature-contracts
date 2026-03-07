@@ -1,0 +1,34 @@
+contract: GRAB-302.fc.md
+phase: plan
+timestamp: 2026-03-07T16:21:35.699Z
+context: []
+context_token_usage: 0
+context_token_budget: 700
+files:
+  - action: modify
+    path: lib/commands.cjs
+    reason: Add project-context injection to plan/execute handlers
+  - action: modify
+    path: lib/governance-runtime.cjs
+    reason: Extend context resolver with project-context summary
+  - action: modify
+    path: tests/llm-context-policy.test.js
+    reason: Test bounded context injection and token limits
+  - action: modify
+    path: tests/commands.test.js
+    reason: Test plan/execute with project context enabled/disabled
+rules:
+  - §typescript
+  - §hooks
+  - §testing
+risks:
+  - State synchronization
+  - Type coverage
+  - Edge cases
+status: executing
+approval_token_required: Approved
+execution_mode: plan_only
+approved_at: 2026-03-07T16:21:46.843Z
+approval_token: Approved
+executed_at: 2026-03-07T16:23:34.493Z
+execution_guard: passed

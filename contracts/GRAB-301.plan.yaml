@@ -1,0 +1,28 @@
+contract: GRAB-301.fc.md
+phase: plan
+timestamp: 2026-03-07T16:21:35.848Z
+context: []
+context_token_usage: 0
+context_token_budget: 700
+files:
+  - action: modify
+    path: lib/interactive-shell.cjs
+    reason: Update help/sprint-status to use config-aware contract resolution
+  - action: modify
+    path: tests/interactive-shell.test.js
+    reason: Add tests for tracking mode and custom contracts dir
+rules:
+  - §typescript
+  - §hooks
+  - §testing
+risks:
+  - State synchronization
+  - Type coverage
+  - Edge cases
+status: executing
+approval_token_required: Approved
+execution_mode: plan_only
+approved_at: 2026-03-07T16:21:46.696Z
+approval_token: Approved
+executed_at: 2026-03-07T16:23:34.273Z
+execution_guard: passed
