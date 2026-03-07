@@ -1144,6 +1144,27 @@ Archive the root contract safely.
     expect(logger.lines.join('\n')).toContain('History: .grabby/history/history-001.yaml');
   });
 
+  it('archives hanging approved contracts and removes the matching plan artifact', () => {
+    const logger = createLogger();
+    const context = createProjectContext({ cwd: tempDir, pkgRoot: PKG_ROOT });
+    const handlers = createCommandHandlers({ context, logger });
+    const activeDir = path.join(tempDir, 'contracts', 'active');
+    fs.mkdirSync(activeDir, { recursive: true });
+    fs.writeFileSync(path.join(activeDir, 'ARCH-GC-3.fc.md'), `# Feature Contract: Hanging Feature
+**ID:** ARCH-GC-3 | **Status:** approved
+`, 'utf8');
+    fs.writeFileSync(path.join(activeDir, 'ARCH-GC-3.plan.yaml'), yaml.stringify({
+      files: [{ path: 'contracts/active/ARCH-GC-3.fc.md' }],
+      status: 'approved',
+    }), 'utf8');
+
+    handlers.featureGc('archive', 'ARCH-GC-3');
+
+    expect(fs.existsSync(path.join(activeDir, 'ARCH-GC-3.fc.md'))).toBe(false);
+    expect(fs.existsSync(path.join(activeDir, 'ARCH-GC-3.plan.yaml'))).toBe(false);
+    expect(logger.lines.join('\n')).toContain('Archived hanging feature ARCH-GC-3');
+  });
+
   it('generates an agile backlog from a valid contract', () => {
     const logger = createLogger();
     const context = createProjectContext({ cwd: tempDir, pkgRoot: PKG_ROOT });
