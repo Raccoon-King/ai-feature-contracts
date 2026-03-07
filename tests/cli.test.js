@@ -139,25 +139,23 @@ describeCli('CLI integration', () => {
     const result = runCli(['init'], tempDir);
 
     expect(result.status).toBe(0);
-    expect(fs.existsSync(path.join(tempDir, 'contracts', 'README.md'))).toBe(true);
-    expect(fs.existsSync(path.join(tempDir, 'contracts', 'SETUP-BASELINE.fc.md'))).toBe(true);
+    expect(fs.existsSync(path.join(tempDir, 'contracts', 'README.md'))).toBe(false);
+    expect(fs.existsSync(path.join(tempDir, 'contracts', 'SETUP-BASELINE.fc.md'))).toBe(false);
+    expect(fs.readdirSync(path.join(tempDir, 'contracts'))).toEqual([]);
+    expect(fs.existsSync(path.join(tempDir, '.grabby', 'history', 'history-001.yaml'))).toBe(true);
     expect(fs.existsSync(path.join(tempDir, 'docs', 'ARCHITECTURE_INDEX.md'))).toBe(true);
     expect(fs.existsSync(path.join(tempDir, '.grabby', 'config.json'))).toBe(true);
     expect(fs.existsSync(path.join(tempDir, '.grabbyignore'))).toBe(true);
     expect(result.stdout).toContain('Initialized');
   });
 
-  it('blocks non-bootstrap commands after init until setup baseline is completed', () => {
+  it('allows normal commands after init when bootstrap contracts are archived', () => {
     const initResult = runCli(['init'], tempDir);
     expect(initResult.status).toBe(0);
 
-    const blocked = runCli(['create', 'blocked-feature'], tempDir);
-    expect(blocked.status).toBe(1);
-    expect(blocked.stdout).toContain('Bootstrap gate active');
-    expect(blocked.stdout).toContain('SETUP-BASELINE.fc.md');
-
-    const allowed = runCli(['validate', 'SETUP-BASELINE.fc.md'], tempDir);
+    const allowed = runCli(['create', 'fresh-feature'], tempDir);
     expect(allowed.status).toBe(0);
+    expect(allowed.stdout).toContain('Created: contracts/fresh-feature.fc.md');
   });
 
   it('creates a contract file from the CLI', () => {

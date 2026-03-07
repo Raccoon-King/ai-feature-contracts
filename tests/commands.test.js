@@ -670,19 +670,27 @@ Capture baseline context.
     expect(fs.existsSync(path.join(tempDir, '.grabby', 'config.json'))).toBe(true);
     expect(fs.existsSync(path.join(tempDir, '.grabby', 'project-context.json'))).toBe(true);
     expect(fs.existsSync(path.join(tempDir, '.grabbyignore'))).toBe(true);
-    expect(fs.existsSync(path.join(tempDir, 'contracts', 'SYSTEM-BASELINE.fc.md'))).toBe(true);
-    expect(fs.existsSync(path.join(tempDir, 'contracts', 'PROJECT-BASELINE.fc.md'))).toBe(true);
-    expect(fs.existsSync(path.join(tempDir, 'contracts', 'SETUP-BASELINE.fc.md'))).toBe(true);
-    expect(fs.readFileSync(path.join(tempDir, 'contracts', 'README.md'), 'utf8')).toContain('## Baseline Contracts');
-    expect(fs.readFileSync(path.join(tempDir, 'contracts', 'PROJECT-BASELINE.fc.md'), 'utf8')).toContain('React application');
+    expect(fs.existsSync(path.join(tempDir, 'contracts', 'SYSTEM-BASELINE.fc.md'))).toBe(false);
+    expect(fs.existsSync(path.join(tempDir, 'contracts', 'PROJECT-BASELINE.fc.md'))).toBe(false);
+    expect(fs.existsSync(path.join(tempDir, 'contracts', 'SETUP-BASELINE.fc.md'))).toBe(false);
+    expect(fs.existsSync(path.join(tempDir, 'contracts', 'README.md'))).toBe(false);
+    const contractsEntries = fs.readdirSync(path.join(tempDir, 'contracts'));
+    expect(contractsEntries).toEqual([]);
+    const historyFile = path.join(tempDir, '.grabby', 'history', 'history-001.yaml');
+    const historyContent = yaml.parse(fs.readFileSync(historyFile, 'utf8'));
+    expect(historyContent.entries.map((entry) => entry.id)).toEqual(expect.arrayContaining([
+      'SYSTEM-BASELINE',
+      'PROJECT-BASELINE',
+      'SETUP-BASELINE',
+    ]));
     expect(logger.lines.join('\n')).toContain('.grabby/config.json');
     expect(logger.lines.join('\n')).toContain('.grabby/project-context.json');
     expect(logger.lines.join('\n')).toContain('Baseline assessment:');
     expect(logger.lines.join('\n')).toContain('Context summary:');
     expect(logger.lines.join('\n')).toContain('Setup summary');
     expect(logger.lines.join('\n')).toContain('Mode: brownfield');
-    expect(logger.lines.join('\n')).toContain('contracts/SETUP-BASELINE.fc.md');
-    expect(logger.lines.join('\n')).toContain('Review .grabby/project-context.json');
+    expect(logger.lines.join('\n')).toContain('Contracts directory reset for fresh feature work');
+    expect(logger.lines.join('\n')).toContain('Contracts directory starts empty by design after init bootstrap archival.');
   });
 
   it('persists detected plugin suggestions during init', async () => {
