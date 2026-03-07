@@ -531,6 +531,12 @@ In `local-only` mode:
 
 MIT
 
+## Acknowledgements
+
+Grabby's persona-led workflow model and selected optional governance patterns are influenced by the BMAD Method project.
+
+- BMAD Method (BMad Code): https://github.com/bmad-code-org/BMAD-METHOD
+
 
 
 
