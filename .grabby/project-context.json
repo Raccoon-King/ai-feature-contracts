@@ -1,0 +1,114 @@
+{
+  "version": 1,
+  "generatedAt": "2026-03-08T03:08:53.705Z",
+  "packageName": "grabby",
+  "stackSummary": "React application",
+  "summary": "React application detected from local repository structure. Primary working areas include lib, hooks, tests. Testing signals are present in the repository.",
+  "projectTypes": [
+    "react",
+    "node"
+  ],
+  "projectDirs": [
+    "lib",
+    "hooks",
+    "tests"
+  ],
+  "recommendedDirectories": [
+    "lib",
+    "hooks",
+    "tests"
+  ],
+  "scripts": [
+    "grabby:execute",
+    "grabby:guard",
+    "grabby:init",
+    "grabby:plan",
+    "grabby:session",
+    "grabby:validate",
+    "lint",
+    "test",
+    "test:coverage",
+    "test:watch"
+  ],
+  "dependencySignals": [
+    "chokidar",
+    "cli-progress",
+    "yaml",
+    "jest"
+  ],
+  "testing": {
+    "hasTests": true,
+    "signals": [
+      "test",
+      "test:coverage",
+      "test:watch"
+    ]
+  },
+  "governance": {
+    "hasContracts": true,
+    "allowedDirectories": [
+      "lib",
+      "hooks",
+      "tests"
+    ],
+    "restrictedDirectories": [
+      "node_modules",
+      ".git",
+      ".env*",
+      "coverage"
+    ]
+  },
+  "plugins": {
+    "suggested": []
+  },
+  "rootSignals": [
+    {
+      "name": "agents",
+      "kind": "dir"
+    },
+    {
+      "name": "AGENTS.md",
+      "kind": "file"
+    },
+    {
+      "name": "bin",
+      "kind": "dir"
+    },
+    {
+      "name": "CLAUDE.md",
+      "kind": "file"
+    },
+    {
+      "name": "contracts",
+      "kind": "dir"
+    },
+    {
+      "name": "docs",
+      "kind": "dir"
+    },
+    {
+      "name": "examples",
+      "kind": "dir"
+    },
+    {
+      "name": "grabby.config.example.json",
+      "kind": "file"
+    },
+    {
+      "name": "grabby.config.json",
+      "kind": "file"
+    },
+    {
+      "name": "hooks",
+      "kind": "dir"
+    },
+    {
+      "name": "lib",
+      "kind": "dir"
+    },
+    {
+      "name": "package-lock.json",
+      "kind": "file"
+    }
+  ]
+}

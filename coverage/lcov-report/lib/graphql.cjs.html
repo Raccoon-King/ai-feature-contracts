@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">0% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>22/22</span>
+                <span class='fraction'>0/22</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">89.47% </span>
+                <span class="strong">0% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>17/19</span>
+                <span class='fraction'>0/19</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">0% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>5/5</span>
+                <span class='fraction'>0/5</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">0% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>20/20</span>
+                <span class='fraction'>0/20</span>
             </div>
         
             
@@ -61,7 +61,7 @@
             </div>
         </template>
     </div>
-    <div class='status-line high'></div>
+    <div class='status-line low'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -108,81 +108,81 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">7x</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">6x</span>
-<span class="cline-any cline-yes">10x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">8x</span>
-<span class="cline-any cline-yes">8x</span>
-<span class="cline-any cline-yes">8x</span>
-<span class="cline-any cline-yes">8x</span>
-<span class="cline-any cline-yes">8x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">7x</span>
-<span class="cline-any cline-yes">7x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">7x</span>
-<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">6x</span>
-<span class="cline-any cline-yes">5x</span>
-<span class="cline-any cline-yes">5x</span>
-<span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">/**
  * Lightweight GraphQL-style interface for Grabby contracts.
  * Supports a focused subset of read-only queries without external deps.
  */
 &nbsp;
-const fs = require('fs');
-const path = require('path');
+const fs = <span class="cstat-no" title="statement not covered" >require('fs');</span>
+const path = <span class="cstat-no" title="statement not covered" >require('path');</span>
 &nbsp;
-function readContracts(contractsDir) {
-  if (!fs.existsSync(contractsDir)) return [];
+function <span class="fstat-no" title="function not covered" >readContracts(</span>contractsDir) {
+<span class="cstat-no" title="statement not covered" >  if (!fs.existsSync(contractsDir)) <span class="cstat-no" title="statement not covered" >return [];</span></span>
 &nbsp;
-  return fs.readdirSync(contractsDir)
-    .filter(f =&gt; f.endsWith('.fc.md'))
-    .map(file =&gt; {
-      const content = fs.readFileSync(path.join(contractsDir, file), 'utf8');
-      const title = content.match(/^# FC:\s+(.+)$/m)?.[1] || file;
-      const id = content.match(/\*\*ID:\*\*\s*(FC-\d+)/)?.[1] || 'unknown';
-      const status = content.match(/\*\*Status:\*\*\s*(\w+)/)?.[1] || 'unknown';
-      return { id, title, status, file };
+<span class="cstat-no" title="statement not covered" >  return fs.readdirSync(contractsDir)</span>
+    .filter(<span class="fstat-no" title="function not covered" >f </span>=&gt; <span class="cstat-no" title="statement not covered" >f.endsWith('.fc.md'))</span>
+    .map(<span class="fstat-no" title="function not covered" >fi</span>le =&gt; {
+      const content = <span class="cstat-no" title="statement not covered" >fs.readFileSync(path.join(contractsDir, file), 'utf8');</span>
+      const title = <span class="cstat-no" title="statement not covered" >content.match(/^# FC:\s+(.+)$/m)?.[1] || file;</span>
+      const id = <span class="cstat-no" title="statement not covered" >content.match(/\*\*ID:\*\*\s*(FC-\d+)/)?.[1] || 'unknown';</span>
+      const status = <span class="cstat-no" title="statement not covered" >content.match(/\*\*Status:\*\*\s*(\w+)/)?.[1] || 'unknown';</span>
+<span class="cstat-no" title="statement not covered" >      return { id, title, status, file };</span>
     });
 }
 &nbsp;
-function executeGraphQL(query, context = <span class="branch-0 cbranch-no" title="branch not covered" >{})</span> {
-  const normalized = String(query || <span class="branch-1 cbranch-no" title="branch not covered" >'')</span>.replace(/\s+/g, ' ').trim();
-  const contracts = readContracts(context.contractsDir);
+function <span class="fstat-no" title="function not covered" >executeGraphQL(</span>query, context = <span class="branch-0 cbranch-no" title="branch not covered" >{})</span> {
+  const normalized = <span class="cstat-no" title="statement not covered" >String(query || '').replace(/\s+/g, ' ').trim();</span>
+  const contracts = <span class="cstat-no" title="statement not covered" >readContracts(context.contractsDir);</span>
 &nbsp;
-  if (/\bhealth\b/i.test(normalized)) {
-    return { data: { health: { status: 'ok', version: '2.0.0' } } };
+<span class="cstat-no" title="statement not covered" >  if (/\bhealth\b/i.test(normalized)) {</span>
+<span class="cstat-no" title="statement not covered" >    return { data: { health: { status: 'ok', version: '2.0.0' } } };</span>
   }
 &nbsp;
-  if (/\bcontracts\b/i.test(normalized)) {
-    const id = normalized.match(/id\s*:\s*"([^"]+)"/i)?.[1];
-    const filtered = id ? contracts.filter(c =&gt; c.id === id || c.file === id) : contracts;
-    return { data: { contracts: filtered } };
+<span class="cstat-no" title="statement not covered" >  if (/\bcontracts\b/i.test(normalized)) {</span>
+    const id = <span class="cstat-no" title="statement not covered" >normalized.match(/id\s*:\s*"([^"]+)"/i)?.[1];</span>
+    const filtered = <span class="cstat-no" title="statement not covered" >id ? contracts.filter(<span class="fstat-no" title="function not covered" >c </span>=&gt; <span class="cstat-no" title="statement not covered" >c.id === id || c.file === id)</span> : contracts;</span>
+<span class="cstat-no" title="statement not covered" >    return { data: { contracts: filtered } };</span>
   }
 &nbsp;
-  return { errors: [{ message: 'Unsupported query' }] };
+<span class="cstat-no" title="statement not covered" >  return { errors: [{ message: 'Unsupported query' }] };</span>
 }
 &nbsp;
-module.exports = { executeGraphQL, readContracts };
+<span class="cstat-no" title="statement not covered" >module.exports = { executeGraphQL, readContracts };</span>
 &nbsp;</pre></td></tr></table></pre>
 
                 <div class='push'></div><!-- for sticky footer -->
@@ -190,7 +190,7 @@ module.exports = { executeGraphQL, readContracts };
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-03-07T16:05:54.848Z
+                at 2026-03-08T03:08:26.508Z
             </div>
         <script src="../prettify.js"></script>
         <script>

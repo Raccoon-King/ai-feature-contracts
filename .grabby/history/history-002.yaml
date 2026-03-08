@@ -258,4 +258,175 @@ entries:
       - tests/features-index.test.js
       - tests/e2e-workflow.test.js
     closedAt: 2026-03-07T16:49:12.697Z
-lastUpdated: 2026-03-07T16:49:12.703Z
+  - id: DX-001
+    title: Extract ensureDir and filesystem utilities
+    objective: Create `lib/fs-utils.cjs` with consolidated filesystem utilities to
+      eliminate duplicated I/O patterns across the codebase.
+    type: feat
+    files:
+      - lib/fs-utils.cjs
+      - tests/fs-utils.test.js
+      - lib/features.cjs
+      - lib/db-awareness.cjs
+      - lib/git-workflow.cjs
+      - lib/config.cjs
+      - lib/commands.cjs
+    closedAt: 2026-03-08T03:15:15.320Z
+  - id: DX-002
+    title: Async-ify API server I/O
+    objective: Convert `lib/api-server.cjs` to use async filesystem operations so
+      large contract directories don't block the request thread.
+    type: feat
+    files:
+      - lib/api-server.cjs
+      - tests/api-server.test.js
+    closedAt: 2026-03-08T03:15:15.549Z
+  - id: DX-003
+    title: Consolidate test fixtures and helpers
+    objective: Create `tests/fixtures/` with shared test utilities to reduce test
+      file sizes by 30% and improve test maintainability.
+    type: feat
+    files:
+      - tests/fixtures/index.js
+      - tests/fixtures/contracts.js
+      - tests/fixtures/mocks.js
+      - tests/commands.test.js
+      - tests/features.test.js
+      - tests/interactive-workflows.test.js
+      - tests/interactive-shell.test.js
+    closedAt: 2026-03-08T03:15:15.782Z
+  - id: DX-004
+    title: Split commands.cjs into modules
+    objective: Split `lib/commands.cjs` into domain-specific modules under
+      `lib/commands/` while maintaining backward compatibility through
+      re-exports.
+    type: feat
+    files:
+      - lib/commands/task.cjs
+      - lib/commands/validate.cjs
+      - lib/commands/plan.cjs
+      - lib/commands/execute.cjs
+      - lib/commands/audit.cjs
+      - lib/commands/init.cjs
+      - lib/commands/git.cjs
+      - lib/commands/index.cjs
+      - lib/commands.cjs
+      - tests/commands.test.js
+    closedAt: 2026-03-08T03:15:16.018Z
+  - id: DX-005
+    title: Add JSDoc to exported functions
+    objective: Add JSDoc comments to all exported functions in core lib files to
+      improve IDE intellisense and maintainability.
+    type: feat
+    files:
+      - lib/commands.cjs
+      - lib/features.cjs
+      - lib/core.cjs
+      - lib/config.cjs
+      - lib/id-utils.cjs
+      - lib/interactive-workflows.cjs
+    closedAt: 2026-03-08T03:15:16.246Z
+  - id: DX-006
+    title: Improve error messages with context
+    objective: Enhance error messages across grabby to include file paths searched,
+      suggested next commands, and recovery hints.
+    type: feat
+    files:
+      - lib/features.cjs
+      - lib/commands.cjs
+      - lib/core.cjs
+      - lib/config.cjs
+    closedAt: 2026-03-08T03:15:16.473Z
+  - id: DX-007
+    title: Consolidate color codes and output formatting
+    objective: Create `lib/colors.cjs` with centralized ANSI color utilities and
+      update all usages across the codebase.
+    type: feat
+    files:
+      - lib/colors.cjs
+      - tests/colors.test.js
+      - lib/commands.cjs
+      - lib/tui.cjs
+      - bin/index.cjs
+      - lib/interactive-shell.cjs
+    closedAt: 2026-03-08T03:15:16.700Z
+  - id: DX-008
+    title: Fix N+1 file reads in features.cjs
+    objective: Optimize `lib/features.cjs` to read each contract file once and cache
+      parsed results during discovery operations.
+    type: feat
+    files:
+      - lib/features.cjs
+      - tests/features.test.js
+    closedAt: 2026-03-08T03:15:16.919Z
+  - id: DX-009
+    title: Add config schema validation
+    objective: Add JSON schema validation to `lib/config.cjs` so invalid
+      configurations fail fast with clear error messages.
+    type: feat
+    files:
+      - lib/config-schema.cjs
+      - docs/CONFIG_SCHEMA.md
+      - lib/config.cjs
+      - tests/config.test.js
+    closedAt: 2026-03-08T03:15:17.144Z
+  - id: DX-010
+    title: Developer involvement modes
+    objective: Add three developer involvement modes that control how much the AI
+      does vs explains during contract execution.
+    type: feat
+    files:
+      - lib/commands.cjs
+      - lib/config.cjs
+      - lib/dev-modes.cjs
+      - tests/dev-modes.test.js
+      - docs/EXECUTION_PROTOCOL.md
+    closedAt: 2026-03-08T03:15:17.371Z
+  - id: DX-011
+    title: Configurable validation rules
+    objective: Extract validation rules into a configurable schema so projects can
+      promote warnings to errors, demote errors to warnings, or disable rules
+      entirely.
+    type: feat
+    files:
+      - lib/validation-rules.cjs
+      - lib/core.cjs
+      - lib/config.cjs
+      - tests/validation-rules.test.js
+      - docs/CONFIG_SCHEMA.md
+    closedAt: 2026-03-08T03:15:17.620Z
+  - id: PROJECT-BASELINE
+    title: Project Baseline for React application
+    objective: Capture the repository baseline for this react application so future
+      feature contracts can stay aligned with the detected structure and
+      tooling.
+    type: FEATURE_CONTRACT
+    files:
+      - contracts/PROJECT-BASELINE.fc.md
+      - contracts/PROJECT-BASELINE.fc.md
+      - contracts/README.md
+    closedAt: 2026-03-08T03:15:17.856Z
+  - id: SETUP-BASELINE
+    title: Setup Validation and Project Index Baseline
+    objective: Define the deterministic setup validation and repository indexing
+      procedure that any LLM must follow after `grabby init` so governed
+      workflows star...
+    type: FEATURE_CONTRACT
+    files:
+      - contracts/SETUP-BASELINE.fc.md
+      - contracts/SETUP-BASELINE.fc.md
+      - .grabby/project-context.json
+      - contracts/README.md
+    closedAt: 2026-03-08T03:15:18.082Z
+  - id: SYSTEM-BASELINE
+    title: Grabby System Baseline
+    objective: Establish the baseline Grabby governance contract for `grabby` so
+      initialization, planning, approval, execution, and audit flows start from
+      a consi...
+    type: FEATURE_CONTRACT
+    files:
+      - contracts/SYSTEM-BASELINE.fc.md
+      - contracts/PROJECT-BASELINE.fc.md
+      - contracts/README.md
+    closedAt: 2026-03-08T03:15:18.297Z
+lastUpdated: 2026-03-08T03:15:18.307Z

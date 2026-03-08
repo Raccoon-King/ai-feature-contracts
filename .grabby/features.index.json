@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-08T02:41:46.893Z",
+  "generatedAt": "2026-03-08T03:15:18.351Z",
   "trackingMode": "tracked",
   "features": [
     {
@@ -196,132 +196,181 @@
     {
       "id": "DX-001",
       "title": "Extract ensureDir and filesystem utilities",
+      "status": "archived",
+      "archivePath": ".grabby/history/history-002.yaml",
+      "closedAt": "2026-03-08T03:15:15.320Z",
+      "objective": "Create `lib/fs-utils.cjs` with consolidated filesystem utilities to eliminate duplicated I/O patterns across the codebase.",
       "type": "feat",
-      "status": "draft",
-      "branch": null,
-      "lastModifiedAt": "2026-03-08T02:37:56.159Z",
-      "contractPath": "contracts/DX-001.fc.md",
-      "planPath": null,
-      "auditPath": null,
-      "archivePath": null,
-      "closedAt": null
+      "files": [
+        "lib/fs-utils.cjs",
+        "tests/fs-utils.test.js",
+        "lib/features.cjs",
+        "lib/db-awareness.cjs",
+        "lib/git-workflow.cjs",
+        "lib/config.cjs",
+        "lib/commands.cjs"
+      ]
     },
     {
       "id": "DX-002",
       "title": "Async-ify API server I/O",
+      "status": "archived",
+      "archivePath": ".grabby/history/history-002.yaml",
+      "closedAt": "2026-03-08T03:15:15.549Z",
+      "objective": "Convert `lib/api-server.cjs` to use async filesystem operations so large contract directories don't block the request thread.",
       "type": "feat",
-      "status": "draft",
-      "branch": null,
-      "lastModifiedAt": "2026-03-08T02:38:07.542Z",
-      "contractPath": "contracts/DX-002.fc.md",
-      "planPath": null,
-      "auditPath": null,
-      "archivePath": null,
-      "closedAt": null
+      "files": [
+        "lib/api-server.cjs",
+        "tests/api-server.test.js"
+      ]
     },
     {
       "id": "DX-003",
       "title": "Consolidate test fixtures and helpers",
+      "status": "archived",
+      "archivePath": ".grabby/history/history-002.yaml",
+      "closedAt": "2026-03-08T03:15:15.782Z",
+      "objective": "Create `tests/fixtures/` with shared test utilities to reduce test file sizes by 30% and improve test maintainability.",
       "type": "feat",
-      "status": "draft",
-      "branch": null,
-      "lastModifiedAt": "2026-03-08T02:38:15.373Z",
-      "contractPath": "contracts/DX-003.fc.md",
-      "planPath": null,
-      "auditPath": null,
-      "archivePath": null,
-      "closedAt": null
+      "files": [
+        "tests/fixtures/index.js",
+        "tests/fixtures/contracts.js",
+        "tests/fixtures/mocks.js",
+        "tests/commands.test.js",
+        "tests/features.test.js",
+        "tests/interactive-workflows.test.js",
+        "tests/interactive-shell.test.js"
+      ]
     },
     {
       "id": "DX-004",
       "title": "Split commands.cjs into modules",
+      "status": "archived",
+      "archivePath": ".grabby/history/history-002.yaml",
+      "closedAt": "2026-03-08T03:15:16.018Z",
+      "objective": "Split `lib/commands.cjs` into domain-specific modules under `lib/commands/` while maintaining backward compatibility through re-exports.",
       "type": "feat",
-      "status": "draft",
-      "branch": null,
-      "lastModifiedAt": "2026-03-08T02:38:24.005Z",
-      "contractPath": "contracts/DX-004.fc.md",
-      "planPath": null,
-      "auditPath": null,
-      "archivePath": null,
-      "closedAt": null
+      "files": [
+        "lib/commands/task.cjs",
+        "lib/commands/validate.cjs",
+        "lib/commands/plan.cjs",
+        "lib/commands/execute.cjs",
+        "lib/commands/audit.cjs",
+        "lib/commands/init.cjs",
+        "lib/commands/git.cjs",
+        "lib/commands/index.cjs",
+        "lib/commands.cjs",
+        "tests/commands.test.js"
+      ]
     },
     {
       "id": "DX-005",
       "title": "Add JSDoc to exported functions",
+      "status": "archived",
+      "archivePath": ".grabby/history/history-002.yaml",
+      "closedAt": "2026-03-08T03:15:16.246Z",
+      "objective": "Add JSDoc comments to all exported functions in core lib files to improve IDE intellisense and maintainability.",
       "type": "feat",
-      "status": "draft",
-      "branch": null,
-      "lastModifiedAt": "2026-03-08T02:38:33.801Z",
-      "contractPath": "contracts/DX-005.fc.md",
-      "planPath": null,
-      "auditPath": null,
-      "archivePath": null,
-      "closedAt": null
+      "files": [
+        "lib/commands.cjs",
+        "lib/features.cjs",
+        "lib/core.cjs",
+        "lib/config.cjs",
+        "lib/id-utils.cjs",
+        "lib/interactive-workflows.cjs"
+      ]
     },
     {
       "id": "DX-006",
       "title": "Improve error messages with context",
+      "status": "archived",
+      "archivePath": ".grabby/history/history-002.yaml",
+      "closedAt": "2026-03-08T03:15:16.473Z",
+      "objective": "Enhance error messages across grabby to include file paths searched, suggested next commands, and recovery hints.",
       "type": "feat",
-      "status": "draft",
-      "branch": null,
-      "lastModifiedAt": "2026-03-08T02:38:39.272Z",
-      "contractPath": "contracts/DX-006.fc.md",
-      "planPath": null,
-      "auditPath": null,
-      "archivePath": null,
-      "closedAt": null
+      "files": [
+        "lib/features.cjs",
+        "lib/commands.cjs",
+        "lib/core.cjs",
+        "lib/config.cjs"
+      ]
     },
     {
       "id": "DX-007",
       "title": "Consolidate color codes and output formatting",
+      "status": "archived",
+      "archivePath": ".grabby/history/history-002.yaml",
+      "closedAt": "2026-03-08T03:15:16.700Z",
+      "objective": "Create `lib/colors.cjs` with centralized ANSI color utilities and update all usages across the codebase.",
       "type": "feat",
-      "status": "draft",
-      "branch": null,
-      "lastModifiedAt": "2026-03-08T02:38:45.344Z",
-      "contractPath": "contracts/DX-007.fc.md",
-      "planPath": null,
-      "auditPath": null,
-      "archivePath": null,
-      "closedAt": null
+      "files": [
+        "lib/colors.cjs",
+        "tests/colors.test.js",
+        "lib/commands.cjs",
+        "lib/tui.cjs",
+        "bin/index.cjs",
+        "lib/interactive-shell.cjs"
+      ]
     },
     {
       "id": "DX-008",
       "title": "Fix N+1 file reads in features.cjs",
+      "status": "archived",
+      "archivePath": ".grabby/history/history-002.yaml",
+      "closedAt": "2026-03-08T03:15:16.919Z",
+      "objective": "Optimize `lib/features.cjs` to read each contract file once and cache parsed results during discovery operations.",
       "type": "feat",
-      "status": "draft",
-      "branch": null,
-      "lastModifiedAt": "2026-03-08T02:38:52.537Z",
-      "contractPath": "contracts/DX-008.fc.md",
-      "planPath": null,
-      "auditPath": null,
-      "archivePath": null,
-      "closedAt": null
+      "files": [
+        "lib/features.cjs",
+        "tests/features.test.js"
+      ]
     },
     {
       "id": "DX-009",
       "title": "Add config schema validation",
+      "status": "archived",
+      "archivePath": ".grabby/history/history-002.yaml",
+      "closedAt": "2026-03-08T03:15:17.144Z",
+      "objective": "Add JSON schema validation to `lib/config.cjs` so invalid configurations fail fast with clear error messages.",
       "type": "feat",
-      "status": "draft",
-      "branch": null,
-      "lastModifiedAt": "2026-03-08T02:39:00.065Z",
-      "contractPath": "contracts/DX-009.fc.md",
-      "planPath": null,
-      "auditPath": null,
-      "archivePath": null,
-      "closedAt": null
+      "files": [
+        "lib/config-schema.cjs",
+        "docs/CONFIG_SCHEMA.md",
+        "lib/config.cjs",
+        "tests/config.test.js"
+      ]
     },
     {
       "id": "DX-010",
       "title": "Developer involvement modes",
+      "status": "archived",
+      "archivePath": ".grabby/history/history-002.yaml",
+      "closedAt": "2026-03-08T03:15:17.371Z",
+      "objective": "Add three developer involvement modes that control how much the AI does vs explains during contract execution.",
       "type": "feat",
-      "status": "draft",
-      "branch": null,
-      "lastModifiedAt": "2026-03-08T02:41:20.335Z",
-      "contractPath": "contracts/DX-010.fc.md",
-      "planPath": null,
-      "auditPath": null,
-      "archivePath": null,
-      "closedAt": null
+      "files": [
+        "lib/commands.cjs",
+        "lib/config.cjs",
+        "lib/dev-modes.cjs",
+        "tests/dev-modes.test.js",
+        "docs/EXECUTION_PROTOCOL.md"
+      ]
+    },
+    {
+      "id": "DX-011",
+      "title": "Configurable validation rules",
+      "status": "archived",
+      "archivePath": ".grabby/history/history-002.yaml",
+      "closedAt": "2026-03-08T03:15:17.620Z",
+      "objective": "Extract validation rules into a configurable schema so projects can promote warnings to errors, demote errors to warnings, or disable rules entirely.",
+      "type": "feat",
+      "files": [
+        "lib/validation-rules.cjs",
+        "lib/core.cjs",
+        "lib/config.cjs",
+        "tests/validation-rules.test.js",
+        "docs/CONFIG_SCHEMA.md"
+      ]
     },
     {
       "id": "ENV-202",
@@ -1647,6 +1696,20 @@
       "type": "feat"
     },
     {
+      "id": "PROJECT-BASELINE",
+      "title": "Project Baseline for React application",
+      "status": "archived",
+      "archivePath": ".grabby/history/history-002.yaml",
+      "closedAt": "2026-03-08T03:15:17.856Z",
+      "objective": "Capture the repository baseline for this react application so future feature contracts can stay aligned with the detected structure and tooling.",
+      "type": "FEATURE_CONTRACT",
+      "files": [
+        "contracts/PROJECT-BASELINE.fc.md",
+        "contracts/PROJECT-BASELINE.fc.md",
+        "contracts/README.md"
+      ]
+    },
+    {
       "id": "SETUP-201",
       "title": "Brownfield Setup Streamlining",
       "status": "archived",
@@ -1660,6 +1723,35 @@
         "README.md",
         "docs/QUICKSTART.md",
         "contracts/SETUP-201.fc.md"
+      ]
+    },
+    {
+      "id": "SETUP-BASELINE",
+      "title": "Setup Validation and Project Index Baseline",
+      "status": "archived",
+      "archivePath": ".grabby/history/history-002.yaml",
+      "closedAt": "2026-03-08T03:15:18.082Z",
+      "objective": "Define the deterministic setup validation and repository indexing procedure that any LLM must follow after `grabby init` so governed workflows star...",
+      "type": "FEATURE_CONTRACT",
+      "files": [
+        "contracts/SETUP-BASELINE.fc.md",
+        "contracts/SETUP-BASELINE.fc.md",
+        ".grabby/project-context.json",
+        "contracts/README.md"
+      ]
+    },
+    {
+      "id": "SYSTEM-BASELINE",
+      "title": "Grabby System Baseline",
+      "status": "archived",
+      "archivePath": ".grabby/history/history-002.yaml",
+      "closedAt": "2026-03-08T03:15:18.297Z",
+      "objective": "Establish the baseline Grabby governance contract for `grabby` so initialization, planning, approval, execution, and audit flows start from a consi...",
+      "type": "FEATURE_CONTRACT",
+      "files": [
+        "contracts/SYSTEM-BASELINE.fc.md",
+        "contracts/PROJECT-BASELINE.fc.md",
+        "contracts/README.md"
       ]
     }
   ]

@@ -1,55 +1,65 @@
-# Grabby Method Router for Codex
+# Grabby Core Router Rules (Managed)
 
-This repository uses Grabby for all feature work. The method router ensures that implementation cannot start before proper ticket intake, contract creation, planning, and explicit approval.
+## Feature Request Detection
 
-## Routing Logic
+When the user asks to implement, add, create, build, fix, refactor, or change functionality:
 
-When receiving a feature/change request:
+1. **Check for existing contract reference**
+   - If the request mentions `contracts/<ID>.fc.md` or a valid contract ID (e.g., `GRAB-001`), use that contract.
+   - Otherwise, this is an **uncontracted feature request**.
 
-1. **Detect contract reference**
-   - If the request references an existing contract ID (e.g., `GRAB-001`, `contracts/GRAB-001.fc.md`), use that contract.
-   - If no contract reference exists, route to ticket intake.
+2. **Route uncontracted requests through ticket intake**
+   - Do NOT start planning or implementation immediately.
+   - Ask for structured ticket information:
+     - **Who** is this for?
+     - **What** should be built or changed?
+     - **Why** is this needed?
+     - **Definition of Done** (acceptance criteria)
 
-2. **Ticket intake (uncontracted requests)**
-   - Collect required fields before proceeding:
-     - **Who**: The actor or stakeholder
-     - **What**: The requested change or feature
-     - **Why**: The business reason or motivation
-     - **Definition of Done**: Acceptance criteria (bullet list)
-   - Validate the ticket ID format: `[A-Z][A-Z0-9]+-\d+`
-   - Create `contracts/<ID>.fc.md` as draft
+3. **Generate contract draft**
+   - Once ticket fields are complete, create `contracts/<ID>.fc.md` as a draft.
+   - Generate `contracts/<ID>.plan.yaml` without modifying implementation files.
 
-3. **Plan phase**
-   - Generate `contracts/<ID>.plan.yaml`
-   - **Do not modify implementation files**
-   - Output plan artifacts only
+## Phase Boundaries
 
-4. **Approval gate**
-   - Block execution until `approval_token: Approved` is present in the plan
-   - Explicit user approval is required
+### Plan Phase
+- Read and analyze the contract.
+- Generate the plan file.
+- **NO code modifications allowed.**
+- Output must be plan artifacts only.
 
-5. **Execute phase**
-   - Modify only files listed in the plan's `files:` section
-   - Stay within `Allowed` directories from the contract
-   - Never modify `Restricted` directories
+### Approval Gate
+- Execution is **blocked** until the plan contains `approval_token: Approved`.
+- Do not proceed to execute phase without explicit approval.
 
-## Commands
+### Execute Phase
+- Only modify files listed in the plan's `files:` section.
+- Stay within the contract's `Allowed` directories.
+- Never touch `Restricted` directories.
 
-| Command | Purpose |
-|---------|---------|
-| `grabby list` | List existing contracts |
-| `grabby task "request"` | Create contract with interview |
-| `grabby validate <file>` | Validate contract |
-| `grabby plan <file>` | Generate plan (Phase 1) |
-| `grabby approve <file>` | Approve for execution |
-| `grabby execute <file>` | Get execution context (Phase 2) |
-| `grabby audit <file>` | Audit implementation |
+## Scope Enforcement
 
-## Enforcement
+- If a file is not in the plan, do not modify it.
+- If a directory is restricted, do not create or edit files there.
+- If blocked, stop and report the issue.
 
-- If a file is not in the approved plan, do not modify it.
-- If execution is attempted without approval, stop and report.
-- If scope drift is detected, stop and report.
+## Change Classification Hints
+
+- If migrations, schema files, or backfills are involved, route the work as a data-change contract.
+- If OpenAPI, GraphQL, proto, payload shapes, or versioned endpoints change, route the work as an api-change contract.
+- If `package.json`, workspace manifests, or lockfiles change, route the work as a deps-change contract.
+- Use generated Grabby artifacts under `.grabby/` as evidence when classifying risk.
+
+## ID Normalization
+
+Work item IDs must match `[A-Z][A-Z0-9]+-\d+` and are normalized to uppercase.
+
+## Recovery
+
+If you encounter a blocked state:
+1. Report the specific blocker.
+2. Do not attempt workarounds that bypass governance.
+3. Wait for user guidance or contract amendment.
 
 ---
-*Managed by `grabby init`. See `.codex/rules/grabby.md` for full ruleset.*
+*This file is managed by `grabby init`. Local overrides go in `90-local-overrides.md`.*

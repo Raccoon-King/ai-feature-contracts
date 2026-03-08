@@ -39,7 +39,12 @@
       "Bash(done)",
       "Bash(grabby gc:*)",
       "Bash(grabby features:list:*)",
-      "Bash(grabby contracts:clean-local:*)"
+      "Bash(grabby contracts:clean-local:*)",
+      "Bash(grabby task:*)",
+      "Bash(grabby features:refresh:*)",
+      "Bash(powershell -File - <<'PSEOF'\n$f = 'C:/Users/jesse/ai-feature-contracts/lib/system-awareness.cjs'\n$c = [IO.File]::ReadAllText\\($f\\)\n$c = $c -replace 'if \\\\\\(!fs\\\\.existsSync\\\\\\(dirPath\\\\\\)\\\\\\) \\\\{[\\\\r\\\\n]+\\\\s+fs\\\\.mkdirSync\\\\\\(dirPath, \\\\{ recursive: true \\\\}\\\\\\);[\\\\r\\\\n]+\\\\s+\\\\}', 'ensureDir\\(dirPath\\);'\n[IO.File]::WriteAllText\\($f, $c\\)\nPSEOF)",
+      "Bash(powershell -File - <<'PSEOF'\n$f = 'C:/Users/jesse/ai-feature-contracts/lib/metrics.cjs'\n$c = [IO.File]::ReadAllText\\($f\\)\n$c = $c -replace 'if \\\\\\(!fs\\\\.existsSync\\\\\\(metricsDir\\\\\\)\\\\\\) \\\\{[\\\\r\\\\n]+\\\\s+fs\\\\.mkdirSync\\\\\\(metricsDir, \\\\{ recursive: true \\\\}\\\\\\);[\\\\r\\\\n]+\\\\s+\\\\}', 'ensureDir\\(metricsDir\\);'\n[IO.File]::WriteAllText\\($f, $c\\)\nPSEOF)",
+      "Bash(powershell -File:*)"
     ]
   }
 }
