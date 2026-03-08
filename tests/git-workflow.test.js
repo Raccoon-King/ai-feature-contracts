@@ -160,4 +160,33 @@ describe('git-workflow', () => {
       'Required test command is not known in repo scripts/config.',
     ]));
   });
+
+  test('preflight blocks direct check-ins to default/protected branch unless explicitly allowed', () => {
+    const exec = createExec({
+      'git rev-parse --is-inside-work-tree': 'true',
+      'git rev-parse --abbrev-ref HEAD': 'main',
+      'git rev-parse --abbrev-ref --symbolic-full-name @{u}': 'origin/main',
+      'git remote get-url origin': 'git@github.com:team/repo.git',
+      'git status --porcelain=v1 --branch': '## main...origin/main',
+      'git rev-list --left-right --count origin/main...HEAD': '0 0',
+      'git stash list': '',
+    });
+
+    const blocked = git.preflightGitState({
+      cwd: tempDir,
+      execSyncImpl: exec,
+      config: { gitGovernance: { defaultBranch: 'main', protectedBranches: ['main'] } },
+      requiredChecksKnown: { lint: true, test: true, guard: true, build: true },
+    });
+    expect(blocked.valid).toBe(false);
+    expect(blocked.errors.some((error) => error.includes('Direct commits/check-ins to protected/default branch "main" are blocked by GitHub policy'))).toBe(true);
+
+    const allowed = git.preflightGitState({
+      cwd: tempDir,
+      execSyncImpl: exec,
+      config: { gitGovernance: { defaultBranch: 'main', protectedBranches: ['main'], allowDirectDefaultBranchCommits: true } },
+      requiredChecksKnown: { lint: true, test: true, guard: true, build: true },
+    });
+    expect(allowed.errors.some((error) => error.includes('Direct commits/check-ins to protected/default branch'))).toBe(false);
+  });
 });

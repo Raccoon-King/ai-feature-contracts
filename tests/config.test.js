@@ -277,6 +277,7 @@ describe('config', () => {
     setConfigValue(cfg, 'gitGovernance.hosting', 'both');
     setConfigValue(cfg, 'gitGovernance.updateStrategy', 'rebase');
     setConfigValue(cfg, 'gitGovernance.protectedBranches', '["main","release"]');
+    setConfigValue(cfg, 'gitGovernance.allowDirectDefaultBranchCommits', 'false');
     setConfigValue(cfg, 'gitGovernance.allowForcePush', 'false');
     setConfigValue(cfg, 'gitGovernance.requiredChecks', '["lint","test","guard"]');
     setConfigValue(cfg, 'gitGovernance.freshnessThresholdBehind', '1');
@@ -287,6 +288,7 @@ describe('config', () => {
     cfg.gitGovernance.updateStrategy = 'cherry-pick';
     cfg.gitGovernance.collaborationModel = 'surprise';
     cfg.gitGovernance.protectedBranches = 'main';
+    cfg.gitGovernance.allowDirectDefaultBranchCommits = 'sometimes';
     cfg.gitGovernance.allowRebaseAfterReviewOpen = 'sometimes';
     cfg.gitGovernance.requiredChecks = 'lint';
     cfg.gitGovernance.freshnessThresholdBehind = -1;
@@ -297,6 +299,7 @@ describe('config', () => {
       'gitGovernance.updateStrategy must be one of: repo-default, rebase, merge, squash',
       'gitGovernance.collaborationModel must be one of: repo-default, forks, shared-branches',
       'gitGovernance.protectedBranches must be an array',
+      'gitGovernance.allowDirectDefaultBranchCommits must be true or false',
       'gitGovernance.allowRebaseAfterReviewOpen must be true or false',
       'gitGovernance.requiredChecks must be an array',
       'gitGovernance.freshnessThresholdBehind must be a non-negative integer',

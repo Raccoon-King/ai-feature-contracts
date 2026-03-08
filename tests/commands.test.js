@@ -556,6 +556,44 @@ Capture baseline context.
     expect(logger.lines.join('\n')).toContain('No plan found');
   });
 
+  it('blocks execute on default/protected branch even when full preflight is disabled', () => {
+    const logger = createLogger();
+    const exits = [];
+    const context = createProjectContext({ cwd: tempDir, pkgRoot: PKG_ROOT });
+    const handlers = createCommandHandlers({
+      context,
+      logger,
+      exit: (code) => exits.push(code),
+      execSyncImpl: (command) => {
+        const responses = {
+          'git rev-parse --is-inside-work-tree': 'true',
+          'git rev-parse --abbrev-ref HEAD': 'main',
+          'git rev-parse --abbrev-ref --symbolic-full-name @{u}': 'origin/main',
+          'git remote get-url origin': 'git@github.com:team/repo.git',
+          'git status --porcelain=v1 --branch': '## main...origin/main',
+          'git rev-list --left-right --count origin/main...HEAD': '0 0',
+          'git stash list': '',
+        };
+        if (Object.prototype.hasOwnProperty.call(responses, command)) {
+          return responses[command];
+        }
+        throw new Error(`Unexpected command: ${command}`);
+      },
+    });
+
+    writeValidContract(tempDir, 'valid-feature.fc.md', 'approved');
+    fs.writeFileSync(path.join(tempDir, 'contracts', 'FC-123.plan.yaml'), yaml.stringify({
+      status: 'approved',
+      files: [{ action: 'modify', path: 'src/feature.ts' }],
+    }), 'utf8');
+
+    handlers.execute('valid-feature.fc.md');
+
+    expect(exits).toEqual([1]);
+    expect(logger.lines.join('\n')).toContain('Git branch policy failure:');
+    expect(logger.lines.join('\n')).toContain('Direct commits/check-ins to protected/default branch "main" are blocked by GitHub policy');
+  });
+
   it('executes legacy plans that use files_to_modify and files_to_create', () => {
     const logger = createLogger();
     const context = createProjectContext({ cwd: tempDir, pkgRoot: PKG_ROOT });
