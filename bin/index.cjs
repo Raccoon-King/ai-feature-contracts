@@ -121,6 +121,25 @@ function update() {
   });
 }
 
+function setup() {
+  return commandHandlers.setup({
+    quick: args.includes('--quick') || args.includes('-q'),
+    skipBaselines: args.includes('--skip-baselines') || args.includes('--skip'),
+    force: args.includes('--force') || args.includes('-f'),
+    disableGate: args.includes('--disable-gate'),
+  });
+}
+
+function completeBaseline() {
+  const target = args[0] || 'SETUP-BASELINE';
+  commandHandlers.completeBaseline(target);
+}
+
+function archiveBaseline() {
+  const target = args[0] || 'SETUP-BASELINE';
+  commandHandlers.archiveBaseline(target);
+}
+
 function initHooks() {
   commandHandlers.initHooks();
 }
@@ -893,14 +912,47 @@ async function ruleset() {
       break;
     }
 
+    case 'list':
+      commandHandlers.rulesetList();
+      break;
+
+    case 'fetch': {
+      const url = args[1];
+      if (!url) {
+        console.log(c.error('Usage: grabby ruleset fetch <url>'));
+        process.exit(1);
+      }
+      await commandHandlers.rulesetFetch(url, { force: args.includes('--force') });
+      break;
+    }
+
+    case 'resolve': {
+      const name = args[1];
+      if (!name) {
+        console.log(c.error('Usage: grabby ruleset resolve <name>'));
+        process.exit(1);
+      }
+      await commandHandlers.rulesetResolve(name);
+      break;
+    }
+
+    case 'clear':
+      commandHandlers.rulesetClear();
+      break;
+
     default:
       console.log(c.heading('\nRuleset Commands'));
       console.log('─'.repeat(40));
+      console.log('  grabby ruleset list               List all available rulesets');
       console.log('  grabby ruleset create [goal]      Create a ruleset interactively');
+      console.log('  grabby ruleset fetch <url>        Fetch remote ruleset');
+      console.log('  grabby ruleset resolve <name>     Resolve ruleset with inheritance');
+      console.log('  grabby ruleset clear              Clear cached remote rulesets');
       console.log('');
       console.log(c.dim('Options:'));
       console.log(c.dim('  --title=<name>   Override ruleset title'));
       console.log(c.dim('  --from=<paths>   Comma-separated files/dirs for context'));
+      console.log(c.dim('  --force          Force refresh cached ruleset'));
   }
 }
 
@@ -1399,6 +1451,9 @@ const commands = {
   party,
   workflow,
   resume,
+  setup,
+  'complete-baseline': completeBaseline,
+  'archive-baseline': archiveBaseline,
   help,
   '-h': help,
   '--help': help
@@ -1434,9 +1489,11 @@ function isBootstrapCommandAllowed(commandName, commandArgs) {
   if (!commandName) {
     return true;
   }
-  if (['help', '-h', '--help', 'init', 'tui', 'list'].includes(commandName)) {
+  // Always allowed commands
+  if (['help', '-h', '--help', 'init', 'tui', 'list', 'setup', 'complete-baseline', 'archive-baseline'].includes(commandName)) {
     return true;
   }
+  // SETUP-BASELINE-specific workflow commands
   if (['validate', 'plan', 'approve', 'execute', 'run', 'audit'].includes(commandName)) {
     const target = commandName === 'run' ? getFirstPositionalArg(commandArgs) : commandArgs[0];
     return isSetupBaselineTarget(target);
@@ -1444,17 +1501,41 @@ function isBootstrapCommandAllowed(commandName, commandArgs) {
   return false;
 }
 
-if (hasSetupBaseline() && !isSetupBaselineComplete() && !isBootstrapCommandAllowed(cmd, args)) {
-  console.log(c.error('[GRABBY] Bootstrap gate active.'));
-  console.log(c.warn('Complete contracts/SETUP-BASELINE.fc.md with an LLM workflow before using other Grabby commands.'));
-  console.log('');
-  console.log('Run this sequence:');
-  console.log('  grabby validate SETUP-BASELINE.fc.md');
-  console.log('  grabby plan SETUP-BASELINE.fc.md');
-  console.log('  grabby approve SETUP-BASELINE.fc.md');
-  console.log('  grabby execute SETUP-BASELINE.fc.md --yes');
-  console.log('  grabby audit SETUP-BASELINE.fc.md --yes');
-  process.exit(1);
+function getBootstrapGateMode() {
+  // Check for --force flag
+  if (args.includes('--force') || args.includes('-f')) {
+    return 'off';
+  }
+  // Check config for gate mode
+  const gateMode = repoConfig?.bootstrap?.gateMode;
+  if (gateMode === 'off' || gateMode === 'warn' || gateMode === 'strict') {
+    return gateMode;
+  }
+  return 'strict'; // default
+}
+
+const bootstrapGateMode = getBootstrapGateMode();
+const bootstrapGateActive = hasSetupBaseline() && !isSetupBaselineComplete() && !isBootstrapCommandAllowed(cmd, args);
+
+if (bootstrapGateActive && bootstrapGateMode !== 'off') {
+  if (bootstrapGateMode === 'warn') {
+    console.log(c.warn('[GRABBY] Bootstrap gate warning: SETUP-BASELINE.fc.md is not complete.'));
+    console.log(c.dim('Run `grabby setup --quick` to complete setup quickly.\n'));
+  } else {
+    console.log(c.error('[GRABBY] Bootstrap gate active.'));
+    console.log(c.warn('Complete setup before using other Grabby commands.\n'));
+    console.log('Quick options:');
+    console.log('  grabby setup --quick      # Auto-complete all baselines');
+    console.log('  grabby setup --skip       # Skip and archive baselines');
+    console.log('  grabby <cmd> --force      # Bypass gate for this command\n');
+    console.log('Or complete manually:');
+    console.log('  grabby validate SETUP-BASELINE.fc.md');
+    console.log('  grabby plan SETUP-BASELINE.fc.md');
+    console.log('  grabby approve SETUP-BASELINE.fc.md');
+    console.log('  grabby execute SETUP-BASELINE.fc.md --yes');
+    console.log('  grabby audit SETUP-BASELINE.fc.md --yes');
+    process.exit(1);
+  }
 }
 
 // Handle async commands

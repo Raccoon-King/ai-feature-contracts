@@ -429,4 +429,48 @@ entries:
       - contracts/PROJECT-BASELINE.fc.md
       - contracts/README.md
     closedAt: 2026-03-08T03:15:18.297Z
-lastUpdated: 2026-03-08T03:15:18.307Z
+  - id: DX-012
+    title: Component Library & Language-Aware Project Indexing
+    objective: Extend grabby's project awareness to index custom UI components for
+      React/Vue projects and understand complete developer tooling setups for
+      Go, Pyt...
+    type: FEATURE_CONTRACT
+    closedAt: 2026-03-08T18:20:27.843Z
+  - id: DX-013
+    title: Cross-Repo Ruleset Sharing & LLM Contract Guidance
+    objective: Enable grabby to share governance rules across repositories and
+      provide better guidance to LLMs when building contracts, ensuring
+      consistent qualit...
+    type: FEATURE_CONTRACT
+    closedAt: 2026-03-08T18:20:28.066Z
+  - id: DX-014
+    title: One-Command Setup with `grabby setup`
+    objective: Replace the complex 5-step bootstrap workflow with a single `grabby
+      setup` command that handles all initialization, baseline completion, and
+      gate c...
+    type: FEATURE_CONTRACT
+    closedAt: 2026-03-08T18:20:28.293Z
+  - id: DX-015
+    title: Developer Contract Control Menu
+    objective: Add a contract control submenu in the TUI that gives developers
+      direct control over system-level contracts, including the ability to
+      complete, skip...
+    type: FEATURE_CONTRACT
+    files:
+      - lib/tui.cjs
+      - lib/commands.cjs
+      - tests/tui-contract-control.test.js
+    closedAt: 2026-03-08T18:20:28.519Z
+  - id: DX-016
+    title: Configurable Bootstrap Gate
+    objective: Make the bootstrap gate configurable so developers can disable it
+      when they understand the system or are working on quick prototypes. Add
+      different...
+    type: FEATURE_CONTRACT
+    files:
+      - bin/index.cjs
+      - lib/config.cjs
+      - lib/governance.cjs
+      - tests/bootstrap-gate.test.js
+    closedAt: 2026-03-08T18:20:28.748Z
+lastUpdated: 2026-03-08T18:20:28.759Z

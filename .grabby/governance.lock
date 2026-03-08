@@ -11,3 +11,6 @@ governance:
     ENV:
       - checks@v1
       - git-commands@v1
+setupCompleted: true
+setupCompletedAt: 2026-03-08T18:16:45.058Z
+setupMode: quick

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-08T03:15:18.351Z",
+  "generatedAt": "2026-03-08T18:20:28.794Z",
   "trackingMode": "tracked",
   "features": [
     {
@@ -370,6 +370,62 @@
         "lib/config.cjs",
         "tests/validation-rules.test.js",
         "docs/CONFIG_SCHEMA.md"
+      ]
+    },
+    {
+      "id": "DX-012",
+      "title": "Component Library & Language-Aware Project Indexing",
+      "status": "archived",
+      "archivePath": ".grabby/history/history-002.yaml",
+      "closedAt": "2026-03-08T18:20:27.843Z",
+      "objective": "Extend grabby's project awareness to index custom UI components for React/Vue projects and understand complete developer tooling setups for Go, Pyt...",
+      "type": "FEATURE_CONTRACT"
+    },
+    {
+      "id": "DX-013",
+      "title": "Cross-Repo Ruleset Sharing & LLM Contract Guidance",
+      "status": "archived",
+      "archivePath": ".grabby/history/history-002.yaml",
+      "closedAt": "2026-03-08T18:20:28.066Z",
+      "objective": "Enable grabby to share governance rules across repositories and provide better guidance to LLMs when building contracts, ensuring consistent qualit...",
+      "type": "FEATURE_CONTRACT"
+    },
+    {
+      "id": "DX-014",
+      "title": "One-Command Setup with `grabby setup`",
+      "status": "archived",
+      "archivePath": ".grabby/history/history-002.yaml",
+      "closedAt": "2026-03-08T18:20:28.293Z",
+      "objective": "Replace the complex 5-step bootstrap workflow with a single `grabby setup` command that handles all initialization, baseline completion, and gate c...",
+      "type": "FEATURE_CONTRACT"
+    },
+    {
+      "id": "DX-015",
+      "title": "Developer Contract Control Menu",
+      "status": "archived",
+      "archivePath": ".grabby/history/history-002.yaml",
+      "closedAt": "2026-03-08T18:20:28.519Z",
+      "objective": "Add a contract control submenu in the TUI that gives developers direct control over system-level contracts, including the ability to complete, skip...",
+      "type": "FEATURE_CONTRACT",
+      "files": [
+        "lib/tui.cjs",
+        "lib/commands.cjs",
+        "tests/tui-contract-control.test.js"
+      ]
+    },
+    {
+      "id": "DX-016",
+      "title": "Configurable Bootstrap Gate",
+      "status": "archived",
+      "archivePath": ".grabby/history/history-002.yaml",
+      "closedAt": "2026-03-08T18:20:28.748Z",
+      "objective": "Make the bootstrap gate configurable so developers can disable it when they understand the system or are working on quick prototypes. Add different...",
+      "type": "FEATURE_CONTRACT",
+      "files": [
+        "bin/index.cjs",
+        "lib/config.cjs",
+        "lib/governance.cjs",
+        "tests/bootstrap-gate.test.js"
       ]
     },
     {
@@ -1698,6 +1754,19 @@
     {
       "id": "PROJECT-BASELINE",
       "title": "Project Baseline for React application",
+      "type": "FEATURE_CONTRACT",
+      "status": "complete",
+      "branch": null,
+      "lastModifiedAt": "2026-03-08T18:16:19.569Z",
+      "contractPath": "contracts/PROJECT-BASELINE.fc.md",
+      "planPath": null,
+      "auditPath": null,
+      "archivePath": null,
+      "closedAt": null
+    },
+    {
+      "id": "PROJECT-BASELINE",
+      "title": "Project Baseline for React application",
       "status": "archived",
       "archivePath": ".grabby/history/history-002.yaml",
       "closedAt": "2026-03-08T03:15:17.856Z",
@@ -1728,6 +1797,19 @@
     {
       "id": "SETUP-BASELINE",
       "title": "Setup Validation and Project Index Baseline",
+      "type": "FEATURE_CONTRACT",
+      "status": "complete",
+      "branch": null,
+      "lastModifiedAt": "2026-03-08T18:16:19.570Z",
+      "contractPath": "contracts/SETUP-BASELINE.fc.md",
+      "planPath": null,
+      "auditPath": null,
+      "archivePath": null,
+      "closedAt": null
+    },
+    {
+      "id": "SETUP-BASELINE",
+      "title": "Setup Validation and Project Index Baseline",
       "status": "archived",
       "archivePath": ".grabby/history/history-002.yaml",
       "closedAt": "2026-03-08T03:15:18.082Z",
@@ -1739,6 +1821,19 @@
         ".grabby/project-context.json",
         "contracts/README.md"
       ]
+    },
+    {
+      "id": "SYSTEM-BASELINE",
+      "title": "Grabby System Baseline",
+      "type": "FEATURE_CONTRACT",
+      "status": "complete",
+      "branch": null,
+      "lastModifiedAt": "2026-03-08T18:16:19.569Z",
+      "contractPath": "contracts/SYSTEM-BASELINE.fc.md",
+      "planPath": null,
+      "auditPath": null,
+      "archivePath": null,
+      "closedAt": null
     },
     {
       "id": "SYSTEM-BASELINE",

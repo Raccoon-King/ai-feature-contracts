@@ -1,6 +1,6 @@
 {
-  "version": 1,
-  "generatedAt": "2026-03-08T03:08:53.705Z",
+  "version": 2,
+  "generatedAt": "2026-03-08T17:41:01.735Z",
   "packageName": "grabby",
   "stackSummary": "React application",
   "summary": "React application detected from local repository structure. Primary working areas include lib, hooks, tests. Testing signals are present in the repository.",
@@ -110,5 +110,7 @@
       "name": "package-lock.json",
       "kind": "file"
     }
-  ]
+  ],
+  "componentPreferences": null,
+  "languageSetup": null
 }

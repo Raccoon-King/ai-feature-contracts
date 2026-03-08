@@ -107,7 +107,7 @@ Build the ticket wizard.
     ]);
   });
 
-  it('skips malformed contracts during mixed-layout discovery', () => {
+  it('parses contracts with minimal metadata using filename as ID fallback', () => {
     const legacyActiveDir = path.join(tempDir, 'contracts', 'active');
     fs.mkdirSync(legacyActiveDir, { recursive: true });
     writeContract('BROKEN.fc.md', '# not a valid feature contract\n');
@@ -115,7 +115,15 @@ Build the ticket wizard.
 **ID:** GRAB-8 | **Status:** approved
 `, 'utf8');
 
-    expect(features.listContractFeatures(tempDir)).toMatchObject([
+    const contracts = features.listContractFeatures(tempDir);
+    expect(contracts).toHaveLength(2);
+    expect(contracts).toMatchObject([
+      {
+        id: 'BROKEN',
+        title: 'not a valid feature contract',
+        status: 'draft',
+        contractPath: 'contracts/BROKEN.fc.md',
+      },
       {
         id: 'GRAB-8',
         contractPath: 'contracts/active/GRAB-8.fc.md',
