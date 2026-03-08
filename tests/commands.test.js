@@ -2310,6 +2310,22 @@ paths:
     expect(logger.lines.join('\n')).toContain('Governance policy failure');
   });
 
+  it('fails validation for DB change contracts with governance policy violations', () => {
+    const logger = createLogger();
+    const exits = [];
+    const context = createProjectContext({ cwd: tempDir, pkgRoot: PKG_ROOT });
+    const handlers = createCommandHandlers({ context, logger, exit: (code) => exits.push(code) });
+
+    const contractPath = writeValidContract(tempDir, 'db-validate.fc.md', 'draft');
+    fs.writeFileSync(contractPath, `${fs.readFileSync(contractPath, 'utf8')}\nAdd migration for users table.\n`, 'utf8');
+
+    handlers.validate('db-validate.fc.md');
+
+    expect(exits).toEqual([1]);
+    expect(logger.lines.join('\n')).toContain('Data-affecting contract is missing explicit DB impact metadata');
+    expect(logger.lines.join('\n')).toContain('Validation failed');
+  });
+
   it('blocks execute for API and dependency change contracts without required artifacts or approvals', () => {
     const logger = createLogger();
     const exits = [];
@@ -2327,6 +2343,23 @@ paths:
 
     expect(exits).toEqual([1]);
     expect(logger.lines.join('\n')).toContain('Governance policy failure');
+  });
+
+  it('fails validation for API/dependency change contracts with governance policy violations', () => {
+    const logger = createLogger();
+    const exits = [];
+    const context = createProjectContext({ cwd: tempDir, pkgRoot: PKG_ROOT });
+    const handlers = createCommandHandlers({ context, logger, exit: (code) => exits.push(code) });
+
+    const contractPath = writeValidContract(tempDir, 'api-deps-validate.fc.md', 'draft');
+    fs.writeFileSync(contractPath, `${fs.readFileSync(contractPath, 'utf8')}\nUpdate OpenAPI payload shape and package.json dependencies.\n`, 'utf8');
+
+    handlers.validate('api-deps-validate.fc.md');
+
+    expect(exits).toEqual([1]);
+    expect(logger.lines.join('\n')).toContain('API-affecting contract is missing explicit API impact metadata');
+    expect(logger.lines.join('\n')).toContain('Dependency-affecting contract is missing explicit dependency metadata');
+    expect(logger.lines.join('\n')).toContain('Validation failed');
   });
 
   it('surfaces active environment constraints in plan output', () => {
