@@ -1637,6 +1637,50 @@ Archive the root contract safely.
     expect(logger.lines.join('\n')).toContain('grabby update --yes');
   });
 
+  it('treats semver-equivalent installed/latest versions as up to date', () => {
+    const logger = createLogger();
+    const context = createProjectContext({ cwd: tempDir, pkgRoot: PKG_ROOT });
+    const handlers = createCommandHandlers({
+      context,
+      logger,
+      execSyncImpl: (command) => {
+        if (command.includes('list -g grabby')) {
+          return JSON.stringify({ dependencies: { grabby: { version: 'v2.0.0' } } });
+        }
+        if (command.includes('view grabby version')) {
+          return JSON.stringify('2.0.0');
+        }
+        return '';
+      },
+    });
+
+    handlers.updateGrabby({ checkOnly: true });
+
+    expect(logger.lines.join('\n')).toContain('Grabby is already up to date.');
+  });
+
+  it('treats installed versions newer than registry latest as up to date', () => {
+    const logger = createLogger();
+    const context = createProjectContext({ cwd: tempDir, pkgRoot: PKG_ROOT });
+    const handlers = createCommandHandlers({
+      context,
+      logger,
+      execSyncImpl: (command) => {
+        if (command.includes('list -g grabby')) {
+          return JSON.stringify({ dependencies: { grabby: { version: '2.0.0' } } });
+        }
+        if (command.includes('view grabby version')) {
+          return JSON.stringify('1.9.9');
+        }
+        return '';
+      },
+    });
+
+    handlers.updateGrabby({ checkOnly: true });
+
+    expect(logger.lines.join('\n')).toContain('installed version is newer than registry latest');
+  });
+
   it('applies Grabby updates when explicitly approved', () => {
     const logger = createLogger();
     const commands = [];
