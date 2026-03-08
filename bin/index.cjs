@@ -245,12 +245,14 @@ function session(file) {
   const regenerate = args.includes('--regenerate');
   const check = args.includes('--check');
   const checkAll = args.includes('--check-all');
+  const allowEmpty = args.includes('--allow-empty');
   const formatIndex = args.indexOf('--format');
   const outputIndex = args.indexOf('--output-path');
   commandHandlers.session(file, {
     regenerate,
     check,
     checkAll,
+    allowEmpty,
     format: formatIndex !== -1 && args[formatIndex + 1] ? args[formatIndex + 1] : 'json',
     outputPath: outputIndex !== -1 && args[outputIndex + 1] ? args[outputIndex + 1] : null,
   });

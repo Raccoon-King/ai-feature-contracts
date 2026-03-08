@@ -2109,6 +2109,18 @@ Change architecture safely.
     expect(logger.lines.join('\n')).toContain('no session artifacts found');
   });
 
+  it('allows empty bulk session checks when allowEmpty is enabled', () => {
+    const logger = createLogger();
+    const exits = [];
+    const context = createProjectContext({ cwd: tempDir, pkgRoot: PKG_ROOT });
+    const handlers = createCommandHandlers({ context, logger, exit: (code) => exits.push(code) });
+
+    handlers.session(null, { checkAll: true, allowEmpty: true });
+
+    expect(exits).toEqual([]);
+    expect(logger.lines.join('\n')).toContain('no session artifacts found (skipped)');
+  });
+
   it('resolves plan and execute context bundles for a contract', () => {
     const logger = createLogger();
     const docsDir = createContextDocs(tempDir);
