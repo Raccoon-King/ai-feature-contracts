@@ -302,6 +302,113 @@ Archive me
     expect(logger.lines.join('\n')).toContain('Completed features must not remain in contracts/active/');
   });
 
+  it('warns and does not auto-update scaffolding when governance.lock is older than CLI version', () => {
+    const logger = createLogger();
+    const execCommands = [];
+    const context = createProjectContext({ cwd: tempDir, pkgRoot: PKG_ROOT });
+    const handlers = createCommandHandlers({
+      context,
+      logger,
+      execSyncImpl: (command) => {
+        execCommands.push(command);
+        return '';
+      },
+    });
+
+    writeValidContract(tempDir, 'version-sync.fc.md', 'draft');
+    fs.mkdirSync(context.grabbyDir, { recursive: true });
+    fs.writeFileSync(path.join(context.grabbyDir, 'governance.lock'), yaml.stringify({
+      governance: {
+        version: '1.0.0',
+        profile: 'default',
+        rules_version: 'v1',
+      },
+    }), 'utf8');
+
+    handlers.validate('version-sync.fc.md');
+
+    expect(execCommands.some((cmd) => cmd.includes('bin') && cmd.includes('index.cjs') && cmd.includes('init'))).toBe(false);
+    expect(logger.lines.join('\n')).toContain('Repo scaffolding is older than this CLI');
+    expect(logger.lines.join('\n')).toContain('Re-run this command with --yes');
+  });
+
+  it('updates scaffolding when governance.lock is older and --yes is provided', () => {
+    const logger = createLogger();
+    const execCommands = [];
+    const context = createProjectContext({ cwd: tempDir, pkgRoot: PKG_ROOT });
+    const handlers = createCommandHandlers({
+      context,
+      logger,
+      execSyncImpl: (command) => {
+        execCommands.push(command);
+        return '';
+      },
+    });
+
+    writeValidContract(tempDir, 'version-sync-yes.fc.md', 'draft');
+    fs.mkdirSync(context.grabbyDir, { recursive: true });
+    fs.writeFileSync(path.join(context.grabbyDir, 'governance.lock'), yaml.stringify({
+      governance: {
+        version: '1.0.0',
+        profile: 'default',
+        rules_version: 'v1',
+      },
+    }), 'utf8');
+
+    const originalArgv = process.argv;
+    process.argv = [...originalArgv, '--yes'];
+    try {
+      handlers.validate('version-sync-yes.fc.md');
+    } finally {
+      process.argv = originalArgv;
+    }
+
+    expect(execCommands.some((cmd) => cmd.includes('bin') && cmd.includes('index.cjs') && cmd.includes('init'))).toBe(true);
+    expect(logger.lines.join('\n')).toContain('Repo scaffolding updated from CLI');
+  });
+
+  it('does not re-warn about outdated scaffolding until 10 more contracts exist', () => {
+    const context = createProjectContext({ cwd: tempDir, pkgRoot: PKG_ROOT });
+    fs.mkdirSync(context.grabbyDir, { recursive: true });
+    fs.writeFileSync(path.join(context.grabbyDir, 'governance.lock'), yaml.stringify({
+      governance: {
+        version: '1.0.0',
+        profile: 'default',
+        rules_version: 'v1',
+      },
+    }), 'utf8');
+
+    const firstContractPath = writeValidContract(tempDir, 'WARN-1.fc.md', 'draft');
+    fs.writeFileSync(firstContractPath, fs.readFileSync(firstContractPath, 'utf8').replace('**ID:** FC-123', '**ID:** WARN-1'), 'utf8');
+
+    const loggerFirst = createLogger();
+    const exitsFirst = [];
+    const handlersFirst = createCommandHandlers({
+      context,
+      logger: loggerFirst,
+      exit: (code) => exitsFirst.push(code),
+      execSyncImpl: () => '',
+    });
+    handlersFirst.validate('WARN-1.fc.md');
+    expect(exitsFirst).toEqual([]);
+    expect(loggerFirst.lines.join('\n')).toContain('Repo scaffolding is older than this CLI');
+
+    const secondContractPath = writeValidContract(tempDir, 'WARN-2.fc.md', 'draft');
+    fs.writeFileSync(secondContractPath, fs.readFileSync(secondContractPath, 'utf8').replace('**ID:** FC-123', '**ID:** WARN-2'), 'utf8');
+
+    const loggerSecond = createLogger();
+    const exitsSecond = [];
+    const handlersSecond = createCommandHandlers({
+      context,
+      logger: loggerSecond,
+      exit: (code) => exitsSecond.push(code),
+      execSyncImpl: () => '',
+    });
+    handlersSecond.validate('WARN-2.fc.md');
+    expect(exitsSecond).toEqual([]);
+    expect(loggerSecond.lines.join('\n')).not.toContain('Repo scaffolding is older than this CLI');
+  });
+
   it('validates baseline contracts without requiring work-item IDs', () => {
     const logger = createLogger();
     const exits = [];
