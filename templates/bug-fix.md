@@ -56,3 +56,13 @@ Fix bug: [brief description of the bug]
 - ARCH: auth-module@v1
 - RULESET: imports@v1
 - ENV: test-runner@v1
+
+## AI Assistant Handoff
+- Generate prompt bundle: `grabby prompt [CONTRACT_FILE]`
+- Prompt file: `contracts/[PROMPT_FILE]`
+- Copy/paste flow:
+  1. Open `contracts/[PROMPT_FILE]`
+  2. Paste all contents into your AI assistant
+  3. Ask it to execute only within this contract's scope and files
+- File reference flow:
+  - Tell your AI assistant: "Read and process `contracts/[PROMPT_FILE]` exactly, then implement only approved contract scope."

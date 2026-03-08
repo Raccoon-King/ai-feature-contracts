@@ -234,16 +234,25 @@ function promptBundle(file) {
   commandHandlers.promptBundle(file);
 }
 
+function installPrompt() {
+  const tierIndex = args.indexOf('--tier');
+  commandHandlers.installPrompt({
+    tier: tierIndex !== -1 && args[tierIndex + 1] ? args[tierIndex + 1] : '2',
+  });
+}
+
 function session(file) {
   const regenerate = args.includes('--regenerate');
   const check = args.includes('--check');
   const checkAll = args.includes('--check-all');
+  const allowEmpty = args.includes('--allow-empty');
   const formatIndex = args.indexOf('--format');
   const outputIndex = args.indexOf('--output-path');
   commandHandlers.session(file, {
     regenerate,
     check,
     checkAll,
+    allowEmpty,
     format: formatIndex !== -1 && args[formatIndex + 1] ? args[formatIndex + 1] : 'json',
     outputPath: outputIndex !== -1 && args[outputIndex + 1] ? args[outputIndex + 1] : null,
   });
@@ -1405,6 +1414,8 @@ const commands = {
   'context:lint': contextLint,
   'policy:check': policyCheck,
   prompt: () => promptBundle(args[0]),
+  'install:prompt': installPrompt,
+  'setup:prompt': installPrompt,
   session: () => session(args[0]),
   watch,
   'agent:lint': agentLint,
@@ -1490,7 +1501,7 @@ function isBootstrapCommandAllowed(commandName, commandArgs) {
     return true;
   }
   // Always allowed commands
-  if (['help', '-h', '--help', 'init', 'tui', 'list', 'setup', 'complete-baseline', 'archive-baseline'].includes(commandName)) {
+  if (['help', '-h', '--help', 'init', 'tui', 'list', 'setup', 'complete-baseline', 'archive-baseline', 'install:prompt', 'setup:prompt'].includes(commandName)) {
     return true;
   }
   // SETUP-BASELINE-specific workflow commands
@@ -1529,11 +1540,12 @@ if (bootstrapGateActive && bootstrapGateMode !== 'off') {
     console.log('  grabby setup --skip       # Skip and archive baselines');
     console.log('  grabby <cmd> --force      # Bypass gate for this command\n');
     console.log('Or complete manually:');
+    console.log('  grabby install:prompt --tier 2');
     console.log('  grabby validate SETUP-BASELINE.fc.md');
     console.log('  grabby plan SETUP-BASELINE.fc.md');
     console.log('  grabby approve SETUP-BASELINE.fc.md');
-    console.log('  grabby execute SETUP-BASELINE.fc.md --yes');
-    console.log('  grabby audit SETUP-BASELINE.fc.md --yes');
+    console.log('  # Finish remaining setup work in your preferred AI assistant');
+    console.log('  grabby complete-baseline SETUP-BASELINE');
     process.exit(1);
   }
 }

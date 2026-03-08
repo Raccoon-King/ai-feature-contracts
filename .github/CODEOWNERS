@@ -1,0 +1,12 @@
+# Default owners for all repository content
+* @Raccoon-King
+
+# High-risk governance and automation areas
+/.github/ @Raccoon-King
+/bin/ @Raccoon-King
+/lib/ @Raccoon-King
+/hooks/ @Raccoon-King
+
+# Contract and policy artifacts
+/contracts/ @Raccoon-King
+/docs/ @Raccoon-King

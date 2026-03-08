@@ -1,0 +1,32 @@
+contract: SETUP-BASELINE.fc.md
+phase: plan
+timestamp: 2026-03-08T19:38:50.937Z
+context:
+  - ARCH:setup-validation@v1
+  - RULESET:baseline-governance@v1
+context_token_usage: 7
+context_token_budget: 700
+files:
+  - action: create
+    path: contracts/SETUP-BASELINE.fc.md
+    reason: Seed deterministic setup-validation instructions for any LLM
+  - action: modify
+    path: contracts/SETUP-BASELINE.fc.md
+    reason: Refine setup checks for repository-specific requirements
+  - action: modify
+    path: .grabby/project-context.json
+    reason: Refresh the indexed project context after setup validation
+  - action: modify
+    path: contracts/README.md
+    reason: Keep baseline guidance aligned with setup-validation workflow
+rules:
+  - §typescript
+  - §hooks
+  - §testing
+risks:
+  - State synchronization
+  - Type coverage
+  - Edge cases
+status: pending_approval
+approval_token_required: Approved
+execution_mode: plan_only
