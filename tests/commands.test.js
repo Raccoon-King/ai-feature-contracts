@@ -1261,6 +1261,28 @@ Archive the root contract safely.
     expect(logger.lines.join('\n')).toContain('No contract activity');
   });
 
+  it('ignores completed baseline contracts during garbage-collector checks', () => {
+    const logger = createLogger();
+    const exits = [];
+    const context = createProjectContext({ cwd: tempDir, pkgRoot: PKG_ROOT });
+    const handlers = createCommandHandlers({ context, logger, exit: (code) => exits.push(code) });
+    fs.mkdirSync(path.join(tempDir, 'contracts'), { recursive: true });
+    fs.writeFileSync(path.join(tempDir, 'contracts', 'SYSTEM-BASELINE.fc.md'), `# Feature Contract: System Baseline
+**Status:** complete
+`, 'utf8');
+    fs.writeFileSync(path.join(tempDir, 'contracts', 'PROJECT-BASELINE.fc.md'), `# Feature Contract: Project Baseline
+**Status:** complete
+`, 'utf8');
+    fs.writeFileSync(path.join(tempDir, 'contracts', 'SETUP-BASELINE.fc.md'), `# Feature Contract: Setup Baseline
+**Status:** complete
+`, 'utf8');
+
+    handlers.featureGc('check', null, { maxAgeDays: 30 });
+
+    expect(exits).toEqual([]);
+    expect(logger.lines.join('\n')).toContain('No hanging contracts require garbage collection.');
+  });
+
   it('archives hanging completed contracts and removes sibling story artifacts', () => {
     const logger = createLogger();
     const context = createProjectContext({ cwd: tempDir, pkgRoot: PKG_ROOT });
