@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-08T18:20:28.794Z",
+  "generatedAt": "2026-03-08T18:27:14.976Z",
   "trackingMode": "tracked",
   "features": [
     {
@@ -426,6 +426,21 @@
         "lib/config.cjs",
         "lib/governance.cjs",
         "tests/bootstrap-gate.test.js"
+      ]
+    },
+    {
+      "id": "DX-017",
+      "title": "Enhanced Change Assessment in Contracts",
+      "status": "archived",
+      "archivePath": ".grabby/history/history-002.yaml",
+      "closedAt": "2026-03-08T18:27:14.931Z",
+      "objective": "Enhance contracts to include full assessment of all changes with clear distinction between new and modified items across files, dependencies, and a...",
+      "type": "FEATURE_CONTRACT",
+      "files": [
+        "templates/contract.md",
+        "lib/core.cjs",
+        "lib/smart-prompts.cjs",
+        "tests/change-assessment.test.js"
       ]
     },
     {

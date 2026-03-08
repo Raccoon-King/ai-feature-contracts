@@ -473,4 +473,16 @@ entries:
       - lib/governance.cjs
       - tests/bootstrap-gate.test.js
     closedAt: 2026-03-08T18:20:28.748Z
-lastUpdated: 2026-03-08T18:20:28.759Z
+  - id: DX-017
+    title: Enhanced Change Assessment in Contracts
+    objective: Enhance contracts to include full assessment of all changes with
+      clear distinction between new and modified items across files,
+      dependencies, and a...
+    type: FEATURE_CONTRACT
+    files:
+      - templates/contract.md
+      - lib/core.cjs
+      - lib/smart-prompts.cjs
+      - tests/change-assessment.test.js
+    closedAt: 2026-03-08T18:27:14.931Z
+lastUpdated: 2026-03-08T18:27:14.942Z
