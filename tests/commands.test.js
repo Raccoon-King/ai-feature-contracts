@@ -1337,10 +1337,27 @@ Archive the root contract safely.
 
     const promptPath = path.join(tempDir, 'contracts', 'valid-feature.prompt.md');
     const prompt = fs.readFileSync(promptPath, 'utf8');
+    const contract = fs.readFileSync(path.join(tempDir, 'contracts', 'valid-feature.fc.md'), 'utf8');
     expect(prompt).toContain('Grabby Prompt Bundle: valid-feature.fc.md');
     expect(prompt).toContain('Provider profile: generic');
     expect(prompt).toContain('## Contract');
     expect(prompt).toContain('## Backlog');
+    expect(contract).toContain('## AI Assistant Handoff');
+    expect(contract).toContain('Prompt file: `contracts/valid-feature.prompt.md`');
+  });
+
+  it('renders a tiered install prompt for tool-agnostic setup completion', () => {
+    const logger = createLogger();
+    const context = createProjectContext({ cwd: tempDir, pkgRoot: PKG_ROOT });
+    const handlers = createCommandHandlers({ context, logger });
+
+    handlers.installPrompt({ tier: '3' });
+
+    const output = logger.lines.join('\n');
+    expect(output).toContain('Setup Completion Prompt');
+    expect(output).toContain('Tier: Tier 3 (Deep)');
+    expect(output).toContain('tool-agnostic');
+    expect(output).toContain('grabby complete-baseline SETUP-BASELINE');
   });
 
   it('inspects a valid session artifact and reports schema status', () => {

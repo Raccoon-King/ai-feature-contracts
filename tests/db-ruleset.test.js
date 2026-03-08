@@ -79,6 +79,25 @@ describe('db ruleset governance', () => {
     });
   });
 
+  test('indexes setup baseline context refs used by SETUP-BASELINE contract', () => {
+    const index = yaml.parse(fs.readFileSync(path.join(root, 'docs', 'context-index.yaml'), 'utf8'));
+    expect(index.references.ARCH['setup-validation@v1']).toMatchObject({
+      file: 'ARCHITECTURE_INDEX.md',
+      section: 'Contract Management',
+      status: 'active',
+    });
+    expect(index.references.RULESET['baseline-governance@v1']).toMatchObject({
+      file: 'RULESET_CORE.md',
+      section: 'Contracts',
+      status: 'active',
+    });
+    expect(index.references.ENV['local-repo-index@v1']).toMatchObject({
+      file: 'ENV_STACK.md',
+      section: 'Key Paths',
+      status: 'active',
+    });
+  });
+
   test('documents git workflow rules and pins them in governance lock', () => {
     const content = fs.readFileSync(path.join(root, 'docs', 'RULESET_GIT_WORKFLOW.md'), 'utf8');
     const env = fs.readFileSync(path.join(root, 'docs', 'ENV_STACK.md'), 'utf8');

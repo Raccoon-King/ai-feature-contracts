@@ -14,3 +14,7 @@ governance:
 setupCompleted: true
 setupCompletedAt: 2026-03-08T18:16:45.058Z
 setupMode: quick
+scaffoldingSync:
+  lastWarnedContractCount: 3
+  minContractsBetweenWarnings: 10
+  lastWarnedAt: 2026-03-08T19:38:50.924Z

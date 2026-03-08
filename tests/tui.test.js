@@ -322,6 +322,29 @@ Bootstrap
     expect(commandHandlers.updateGrabby).toHaveBeenCalledWith({ checkOnly: true });
   });
 
+  test('createTUI generates install prompt from setup wizard with tier choice', () => {
+    const commandHandlers = {
+      installPrompt: jest.fn(),
+    };
+
+    const output = runTuiKeys([
+      '\u001B[B',
+      '\r',
+      '\u001B[B',
+      '\u001B[B',
+      '\u001B[B',
+      '\u001B[B',
+      '\u001B[B',
+      '\r',
+    ], () => {}, {
+      answers: ['3'],
+      commandHandlers,
+    });
+
+    expect(output).toContain('Install Completion Prompt');
+    expect(commandHandlers.installPrompt).toHaveBeenCalledWith({ tier: '3' });
+  });
+
   test('createTUI runs interactive brownfield init from setup wizard', () => {
     const commandHandlers = {
       init: jest.fn(),

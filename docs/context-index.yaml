@@ -36,6 +36,15 @@ references:
       phases:
         - plan
 
+    # Baseline setup/onboarding workflow context.
+    setup-validation@v1:
+      file: ARCHITECTURE_INDEX.md
+      section: Contract Management
+      status: active
+      phases:
+        - plan
+        - execute
+
   RULESET:
     # Default implementation rules for TypeScript execution.
     imports@v1:
@@ -87,6 +96,15 @@ references:
         - plan
         - execute
 
+    # Baseline governance rules used by setup contracts.
+    baseline-governance@v1:
+      file: RULESET_CORE.md
+      section: Contracts
+      status: active
+      phases:
+        - plan
+        - execute
+
   ENV:
     # Default command/runtime environment used in both phases.
     test-runner@v1:
@@ -108,6 +126,15 @@ references:
     git-commands@v1:
       file: ENV_STACK.md
       section: Git Commands
+      status: active
+      phases:
+        - plan
+        - execute
+
+    # Local repository indexing and artifact path context.
+    local-repo-index@v1:
+      file: ENV_STACK.md
+      section: Key Paths
       status: active
       phases:
         - plan
