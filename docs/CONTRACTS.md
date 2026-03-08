@@ -1,6 +1,6 @@
 # Feature Contracts
 
-This directory contains feature contracts for AI-assisted development.
+The `contracts/` directory contains feature contracts for AI-assisted development.
 
 ## Commands
 
