@@ -17,6 +17,8 @@ jobs:
   validate-contracts:
     name: Validate Contracts
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
 
     steps:
       - name: Checkout
@@ -31,16 +33,13 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Install Grabby
-        run: npm install -g grabby
-
       - name: Validate all contracts
         run: |
           echo "Validating contracts..."
           for contract in contracts/*.fc.md; do
             if [ -f "$contract" ]; then
               echo "Checking: $contract"
-              grabby validate "$contract"
+              node bin/index.cjs validate "$contract"
             fi
           done
 
@@ -52,7 +51,7 @@ jobs:
           fi
 
       - name: Generate metrics
-        run: grabby metrics --output json > contract-metrics.json
+        run: node bin/index.cjs metrics > contract-metrics.json
         continue-on-error: true
 
       - name: Upload metrics artifact
