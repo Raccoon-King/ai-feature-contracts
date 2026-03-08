@@ -36,7 +36,10 @@
       "Bash(find:*)",
       "Bash(for fc in contracts/GRAB-30*.fc.md contracts/GRAB-31*.fc.md)",
       "Bash(do echo \"=== Validating $fc ===\")",
-      "Bash(done)"
+      "Bash(done)",
+      "Bash(grabby gc:*)",
+      "Bash(grabby features:list:*)",
+      "Bash(grabby contracts:clean-local:*)"
     ]
   }
 }
