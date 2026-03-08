@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-07T16:49:12.742Z",
+  "generatedAt": "2026-03-08T02:41:46.893Z",
   "trackingMode": "tracked",
   "features": [
     {
@@ -192,6 +192,136 @@
         "tests/commands.test.js",
         "contracts/BUG-203.fc.md"
       ]
+    },
+    {
+      "id": "DX-001",
+      "title": "Extract ensureDir and filesystem utilities",
+      "type": "feat",
+      "status": "draft",
+      "branch": null,
+      "lastModifiedAt": "2026-03-08T02:37:56.159Z",
+      "contractPath": "contracts/DX-001.fc.md",
+      "planPath": null,
+      "auditPath": null,
+      "archivePath": null,
+      "closedAt": null
+    },
+    {
+      "id": "DX-002",
+      "title": "Async-ify API server I/O",
+      "type": "feat",
+      "status": "draft",
+      "branch": null,
+      "lastModifiedAt": "2026-03-08T02:38:07.542Z",
+      "contractPath": "contracts/DX-002.fc.md",
+      "planPath": null,
+      "auditPath": null,
+      "archivePath": null,
+      "closedAt": null
+    },
+    {
+      "id": "DX-003",
+      "title": "Consolidate test fixtures and helpers",
+      "type": "feat",
+      "status": "draft",
+      "branch": null,
+      "lastModifiedAt": "2026-03-08T02:38:15.373Z",
+      "contractPath": "contracts/DX-003.fc.md",
+      "planPath": null,
+      "auditPath": null,
+      "archivePath": null,
+      "closedAt": null
+    },
+    {
+      "id": "DX-004",
+      "title": "Split commands.cjs into modules",
+      "type": "feat",
+      "status": "draft",
+      "branch": null,
+      "lastModifiedAt": "2026-03-08T02:38:24.005Z",
+      "contractPath": "contracts/DX-004.fc.md",
+      "planPath": null,
+      "auditPath": null,
+      "archivePath": null,
+      "closedAt": null
+    },
+    {
+      "id": "DX-005",
+      "title": "Add JSDoc to exported functions",
+      "type": "feat",
+      "status": "draft",
+      "branch": null,
+      "lastModifiedAt": "2026-03-08T02:38:33.801Z",
+      "contractPath": "contracts/DX-005.fc.md",
+      "planPath": null,
+      "auditPath": null,
+      "archivePath": null,
+      "closedAt": null
+    },
+    {
+      "id": "DX-006",
+      "title": "Improve error messages with context",
+      "type": "feat",
+      "status": "draft",
+      "branch": null,
+      "lastModifiedAt": "2026-03-08T02:38:39.272Z",
+      "contractPath": "contracts/DX-006.fc.md",
+      "planPath": null,
+      "auditPath": null,
+      "archivePath": null,
+      "closedAt": null
+    },
+    {
+      "id": "DX-007",
+      "title": "Consolidate color codes and output formatting",
+      "type": "feat",
+      "status": "draft",
+      "branch": null,
+      "lastModifiedAt": "2026-03-08T02:38:45.344Z",
+      "contractPath": "contracts/DX-007.fc.md",
+      "planPath": null,
+      "auditPath": null,
+      "archivePath": null,
+      "closedAt": null
+    },
+    {
+      "id": "DX-008",
+      "title": "Fix N+1 file reads in features.cjs",
+      "type": "feat",
+      "status": "draft",
+      "branch": null,
+      "lastModifiedAt": "2026-03-08T02:38:52.537Z",
+      "contractPath": "contracts/DX-008.fc.md",
+      "planPath": null,
+      "auditPath": null,
+      "archivePath": null,
+      "closedAt": null
+    },
+    {
+      "id": "DX-009",
+      "title": "Add config schema validation",
+      "type": "feat",
+      "status": "draft",
+      "branch": null,
+      "lastModifiedAt": "2026-03-08T02:39:00.065Z",
+      "contractPath": "contracts/DX-009.fc.md",
+      "planPath": null,
+      "auditPath": null,
+      "archivePath": null,
+      "closedAt": null
+    },
+    {
+      "id": "DX-010",
+      "title": "Developer involvement modes",
+      "type": "feat",
+      "status": "draft",
+      "branch": null,
+      "lastModifiedAt": "2026-03-08T02:41:20.335Z",
+      "contractPath": "contracts/DX-010.fc.md",
+      "planPath": null,
+      "auditPath": null,
+      "archivePath": null,
+      "closedAt": null
     },
     {
       "id": "ENV-202",
