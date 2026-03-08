@@ -155,4 +155,107 @@ entries:
       - contracts/BMAD-216.rubric.md
       - contracts/BMAD-201.stories.md
     closedAt: 2026-03-07T15:32:41.248Z
-lastUpdated: 2026-03-07T15:32:41.254Z
+  - id: GRAB-301
+    title: Ensure help/sprint-status read the configured contracts d...
+    objective: Route interactive shell contract-state reads through config-aware
+      contracts resolution
+    type: feat
+    files:
+      - lib/interactive-shell.cjs
+      - tests/interactive-shell.test.js
+    closedAt: 2026-03-07T16:49:10.901Z
+  - id: GRAB-302
+    title: Include project-context summary as optional bounded conte...
+    objective: Wire project-context summary into context resolution without token bloat
+    type: feat
+    files:
+      - lib/commands.cjs
+      - lib/governance-runtime.cjs
+      - tests/llm-context-policy.test.js
+      - tests/commands.test.js
+    closedAt: 2026-03-07T16:49:11.126Z
+  - id: GRAB-303
+    title: Document and enforce a narrow default workflow path to re...
+    objective: Reduce perceived scope creep while preserving capability
+    type: feat
+    files:
+      - README.md
+      - docs/EXECUTION_PROTOCOL.md
+      - lib/interactive-shell.cjs
+      - tests/help-adaptive-routing.test.js
+    closedAt: 2026-03-07T16:49:11.343Z
+  - id: GRAB-304
+    title: Extract filesystem abstraction layer with centralized err...
+    objective: Create a centralized filesystem abstraction that provides consistent
+      error handling, recovery patterns, and testability across all I/O
+      operations.
+    type: feat
+    files:
+      - lib/fs-utils.cjs
+      - lib/core.cjs
+      - lib/commands.cjs
+      - lib/config.cjs
+      - lib/api-server.cjs
+      - tests/fs-utils.test.js
+    closedAt: 2026-03-07T16:49:11.560Z
+  - id: GRAB-305
+    title: Build schema-driven contract validation with configurable...
+    objective: Replace brittle regex parsing with schema validation for contracts,
+      making validation rules configurable and extensible.
+    type: feat
+    files:
+      - lib/contract-schema.cjs
+      - docs/contract-schema.yaml
+      - lib/core.cjs
+      - lib/config.cjs
+      - tests/contract-validation.test.js
+    closedAt: 2026-03-07T16:49:11.789Z
+  - id: GRAB-306
+    title: Harden API server with input validation, security, and pe...
+    objective: Secure and optimize the API server to prevent vulnerabilities and
+      improve performance.
+    type: feat
+    files:
+      - lib/path-security.cjs
+      - lib/api-server.cjs
+      - tests/api-server.test.js
+    closedAt: 2026-03-07T16:49:12.012Z
+  - id: GRAB-307
+    title: Extract reusable I/O and parsing utilities to reduce dupl...
+    objective: Consolidate duplicated I/O and parsing patterns into reusable
+      utilities, reducing code duplication by 300+ lines.
+    type: feat
+    files:
+      - lib/io-utils.cjs
+      - lib/parsing-utils.cjs
+      - lib/commands.cjs
+      - lib/jira.cjs
+      - lib/api-server.cjs
+      - tests/io-parsing-utils.test.js
+    closedAt: 2026-03-07T16:49:12.244Z
+  - id: GRAB-312
+    title: Create error handling framework with structured context
+    objective: Establish consistent error handling with typed errors, context
+      chains, and structured logging.
+    type: feat
+    files:
+      - lib/errors.cjs
+      - lib/logger.cjs
+      - lib/core.cjs
+      - lib/commands.cjs
+      - lib/api-server.cjs
+      - tests/errors.test.js
+    closedAt: 2026-03-07T16:49:12.466Z
+  - id: GRAB-313
+    title: Close test coverage gaps and add edge case tests
+    objective: Achieve 80%+ coverage across all critical modules with comprehensive
+      edge case testing.
+    type: feat
+    files:
+      - tests/api-server.test.js
+      - tests/features.test.js
+      - tests/interactive-shell.test.js
+      - tests/features-index.test.js
+      - tests/e2e-workflow.test.js
+    closedAt: 2026-03-07T16:49:12.697Z
+lastUpdated: 2026-03-07T16:49:12.703Z
