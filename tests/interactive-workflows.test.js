@@ -1525,7 +1525,7 @@ Plan without context refs.
     await runtime.executeAgentCommand('strategist', 'generate-plan', ['no-context.fc.md']);
 
     const plan = yaml.parse(fs.readFileSync(path.join(contractsDir, 'no-context.plan.yaml'), 'utf8'));
-    expect(plan.context).toEqual(['ARCH_INDEX_v1', 'RULESET_CORE_v1']);
+    expect(plan.context).toEqual(['SYSTEM:architecture@v1', 'SYSTEM:standards@v1', 'SYSTEM:workflow@v1']);
     mockRl.restore();
     consoleSpy.mockRestore();
   });
