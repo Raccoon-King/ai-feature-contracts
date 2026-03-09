@@ -1,0 +1,50 @@
+#!/bin/sh
+#
+# Grabby Pre-Push Hook
+# Blocks release tag pushes unless contracts are complete and contracts/ is empty.
+#
+# Install: grabby init-hooks
+
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[0;33m'
+NC='\033[0m'
+
+is_release_tag_push=0
+
+while read local_ref local_sha remote_ref remote_sha
+do
+  case "$remote_ref" in
+    refs/tags/*)
+      is_release_tag_push=1
+      ;;
+  esac
+done
+
+# Only enforce for tag pushes (release tags)
+if [ "$is_release_tag_push" -ne 1 ]; then
+  exit 0
+fi
+
+if [ ! -d "contracts" ]; then
+  echo "${RED}[grabby] Release tag blocked: contracts/ directory not found.${NC}"
+  echo "Run from repository root with contracts present."
+  exit 1
+fi
+
+ACTIVE_CONTRACTS=$(ls contracts/*.fc.md 2>/dev/null)
+if [ -n "$ACTIVE_CONTRACTS" ]; then
+  echo "${RED}[grabby] Release tag blocked.${NC}"
+  echo "contracts/ must be empty before tagging a release."
+  echo "Archive/close all contracts first (for example: grabby feature close <ID>)."
+  echo ""
+  echo "Remaining contracts:"
+  echo "$ACTIVE_CONTRACTS" | while read contract; do
+    [ -n "$contract" ] && echo "  - $contract"
+  done
+  exit 1
+fi
+
+echo "${GREEN}[grabby] Release tag gate passed: contracts/ is empty.${NC}"
+exit 0
+

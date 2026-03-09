@@ -2,25 +2,44 @@
 
 This repository uses Grabby for request intake, contract governance, planning, execution, and audit.
 
-For Codex-specific guidance, use:
-- [.codex/rules/grabby.md](C:/Users/jesse/ai-feature-contracts/.codex/rules/grabby.md)
+For detailed workflow guidance, see:
+- [docs/commandline-workflow.md](docs/commandline-workflow.md) - Full CLI workflow reference
+- [.codex/rules/grabby.md](.codex/rules/grabby.md) - Codex-specific rules
 
 ## Default Workflow
 
-1. `grabby list`
-2. `grabby ticket "request"` if the request is not already a complete ticket
-3. `grabby task "request"` or `grabby orchestrate "request"`
-4. `grabby validate <file>`
-5. `grabby plan <file>`
-6. `grabby approve <file>`
-7. `grabby execute <file>`
-8. Implement only within approved scope
-9. `grabby audit <file>`
+| Step | Command | Checkpoint |
+|------|---------|------------|
+| 1 | `grabby list` | Review existing contracts |
+| 2 | `grabby task "request"` | Contract created |
+| 3 | `grabby validate <file>` | Zero validation errors |
+| 4 | `grabby plan <file>` | Plan artifact generated |
+| 5 | `grabby approve <file>` | Status = approved |
+| 6 | `grabby execute <file>` | Get implementation scope |
+| 7 | Implement within scope | Tests passing, 80%+ coverage |
+| 8 | `grabby audit <file>` | Audit artifact created |
+
+**Alternative intake methods:**
+- `grabby orchestrate "request"` - Full persona handoff (Archie → Val → Sage → Dev → Iris)
+- `grabby quick` - Fast-track for changes < 3 files
+- `grabby agent architect CC` - Interactive contract creation
 
 ## Canonical Artifacts
 
-- `contracts/<ID>.fc.md`
-- `contracts/<ID>.plan.yaml`
-- `contracts/<ID>.audit.md`
+- `contracts/<ID>.fc.md` - Feature contract (source of truth)
+- `contracts/<ID>.plan.yaml` - Execution plan
+- `contracts/<ID>.audit.md` - Compliance audit
 
-Standalone ticket markdown files are deprecated. Use the feature contract as the canonical repo artifact.
+Standalone ticket files are deprecated. The feature contract is the canonical artifact.
+
+## Enforcement
+
+Install git hooks for automatic enforcement:
+```bash
+grabby init-hooks
+export GRABBY_STRICT=1  # Optional: block commits without contracts
+```
+
+Release tag rule (repo-local):
+- Release tags are blocked unless `contracts/` is empty.
+- Close/archive all active contracts before pushing a release tag.
