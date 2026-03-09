@@ -1,0 +1,716 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Grabby Interactive User Guide</title>
+  <style>
+    :root {
+      --bg: #f3f7fa;
+      --bg-radial-a: #dbf2ec;
+      --bg-radial-b: #e5eefc;
+      --panel: #ffffff;
+      --panel-soft: #f8fbfd;
+      --text: #112433;
+      --muted: #5a6f80;
+      --line: #d6e2ec;
+      --sidebar-bg-top: #f8fdfa;
+      --sidebar-bg-bottom: #eef6f8;
+      --brand: #0f766e;
+      --brand-deep: #155e75;
+      --hero-grad: linear-gradient(120deg, #0f766e 0%, #155e75 48%, #1d4ed8 100%);
+      --accent: #ea580c;
+      --ok: #166534;
+      --warn: #9a3412;
+      --tip-bg: #fff8ec;
+      --tip-line: #f4d8a7;
+      --tip-text: #6f4f16;
+      --nav-hover-bg: #e8f5f2;
+      --nav-hover-line: #c4e6dd;
+      --nav-hover-text: #0e5a53;
+      --chip-bg: #edf8f5;
+      --chip-line: #cbe0da;
+      --chip-text: #0d5f57;
+      --btn-bg: #fff;
+      --btn-line: #c7d7e3;
+      --btn-text: #223344;
+      --btn-active-bg: #edf9f6;
+      --btn-active-line: #9ecfbe;
+      --btn-active-text: #0f5f56;
+      --quick-bg: #f7fbff;
+      --quick-line: #d7e5f4;
+      --quick-hover: #ecf5ff;
+      --quick-title: #12314c;
+      --dot-bg: #d9eee9;
+      --dot-line: #b8dcd2;
+      --dot-text: #0f5e56;
+      --ok-bg: #eefaf2;
+      --ok-line: #bde7cb;
+      --warn-bg: #fff7ed;
+      --warn-line: #fed7aa;
+      --mono: "Cascadia Code", "Consolas", "Menlo", monospace;
+      --sans: "Segoe UI", "Inter", "Trebuchet MS", sans-serif;
+      --radius: 14px;
+      --shadow: 0 10px 32px rgba(15, 23, 42, 0.08);
+    }
+    :root[data-theme="dark"] {
+      --bg: #0b1520;
+      --bg-radial-a: #0f2a27;
+      --bg-radial-b: #1a2338;
+      --panel: #121d2a;
+      --panel-soft: #162434;
+      --text: #e7eef8;
+      --muted: #9ab0c7;
+      --line: #24384c;
+      --sidebar-bg-top: #0f1a26;
+      --sidebar-bg-bottom: #0d1b2c;
+      --brand: #0f766e;
+      --brand-deep: #155e75;
+      --hero-grad: linear-gradient(120deg, #0d5e58 0%, #124e61 48%, #163f8f 100%);
+      --tip-bg: #2c2417;
+      --tip-line: #6f5728;
+      --tip-text: #f2d9aa;
+      --nav-hover-bg: #183042;
+      --nav-hover-line: #28506a;
+      --nav-hover-text: #b4ebdc;
+      --chip-bg: #153239;
+      --chip-line: #295565;
+      --chip-text: #b6e8dc;
+      --btn-bg: #162434;
+      --btn-line: #2a445a;
+      --btn-text: #d5e4f2;
+      --btn-active-bg: #16363c;
+      --btn-active-line: #2c666f;
+      --btn-active-text: #b5e9dc;
+      --quick-bg: #142232;
+      --quick-line: #28465f;
+      --quick-hover: #1a3148;
+      --quick-title: #dceafe;
+      --dot-bg: #214050;
+      --dot-line: #2c5a72;
+      --dot-text: #d4eefb;
+      --ok-bg: #183528;
+      --ok-line: #2c6f53;
+      --warn-bg: #3a2615;
+      --warn-line: #7a4b28;
+      --ok: #7de3a2;
+      --warn: #ffbf86;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: var(--sans);
+      color: var(--text);
+      background:
+        radial-gradient(1000px 500px at -10% -20%, var(--bg-radial-a) 0%, transparent 65%),
+        radial-gradient(950px 500px at 110% -15%, var(--bg-radial-b) 0%, transparent 60%),
+        var(--bg);
+      line-height: 1.5;
+    }
+    .app { display: grid; grid-template-columns: 300px 1fr; min-height: 100vh; }
+    aside {
+      position: sticky; top: 0; height: 100vh; overflow: auto;
+      border-right: 1px solid var(--line);
+      background: linear-gradient(180deg, var(--sidebar-bg-top) 0%, var(--sidebar-bg-bottom) 100%);
+      padding: 18px 16px;
+    }
+    .brand {
+      background: linear-gradient(135deg, var(--brand) 0%, var(--brand-deep) 100%);
+      color: #fff; border-radius: 12px; padding: 14px; box-shadow: var(--shadow);
+      margin-bottom: 14px;
+    }
+    .brand-top { display: flex; align-items: center; gap: 10px; }
+    .brand-top img {
+      width: 40px; height: 40px; border-radius: 10px;
+      background: #ffffff; padding: 5px; object-fit: contain;
+      border: 1px solid rgba(255,255,255,0.45);
+      box-shadow: 0 6px 12px rgba(15, 23, 42, 0.2);
+    }
+    .brand h1 { margin: 0; font-size: 1.15rem; }
+    .brand p { margin: 6px 0 0; font-size: 0.9rem; color: rgba(255,255,255,0.93); }
+    nav a {
+      display: block; text-decoration: none; color: var(--text); font-size: 0.94rem;
+      padding: 9px 10px; border-radius: 8px; margin-bottom: 4px; border: 1px solid transparent;
+    }
+    nav a:hover, nav a.active { background: var(--nav-hover-bg); border-color: var(--nav-hover-line); color: var(--nav-hover-text); }
+    .tip {
+      margin-top: 10px; border: 1px solid var(--tip-line); background: var(--tip-bg); color: var(--tip-text);
+      border-radius: 10px; padding: 10px; font-size: 0.84rem;
+    }
+
+    main { padding: 24px; }
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+    .topbar .meta {
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+    .mode-toggle {
+      border: 1px solid var(--btn-line);
+      background: var(--btn-bg);
+      color: var(--btn-text);
+      border-radius: 8px;
+      padding: 7px 10px;
+      font-size: 0.82rem;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    .hero {
+      border-radius: 18px; padding: 24px; box-shadow: var(--shadow); color: #fff;
+      background: var(--hero-grad);
+      margin-bottom: 14px;
+    }
+    .hero-wrap { display: grid; grid-template-columns: 1fr 130px; gap: 14px; align-items: center; }
+    .hero-art { display: grid; justify-items: end; gap: 8px; }
+    .hero-art img {
+      width: 88px; height: 88px; border-radius: 14px;
+      padding: 8px; background: #ffffff; object-fit: contain;
+      border: 1px solid rgba(255,255,255,0.35);
+      box-shadow: 0 8px 18px rgba(15, 23, 42, 0.2);
+    }
+    .hero h2 { margin: 0 0 8px; font-size: 1.75rem; }
+    .hero p { margin: 0; color: rgba(255,255,255,0.94); max-width: 980px; }
+
+    .grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 14px; }
+    .card {
+      background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius);
+      box-shadow: var(--shadow); padding: 16px;
+    }
+    .span-12 { grid-column: span 12; }
+    .span-8 { grid-column: span 8; }
+    .span-6 { grid-column: span 6; }
+    .span-4 { grid-column: span 4; }
+
+    .card h3 { margin: 0 0 8px; font-size: 1.06rem; }
+    .card p { margin: 0; color: var(--muted); }
+
+    .chip { display: inline-block; margin: 5px 4px 0 0; padding: 4px 8px; border-radius: 999px; font-size: 0.78rem; border: 1px solid var(--chip-line); background: var(--chip-bg); color: var(--chip-text); }
+
+    .flow { display: grid; gap: 9px; }
+    .flow-step {
+      display: grid; grid-template-columns: 36px 1fr; gap: 10px; align-items: start;
+      border: 1px solid var(--line); border-radius: 10px; background: var(--panel-soft); padding: 11px;
+    }
+    .dot {
+      width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center;
+      border: 1px solid var(--dot-line); background: var(--dot-bg); color: var(--dot-text); font-weight: 700;
+    }
+
+    pre {
+      position: relative; margin: 8px 0 0; border-radius: 10px; overflow: auto;
+      background: #0f172a; color: #f8fafc; border: 1px solid #243047; padding: 11px;
+      font-family: var(--mono); font-size: 0.85rem;
+    }
+    .copy {
+      position: absolute; top: 8px; right: 8px; padding: 4px 8px; border-radius: 7px;
+      border: 1px solid #455b7b; background: #1f2937; color: #fff; font-size: 0.75rem; cursor: pointer;
+    }
+
+    .toolbar { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
+    input[type="search"] {
+      width: min(680px, 100%); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; font-size: 0.92rem;
+    }
+    .btn {
+      border: 1px solid var(--btn-line); border-radius: 8px; background: var(--btn-bg); padding: 8px 10px;
+      font-size: 0.83rem; color: var(--btn-text); cursor: pointer;
+    }
+    .btn.active { background: var(--btn-active-bg); border-color: var(--btn-active-line); color: var(--btn-active-text); font-weight: 600; }
+
+    .cmd-list { display: grid; gap: 8px; max-height: 520px; overflow: auto; }
+    .cmd-item { border: 1px solid var(--line); border-radius: 9px; background: var(--panel); padding: 10px; }
+    .cmd-item code { font-family: var(--mono); color: var(--quick-title); font-weight: 700; font-size: 0.85rem; }
+    .cmd-item p { margin: 4px 0 0; color: var(--muted); font-size: 0.9rem; }
+    .quick-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin-top: 14px;
+    }
+    .quick-link {
+      display: block;
+      text-decoration: none;
+      border: 1px solid var(--quick-line);
+      background: var(--quick-bg);
+      color: var(--text);
+      border-radius: 10px;
+      padding: 12px;
+      transition: 150ms ease;
+    }
+    .quick-link:hover {
+      background: var(--quick-hover);
+      transform: translateY(-1px);
+    }
+    .quick-link strong {
+      display: block;
+      color: var(--quick-title);
+      margin-bottom: 4px;
+      font-size: 0.9rem;
+    }
+    .quick-link span {
+      color: var(--muted);
+      font-size: 0.82rem;
+    }
+
+    details {
+      border: 1px solid var(--line); border-radius: 10px; background: var(--panel); padding: 10px; margin-bottom: 8px;
+    }
+    summary { font-weight: 600; cursor: pointer; }
+
+    .checklist label { display: flex; gap: 8px; align-items: center; margin: 6px 0; color: var(--muted); font-size: 0.91rem; }
+    .progress { margin-top: 8px; color: var(--muted); font-size: 0.86rem; }
+
+    .ok { border: 1px solid var(--ok-line); background: var(--ok-bg); color: var(--ok); border-radius: 10px; padding: 10px; font-size: 0.9rem; }
+    .warn { border: 1px solid var(--warn-line); background: var(--warn-bg); color: var(--warn); border-radius: 10px; padding: 10px; font-size: 0.9rem; }
+
+    footer { margin-top: 16px; text-align: center; color: var(--muted); font-size: 0.84rem; }
+
+    @media (max-width: 1080px) {
+      .app { grid-template-columns: 1fr; }
+      aside { position: static; height: auto; border-right: none; border-bottom: 1px solid var(--line); }
+      .span-8, .span-6, .span-4 { grid-column: span 12; }
+      .hero-wrap { grid-template-columns: 1fr; }
+      .hero-art { justify-items: start; }
+      .quick-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 640px) {
+      .quick-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+<div class="app">
+  <aside>
+    <div class="brand">
+      <div class="brand-top">
+        <img src="./assets/grabby/grabby_vscode.png" alt="Grabby icon">
+        <h1>Grabby User Guide</h1>
+      </div>
+      <p>Interactive setup + usage guide</p>
+    </div>
+    <nav id="nav">
+      <a href="#overview">Overview</a>
+      <a href="#quickstart">Quick Start</a>
+      <a href="#claudeflow">Claude Workflow</a>
+      <a href="#setup">Setup</a>
+      <a href="#firstday">First Day Plan</a>
+      <a href="#workflow">Daily Workflow</a>
+      <a href="#validation">Feature Validation</a>
+      <a href="#commands">Command Explorer</a>
+      <a href="#agents">Agents</a>
+      <a href="#governance">Governance</a>
+      <a href="#release">Git + Release</a>
+      <a href="#troubleshooting">Troubleshooting</a>
+    </nav>
+    <div class="tip">
+      Keep this page open while using Grabby. Use command search by keyword: <code>task</code>, <code>orchestrate</code>, <code>feature</code>, <code>audit</code>, <code>preflight</code>.
+    </div>
+  </aside>
+
+  <main>
+    <div class="topbar">
+      <div class="meta">User guide organized by usage order: setup -> execute -> release.</div>
+      <button id="themeToggle" class="mode-toggle" type="button">Theme: Light</button>
+    </div>
+    <section id="overview" class="hero">
+      <div class="hero-wrap">
+        <div>
+          <h2>Grabby: Complete Static Guide</h2>
+          <p>
+            Grabby is a CLI-first framework for AI-assisted software development. It converts plain-language requests into structured
+            feature contracts, then runs them through validation, planning, backlog generation, prompt bundling, approval, execution,
+            and post-run audit. This guide follows the main path: use your preferred LLM service and run Grabby locally for predictable,
+            reviewable, repeatable delivery.
+          </p>
+        </div>
+        <div class="hero-art">
+          <img src="./assets/grabby/grabby_vscode.png" alt="Grabby icon">
+        </div>
+      </div>
+    </section>
+
+    <section id="quickstart" class="card">
+      <h3>Quick Start Navigation</h3>
+      <p>Use this path for first-time onboarding.</p>
+      <div class="quick-grid">
+        <a class="quick-link" href="#setup"><strong>1. Setup</strong><span>Install Grabby and initialize your repo.</span></a>
+        <a class="quick-link" href="#claudeflow"><strong>2. Claude Contract</strong><span>Prompt Claude to generate your contract draft.</span></a>
+        <a class="quick-link" href="#workflow"><strong>3. Grabby Gates</strong><span>Validate, plan, approve, execute, audit.</span></a>
+        <a class="quick-link" href="#release"><strong>4. Release</strong><span>Follow development -> main release process.</span></a>
+      </div>
+    </section>
+
+    <section id="claudeflow" class="card" style="margin-top:14px;">
+      <h3>Main Workflow: Prompt Claude First</h3>
+      <p style="color:var(--muted); margin-top:0;">Primary path for this repo: create the contract draft in Claude, then enforce delivery with Grabby.</p>
+      <div class="flow">
+        <div class="flow-step"><div class="dot">1</div><div><strong>Prompt Claude to draft the contract</strong><pre><button class="copy">Copy</button>You are helping me create a Grabby feature contract.
+
+Request: &lt;describe the feature request here&gt;
+
+Output requirements:
+- Return a complete feature contract markdown.
+- Include clear scope, non-goals, directories, files, dependencies, testing, and done-when criteria.
+- Keep the contract implementation-ready and bounded.
+
+Use filename: contracts/&lt;request-slug&gt;.fc.md</pre></div></div>
+        <div class="flow-step"><div class="dot">2</div><div><strong>Save contract locally</strong><pre><button class="copy">Copy</button># Save Claude output into:
+# contracts/&lt;request-slug&gt;.fc.md</pre></div></div>
+        <div class="flow-step"><div class="dot">3</div><div><strong>Run Grabby governance gates</strong><pre><button class="copy">Copy</button>grabby validate contracts/&lt;request-slug&gt;.fc.md
+grabby plan contracts/&lt;request-slug&gt;.fc.md
+grabby approve contracts/&lt;request-slug&gt;.fc.md</pre></div></div>
+      </div>
+      <details style="margin-top:10px;">
+        <summary>Good vs Bad Claude prompt</summary>
+        <p style="margin:8px 0 0; color:var(--muted);"><strong>Good:</strong> clear scope, strict output format, explicit constraints.</p>
+        <pre><button class="copy">Copy</button>Create a Grabby feature contract for this request:
+"Add login regression tests for redirect edge cases."
+
+Output only valid contract markdown for:
+contracts/login-redirect-regression.fc.md
+
+Requirements:
+- Include objective, scope, non-goals, directories, files table, dependencies, testing, and done-when.
+- Keep scope bounded to tests and related auth redirect logic.
+- Do not propose broad refactors or unrelated enhancements.</pre>
+        <p style="margin:8px 0 0; color:var(--muted);"><strong>Bad:</strong> vague request with no boundaries or expected structure.</p>
+        <pre><button class="copy">Copy</button>Make a contract for login.</pre>
+      </details>
+    </section>
+
+    <section id="setup" class="card" style="margin-top:14px;">
+      <h3>Setup (Highest Priority)</h3>
+      <div class="ok" style="margin-bottom:8px;">
+        Supported LLM services: ChatGPT, Claude, Gemini, Copilot, or any equivalent provider.
+        Grabby is provider-agnostic and runs locally in your repo.
+      </div>
+      <div class="flow">
+        <div class="flow-step"><div class="dot">1</div><div><strong>Use your existing LLM service</strong><pre><button class="copy">Copy</button># Keep using your preferred LLM client/service.
+# Grabby runs locally in your repo to enforce workflow and governance.</pre></div></div>
+        <div class="flow-step"><div class="dot">2</div><div><strong>Install Grabby CLI (standard user path)</strong><pre><button class="copy">Copy</button>npm install -g grabby
+grabby --help</pre></div></div>
+        <div class="flow-step"><div class="dot">3</div><div><strong>Initialize your repo</strong><pre><button class="copy">Copy</button>cd your-project
+grabby init
+grabby init-hooks</pre></div></div>
+        <div class="flow-step"><div class="dot">4</div><div><strong>Run setup baseline if prompted</strong><pre><button class="copy">Copy</button>grabby setup --quick
+# or manual baseline flow
+# grabby validate SETUP-BASELINE.fc.md
+# grabby plan SETUP-BASELINE.fc.md
+# grabby approve SETUP-BASELINE.fc.md
+# grabby complete-baseline SETUP-BASELINE</pre></div></div>
+      </div>
+      <details>
+        <summary>Contributor/developer install from source</summary>
+        <pre><button class="copy">Copy</button>git clone https://github.com/Raccoon-King/ai-feature-contracts.git
+cd ai-feature-contracts
+npm install
+npm link
+grabby --help</pre>
+      </details>
+      <details>
+        <summary>Offline / airgapped install</summary>
+        <pre><button class="copy">Copy</button># connected machine
+npm ci
+npm pack
+
+# airgapped machine
+npm install -g ./grabby-2.0.0.tgz
+grabby --help</pre>
+      </details>
+    </section>
+
+    <section id="firstday" class="card" style="margin-top:14px;">
+      <h3>First Day Plan (User-Focused)</h3>
+      <div class="flow">
+        <div class="flow-step"><div class="dot">A</div><div><strong>Create first contract in Claude</strong><pre><button class="copy">Copy</button># Use the Claude template above to generate:
+# contracts/login-flow-regression.fc.md</pre></div></div>
+        <div class="flow-step"><div class="dot">B</div><div><strong>Pass governance gates</strong><pre><button class="copy">Copy</button>grabby validate contracts/&lt;ID&gt;.fc.md
+grabby plan contracts/&lt;ID&gt;.fc.md
+grabby approve contracts/&lt;ID&gt;.fc.md</pre></div></div>
+        <div class="flow-step"><div class="dot">C</div><div><strong>Execute + verify</strong><pre><button class="copy">Copy</button>grabby execute contracts/&lt;ID&gt;.fc.md
+grabby session contracts/&lt;ID&gt;.fc.md --check
+grabby audit contracts/&lt;ID&gt;.fc.md</pre></div></div>
+      </div>
+    </section>
+
+    <div class="grid" id="validation" style="margin-top:14px;">
+      <section class="card span-8">
+        <h3>Feature Validation Source</h3>
+        <div class="ok">
+          Guide coverage verified against local feature history artifacts:<br>
+          <code>.grabby/features.index.json</code>, <code>.grabby/history/history-001.yaml</code>, <code>.grabby/history/history-002.yaml</code>.
+        </div>
+        <p style="margin-top:8px;">Snapshot timestamp: <strong>2026-03-08T18:27:14.976Z</strong>. Archived feature count: <strong>126</strong>.</p>
+      </section>
+      <section class="card span-4">
+        <h3>Coverage Areas</h3>
+        <span class="chip">Core + Setup</span>
+        <span class="chip">Task/Ticket/Orchestrate</span>
+        <span class="chip">Agent Workflow</span>
+        <span class="chip">Feature Lifecycle</span>
+        <span class="chip">Validation + Audit</span>
+        <span class="chip">Git Safety</span>
+        <span class="chip">Git + Release Policy</span>
+      </section>
+    </div>
+
+    <section id="workflow" class="card" style="margin-top:14px;">
+      <h3>Daily Workflow</h3>
+      <p style="color:var(--muted); margin-top:0;">Default path for most work requests.</p>
+      <div class="flow">
+        <div class="flow-step"><div class="dot">A</div><div><strong>Contract Draft via Claude</strong><pre><button class="copy">Copy</button># Prompt Claude with the template above.
+# Save output as contracts/&lt;request-slug&gt;.fc.md</pre></div></div>
+        <div class="flow-step"><div class="dot">B</div><div><strong>Contract Gate</strong><pre><button class="copy">Copy</button>grabby validate contracts/&lt;ID&gt;.fc.md
+grabby plan contracts/&lt;ID&gt;.fc.md
+grabby approve contracts/&lt;ID&gt;.fc.md</pre></div></div>
+        <div class="flow-step"><div class="dot">C</div><div><strong>Execute + Verify</strong><pre><button class="copy">Copy</button>grabby execute contracts/&lt;ID&gt;.fc.md
+grabby session contracts/&lt;ID&gt;.fc.md --check
+grabby audit contracts/&lt;ID&gt;.fc.md</pre></div></div>
+        <div class="flow-step"><div class="dot">D</div><div><strong>Close Feature</strong><pre><button class="copy">Copy</button>grabby feature:close &lt;id&gt;
+grabby features:refresh</pre></div></div>
+      </div>
+    </section>
+
+    <section id="commands" class="card" style="margin-top:14px;">
+      <h3>Command Explorer (LLM-First Surfaces)</h3>
+      <div class="toolbar">
+        <input id="search" type="search" placeholder="Search command or capability (e.g. task, orchestrate, setup, feature gc)">
+        <button class="btn active" data-filter="all">All</button>
+        <button class="btn" data-filter="core">Core</button>
+        <button class="btn" data-filter="workflow">Workflow</button>
+        <button class="btn" data-filter="agents">Agents</button>
+        <button class="btn" data-filter="git">Git</button>
+        <button class="btn" data-filter="governance">Governance</button>
+        <button class="btn" data-filter="lifecycle">Lifecycle</button>
+      </div>
+      <div class="cmd-list" id="cmdList"></div>
+    </section>
+
+    <div class="grid" style="margin-top:14px;">
+      <section id="agents" class="card span-6">
+        <h3>Agents + Persona Routing</h3>
+        <p>Ari -> Archie -> Val -> Sage -> Dev -> Tess -> Iris, with Flash for quick bounded paths and Conductor for orchestration.</p>
+        <pre><button class="copy">Copy</button>grabby agent list
+grabby agent architect
+grabby orchestrate "request"
+grabby party
+grabby workflow &lt;name&gt;</pre>
+      </section>
+
+      <section id="governance" class="card span-6">
+        <h3>Governance and Safety Gates</h3>
+        <div class="warn"><strong>Rule:</strong> do not bypass validate/plan/approve gates before execute.</div>
+        <pre><button class="copy">Copy</button>grabby context:lint
+grabby policy:check
+grabby guard contracts/&lt;ID&gt;.fc.md
+grabby session --check-all</pre>
+      </section>
+    </div>
+
+    <section id="release" class="card" style="margin-top:14px;">
+      <h3>Git + Release Process</h3>
+      <p style="color:var(--muted); margin-top:0;">Current repo policy: merge normal work to <code>development</code>; release through <code>main</code>.</p>
+      <div class="flow">
+        <div class="flow-step"><div class="dot">1</div><div><strong>Normal development</strong><pre><button class="copy">Copy</button>git checkout development
+git pull origin development
+# feature branch from development
+# PR target: development</pre></div></div>
+        <div class="flow-step"><div class="dot">2</div><div><strong>Release sync</strong><pre><button class="copy">Copy</button>git checkout main
+git merge --ff-only development
+$env:GRABBY_RELEASE="1"; git push origin main</pre></div></div>
+        <div class="flow-step"><div class="dot">3</div><div><strong>Tag release (from main)</strong><pre><button class="copy">Copy</button>git tag -a vX.Y.Z -m "release"
+git push origin vX.Y.Z</pre></div></div>
+      </div>
+      <details>
+        <summary>Release tag pre-push gate</summary>
+        <p>Tag push is blocked if <code>contracts/</code> contains active <code>.fc.md</code> files.</p>
+      </details>
+    </section>
+
+    <section id="troubleshooting" class="card" style="margin-top:14px;">
+      <h3>Troubleshooting</h3>
+      <details>
+        <summary>"Bootstrap gate active"</summary>
+        <p>Complete setup baseline flow or run <code>grabby setup --quick</code>.</p>
+      </details>
+      <details>
+        <summary>"Execution blocked"</summary>
+        <p>Run <code>validate</code> -> <code>plan</code> -> <code>approve</code> for the target contract before <code>execute</code>.</p>
+      </details>
+      <details>
+        <summary>Hooks not applying</summary>
+        <p>Reinstall hooks: <code>grabby init-hooks</code>.</p>
+      </details>
+      <details>
+        <summary>Coverage or generated files are noisy</summary>
+        <p>Do not PR generated local noise unless intentional. Re-check with <code>git status</code> before committing.</p>
+      </details>
+    </section>
+
+    <section class="card" style="margin-top:14px;">
+      <h3>Interactive Checklist</h3>
+      <div class="checklist" id="checklist">
+        <label><input type="checkbox" data-id="1"> Grabby installed and command help accessible</label>
+        <label><input type="checkbox" data-id="2"> Repo initialized and hooks installed</label>
+        <label><input type="checkbox" data-id="3"> Can complete full contract lifecycle</label>
+        <label><input type="checkbox" data-id="4"> Understand development -> main release flow</label>
+        <label><input type="checkbox" data-id="5"> Can run validation, policy, and audit checks</label>
+      </div>
+      <div class="progress" id="progress">0 / 5 complete</div>
+    </section>
+
+    <footer>
+      Source validation: .grabby feature history + current CLI help surfaces. Keep this guide versioned with Grabby updates.
+    </footer>
+  </main>
+</div>
+
+<script>
+  const commands = [
+    ["grabby init", "Initialize project scaffolding", "core"],
+    ["grabby init-hooks", "Install git hooks", "core"],
+    ["grabby setup", "Run setup flow", "core"],
+    ["grabby setup --quick", "Auto-complete setup baseline", "core"],
+    ["grabby update", "Check/apply CLI updates", "core"],
+    ["grabby help", "Command catalog", "core"],
+
+    ["grabby task \"request\"", "Interview-driven request breakdown", "workflow"],
+    ["grabby ticket \"request\"", "Generate structured ticket", "workflow"],
+    ["grabby orchestrate \"request\"", "Full persona handoff", "workflow"],
+    ["grabby create <name>", "Create contract", "workflow"],
+    ["grabby validate <file>", "Validate contract", "workflow"],
+    ["grabby plan <file>", "Generate plan", "workflow"],
+    ["grabby backlog <file>", "Generate backlog", "workflow"],
+    ["grabby approve <file>", "Approve for execution", "workflow"],
+    ["grabby execute <file>", "Execute phase instructions", "workflow"],
+    ["grabby audit <file>", "Post-execution audit", "workflow"],
+    ["grabby run <file>", "Alias for execute", "workflow"],
+    ["grabby quick", "Quick flow for small bounded change", "workflow"],
+    ["grabby session <file>", "Inspect session artifact", "workflow"],
+    ["grabby session --check-all", "Check all session artifacts", "workflow"],
+
+    ["grabby agent list", "List available agents", "agents"],
+    ["grabby agent <name>", "Run one agent", "agents"],
+    ["grabby agent:lint", "Validate agent definitions", "agents"],
+    ["grabby party", "Show full team flow", "agents"],
+    ["grabby workflow <name>", "View workflow details", "agents"],
+    ["grabby resume", "Resume saved workflow", "agents"],
+
+    ["grabby git:status", "Show branch/upstream summary", "git"],
+    ["grabby git:sync", "Fetch and show divergence", "git"],
+    ["grabby git:start <file>", "Start contract branch", "git"],
+    ["grabby git:update", "Guarded update flow", "git"],
+    ["grabby git:preflight [file]", "Git readiness checks", "git"],
+    ["grabby start <file>", "Create branch from contract id/title", "git"],
+    ["grabby pr-template <file>", "Generate PR text", "git"],
+
+    ["grabby context:lint", "Validate context references", "governance"],
+    ["grabby policy:check", "Apply governance policy checks", "governance"],
+    ["grabby guard <file>", "Execution scope guardrail", "governance"],
+    ["grabby complete-baseline <ID>", "Mark baseline complete", "governance"],
+    ["grabby archive-baseline <ID>", "Archive baseline", "governance"],
+
+    ["grabby features:list", "List feature index", "lifecycle"],
+    ["grabby features:status <id>", "Feature status", "lifecycle"],
+    ["grabby features:refresh", "Refresh feature index", "lifecycle"],
+    ["grabby feature describe <id>", "Feature details", "lifecycle"],
+    ["grabby feature close <id>", "Archive complete feature", "lifecycle"],
+    ["grabby feature gc <action>", "Manage hanging contracts", "lifecycle"]
+  ];
+
+  let filter = "all";
+  const list = document.getElementById("cmdList");
+  const search = document.getElementById("search");
+
+  function drawCommands() {
+    const q = search.value.trim().toLowerCase();
+    const rows = commands.filter(([cmd, desc, cat]) => {
+      const a = filter === "all" || cat === filter;
+      const b = !q || cmd.toLowerCase().includes(q) || desc.toLowerCase().includes(q) || cat.toLowerCase().includes(q);
+      return a && b;
+    });
+
+    list.innerHTML = "";
+    rows.forEach(([cmd, desc, cat]) => {
+      const item = document.createElement("div");
+      item.className = "cmd-item";
+      item.innerHTML = `<code>${cmd}</code><p>${desc}</p><span class="chip">${cat}</span>`;
+      list.appendChild(item);
+    });
+    if (!rows.length) list.innerHTML = '<div class="cmd-item">No commands match your filter.</div>';
+  }
+
+  document.querySelectorAll(".btn[data-filter]").forEach((b) => {
+    b.addEventListener("click", () => {
+      document.querySelectorAll(".btn[data-filter]").forEach((x) => x.classList.remove("active"));
+      b.classList.add("active");
+      filter = b.dataset.filter;
+      drawCommands();
+    });
+  });
+  search.addEventListener("input", drawCommands);
+
+  document.querySelectorAll(".copy").forEach((btn) => {
+    btn.addEventListener("click", async () => {
+      const text = btn.parentElement.innerText.replace(/^Copy\n?/, "");
+      try {
+        await navigator.clipboard.writeText(text);
+        btn.textContent = "Copied";
+      } catch {
+        btn.textContent = "Failed";
+      }
+      setTimeout(() => btn.textContent = "Copy", 900);
+    });
+  });
+
+  const checks = [...document.querySelectorAll("#checklist input[type='checkbox']")];
+  const progress = document.getElementById("progress");
+  function syncChecks() {
+    let done = 0;
+    checks.forEach((cb) => {
+      const k = `grabby-guide-check-${cb.dataset.id}`;
+      cb.checked = localStorage.getItem(k) === "1";
+      if (cb.checked) done += 1;
+      cb.onchange = () => { localStorage.setItem(k, cb.checked ? "1" : "0"); syncChecks(); };
+    });
+    progress.textContent = `${done} / ${checks.length} complete`;
+  }
+
+  const navLinks = [...document.querySelectorAll("#nav a")];
+  const themeToggle = document.getElementById("themeToggle");
+
+  function applyTheme(theme) {
+    document.documentElement.setAttribute("data-theme", theme);
+    themeToggle.textContent = `Theme: ${theme === "dark" ? "Dark" : "Light"}`;
+  }
+
+  const storedTheme = localStorage.getItem("grabby-docs-theme");
+  const preferredDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+  applyTheme(storedTheme || (preferredDark ? "dark" : "light"));
+  themeToggle.addEventListener("click", () => {
+    const next = document.documentElement.getAttribute("data-theme") === "dark" ? "light" : "dark";
+    localStorage.setItem("grabby-docs-theme", next);
+    applyTheme(next);
+  });
+  function syncNav() {
+    const pos = window.scrollY + 120;
+    let cur = navLinks[0];
+    navLinks.forEach((a) => {
+      const t = document.querySelector(a.getAttribute("href"));
+      if (t && t.offsetTop <= pos) cur = a;
+    });
+    navLinks.forEach((a) => a.classList.remove("active"));
+    cur.classList.add("active");
+  }
+
+  window.addEventListener("scroll", syncNav);
+  drawCommands();
+  syncChecks();
+  syncNav();
+</script>
+</body>
+</html>

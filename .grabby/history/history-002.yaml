@@ -485,4 +485,37 @@ entries:
       - lib/smart-prompts.cjs
       - tests/change-assessment.test.js
     closedAt: 2026-03-08T18:27:14.931Z
-lastUpdated: 2026-03-08T18:27:14.942Z
+  - id: FC-1773025401846
+    title: Adaptive Agent Routing by Stage and Substep
+    objective: Implement state-aware, substep-aware, confidence-aware routing so
+      Grabby selects the best agent at each step/substep while preserving
+      governance gates
+    type: FEATURE_CONTRACT
+    closedAt: 2026-03-09T04:31:48.363Z
+  - id: PROJECT-BASELINE
+    title: Project Baseline for React application
+    objective: Capture the repository baseline for this react application so future
+      feature contracts can stay aligned with the detected structure and
+      tooling.
+    type: FEATURE_CONTRACT
+    closedAt: 2026-03-09T04:31:48.575Z
+  - id: SETUP-BASELINE
+    title: Setup Validation and Project Index Baseline
+    objective: Define the deterministic setup validation and repository indexing
+      procedure that any LLM must follow after `grabby init` so governed
+      workflows star...
+    type: FEATURE_CONTRACT
+    files:
+      - contracts/SETUP-BASELINE.fc.md
+      - contracts/SETUP-BASELINE.fc.md
+      - .grabby/project-context.json
+      - contracts/README.md
+    closedAt: 2026-03-09T04:31:48.794Z
+  - id: SYSTEM-BASELINE
+    title: Grabby System Baseline
+    objective: Establish the baseline Grabby governance contract for `grabby` so
+      initialization, planning, approval, execution, and audit flows start from
+      a consi...
+    type: FEATURE_CONTRACT
+    closedAt: 2026-03-09T04:31:49.004Z
+lastUpdated: 2026-03-09T04:31:49.016Z

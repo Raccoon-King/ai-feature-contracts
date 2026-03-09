@@ -1,3 +1,6 @@
+const fs = require('fs');
+const os = require('os');
+const path = require('path');
 const { createShellHandlers } = require('../lib/interactive-shell.cjs');
 
 function createLogger() {
@@ -486,6 +489,41 @@ describe('Interactive shell', () => {
     expect(logger.lines.join('\n')).toContain('Ruleset Wizards guide importing existing standards');
 
     expect(handlers.resolveContract('demo.fc.md')).toBe('resolved:demo.fc.md');
+  });
+
+  it('renders LLM-first help when workflow.externalLlmOnly is enabled', () => {
+    const logger = createLogger();
+    const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'grabby-help-llm-first-'));
+    const previousCwd = process.cwd();
+    fs.writeFileSync(
+      path.join(tempDir, 'grabby.config.json'),
+      `${JSON.stringify({ workflow: { externalLlmOnly: true } }, null, 2)}\n`,
+      'utf8',
+    );
+
+    try {
+      process.chdir(tempDir);
+      const handlers = createShellHandlers({
+        c: createFormatter(),
+        logger,
+        runtime: {
+          resolveContract: (file) => file,
+        },
+      });
+
+      handlers.help();
+
+      const output = logger.lines.join('\n');
+      expect(output).toContain('Grabby - CLI (LLM-First Mode)');
+      expect(output).toContain('grabby task <request>');
+      expect(output).not.toContain('grabby jira');
+      expect(output).not.toContain('grabby plugin');
+      expect(output).not.toContain('grabby workspace');
+      expect(output).not.toContain('grabby tui');
+    } finally {
+      process.chdir(previousCwd);
+      fs.rmSync(tempDir, { recursive: true, force: true });
+    }
   });
 });
 
