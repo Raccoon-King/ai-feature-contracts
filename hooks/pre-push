@@ -1,0 +1,88 @@
+#!/bin/sh
+#
+# Grabby Pre-Push Hook
+# Enforces repo-local branch/release strategy:
+# - PR merge target is development (no direct non-release pushes to main)
+# - Release flow merges development -> main
+# - Release tags are cut from main only
+# - Release tags require contracts/ to be empty
+#
+# Install: grabby init-hooks
+
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[0;33m'
+NC='\033[0m'
+
+is_release_tag_push=0
+is_main_branch_push=0
+is_main_from_main_ref=0
+
+while read local_ref local_sha remote_ref remote_sha
+do
+  case "$remote_ref" in
+    refs/heads/main)
+      is_main_branch_push=1
+      if [ "$local_ref" = "refs/heads/main" ]; then
+        is_main_from_main_ref=1
+      fi
+      ;;
+    refs/tags/*)
+      is_release_tag_push=1
+      ;;
+  esac
+done
+
+# Rule 1: main updates must come from local main (release flow only)
+if [ "$is_main_branch_push" -eq 1 ] && [ "$is_main_from_main_ref" -ne 1 ]; then
+  echo "${RED}[grabby] Push to main blocked.${NC}"
+  echo "Only local main may update remote main."
+  echo "Merge work into development first, then perform release merge development -> main."
+  exit 1
+fi
+
+# Rule 2: require explicit release intent for main pushes
+if [ "$is_main_branch_push" -eq 1 ] && [ "$GRABBY_RELEASE" != "1" ]; then
+  echo "${RED}[grabby] Direct push to main blocked.${NC}"
+  echo "Repo policy: merge PRs to development."
+  echo "For release merge to main, set GRABBY_RELEASE=1 for that push."
+  echo ""
+  echo "Example:"
+  echo "  GRABBY_RELEASE=1 git push origin main"
+  exit 1
+fi
+
+# Rule 3: tag pushes must be cut from main
+if [ "$is_release_tag_push" -eq 1 ]; then
+  current_branch=$(git rev-parse --abbrev-ref HEAD 2>/dev/null)
+  if [ "$current_branch" != "main" ]; then
+    echo "${RED}[grabby] Release tag blocked.${NC}"
+    echo "Release tags must be created and pushed from main."
+    echo "Current branch: ${current_branch}"
+    exit 1
+  fi
+
+  if [ ! -d "contracts" ]; then
+    echo "${RED}[grabby] Release tag blocked: contracts/ directory not found.${NC}"
+    echo "Run from repository root with contracts present."
+    exit 1
+  fi
+
+  ACTIVE_CONTRACTS=$(ls contracts/*.fc.md 2>/dev/null)
+  if [ -n "$ACTIVE_CONTRACTS" ]; then
+    echo "${RED}[grabby] Release tag blocked.${NC}"
+    echo "contracts/ must be empty before tagging a release."
+    echo "Archive/close all active contracts first."
+    echo ""
+    echo "Remaining contracts:"
+    echo "$ACTIVE_CONTRACTS" | while read contract; do
+      [ -n "$contract" ] && echo "  - $contract"
+    done
+    exit 1
+  fi
+
+  echo "${GREEN}[grabby] Release tag gate passed: from main and contracts/ is empty.${NC}"
+fi
+
+exit 0
+
