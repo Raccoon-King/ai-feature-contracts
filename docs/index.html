@@ -1,0 +1,283 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Grabby Docs Home</title>
+  <style>
+    :root {
+      --bg: #f4f7fa;
+      --bg-radial-a: #dff3ed;
+      --bg-radial-b: #e3ebfc;
+      --card: #ffffff;
+      --text: #122331;
+      --muted: #597082;
+      --line: #d6e2ec;
+      --brand: #0f766e;
+      --brand2: #155e75;
+      --accent: #1d4ed8;
+      --hero-grad: linear-gradient(120deg, var(--brand) 0%, var(--brand2) 55%, var(--accent) 100%);
+      --radius: 14px;
+      --shadow: 0 10px 28px rgba(15, 23, 42, 0.08);
+      --btn-bg: #ebf8f3;
+      --btn-line: #b6d8ce;
+      --btn-text: #0f5e56;
+      --toggle-bg: #ffffff;
+      --toggle-line: #c7d7e3;
+      --toggle-text: #1f3850;
+      --pill-bg: #edf8f5;
+      --pill-line: #c8e1d9;
+      --pill-text: #0f5e56;
+      --sans: "Segoe UI", "Inter", "Trebuchet MS", sans-serif;
+      --mono: "Cascadia Code", "Consolas", monospace;
+    }
+    :root[data-theme="dark"] {
+      --bg: #0b1520;
+      --bg-radial-a: #112a24;
+      --bg-radial-b: #1a2438;
+      --card: #121d2a;
+      --text: #e7eef8;
+      --muted: #9ab0c7;
+      --line: #24384c;
+      --brand: #0f6b63;
+      --brand2: #154f64;
+      --accent: #1942a8;
+      --shadow: 0 10px 28px rgba(0, 0, 0, 0.35);
+      --btn-bg: #17363f;
+      --btn-line: #2f6775;
+      --btn-text: #c7ece2;
+      --toggle-bg: #162434;
+      --toggle-line: #2a445a;
+      --toggle-text: #d5e4f2;
+      --pill-bg: #17363f;
+      --pill-line: #2f6775;
+      --pill-text: #c9f1e5;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: var(--sans);
+      color: var(--text);
+      background:
+        radial-gradient(1000px 480px at -10% -15%, var(--bg-radial-a) 0%, transparent 62%),
+        radial-gradient(900px 460px at 110% -20%, var(--bg-radial-b) 0%, transparent 62%),
+        var(--bg);
+      line-height: 1.5;
+    }
+    .wrap { max-width: 1080px; margin: 0 auto; padding: 26px 18px 30px; }
+    .topbar {
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: 10px;
+    }
+    .mode-toggle {
+      border: 1px solid var(--toggle-line);
+      background: var(--toggle-bg);
+      color: var(--toggle-text);
+      border-radius: 8px;
+      padding: 7px 10px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .hero {
+      background: var(--hero-grad);
+      color: #fff;
+      border-radius: 18px;
+      padding: 24px;
+      box-shadow: var(--shadow);
+      display: grid;
+      grid-template-columns: 1fr 110px;
+      gap: 14px;
+      align-items: center;
+    }
+    .hero h1 { margin: 0 0 8px; font-size: 1.8rem; }
+    .hero p { margin: 0; color: rgba(255,255,255,0.94); }
+    .logo {
+      width: 96px; height: 96px; border-radius: 14px;
+      background: #ffffff;
+      border: 1px solid rgba(255,255,255,0.35);
+      padding: 8px;
+      object-fit: contain;
+      justify-self: end;
+      box-shadow: 0 8px 18px rgba(15, 23, 42, 0.2);
+    }
+    .grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 14px; margin-top: 14px; }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 16px;
+    }
+    .span-12 { grid-column: span 12; }
+    .span-6 { grid-column: span 6; }
+    .span-4 { grid-column: span 4; }
+    .card h2, .card h3 { margin: 0 0 8px; }
+    .card p { margin: 0; color: var(--muted); }
+    .list { margin: 8px 0 0; padding-left: 18px; color: var(--muted); }
+    .list li { margin: 4px 0; }
+    .pill {
+      display: inline-block;
+      margin: 6px 5px 0 0;
+      padding: 4px 8px;
+      border-radius: 999px;
+      background: var(--pill-bg);
+      border: 1px solid var(--pill-line);
+      color: var(--pill-text);
+      font-size: 0.78rem;
+    }
+    .actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+    .btn {
+      text-decoration: none;
+      display: inline-block;
+      border-radius: 9px;
+      border: 1px solid var(--btn-line);
+      padding: 9px 12px;
+      font-size: 0.9rem;
+      color: var(--btn-text);
+      background: var(--btn-bg);
+      font-weight: 600;
+    }
+    .btn.secondary {
+      border-color: var(--toggle-line);
+      color: var(--toggle-text);
+      background: var(--toggle-bg);
+      font-weight: 500;
+    }
+    pre {
+      margin: 8px 0 0;
+      padding: 10px;
+      border-radius: 10px;
+      background: #0f172a;
+      color: #f8fafc;
+      border: 1px solid #243047;
+      font-family: var(--mono);
+      font-size: 0.84rem;
+      overflow: auto;
+    }
+    footer { margin-top: 16px; color: var(--muted); font-size: 0.84rem; text-align: center; }
+    @media (max-width: 960px) {
+      .hero { grid-template-columns: 1fr; }
+      .logo { justify-self: start; }
+      .span-6, .span-4 { grid-column: span 12; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="topbar">
+      <button id="themeToggle" class="mode-toggle" type="button">Theme: Light</button>
+    </div>
+    <section class="hero">
+      <div>
+        <h1>Grabby Documentation Home</h1>
+        <p>
+          Grabby is a CLI-first system for contract-governed, AI-assisted software delivery.
+          It standardizes intake, planning, execution, verification, and audit so teams can move quickly with clear scope control.
+        </p>
+      </div>
+      <img class="logo" src="./assets/grabby/grabby_vscode.png" alt="Grabby logo">
+    </section>
+
+    <div class="grid">
+      <section class="card span-12">
+        <h2>About Grabby</h2>
+        <p>
+          Grabby is a CLI-first framework for AI-assisted software development. It turns a plain-language request into a structured
+          feature contract, then moves it through validation, planning, backlog generation, prompt bundling, approval, execution,
+          and post-run audit. In practice, Grabby acts as a repo-local orchestration layer for coding agents: persona-based handoffs,
+          project-specific guidance, and contract artifacts make AI work predictable, reviewable, and repeatable instead of prompt-driven guesswork.
+        </p>
+        <p style="margin-top:8px;">
+          Supported LLM services: ChatGPT, Claude, Gemini, Copilot, or any equivalent provider. Grabby is provider-agnostic.
+        </p>
+        <p style="margin-top:8px;">
+          Repo policy: this project runs in LLM-first mode, so non-workflow command families are intentionally hidden and disabled.
+        </p>
+      </section>
+
+      <section class="card span-12">
+        <h2>Purpose</h2>
+        <p>
+          Grabby helps teams convert natural-language requests into auditable work artifacts and enforce deterministic workflow gates.
+          It reduces ambiguity, improves traceability, and keeps AI-assisted implementation bounded to approved scope.
+        </p>
+        <span class="pill">Contract Driven</span>
+        <span class="pill">Agent Orchestrated</span>
+        <span class="pill">Governance Enforced</span>
+        <span class="pill">Repo Local</span>
+      </section>
+
+      <section class="card span-6">
+        <h3>Core Functions</h3>
+        <ul class="list">
+          <li>Request intake with ticket shaping (`task`, `ticket`, `orchestrate`)</li>
+          <li>Contract lifecycle (`validate` -> `plan` -> `approve` -> `execute` -> `audit`)</li>
+          <li>Agent/persona workflow (Ari, Archie, Val, Sage, Dev, Tess, Iris, Flash)</li>
+          <li>Feature lifecycle and archive (`features:*`, `feature close`, `feature gc`)</li>
+          <li>Governance checks (`context:lint`, `policy:check`, `guard`)</li>
+          <li>Git/release safety gates (`git:*`, pre-push release policy)</li>
+        </ul>
+      </section>
+
+      <section class="card span-6">
+        <h3>Who Should Use It</h3>
+        <ul class="list">
+          <li>Developers building in AI-assisted workflows</li>
+          <li>Leads who require clear scope and change traceability</li>
+          <li>Teams enforcing standardized delivery in multi-agent environments</li>
+          <li>Repos needing gated release discipline</li>
+        </ul>
+      </section>
+
+      <section class="card span-6">
+        <h3>Start Here</h3>
+        <pre># Main path: prompt Claude to draft the contract first
+# Then run Grabby governance and execution flow
+npm install -g grabby
+grabby init
+grabby init-hooks
+grabby validate contracts/<request-slug>.fc.md
+grabby plan contracts/<request-slug>.fc.md
+grabby approve contracts/<request-slug>.fc.md</pre>
+        <div class="actions">
+          <a class="btn" href="./grabby-user-guide.html">Open Interactive User Guide</a>
+          <a class="btn secondary" href="./QUICKSTART.md">Quickstart</a>
+          <a class="btn secondary" href="./EXECUTION_PROTOCOL.md">Execution Protocol</a>
+        </div>
+      </section>
+
+      <section class="card span-6">
+        <h3>Reference Docs</h3>
+        <div class="actions">
+          <a class="btn secondary" href="./CONTRACTS.md">Contracts</a>
+          <a class="btn secondary" href="./AGENT_ARCHITECTURE.md">Agent Architecture</a>
+          <a class="btn secondary" href="./LLM_INSTALL.md">LLM Install</a>
+          <a class="btn secondary" href="./RULESET_CORE.md">Ruleset Core</a>
+          <a class="btn secondary" href="./BMAD_UPGRADE.md">BMAD Upgrade</a>
+        </div>
+      </section>
+    </div>
+
+    <footer>
+      Keep this page as the docs landing page. Update when CLI surfaces or workflow policy changes.
+    </footer>
+  </div>
+  <script>
+    const themeToggle = document.getElementById("themeToggle");
+    function applyTheme(theme) {
+      document.documentElement.setAttribute("data-theme", theme);
+      themeToggle.textContent = `Theme: ${theme === "dark" ? "Dark" : "Light"}`;
+    }
+    const storedTheme = localStorage.getItem("grabby-docs-theme");
+    const preferredDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+    applyTheme(storedTheme || (preferredDark ? "dark" : "light"));
+    themeToggle.addEventListener("click", () => {
+      const next = document.documentElement.getAttribute("data-theme") === "dark" ? "light" : "dark";
+      localStorage.setItem("grabby-docs-theme", next);
+      applyTheme(next);
+    });
+  </script>
+</body>
+</html>

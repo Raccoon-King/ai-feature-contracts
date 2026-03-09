@@ -11,7 +11,27 @@ Supported developer environments:
 
 Grabby targets Node.js `>=18` and an npm-compatible installation flow on all three platforms.
 
-### From Source
+### Standard Install (Recommended)
+
+Use your preferred LLM service/client for conversation and reasoning, and run Grabby locally for contract/governance workflow.
+Supported LLM services include ChatGPT, Claude, Gemini, Copilot, and equivalent providers.
+Grabby is provider-agnostic.
+
+Windows PowerShell:
+
+```powershell
+npm install -g grabby
+grabby --help
+```
+
+macOS / Linux:
+
+```bash
+npm install -g grabby
+grabby --help
+```
+
+### From Source (Contributor Path)
 
 Windows PowerShell:
 
@@ -70,8 +90,14 @@ Notes:
 ## Quick Start
 
 LLM-focused setup instructions are in [docs/LLM_INSTALL.md](docs/LLM_INSTALL.md).
+Documentation home page is [docs/index.html](docs/index.html).
+Interactive static guide is in [docs/grabby-user-guide.html](docs/grabby-user-guide.html).
 
 ```bash
+# Use your own LLM service/client and run Grabby in your repo
+npm install -g grabby
+grabby --help
+
 # Initialize in your project
 cd your-project
 grabby init
@@ -137,6 +163,8 @@ After `grabby init`, review `contracts/PROJECT-BASELINE.fc.md`, `contracts/SYSTE
 
 ## Commands
 
+This repo runs in LLM-first mode (`workflow.externalLlmOnly=true`), so non-workflow surfaces are hidden/disabled by policy.
+
 | Command | Description |
 |---------|-------------|
 | `grabby init` | Initialize in current project |
@@ -154,7 +182,6 @@ After `grabby init`, review `contracts/PROJECT-BASELINE.fc.md`, `contracts/SYSTE
 | `grabby features:refresh` | Regenerate `.grabby/features.index.json` |
 | `grabby feature:close <id>` | Archive a completed feature into a bundle and remove active artifacts |
 | `grabby feature gc [action] [id]` | List, check, archive, or explicitly keep hanging active contracts |
-| `grabby contracts:clean-local` | Remove local-only Grabby artifacts under `.grabby/` |
 | `grabby session --check-all` | Validate all session artifacts under `contracts/` for CI |
 | `grabby approve <file>` | Approve for execution |
 | `grabby start <file> [--type feat\|fix\|chore]` | Create a branch from contract ID/title and write `**Branch:**` |
@@ -173,19 +200,8 @@ After `grabby init`, review `contracts/PROJECT-BASELINE.fc.md`, `contracts/SYSTE
 | `grabby agent <name>` | Load an agent and run its menu/workflows |
 | `grabby workflow <name>` | View workflow details directly |
 | `grabby agent:lint` | Validate built-in agent definitions and workflow references |
-| `grabby db:discover` | Scan the repo for DB, migration, and ORM/query signals |
-| `grabby db:refresh` | Generate DB discovery, schema, relations, and code access artifacts |
-| `grabby db:lint` | Validate DB artifacts and report stale or inconsistent outputs |
-| `grabby api:discover` | Discover API spec surfaces and profile-aware API governance inputs |
-| `grabby api:refresh` | Generate `.grabby/be/api.snapshot.json` from source-of-truth API specs |
-| `grabby api:lint` | Validate API snapshot freshness and breaking-change signals |
-| `grabby fe:discover` | Discover FE package/workspace surfaces and profile-aware FE governance inputs |
-| `grabby fe:refresh` | Generate FE dependency, import, and FE-to-BE usage artifacts |
-| `grabby fe:lint` | Validate FE dependency/import/API usage artifacts |
-| `grabby deps:discover` | Generate a repo-wide code dependency graph artifact |
 | `grabby party` | Show the full multi-agent handoff flow |
 | `grabby resume` | List saved workflow progress |
-| `grabby ruleset create [goal]` | Build rulesets from existing project files |
 
 ## Persona Workflow
 

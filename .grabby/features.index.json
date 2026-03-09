@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-08T18:27:14.976Z",
+  "generatedAt": "2026-03-09T04:31:49.059Z",
   "trackingMode": "tracked",
   "features": [
     {
@@ -588,6 +588,15 @@
         "tests/tui.test.js",
         "contracts/automation-setup-wizards-for-github-actions-pr-templates-hooks-and-config.fc.md"
       ]
+    },
+    {
+      "id": "FC-1773025401846",
+      "title": "Adaptive Agent Routing by Stage and Substep",
+      "status": "archived",
+      "archivePath": ".grabby/history/history-002.yaml",
+      "closedAt": "2026-03-09T04:31:48.363Z",
+      "objective": "Implement state-aware, substep-aware, confidence-aware routing so Grabby selects the best agent at each step/substep while preserving governance gates",
+      "type": "FEATURE_CONTRACT"
     },
     {
       "id": "GC-001",
@@ -1769,19 +1778,6 @@
     {
       "id": "PROJECT-BASELINE",
       "title": "Project Baseline for React application",
-      "type": "FEATURE_CONTRACT",
-      "status": "complete",
-      "branch": null,
-      "lastModifiedAt": "2026-03-08T18:16:19.569Z",
-      "contractPath": "contracts/PROJECT-BASELINE.fc.md",
-      "planPath": null,
-      "auditPath": null,
-      "archivePath": null,
-      "closedAt": null
-    },
-    {
-      "id": "PROJECT-BASELINE",
-      "title": "Project Baseline for React application",
       "status": "archived",
       "archivePath": ".grabby/history/history-002.yaml",
       "closedAt": "2026-03-08T03:15:17.856Z",
@@ -1792,6 +1788,15 @@
         "contracts/PROJECT-BASELINE.fc.md",
         "contracts/README.md"
       ]
+    },
+    {
+      "id": "PROJECT-BASELINE",
+      "title": "Project Baseline for React application",
+      "status": "archived",
+      "archivePath": ".grabby/history/history-002.yaml",
+      "closedAt": "2026-03-09T04:31:48.575Z",
+      "objective": "Capture the repository baseline for this react application so future feature contracts can stay aligned with the detected structure and tooling.",
+      "type": "FEATURE_CONTRACT"
     },
     {
       "id": "SETUP-201",
@@ -1812,19 +1817,6 @@
     {
       "id": "SETUP-BASELINE",
       "title": "Setup Validation and Project Index Baseline",
-      "type": "FEATURE_CONTRACT",
-      "status": "complete",
-      "branch": null,
-      "lastModifiedAt": "2026-03-08T18:16:19.570Z",
-      "contractPath": "contracts/SETUP-BASELINE.fc.md",
-      "planPath": null,
-      "auditPath": null,
-      "archivePath": null,
-      "closedAt": null
-    },
-    {
-      "id": "SETUP-BASELINE",
-      "title": "Setup Validation and Project Index Baseline",
       "status": "archived",
       "archivePath": ".grabby/history/history-002.yaml",
       "closedAt": "2026-03-08T03:15:18.082Z",
@@ -1838,17 +1830,19 @@
       ]
     },
     {
-      "id": "SYSTEM-BASELINE",
-      "title": "Grabby System Baseline",
+      "id": "SETUP-BASELINE",
+      "title": "Setup Validation and Project Index Baseline",
+      "status": "archived",
+      "archivePath": ".grabby/history/history-002.yaml",
+      "closedAt": "2026-03-09T04:31:48.794Z",
+      "objective": "Define the deterministic setup validation and repository indexing procedure that any LLM must follow after `grabby init` so governed workflows star...",
       "type": "FEATURE_CONTRACT",
-      "status": "complete",
-      "branch": null,
-      "lastModifiedAt": "2026-03-08T18:16:19.569Z",
-      "contractPath": "contracts/SYSTEM-BASELINE.fc.md",
-      "planPath": null,
-      "auditPath": null,
-      "archivePath": null,
-      "closedAt": null
+      "files": [
+        "contracts/SETUP-BASELINE.fc.md",
+        "contracts/SETUP-BASELINE.fc.md",
+        ".grabby/project-context.json",
+        "contracts/README.md"
+      ]
     },
     {
       "id": "SYSTEM-BASELINE",
@@ -1863,6 +1857,15 @@
         "contracts/PROJECT-BASELINE.fc.md",
         "contracts/README.md"
       ]
+    },
+    {
+      "id": "SYSTEM-BASELINE",
+      "title": "Grabby System Baseline",
+      "status": "archived",
+      "archivePath": ".grabby/history/history-002.yaml",
+      "closedAt": "2026-03-09T04:31:49.004Z",
+      "objective": "Establish the baseline Grabby governance contract for `grabby` so initialization, planning, approval, execution, and audit flows start from a consi...",
+      "type": "FEATURE_CONTRACT"
     }
   ]
 }

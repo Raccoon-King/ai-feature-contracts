@@ -1389,8 +1389,13 @@ function cleanLocalContracts() {
 
 const [cmd, ...args] = process.argv.slice(2);
 const repoConfig = loadConfig(CWD);
+const llmFirstOnlyMode = Boolean(
+  repoConfig?.workflow?.externalLlmOnly === true
+  || repoConfig?.workflow?.llmFirstOnly === true
+);
 const shouldLaunchMenuByDefault = !cmd
   && Boolean(process.stdin.isTTY && process.stdout.isTTY)
+  && !llmFirstOnlyMode
   && repoConfig?.features?.menuMode !== false;
 
 const commands = {
@@ -1525,6 +1530,38 @@ function getBootstrapGateMode() {
   return 'strict'; // default
 }
 
+const llmFirstBlockedCommands = new Set([
+  'watch',
+  'tui',
+  'db:discover',
+  'db:refresh',
+  'db:lint',
+  'api:discover',
+  'api:refresh',
+  'api:lint',
+  'fe:discover',
+  'fe:refresh',
+  'fe:lint',
+  'deps:discover',
+  'metrics',
+  'cicd',
+  'plugin',
+  'jira',
+  'serve',
+  'workspace',
+  'system',
+  'contracts',
+  'contracts:clean-local',
+  'ruleset',
+  'config',
+]);
+
+function isBlockedByLlmFirstMode(commandName) {
+  if (!llmFirstOnlyMode) return false;
+  if (!commandName) return false;
+  return llmFirstBlockedCommands.has(String(commandName).toLowerCase());
+}
+
 const bootstrapGateMode = getBootstrapGateMode();
 const bootstrapGateActive = hasSetupBaseline() && !isSetupBaselineComplete() && !isBootstrapCommandAllowed(cmd, args);
 
@@ -1548,6 +1585,18 @@ if (bootstrapGateActive && bootstrapGateMode !== 'off') {
     console.log('  grabby complete-baseline SETUP-BASELINE');
     process.exit(1);
   }
+}
+
+if (isBlockedByLlmFirstMode(cmd)) {
+  console.log(c.error('[GRABBY] Command disabled by repo policy (LLM-first mode).'));
+  console.log(c.warn('This repository is configured for external-LLM + core Grabby workflow only.\n'));
+  console.log('Use these commands instead:');
+  console.log('  grabby task "request"');
+  console.log('  grabby ticket "request"');
+  console.log('  grabby orchestrate "request"');
+  console.log('  grabby validate <file> && grabby plan <file> && grabby approve <file>');
+  console.log('  grabby execute <file> && grabby audit <file>');
+  process.exit(1);
 }
 
 // Handle async commands
