@@ -1,0 +1,136 @@
+version: 1
+contract: FC-1773025401846.fc.md
+agile:
+  enabled: true
+  levels:
+    - epic
+    - task
+    - subtask
+  maxTasksPerEpic: 5
+  maxSubtasksPerTask: 5
+  splitBy:
+    - scope
+    - files
+    - quality
+  naming:
+    epicPrefix: EPIC
+    taskPrefix: TASK
+    subtaskPrefix: SUBTASK
+epics:
+  - id: EPIC-1
+    title: Adaptive Agent Routing by Stage and Substep
+    goal: Deliver Adaptive Agent Routing by Stage and Substep within contract
+      boundaries
+    tasks:
+      - id: TASK-1
+        title: Replace keyword-first routing with state-first routing
+        splitBy: scope
+        subtasks:
+          - id: SUBTASK-1
+            title: Update state-first decision path in lib/personas.cjs
+            type: implementation
+            file: lib/personas.cjs
+            reason: Prefer workflow/artifact state over keyword hints
+          - id: SUBTASK-2
+            title: Add regression tests for state-over-keyword precedence
+            type: test
+            file: tests/personas.test.js
+            reason: Prevent future routing regressions
+      - id: TASK-2
+        title: Enforce artifact governance gates in routing
+        splitBy: scope
+        subtasks:
+          - id: SUBTASK-1
+            title: Add execution/audit gate checks in deriveWorkflowRoles
+            type: implementation
+            file: lib/personas.cjs
+            reason: Block invalid stage transitions
+          - id: SUBTASK-2
+            title: Add blocked-transition integration tests
+            type: test
+            file: tests/integration/persona-handoff.test.js
+            reason: Verify governance enforcement in full workflow
+      - id: TASK-3
+        title: Add substep-aware routing model
+        splitBy: scope
+        subtasks:
+          - id: SUBTASK-1
+            title: Define substep taxonomy and stage-substep owner map
+            type: implementation
+            file: lib/personas.cjs
+            reason: Enable specialist routing at substep level
+          - id: SUBTASK-2
+            title: Add route matrix tests for all supported substeps
+            type: test
+            file: tests/personas.test.js
+            reason: Ensure deterministic stage/substep routing
+      - id: TASK-4
+        title: Add confidence scoring and fallback routing
+        splitBy: scope
+        subtasks:
+          - id: SUBTASK-1
+            title: Return confidence and fallback metadata from router
+            type: implementation
+            file: lib/personas.cjs
+            reason: Support safe fallback behavior
+          - id: SUBTASK-2
+            title: Add low-confidence fallback tests
+            type: test
+            file: tests/personas.test.js
+            reason: Guarantee analyst fallback on uncertainty
+      - id: TASK-5
+        title: Add routing memory and outcome feedback
+        splitBy: scope
+        subtasks:
+          - id: SUBTASK-1
+            title: Create routing memory persistence module
+            type: implementation
+            file: lib/routing-memory.cjs
+            reason: Persist prior routing outcomes under .grabby/metrics
+          - id: SUBTASK-2
+            title: Integrate memory signals into persona selection
+            type: implementation
+            file: lib/personas.cjs
+            reason: Improve selection quality over time
+      - id: TASK-6
+        title: Add re-evaluation checkpoints after major transitions
+        splitBy: scope
+        subtasks:
+          - id: SUBTASK-1
+            title: Recompute owner after contract, validation, plan, execution, and verification checkpoints
+            type: implementation
+            file: lib/interactive-workflows.cjs
+            reason: Ensure persona updates with newest artifact state
+          - id: SUBTASK-2
+            title: Add checkpoint transition tests
+            type: test
+            file: tests/integration/persona-handoff.test.js
+            reason: Confirm re-routing across major workflow phases
+      - id: TASK-7
+        title: Expand tests for known misrouting scenarios
+        splitBy: scope
+        subtasks:
+          - id: SUBTASK-1
+            title: Add high-risk regression and multi-file bug-fix routing tests
+            type: test
+            file: tests/personas.test.js
+            reason: Cover known misrouting patterns
+          - id: SUBTASK-2
+            title: Add security-sensitive and tiny-fix quick-flow boundary tests
+            type: test
+            file: tests/personas.test.js
+            reason: Keep quick-flow narrowly scoped
+      - id: TASK-8
+        title: Add routing observability and explainability
+        splitBy: scope
+        subtasks:
+          - id: SUBTASK-1
+            title: Emit routing decision trace and reasons in CLI output
+            type: implementation
+            file: lib/interactive-workflows.cjs
+            reason: Make handoff reasoning transparent
+          - id: SUBTASK-2
+            title: Document updated routing logic and debug usage
+            type: implementation
+            file: docs/AGENT_ARCHITECTURE.md
+            reason: Keep operator guidance current

@@ -95,6 +95,26 @@ violate governance gates.
 - Do not route audit before implementation is complete
 - Use quick flow only for genuinely bounded changes
 
+## Decision Signals
+
+Routing decisions now follow a strict precedence order:
+
+1. Artifact and governance state (hard gate)
+2. Stage/substep mapping (requirements, scope, risk, planning, execution, verification, audit)
+3. Keyword hints (soft signal only)
+4. Confidence fallback (route to analyst when confidence is low)
+
+The router emits decision metadata including `reason`, `confidence`, `substep`,
+and `blockedTransitions` so CLI surfaces can explain why a persona was selected.
+
+## Routing Memory
+
+Grabby persists lightweight local routing memory in `.grabby/metrics/routing-memory.json`.
+
+- Stores last successful agent by substep
+- Never stores secrets
+- Used as a preference signal only (cannot bypass governance gates)
+
 ## Migration Guidance
 
 Current recommended mapping:

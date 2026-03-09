@@ -4,6 +4,8 @@ const path = require('path');
 const {
   selectPersonaForTask,
   selectPersonaForStage,
+  inferSubstep,
+  selectPersonaForSubstep,
   deriveWorkflowRoles,
   validateAgentDefinition,
   lintAgentDefinitions,
@@ -76,13 +78,23 @@ describe('Persona selection', () => {
       request: 'implement the oauth callback flow',
     }));
     expect(selectPersonaForTask('bug regression in profile save')).toEqual(expect.objectContaining({
-      agentKey: 'quick',
-      mode: 'quick',
+      agentKey: 'dev',
+      mode: 'execution',
     }));
     expect(selectPersonaForTask('')).toEqual(expect.objectContaining({
       agentKey: 'architect',
       request: '',
     }));
+  });
+
+  it('escalates quick-flow candidates when risk signals are high', () => {
+    const persona = selectPersonaForTask('tiny fix in auth payment path', {}, {
+      quick: true,
+      securityImpact: 'high',
+      fileCount: 2,
+    });
+    expect(persona.agentKey).toBe('validator');
+    expect(persona.reason).toContain('high risk');
   });
 
   it('selects dedicated owners for explicit workflow stages', () => {
@@ -145,6 +157,64 @@ describe('Persona selection', () => {
     })).toEqual(expect.objectContaining({
       primary: expect.objectContaining({ agentKey: 'tester' }),
       next: expect.objectContaining({ agentKey: 'auditor' }),
+    }));
+  });
+
+  it('adds blocked transitions when execution or audit are requested before gates are met', () => {
+    const executionBlocked = deriveWorkflowRoles({
+      request: 'implement now',
+      hasContract: true,
+      contractStatus: 'draft',
+      hasPlan: false,
+      substep: 'implementation',
+    });
+    expect(executionBlocked.primary.agentKey).toBe('validator');
+    expect(executionBlocked.primary.blockedTransitions).toEqual(expect.arrayContaining([
+      expect.objectContaining({ stage: 'execution' }),
+    ]));
+
+    const auditBlocked = deriveWorkflowRoles({
+      request: 'prepare audit evidence',
+      hasContract: true,
+      contractStatus: 'approved',
+      hasPlan: true,
+      planApproved: true,
+      implementationComplete: true,
+      verificationComplete: false,
+      substep: 'audit_evidence',
+    });
+    expect(auditBlocked.primary.agentKey).toBe('tester');
+    expect(auditBlocked.primary.blockedTransitions).toEqual(expect.arrayContaining([
+      expect.objectContaining({ stage: 'audit' }),
+    ]));
+  });
+
+  it('uses routing memory when provided for a substep', () => {
+    const roles = deriveWorkflowRoles({
+      request: 'close test gaps',
+      hasContract: true,
+      contractStatus: 'approved',
+      hasPlan: true,
+      planApproved: true,
+      implementationComplete: true,
+      substep: 'test_gap',
+      routingMemory: {
+        lastSuccessfulAgentBySubstep: {
+          test_gap: 'tester',
+        },
+      },
+    });
+    expect(roles.primary.agentKey).toBe('tester');
+    expect(roles.primary.reason).toContain('Routing memory preferred agent');
+  });
+
+  it('infers and routes substeps directly', () => {
+    expect(inferSubstep('clarify the request')).toBe('requirements_clarification');
+    expect(inferSubstep('plan file sequencing')).toBe('file_plan');
+    expect(selectPersonaForSubstep('risk_check', { request: 'security review' })).toEqual(expect.objectContaining({
+      agentKey: 'validator',
+      confidence: expect.any(Number),
+      fallbackAgent: 'analyst',
     }));
   });
 });

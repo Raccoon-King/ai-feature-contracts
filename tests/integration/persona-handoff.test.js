@@ -116,6 +116,33 @@ describe('Persona Selection', () => {
     expect(persona.agentKey).toMatch(/auditor/i);
     expect(persona.agentName).toBe('Iris');
   });
+
+  it('should enforce gating for execution and audit checkpoints', () => {
+    const blockedExecution = personas.deriveWorkflowRoles({
+      request: 'implement this now',
+      hasContract: true,
+      contractStatus: 'draft',
+      hasPlan: false,
+      substep: 'implementation',
+    });
+    expect(blockedExecution.primary.blockedTransitions).toEqual(expect.arrayContaining([
+      expect.objectContaining({ stage: 'execution' }),
+    ]));
+
+    const blockedAudit = personas.deriveWorkflowRoles({
+      request: 'generate audit evidence',
+      hasContract: true,
+      contractStatus: 'approved',
+      hasPlan: true,
+      planApproved: true,
+      implementationComplete: true,
+      verificationComplete: false,
+      substep: 'audit_evidence',
+    });
+    expect(blockedAudit.primary.blockedTransitions).toEqual(expect.arrayContaining([
+      expect.objectContaining({ stage: 'audit' }),
+    ]));
+  });
 });
 
 // ============================================================================
