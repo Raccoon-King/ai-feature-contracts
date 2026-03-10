@@ -17,6 +17,7 @@ NC='\033[0m'
 is_release_tag_push=0
 is_main_branch_push=0
 is_main_from_main_ref=0
+release_tags=""
 
 while read local_ref local_sha remote_ref remote_sha
 do
@@ -29,6 +30,8 @@ do
       ;;
     refs/tags/*)
       is_release_tag_push=1
+      tag_name=$(echo "$remote_ref" | sed 's#refs/tags/##')
+      release_tags="$release_tags $tag_name"
       ;;
   esac
 done
@@ -82,6 +85,26 @@ if [ "$is_release_tag_push" -eq 1 ]; then
   fi
 
   echo "${GREEN}[grabby] Release tag gate passed: from main and contracts/ is empty.${NC}"
+
+  # Rule 4: require tag-specific documentation/website audit artifact
+  for tag in $release_tags; do
+    audit_file="docs/user-guide/release-audits/${tag}.md"
+    if [ ! -f "$audit_file" ]; then
+      echo "${RED}[grabby] Release tag blocked.${NC}"
+      echo "Missing required audit artifact: ${audit_file}"
+      echo "Rule: each release tag must include a docs+website audit review file."
+      exit 1
+    fi
+    if ! grep -q "Docs Reviewed: yes" "$audit_file" || ! grep -q "Website Updated: yes" "$audit_file"; then
+      echo "${RED}[grabby] Release tag blocked.${NC}"
+      echo "Audit file is incomplete: ${audit_file}"
+      echo "Required lines:"
+      echo "  Docs Reviewed: yes"
+      echo "  Website Updated: yes"
+      exit 1
+    fi
+    echo "${GREEN}[grabby] Audit gate passed for tag ${tag}:${NC} ${audit_file}"
+  done
 fi
 
 exit 0
