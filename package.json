@@ -1,6 +1,6 @@
 {
   "name": "grabby",
-  "version": "2.1.1",
+  "version": "2.2.0",
   "description": "Token-efficient feature contract system for AI-assisted development",
   "main": "bin/index.cjs",
   "bin": {
@@ -44,6 +44,14 @@
   ],
   "author": "jesse",
   "license": "MIT",
+  "homepage": "https://grabbyai-com.pages.dev",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Raccoon-King/ai-feature-contracts.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Raccoon-King/ai-feature-contracts/issues"
+  },
   "dependencies": {
     "chokidar": "^5.0.0",
     "cli-progress": "^3.12.0",
