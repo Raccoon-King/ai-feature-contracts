@@ -43,6 +43,10 @@ export GRABBY_STRICT=1  # Optional: block commits without contracts
 Release tag rule (repo-local):
 - Release tags are blocked unless `contracts/` is empty.
 - Close/archive all active contracts before pushing a release tag.
+- Release tags are blocked unless a tag-specific docs+website audit file exists at `docs/user-guide/release-audits/<tag>.md`.
+- Audit file must include:
+  - `Docs Reviewed: yes`
+  - `Website Updated: yes`
 
 ## Branch Strategy (Repo-Local)
 
@@ -58,3 +62,4 @@ Local hook enforcement (`hooks/pre-push`):
 - Blocks pushes to `main` from non-`main` refs
 - Blocks release tag pushes outside `main`
 - Blocks release tag pushes while `contracts/` contains active `.fc.md` files
+- Blocks release tag pushes missing docs+website audit confirmation for the tag

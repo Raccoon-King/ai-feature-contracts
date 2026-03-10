@@ -16,6 +16,16 @@ jobs:
       - name: Checkout source repo
         uses: actions/checkout@v4
 
+      - name: Enforce docs+website audit artifact for tag
+        if: startsWith(github.ref, 'refs/tags/')
+        run: |
+          set -euo pipefail
+          TAG="${GITHUB_REF_NAME}"
+          AUDIT_FILE="docs/user-guide/release-audits/${TAG}.md"
+          test -f "${AUDIT_FILE}"
+          grep -q "^Docs Reviewed: yes$" "${AUDIT_FILE}"
+          grep -q "^Website Updated: yes$" "${AUDIT_FILE}"
+
       - name: Checkout website repo
         uses: actions/checkout@v4
         with:
