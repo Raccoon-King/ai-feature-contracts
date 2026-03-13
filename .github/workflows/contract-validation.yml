@@ -5,11 +5,12 @@ name: Contract Validation
 
 on:
   pull_request:
+    branches: [main, development]
     paths:
       - 'contracts/**'
       - '.grabby/**'
   push:
-    branches: [main, master]
+    branches: [main, development]
     paths:
       - 'contracts/**'
 

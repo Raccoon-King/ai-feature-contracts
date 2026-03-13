@@ -2,10 +2,16 @@
 #
 # Grabby Pre-Push Hook
 # Enforces repo-local branch/release strategy:
-# - PR merge target is development (no direct non-release pushes to main)
-# - Release flow merges development -> main
-# - Release tags are cut from main only
-# - Release tags require contracts/ to be empty
+#
+#   feature/* -> development  (squash merge via PR)
+#   development -> release tag (semver bump via release workflow)
+#   release tag -> main updated (via release PR)
+#
+# Rules:
+# - No direct pushes to main (use release workflow or GRABBY_RELEASE=1)
+# - No direct pushes to development (use feature branch PRs or GRABBY_RELEASE=1)
+# - Release tags are cut from development
+# - Release tags require docs+website audit artifact
 #
 # Install: grabby init-hooks
 
@@ -16,7 +22,7 @@ NC='\033[0m'
 
 is_release_tag_push=0
 is_main_branch_push=0
-is_main_from_main_ref=0
+is_dev_branch_push=0
 release_tags=""
 
 while read local_ref local_sha remote_ref remote_sha
@@ -24,9 +30,9 @@ do
   case "$remote_ref" in
     refs/heads/main)
       is_main_branch_push=1
-      if [ "$local_ref" = "refs/heads/main" ]; then
-        is_main_from_main_ref=1
-      fi
+      ;;
+    refs/heads/development)
+      is_dev_branch_push=1
       ;;
     refs/tags/*)
       is_release_tag_push=1
@@ -36,31 +42,36 @@ do
   esac
 done
 
-# Rule 1: main updates must come from local main (release flow only)
-if [ "$is_main_branch_push" -eq 1 ] && [ "$is_main_from_main_ref" -ne 1 ]; then
-  echo "${RED}[grabby] Push to main blocked.${NC}"
-  echo "Only local main may update remote main."
-  echo "Merge work into development first, then perform release merge development -> main."
-  exit 1
-fi
-
-# Rule 2: require explicit release intent for main pushes
+# Rule 1: direct push to main requires release intent
 if [ "$is_main_branch_push" -eq 1 ] && [ "$GRABBY_RELEASE" != "1" ]; then
   echo "${RED}[grabby] Direct push to main blocked.${NC}"
-  echo "Repo policy: merge PRs to development."
-  echo "For release merge to main, set GRABBY_RELEASE=1 for that push."
+  echo "Workflow: feature/* -> development -> release tag -> main"
   echo ""
-  echo "Example:"
+  echo "To merge a release to main, use the release workflow or:"
   echo "  GRABBY_RELEASE=1 git push origin main"
   exit 1
 fi
 
-# Rule 3: tag pushes must be cut from main
+# Rule 2: direct push to development requires release intent
+# (feature work arrives via squash-merged PRs from feature branches)
+if [ "$is_dev_branch_push" -eq 1 ] && [ "$GRABBY_RELEASE" != "1" ]; then
+  current_branch=$(git rev-parse --abbrev-ref HEAD 2>/dev/null)
+  # Allow if pushing development branch itself (not a feature branch)
+  if [ "$current_branch" != "development" ]; then
+    echo "${RED}[grabby] Direct push to development from '${current_branch}' blocked.${NC}"
+    echo "Open a PR from your feature branch into development instead."
+    exit 1
+  fi
+  echo "${YELLOW}[grabby] Warning: direct push to development.${NC}"
+  echo "Preferred workflow: open a PR from your feature branch."
+fi
+
+# Rule 3: release tags must be cut from development (or main for hotfixes)
 if [ "$is_release_tag_push" -eq 1 ]; then
   current_branch=$(git rev-parse --abbrev-ref HEAD 2>/dev/null)
-  if [ "$current_branch" != "main" ]; then
+  if [ "$current_branch" != "development" ] && [ "$current_branch" != "main" ]; then
     echo "${RED}[grabby] Release tag blocked.${NC}"
-    echo "Release tags must be created and pushed from main."
+    echo "Release tags must be created from 'development' (or 'main' for hotfixes)."
     echo "Current branch: ${current_branch}"
     exit 1
   fi
@@ -84,7 +95,7 @@ if [ "$is_release_tag_push" -eq 1 ]; then
     exit 1
   fi
 
-  echo "${GREEN}[grabby] Release tag gate passed: from main and contracts/ is empty.${NC}"
+  echo "${GREEN}[grabby] Release tag gate passed: from ${current_branch}, contracts/ is empty.${NC}"
 
   # Rule 4: require tag-specific documentation/website audit artifact
   for tag in $release_tags; do
@@ -108,4 +119,3 @@ if [ "$is_release_tag_push" -eq 1 ]; then
 fi
 
 exit 0
-

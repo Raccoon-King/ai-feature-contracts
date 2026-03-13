@@ -1,0 +1,122 @@
+name: Setup Repository
+
+# Run once manually to:
+# 1. Create the 'development' branch (if missing)
+# 2. Set 'development' as the default branch
+# 3. Enable squash-merge only on the repo
+# 4. Apply branch protection to main and development
+#
+# Requirements: REPO_ADMIN_TOKEN secret with repo admin scope
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  setup:
+    name: Configure Repository Rules
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+          token: ${{ secrets.REPO_ADMIN_TOKEN || secrets.GITHUB_TOKEN }}
+
+      - name: Create development branch if missing
+        run: |
+          git fetch origin
+          if git ls-remote --exit-code origin development > /dev/null 2>&1; then
+            echo "Branch 'development' already exists on remote."
+          else
+            git checkout -b development
+            git push origin development
+            echo "Created 'development' branch."
+          fi
+
+      - name: Set default branch to development
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.REPO_ADMIN_TOKEN || secrets.GITHUB_TOKEN }}
+          script: |
+            await github.rest.repos.update({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              default_branch: 'development',
+              allow_squash_merge: true,
+              allow_merge_commit: false,
+              allow_rebase_merge: false,
+              delete_branch_on_merge: true,
+            });
+            console.log('Set default branch to development, squash-merge only, auto-delete merged branches.');
+
+      - name: Protect main branch
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.REPO_ADMIN_TOKEN || secrets.GITHUB_TOKEN }}
+          script: |
+            await github.rest.repos.updateBranchProtection({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              branch: 'main',
+              required_status_checks: {
+                strict: true,
+                contexts: ['Test Suite', 'CodeQL', 'NPM Audit'],
+              },
+              enforce_admins: false,
+              required_pull_request_reviews: {
+                dismiss_stale_reviews: true,
+                require_code_owner_reviews: false,
+                required_approving_review_count: 1,
+              },
+              restrictions: null,
+              required_linear_history: true,
+              allow_force_pushes: false,
+              allow_deletions: false,
+            });
+            console.log('Protected main branch.');
+
+      - name: Protect development branch
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.REPO_ADMIN_TOKEN || secrets.GITHUB_TOKEN }}
+          script: |
+            await github.rest.repos.updateBranchProtection({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              branch: 'development',
+              required_status_checks: {
+                strict: true,
+                contexts: ['Test Suite'],
+              },
+              enforce_admins: false,
+              required_pull_request_reviews: {
+                dismiss_stale_reviews: true,
+                require_code_owner_reviews: false,
+                required_approving_review_count: 1,
+              },
+              restrictions: null,
+              required_linear_history: true,
+              allow_force_pushes: false,
+              allow_deletions: false,
+            });
+            console.log('Protected development branch.');
+
+      - name: Summary
+        run: |
+          echo "## Repository Setup Complete" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Setting | Value |" >> $GITHUB_STEP_SUMMARY
+          echo "|---------|-------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Default branch | development |" >> $GITHUB_STEP_SUMMARY
+          echo "| Merge strategy | Squash only |" >> $GITHUB_STEP_SUMMARY
+          echo "| main protection | PR required, 1 review, linear history |" >> $GITHUB_STEP_SUMMARY
+          echo "| development protection | PR required, 1 review, linear history |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Branch Flow" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          echo "feature/* ──(squash PR)──> development ──(release workflow)──> v*.*.* tag ──(PR)──> main" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
