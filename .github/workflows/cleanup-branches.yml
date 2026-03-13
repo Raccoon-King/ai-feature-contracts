@@ -1,0 +1,95 @@
+name: Cleanup Merged Branches
+
+on:
+  pull_request:
+    types: [closed]
+    branches: [development, main]
+
+permissions:
+  contents: write
+
+jobs:
+  delete-head-branch:
+    name: Delete merged PR branch
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    steps:
+      - name: Delete head branch
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const branch = context.payload.pull_request.head.ref;
+            const protected = ['main', 'development'];
+            if (protected.includes(branch)) {
+              console.log(`Skipping protected branch: ${branch}`);
+              return;
+            }
+            try {
+              await github.rest.git.deleteRef({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                ref: `heads/${branch}`,
+              });
+              console.log(`Deleted branch: ${branch}`);
+            } catch (err) {
+              if (err.status === 422) {
+                console.log(`Branch already deleted: ${branch}`);
+              } else {
+                throw err;
+              }
+            }
+
+  sweep-stale-branches:
+    name: Sweep other merged branches
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    steps:
+      - name: Delete all branches already merged into development or main
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const protected = new Set(['main', 'development']);
+            const { data: branches } = await github.rest.repos.listBranches({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              per_page: 100,
+            });
+
+            for (const branch of branches) {
+              if (protected.has(branch.name)) continue;
+
+              // Check if merged into development
+              try {
+                await github.rest.repos.compareCommits({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  base: branch.name,
+                  head: 'development',
+                });
+                // If ahead_by == 0 the branch tip is reachable from development
+                // compareCommits base..head: status == 'ahead' or 'identical' means merged
+              } catch (_) { continue; }
+
+              const { data: cmp } = await github.rest.repos.compareCommits({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                base: 'development',
+                head: branch.name,
+              }).catch(() => ({ data: null }));
+
+              if (!cmp) continue;
+
+              // Branch is merged if development is ahead of it (behind_by == 0 for the branch)
+              if (cmp.behind_by === 0) {
+                try {
+                  await github.rest.git.deleteRef({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    ref: `heads/${branch.name}`,
+                  });
+                  console.log(`Swept merged branch: ${branch.name}`);
+                } catch (err) {
+                  console.log(`Could not delete ${branch.name}: ${err.message}`);
+                }
+              }
+            }

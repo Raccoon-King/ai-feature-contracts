@@ -49,8 +49,9 @@ jobs:
               allow_squash_merge: true,
               allow_merge_commit: false,
               allow_rebase_merge: false,
+              delete_branch_on_merge: true,
             });
-            console.log('Set default branch to development, squash-merge only.');
+            console.log('Set default branch to development, squash-merge only, auto-delete merged branches.');
 
       - name: Protect main branch
         uses: actions/github-script@v7
