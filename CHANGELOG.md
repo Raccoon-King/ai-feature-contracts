@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [2.2.1] - 2026-03-13
+## [2.3.1] - 2026-03-13
 
 ### Added
 - `LICENSE` file (MIT)
@@ -53,8 +53,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Token-efficient feature contract system
 - Multi-AI-agent support (Claude Code, Cline, Codex, Continue)
 
-[Unreleased]: https://github.com/Raccoon-King/ai-feature-contracts/compare/v2.2.1...HEAD
-[2.2.1]: https://github.com/Raccoon-King/ai-feature-contracts/compare/v2.2.0...v2.2.1
+[Unreleased]: https://github.com/Raccoon-King/ai-feature-contracts/compare/v2.3.1...HEAD
+[2.3.1]: https://github.com/Raccoon-King/ai-feature-contracts/compare/v2.2.0...v2.3.1
 [2.2.0]: https://github.com/Raccoon-King/ai-feature-contracts/compare/v2.1.1...v2.2.0
 [2.1.1]: https://github.com/Raccoon-King/ai-feature-contracts/compare/v2.1.0...v2.1.1
 [2.1.0]: https://github.com/Raccoon-King/ai-feature-contracts/compare/v2.0.0...v2.1.0
