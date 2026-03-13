@@ -2,8 +2,9 @@ name: Security Hardening
 
 on:
   pull_request:
+    branches: [main, development]
   push:
-    branches: [main]
+    branches: [main, development]
 
 permissions:
   contents: read

@@ -1,0 +1,177 @@
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      bump:
+        description: 'Version bump type (auto = detect from commits)'
+        required: false
+        default: 'auto'
+        type: choice
+        options:
+          - auto
+          - patch
+          - minor
+          - major
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  release:
+    name: Create Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout development
+        uses: actions/checkout@v4
+        with:
+          ref: development
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests
+        run: npm test -- --runInBand
+
+      - name: Determine version bump
+        id: bump
+        run: |
+          BUMP="${{ github.event.inputs.bump }}"
+
+          if [ "$BUMP" = "auto" ]; then
+            LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+            if [ -z "$LAST_TAG" ]; then
+              COMMITS=$(git log --oneline)
+            else
+              COMMITS=$(git log "${LAST_TAG}..HEAD" --oneline)
+            fi
+
+            echo "Commits since last tag:"
+            echo "$COMMITS"
+
+            # Detect bump from conventional commits
+            if echo "$COMMITS" | grep -qiE '(BREAKING CHANGE|!:)'; then
+              BUMP="major"
+            elif echo "$COMMITS" | grep -qE '^[a-f0-9]+ feat(\(.+\))?!?:'; then
+              BUMP="minor"
+            else
+              BUMP="patch"
+            fi
+          fi
+
+          echo "bump=$BUMP" >> "$GITHUB_OUTPUT"
+          echo "Resolved bump type: $BUMP"
+
+      - name: Calculate new version
+        id: version
+        run: |
+          CURRENT=$(node -p "require('./package.json').version")
+          BUMP="${{ steps.bump.outputs.bump }}"
+
+          IFS='.' read -r MAJOR MINOR PATCH <<< "$CURRENT"
+
+          case "$BUMP" in
+            major) MAJOR=$((MAJOR + 1)); MINOR=0; PATCH=0 ;;
+            minor) MINOR=$((MINOR + 1)); PATCH=0 ;;
+            patch) PATCH=$((PATCH + 1)) ;;
+          esac
+
+          NEW_VERSION="${MAJOR}.${MINOR}.${PATCH}"
+          echo "current=$CURRENT" >> "$GITHUB_OUTPUT"
+          echo "new=$NEW_VERSION" >> "$GITHUB_OUTPUT"
+          echo "tag=v${NEW_VERSION}" >> "$GITHUB_OUTPUT"
+          echo "Bumping $CURRENT → $NEW_VERSION ($BUMP)"
+
+      - name: Update package.json version
+        run: |
+          NEW_VERSION="${{ steps.version.outputs.new }}"
+          node -e "
+            const fs = require('fs');
+            const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'));
+            pkg.version = '${NEW_VERSION}';
+            fs.writeFileSync('package.json', JSON.stringify(pkg, null, 2) + '\n');
+          "
+          echo "Updated package.json to $NEW_VERSION"
+
+      - name: Build changelog
+        id: changelog
+        run: |
+          LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+          TAG="${{ steps.version.outputs.tag }}"
+
+          if [ -z "$LAST_TAG" ]; then
+            LOG=$(git log --oneline --no-merges | head -40)
+          else
+            LOG=$(git log "${LAST_TAG}..HEAD" --oneline --no-merges)
+          fi
+
+          {
+            echo "body<<EOF"
+            echo "## What's Changed"
+            echo ""
+            echo "$LOG" | sed 's/^[a-f0-9]* /- /'
+            echo ""
+            if [ -n "$LAST_TAG" ]; then
+              echo "**Full Changelog:** https://github.com/${{ github.repository }}/compare/${LAST_TAG}...${TAG}"
+            fi
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Commit version bump
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add package.json
+          git commit -m "chore(release): bump version to ${{ steps.version.outputs.new }}"
+
+      - name: Create and push tag
+        run: |
+          TAG="${{ steps.version.outputs.tag }}"
+          git tag -a "$TAG" -m "Release $TAG"
+          git push origin development
+          git push origin "$TAG"
+
+      - name: Create GitHub Release
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const tag = '${{ steps.version.outputs.tag }}';
+            const body = `${{ steps.changelog.outputs.body }}`;
+            await github.rest.repos.createRelease({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              tag_name: tag,
+              name: `Release ${tag}`,
+              body,
+              draft: false,
+              prerelease: false,
+            });
+            console.log(`Created release ${tag}`);
+
+      - name: Open PR to merge development into main
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const version = '${{ steps.version.outputs.new }}';
+            const tag = '${{ steps.version.outputs.tag }}';
+            const bump = '${{ steps.bump.outputs.bump }}';
+            const body = `${{ steps.changelog.outputs.body }}`;
+
+            const { data: pr } = await github.rest.pulls.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `release: ${tag}`,
+              head: 'development',
+              base: 'main',
+              body: `## Release ${tag}\n\nBump type: **${bump}**\n\n${body}\n\n---\n_Auto-generated by release workflow._`,
+            });
+            console.log(`Created PR #${pr.number}: ${pr.html_url}`);
