@@ -1,0 +1,36 @@
+name: Bootstrap Development Branch
+
+# Runs once when this branch is pushed to create the development branch.
+# Self-disabling: exits immediately if development already exists.
+
+on:
+  push:
+    branches:
+      - 'claude/setup-github-workflow-eeJlI'
+
+permissions:
+  contents: write
+
+jobs:
+  create-development:
+    name: Create development branch
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Create development from main (if missing)
+        run: |
+          git fetch origin
+          if git ls-remote --exit-code origin development > /dev/null 2>&1; then
+            echo "Branch 'development' already exists — nothing to do."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -b development
+          git push origin development
+          echo "Created 'development' branch from main."
