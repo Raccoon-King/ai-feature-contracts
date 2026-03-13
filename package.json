@@ -1,6 +1,6 @@
 {
   "name": "grabby",
-  "version": "2.2.0",
+  "version": "2.2.1",
   "description": "Token-efficient feature contract system for AI-assisted development",
   "main": "bin/index.cjs",
   "bin": {
@@ -15,7 +15,10 @@
     "agents/",
     "workflows/",
     "hooks/",
-    "README.md"
+    "README.md",
+    "LICENSE",
+    "CONTRIBUTING.md",
+    "CHANGELOG.md"
   ],
   "bundleDependencies": [
     "chokidar",
