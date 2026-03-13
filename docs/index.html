@@ -75,10 +75,46 @@
       background: var(--toggle-bg);
       color: var(--toggle-text);
       border-radius: 8px;
-      padding: 7px 10px;
+      padding: 7px 12px;
       font-size: 0.82rem;
       font-weight: 600;
       cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+    }
+    .mode-toggle:hover {
+      background: var(--btn-bg);
+      border-color: var(--btn-line);
+      color: var(--btn-text);
+    }
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+    .card-label {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--pill-line);
+      background: var(--pill-bg);
+      color: var(--pill-text);
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+    .version-badge {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: var(--toggle-bg);
+      color: var(--muted);
+      font-size: 0.72rem;
+      font-weight: 700;
+      font-family: var(--mono);
+      letter-spacing: 0.03em;
     }
     .hero {
       background: var(--hero-grad);
@@ -167,7 +203,7 @@
 <body>
   <div class="wrap">
     <div class="topbar">
-      <button id="themeToggle" class="mode-toggle" type="button">Theme: Light</button>
+      <button id="themeToggle" class="mode-toggle" type="button">☀ Light Mode</button>
     </div>
     <section class="hero">
       <div>
@@ -182,6 +218,10 @@
 
     <div class="grid">
       <section class="card span-12">
+        <div class="card-header">
+          <span class="card-label">What is Grabby?</span>
+          <span class="version-badge">v2.2.0</span>
+        </div>
         <h2>About Grabby</h2>
         <p>
           Grabby is a CLI-first framework for AI-assisted software development. It turns a plain-language request into a structured
@@ -268,7 +308,7 @@ grabby approve contracts/<request-slug>.fc.md</pre>
     const themeToggle = document.getElementById("themeToggle");
     function applyTheme(theme) {
       document.documentElement.setAttribute("data-theme", theme);
-      themeToggle.textContent = `Theme: ${theme === "dark" ? "Dark" : "Light"}`;
+      themeToggle.textContent = theme === "dark" ? "☾ Dark Mode" : "☀ Light Mode";
     }
     const storedTheme = localStorage.getItem("grabby-docs-theme");
     const preferredDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
