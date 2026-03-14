@@ -1,0 +1,31 @@
+contract: calculator-web-app.fc.md
+phase: plan
+timestamp: 2026-03-14T05:29:14.474Z
+context:
+  - ARCH:auth-module@v1
+  - RULESET:imports@v1
+context_token_usage: 7
+context_token_budget: 700
+files:
+  - action: "**CREATE**"
+    path: src/hooks/usecalculatorwebapp.ts
+    reason: New hook for feature logic
+  - action: "**CREATE**"
+    path: tests/usecalculatorwebapp.test.ts
+    reason: Unit tests for new hook
+  - action: "**MODIFY**"
+    path: src/types.ts
+    reason: Add new interfaces
+rules:
+  - §typescript
+  - §hooks
+  - §testing
+risks:
+  - State synchronization
+  - Type coverage
+  - Edge cases
+status: approved
+approval_token_required: Approved
+execution_mode: plan_only
+approved_at: 2026-03-14T05:29:14.975Z
+approval_token: Approved
