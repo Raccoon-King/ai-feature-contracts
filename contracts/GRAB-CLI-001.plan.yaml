@@ -1,0 +1,30 @@
+contract: GRAB-CLI-001.fc.md
+phase: plan
+timestamp: 2026-03-14T05:10:29.794Z
+context: []
+context_token_usage: 0
+context_token_budget: 700
+files:
+  - action: modify
+    path: lib/interactive-shell.cjs
+    reason: Fix interactive command flag parsing and quick-flow routing
+  - action: modify
+    path: lib/interactive-workflows.cjs
+    reason: Remove misleading non-interactive intake failure output if workflow
+      logic requires changes there
+  - action: modify
+    path: tests/integration/grabby-calculator-integration.test.js
+    reason: Regression coverage for calculator workflow and non-interactive flows
+rules:
+  - §typescript
+  - §hooks
+  - §testing
+risks:
+  - State synchronization
+  - Type coverage
+  - Edge cases
+status: approved
+approval_token_required: Approved
+execution_mode: plan_only
+approved_at: 2026-03-14T05:12:41.317Z
+approval_token: Approved

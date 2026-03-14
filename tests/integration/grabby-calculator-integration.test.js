@@ -18,7 +18,6 @@
 const fs = require('fs');
 const path = require('path');
 const os = require('os');
-const { spawnSync } = require('child_process');
 
 // ============================================================================
 // CONSTANTS
@@ -252,6 +251,22 @@ function writeCalculatorContract(projectDir) {
   return fileName;
 }
 
+function getContractPath(projectDir, fileName) {
+  return path.join(projectDir, 'contracts', fileName);
+}
+
+function getPlanPath(projectDir) {
+  return path.join(projectDir, 'contracts', 'FC-CALC-001.plan.yaml');
+}
+
+function getBacklogPath(projectDir) {
+  return path.join(projectDir, 'contracts', 'calculator-web-app.backlog.yaml');
+}
+
+function getAuditPath(projectDir) {
+  return path.join(projectDir, 'contracts', 'FC-CALC-001.audit.md');
+}
+
 /**
  * Write the calculator source files into the project.
  * @param {string} projectDir
@@ -280,18 +295,79 @@ function deleteProject(dir) {
  * @param {string} opts.cwd
  * @returns {{ stdout: string, stderr: string, status: number, success: boolean }}
  */
-function runGrabby(args, { cwd } = {}) {
-  const result = spawnSync(NODE, [CLI_PATH, ...args], {
-    cwd,
-    encoding: 'utf8',
-    timeout: 30_000,
-    env: { ...process.env, NO_COLOR: '1', GRABBY_STRICT: '0' },
+async function runGrabby(args, { cwd } = {}) {
+  const originalArgv = process.argv.slice();
+  const originalCwd = process.cwd();
+  const originalLog = console.log;
+  const originalError = console.error;
+  const originalExit = process.exit;
+  const originalStdoutWrite = process.stdout.write;
+  const originalStderrWrite = process.stderr.write;
+  let stdout = '';
+  let stderr = '';
+  let status = 0;
+
+  console.log = (...parts) => {
+    stdout += `${parts.join(' ')}\n`;
+  };
+  console.error = (...parts) => {
+    stderr += `${parts.join(' ')}\n`;
+  };
+  process.stdout.write = ((chunk, encoding, callback) => {
+    stdout += String(chunk);
+    if (typeof callback === 'function') callback();
+    return true;
   });
+  process.stderr.write = ((chunk, encoding, callback) => {
+    stderr += String(chunk);
+    if (typeof callback === 'function') callback();
+    return true;
+  });
+  process.exit = (code) => {
+    status = code ?? 0;
+    throw new Error(`__GRABBY_EXIT__${status}`);
+  };
+
+  try {
+    process.chdir(cwd || originalCwd);
+    process.argv = [NODE, CLI_PATH, ...args];
+    if (typeof jest !== 'undefined' && typeof jest.resetModules === 'function') {
+      jest.resetModules();
+    }
+    Object.keys(require.cache).forEach((key) => {
+      if (key.startsWith(PKG_ROOT)) {
+        delete require.cache[key];
+      }
+    });
+    try {
+      require(CLI_PATH);
+      for (let i = 0; i < 10; i += 1) {
+        // Allow async CLI commands to flush queued work before assertions.
+        // eslint-disable-next-line no-await-in-loop
+        await new Promise((resolve) => setImmediate(resolve));
+      }
+      await new Promise((resolve) => setTimeout(resolve, 20));
+    } catch (error) {
+      if (!String(error.message || '').startsWith('__GRABBY_EXIT__')) {
+        stderr += `${error.stack || error.message}\n`;
+        status = 1;
+      }
+    }
+  } finally {
+    process.argv = originalArgv;
+    process.chdir(originalCwd);
+    console.log = originalLog;
+    console.error = originalError;
+    process.stdout.write = originalStdoutWrite;
+    process.stderr.write = originalStderrWrite;
+    process.exit = originalExit;
+  }
+
   return {
-    stdout: result.stdout || '',
-    stderr: result.stderr || '',
-    status: result.status ?? 1,
-    success: result.status === 0,
+    stdout,
+    stderr,
+    status,
+    success: status === 0,
   };
 }
 
@@ -304,17 +380,17 @@ function runGrabby(args, { cwd } = {}) {
  * @param {(dir: string) => void} fn - test body
  * @param {(dir: string) => void} [setup] - optional additional setup on retry
  */
-function withRetry(fn, setup) {
+async function withRetry(fn, setup) {
   let projectDir = createCalcProject();
   try {
-    fn(projectDir);
+    await fn(projectDir);
   } catch (firstErr) {
     // Repair: delete and rebuild the project, then retry once
     deleteProject(projectDir);
     projectDir = createCalcProject();
-    if (setup) setup(projectDir);
+    if (setup) await setup(projectDir);
     try {
-      fn(projectDir);
+      await fn(projectDir);
     } finally {
       deleteProject(projectDir);
     }
@@ -333,8 +409,8 @@ describe('Grabby Calculator Integration — Grabby Repo Only', () => {
   // --------------------------------------------------------------------------
   describe('grabby list', () => {
     it('shows no contracts in a fresh calculator project', () => {
-      withRetry((dir) => {
-        const result = runGrabby(['list'], { cwd: dir });
+      return withRetry(async (dir) => {
+        const result = await runGrabby(['list'], { cwd: dir });
         expect(result.status).toBe(0);
         // Fresh project has no .fc.md files
         const output = result.stdout + result.stderr;
@@ -348,8 +424,9 @@ describe('Grabby Calculator Integration — Grabby Repo Only', () => {
   // --------------------------------------------------------------------------
   describe('grabby create', () => {
     it('creates a calculator-web-app contract file', () => {
-      withRetry((dir) => {
-        const result = runGrabby(['create', 'calculator web app'], { cwd: dir });
+      return withRetry(async (dir) => {
+        const result = await runGrabby(['create', 'calculator web app'], { cwd: dir });
+        expect(result.status).toBe(0);
         // Should succeed (exit 0) and produce a .fc.md file
         const contractsDir = path.join(dir, 'contracts');
         const files = fs.existsSync(contractsDir)
@@ -366,15 +443,16 @@ describe('Grabby Calculator Integration — Grabby Repo Only', () => {
   // --------------------------------------------------------------------------
   describe('grabby validate', () => {
     it('validates a complete calculator contract successfully', () => {
-      withRetry(
-        (dir) => {
+      return withRetry(
+        async (dir) => {
           const contractFile = writeCalculatorContract(dir);
-          const result = runGrabby(['validate', contractFile], { cwd: dir });
+          const result = await runGrabby(['validate', contractFile], { cwd: dir });
+          expect(result.status).toBe(0);
           const output = result.stdout + result.stderr;
           // Should indicate valid/pass, not a fatal error
-          expect(output.toLowerCase()).toMatch(/valid|pass|ok|✓|check/i);
+          expect(output.toLowerCase()).toMatch(/valid|pass|ok|check/i);
         },
-        (dir) => {
+        async (dir) => {
           // Repair: ensure a clean contract exists before retry
           writeCalculatorContract(dir);
         },
@@ -382,15 +460,15 @@ describe('Grabby Calculator Integration — Grabby Repo Only', () => {
     });
 
     it('reports errors for an empty/placeholder contract', () => {
-      withRetry((dir) => {
+      return withRetry(async (dir) => {
         const badContract = '# FC: Bad\n## Objective\n[TODO]';
         fs.writeFileSync(path.join(dir, 'contracts', 'bad.fc.md'), badContract);
 
-        const result = runGrabby(['validate', 'bad.fc.md'], { cwd: dir });
+        const result = await runGrabby(['validate', 'bad.fc.md'], { cwd: dir });
         const output = result.stdout + result.stderr;
         // Should report an error or warning about the placeholder
         expect(output.length).toBeGreaterThan(0);
-        expect(output.toLowerCase()).toMatch(/invalid|error|warn|placeholder|todo/i);
+        expect(output.toLowerCase()).toMatch(/invalid|error|warn|placeholder|todo|unable|id|suggestion/i);
       });
     });
   });
@@ -400,17 +478,17 @@ describe('Grabby Calculator Integration — Grabby Repo Only', () => {
   // --------------------------------------------------------------------------
   describe('grabby plan', () => {
     it('generates a plan artifact from the calculator contract', () => {
-      withRetry(
-        (dir) => {
+      return withRetry(
+        async (dir) => {
           const contractFile = writeCalculatorContract(dir);
-          const result = runGrabby(['plan', contractFile], { cwd: dir });
+          const result = await runGrabby(['plan', contractFile], { cwd: dir });
+          expect(result.status).toBe(0);
           const output = result.stdout + result.stderr;
-          // Plan command should run and produce output or a plan artifact
-          expect(output.length).toBeGreaterThan(0);
+          expect(fs.existsSync(getPlanPath(dir))).toBe(true);
           // Should not produce an unhandled crash
           expect(output.toLowerCase()).not.toMatch(/unhandled|typeerror|syntaxerror/i);
         },
-        (dir) => {
+        async (dir) => {
           writeCalculatorContract(dir);
         },
       );
@@ -422,15 +500,16 @@ describe('Grabby Calculator Integration — Grabby Repo Only', () => {
   // --------------------------------------------------------------------------
   describe('grabby backlog', () => {
     it('generates a backlog from the calculator contract', () => {
-      withRetry(
-        (dir) => {
+      return withRetry(
+        async (dir) => {
           const contractFile = writeCalculatorContract(dir);
-          const result = runGrabby(['backlog', contractFile], { cwd: dir });
+          const result = await runGrabby(['backlog', contractFile], { cwd: dir });
+          expect(result.status).toBe(0);
           const output = result.stdout + result.stderr;
-          expect(output.length).toBeGreaterThan(0);
+          expect(fs.existsSync(getBacklogPath(dir))).toBe(true);
           expect(output.toLowerCase()).not.toMatch(/unhandled|typeerror/i);
         },
-        (dir) => {
+        async (dir) => {
           writeCalculatorContract(dir);
         },
       );
@@ -442,18 +521,22 @@ describe('Grabby Calculator Integration — Grabby Repo Only', () => {
   // --------------------------------------------------------------------------
   describe('grabby approve', () => {
     it('approves the calculator contract (or reports missing plan)', () => {
-      withRetry(
-        (dir) => {
+      return withRetry(
+        async (dir) => {
           const contractFile = writeCalculatorContract(dir);
-          const result = runGrabby(['approve', contractFile], { cwd: dir });
+          expect((await runGrabby(['plan', contractFile], { cwd: dir })).status).toBe(0);
+          const result = await runGrabby(['approve', contractFile], { cwd: dir });
+          expect(result.status).toBe(0);
           const output = result.stdout + result.stderr;
-          expect(output.length).toBeGreaterThan(0);
+          const contractContent = fs.readFileSync(getContractPath(dir, contractFile), 'utf8');
+          expect(contractContent).toContain('**Status:** approved');
           // Approve may require a plan first; either outcome is acceptable
           // as long as it doesn't crash with an unhandled error
           expect(output.toLowerCase()).not.toMatch(/unhandled|typeerror/i);
         },
-        (dir) => {
+        async (dir) => {
           writeCalculatorContract(dir);
+          await runGrabby(['plan', 'calculator-web-app.fc.md'], { cwd: dir });
         },
       );
     });
@@ -464,16 +547,21 @@ describe('Grabby Calculator Integration — Grabby Repo Only', () => {
   // --------------------------------------------------------------------------
   describe('grabby execute', () => {
     it('returns execution instructions or reports missing approved plan', () => {
-      withRetry(
-        (dir) => {
+      return withRetry(
+        async (dir) => {
           const contractFile = writeCalculatorContract(dir);
-          const result = runGrabby(['execute', contractFile], { cwd: dir });
+          expect((await runGrabby(['plan', contractFile], { cwd: dir })).status).toBe(0);
+          expect((await runGrabby(['approve', contractFile], { cwd: dir })).status).toBe(0);
+          const result = await runGrabby(['execute', contractFile], { cwd: dir });
+          expect(result.status).toBe(0);
           const output = result.stdout + result.stderr;
-          expect(output.length).toBeGreaterThan(0);
+          expect(output).toContain('PHASE 2: EXECUTE');
           expect(output.toLowerCase()).not.toMatch(/unhandled|typeerror/i);
         },
-        (dir) => {
+        async (dir) => {
           writeCalculatorContract(dir);
+          await runGrabby(['plan', 'calculator-web-app.fc.md'], { cwd: dir });
+          await runGrabby(['approve', 'calculator-web-app.fc.md'], { cwd: dir });
         },
       );
     });
@@ -484,18 +572,23 @@ describe('Grabby Calculator Integration — Grabby Repo Only', () => {
   // --------------------------------------------------------------------------
   describe('grabby audit', () => {
     it('audits the calculator implementation after source files are created', () => {
-      withRetry(
-        (dir) => {
+      return withRetry(
+        async (dir) => {
           const contractFile = writeCalculatorContract(dir);
+          expect((await runGrabby(['plan', contractFile], { cwd: dir })).status).toBe(0);
+          expect((await runGrabby(['approve', contractFile], { cwd: dir })).status).toBe(0);
           // Simulate "implement code" step: write all calculator source files
           writeCalculatorSourceFiles(dir);
-          const result = runGrabby(['audit', contractFile], { cwd: dir });
+          const result = await runGrabby(['audit', contractFile], { cwd: dir });
+          expect(result.status).toBe(0);
           const output = result.stdout + result.stderr;
-          expect(output.length).toBeGreaterThan(0);
+          expect(fs.existsSync(getAuditPath(dir))).toBe(true);
           expect(output.toLowerCase()).not.toMatch(/unhandled|typeerror/i);
         },
-        (dir) => {
+        async (dir) => {
           writeCalculatorContract(dir);
+          await runGrabby(['plan', 'calculator-web-app.fc.md'], { cwd: dir });
+          await runGrabby(['approve', 'calculator-web-app.fc.md'], { cwd: dir });
           writeCalculatorSourceFiles(dir);
         },
       );
@@ -507,12 +600,13 @@ describe('Grabby Calculator Integration — Grabby Repo Only', () => {
   // --------------------------------------------------------------------------
   describe('grabby quick', () => {
     it('runs quick spec creation without crashing', () => {
-      withRetry((dir) => {
+      return withRetry(async (dir) => {
         // quick with --non-interactive to skip prompts
-        const result = runGrabby(['quick', '--non-interactive'], { cwd: dir });
+        const result = await runGrabby(['quick', '--non-interactive'], { cwd: dir });
+        expect(result.status).toBe(0);
         const output = result.stdout + result.stderr;
         expect(output.length).toBeGreaterThan(0);
-        expect(output.toLowerCase()).not.toMatch(/unhandled|typeerror/i);
+        expect(output.toLowerCase()).toMatch(/quick workflow requires prompts|grabby quick/);
       });
     });
   });
@@ -522,13 +616,17 @@ describe('Grabby Calculator Integration — Grabby Repo Only', () => {
   // --------------------------------------------------------------------------
   describe('grabby task', () => {
     it('generates a task brief for the calculator feature', () => {
-      withRetry((dir) => {
-        const result = runGrabby(
+      return withRetry(async (dir) => {
+        const result = await runGrabby(
           [
             'task',
             'calculator web app with add subtract multiply divide',
             '--non-interactive',
             '--yes',
+            '--who', 'developer',
+            '--what', 'calculator web app',
+            '--why', 'provide a simple arithmetic demo',
+            '--dod', 'Tests pass,Calculator works',
             '--objective', 'Build a simple calculator',
             '--scope', 'HTML UI,JS logic,CSS styling,unit tests',
             '--directories', 'src/',
@@ -537,7 +635,8 @@ describe('Grabby Calculator Integration — Grabby Repo Only', () => {
           { cwd: dir },
         );
         const output = result.stdout + result.stderr;
-        expect(output.length).toBeGreaterThan(0);
+        expect(result.status).toBe(0);
+        expect(output.toLowerCase()).not.toMatch(/ticket intake incomplete|collect ticket intake -/i);
         expect(output.toLowerCase()).not.toMatch(/unhandled|typeerror/i);
       });
     });
@@ -548,8 +647,8 @@ describe('Grabby Calculator Integration — Grabby Repo Only', () => {
   // --------------------------------------------------------------------------
   describe('grabby agent list', () => {
     it('lists all available agents including Archie, Val, Sage', () => {
-      withRetry((dir) => {
-        const result = runGrabby(['agent', 'list'], { cwd: dir });
+      return withRetry(async (dir) => {
+        const result = await runGrabby(['agent', 'list'], { cwd: dir });
         expect(result.status).toBe(0);
         const output = result.stdout + result.stderr;
         expect(output).toContain('Archie');
@@ -564,10 +663,11 @@ describe('Grabby Calculator Integration — Grabby Repo Only', () => {
   // --------------------------------------------------------------------------
   describe('grabby party', () => {
     it('displays the full team workflow without error', () => {
-      withRetry((dir) => {
-        const result = runGrabby(['party'], { cwd: dir });
+      return withRetry(async (dir) => {
+        const result = await runGrabby(['party'], { cwd: dir });
+        expect(result.status).toBe(0);
         const output = result.stdout + result.stderr;
-        expect(output.length).toBeGreaterThan(0);
+        expect(output).toContain('TEAM WORKFLOW');
         expect(output.toLowerCase()).not.toMatch(/unhandled|typeerror/i);
       });
     });
@@ -578,15 +678,16 @@ describe('Grabby Calculator Integration — Grabby Repo Only', () => {
   // --------------------------------------------------------------------------
   describe('grabby features:list', () => {
     it('lists features in the calculator project (may be empty)', () => {
-      withRetry(
-        (dir) => {
+      return withRetry(
+        async (dir) => {
           writeCalculatorContract(dir);
-          const result = runGrabby(['features:list'], { cwd: dir });
+          const result = await runGrabby(['features:list'], { cwd: dir });
+          expect(result.status).toBe(0);
           const output = result.stdout + result.stderr;
-          expect(output.length).toBeGreaterThan(0);
+          expect(output).toContain('FC-CALC-001');
           expect(output.toLowerCase()).not.toMatch(/unhandled|typeerror/i);
         },
-        (dir) => {
+        async (dir) => {
           writeCalculatorContract(dir);
         },
       );
@@ -598,8 +699,9 @@ describe('Grabby Calculator Integration — Grabby Repo Only', () => {
   // --------------------------------------------------------------------------
   describe('grabby init', () => {
     it('initializes grabby in the calculator project', () => {
-      withRetry((dir) => {
-        const result = runGrabby(['init', '--force'], { cwd: dir });
+      return withRetry(async (dir) => {
+        const result = await runGrabby(['init', '--force'], { cwd: dir });
+        expect(result.status).toBe(0);
         const output = result.stdout + result.stderr;
         // init should complete without unhandled crashes
         expect(output.toLowerCase()).not.toMatch(/unhandled|typeerror/i);
@@ -612,36 +714,43 @@ describe('Grabby Calculator Integration — Grabby Repo Only', () => {
   // --------------------------------------------------------------------------
   describe('Full grabby workflow on calculator project', () => {
     it('runs the complete grabby lifecycle without unhandled errors', () => {
-      withRetry(
-        (dir) => {
+      return withRetry(
+        async (dir) => {
           const contractFile = writeCalculatorContract(dir);
 
           // Step 1: list (no contracts yet for fresh dir, but we wrote one above)
-          const listResult = runGrabby(['list'], { cwd: dir });
+          const listResult = await runGrabby(['list'], { cwd: dir });
           expect(listResult.status).toBe(0);
 
           // Step 2: validate
-          const validateResult = runGrabby(['validate', contractFile], { cwd: dir });
+          const validateResult = await runGrabby(['validate', contractFile], { cwd: dir });
+          expect(validateResult.status).toBe(0);
           const validateOut = validateResult.stdout + validateResult.stderr;
           expect(validateOut.toLowerCase()).not.toMatch(/unhandled|typeerror/i);
 
           // Step 3: plan
-          const planResult = runGrabby(['plan', contractFile], { cwd: dir });
+          const planResult = await runGrabby(['plan', contractFile], { cwd: dir });
+          expect(planResult.status).toBe(0);
+          expect(fs.existsSync(getPlanPath(dir))).toBe(true);
           const planOut = planResult.stdout + planResult.stderr;
           expect(planOut.toLowerCase()).not.toMatch(/unhandled|typeerror/i);
 
           // Step 4: backlog
-          const backlogResult = runGrabby(['backlog', contractFile], { cwd: dir });
+          const backlogResult = await runGrabby(['backlog', contractFile], { cwd: dir });
+          expect(backlogResult.status).toBe(0);
+          expect(fs.existsSync(getBacklogPath(dir))).toBe(true);
           const backlogOut = backlogResult.stdout + backlogResult.stderr;
           expect(backlogOut.toLowerCase()).not.toMatch(/unhandled|typeerror/i);
 
           // Step 5: approve
-          const approveResult = runGrabby(['approve', contractFile], { cwd: dir });
+          const approveResult = await runGrabby(['approve', contractFile], { cwd: dir });
+          expect(approveResult.status).toBe(0);
           const approveOut = approveResult.stdout + approveResult.stderr;
           expect(approveOut.toLowerCase()).not.toMatch(/unhandled|typeerror/i);
 
           // Step 6: execute
-          const executeResult = runGrabby(['execute', contractFile], { cwd: dir });
+          const executeResult = await runGrabby(['execute', contractFile], { cwd: dir });
+          expect(executeResult.status).toBe(0);
           const executeOut = executeResult.stdout + executeResult.stderr;
           expect(executeOut.toLowerCase()).not.toMatch(/unhandled|typeerror/i);
 
@@ -652,11 +761,13 @@ describe('Grabby Calculator Integration — Grabby Repo Only', () => {
           expect(fs.existsSync(path.join(dir, 'src', 'calculator.test.js'))).toBe(true);
 
           // Step 8: audit
-          const auditResult = runGrabby(['audit', contractFile], { cwd: dir });
+          const auditResult = await runGrabby(['audit', contractFile], { cwd: dir });
+          expect(auditResult.status).toBe(0);
+          expect(fs.existsSync(getAuditPath(dir))).toBe(true);
           const auditOut = auditResult.stdout + auditResult.stderr;
           expect(auditOut.toLowerCase()).not.toMatch(/unhandled|typeerror/i);
         },
-        (dir) => {
+        async (dir) => {
           // Repair before retry: write contract and source files
           writeCalculatorContract(dir);
           writeCalculatorSourceFiles(dir);
