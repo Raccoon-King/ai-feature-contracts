@@ -1,6 +1,6 @@
 {
   "name": "grabby",
-  "version": "2.3.5",
+  "version": "2.3.8",
   "description": "Token-efficient feature contract system for AI-assisted development",
   "main": "bin/index.cjs",
   "bin": {
@@ -88,5 +88,8 @@
   },
   "engines": {
     "node": ">=18.0.0"
+  },
+  "overrides": {
+    "undici": "^7.24.0"
   }
 }
