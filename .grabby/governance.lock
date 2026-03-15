@@ -1,5 +1,5 @@
 governance:
-  version: 2.0.0
+  version: 2.3.9
   profile: default
   rules_version: v1
   pinned_refs:
@@ -12,7 +12,7 @@ governance:
       - checks@v1
       - git-commands@v1
 setupCompleted: true
-setupCompletedAt: 2026-03-08T18:16:45.058Z
+setupCompletedAt: 2026-03-15T00:14:26.177Z
 setupMode: quick
 scaffoldingSync:
   lastWarnedContractCount: 3
