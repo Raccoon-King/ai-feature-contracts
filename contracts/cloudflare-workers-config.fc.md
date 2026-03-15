@@ -1,5 +1,5 @@
 # FC: Cloudflare Workers Configuration
-**ID:** FC-2026-CW01 | **Status:** approved | **Dependency Change:** yes
+**ID:** FC-2026-CW01 | **Status:** complete | **Dependency Change:** yes
 CONTRACT_TYPE: FEATURE_CONTRACT
 ARCH_VERSION: v1
 RULESET_VERSION: v1

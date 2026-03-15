@@ -1,5 +1,5 @@
 # FC: harden CLI parsing and non-interactive workflow behavior
-**ID:** GRAB-CLI-001 | **Status:** approved
+**ID:** GRAB-CLI-001 | **Status:** complete
 ARCH_VERSION: v1
 RULESET_VERSION: v1
 ENV_VERSION: v1
@@ -42,20 +42,20 @@ Fix the Grabby CLI logic gaps exposed by the calculator integration workflow, es
 - Security: Run `npm audit` before adding packages
 
 ## Security Considerations
-- [ ] Security/migration impact reviewed: None
-- [ ] Input validation implemented where external input is involved
-- [ ] No secrets in code or test fixtures
-- [ ] Dependencies remain CVE-free (`npm audit`)
+- [x] Security/migration impact reviewed: None
+- [x] Input validation implemented where external input is involved
+- [x] No secrets in code or test fixtures
+- [x] Dependencies remain CVE-free (`npm audit`)
 
 ## Code Quality
-- [ ] TypeScript strict mode preserved (no `any`)
-- [ ] No console.log/debugger statements left behind
-- [ ] Error handling matches existing project patterns
+- [x] TypeScript strict mode preserved (no `any`)
+- [x] No console.log/debugger statements left behind
+- [x] Error handling matches existing project patterns
 
 ## Data Impact
-- [ ] No user-facing persisted data format changes
-- [ ] No contract artifact schema changes without compatibility review
-- [ ] Any workflow metadata changes remain backward compatible for existing contracts/plans/audits
+- [x] No user-facing persisted data format changes
+- [x] No contract artifact schema changes without compatibility review
+- [x] Any workflow metadata changes remain backward compatible for existing contracts/plans/audits
 
 ## Rollback Plan
 - Revert CLI parsing changes in `lib/interactive-shell.cjs` if interactive command routing regresses
@@ -63,13 +63,13 @@ Fix the Grabby CLI logic gaps exposed by the calculator integration workflow, es
 - Re-run `npx.cmd jest tests/integration --runInBand` after rollback to confirm previous behavior is restored
 
 ## Done When
-- [ ] All integration tests pass with npx.cmd jest tests/integration --runInBand
-- [ ] Quick non-interactive mode returns guidance instead of treating flags as files
-- [ ] Task non-interactive mode succeeds without misleading intake failure noise
-- [ ] Affected interactive entrypoints have regression coverage
-- [ ] Tests pass (80%+ coverage)
-- [ ] Lint passes
-- [ ] Build succeeds
+- [x] All integration tests pass with npx.cmd jest tests/integration --runInBand
+- [x] Quick non-interactive mode returns guidance instead of treating flags as files
+- [x] Task non-interactive mode succeeds without misleading intake failure noise
+- [x] Affected interactive entrypoints have regression coverage
+- [x] Tests pass (80%+ coverage)
+- [x] Lint passes
+- [x] Build succeeds
 
 ## Testing
 - Integration: `tests/integration/grabby-calculator-integration.test.js`
