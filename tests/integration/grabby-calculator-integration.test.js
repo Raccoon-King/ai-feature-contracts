@@ -61,6 +61,9 @@ Build a simple browser-based calculator web app with add, subtract, multiply, an
 - Allowed: none (vanilla JS only)
 - Banned: moment, lodash, jquery, react
 
+## Code Quality
+- [ ] Lint passes
+
 ## Done When
 - [ ] Tests pass (80%+ coverage)
 - [ ] Lint passes
@@ -74,8 +77,12 @@ Build a simple browser-based calculator web app with add, subtract, multiply, an
 - Unit: src/calculator.test.js
 
 ## Context Refs
+ARCH_VERSION: v1
+RULESET_VERSION: v1
+ENV_VERSION: v1
 - ARCH_INDEX_v1
 - RULESET_CORE_v1
+- ENV_STACK_v1
 `;
 
 // Minimal calculator implementation to satisfy the audit
@@ -451,6 +458,7 @@ describe('Grabby Calculator Integration — Grabby Repo Only', () => {
           const output = result.stdout + result.stderr;
           // Should indicate valid/pass, not a fatal error
           expect(output.toLowerCase()).toMatch(/valid|pass|ok|check/i);
+          expect(output).not.toContain('Validation passed with warnings');
         },
         async (dir) => {
           // Repair: ensure a clean contract exists before retry

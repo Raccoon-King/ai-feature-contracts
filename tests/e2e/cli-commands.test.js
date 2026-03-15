@@ -8,23 +8,17 @@ const fs = require('fs');
 const path = require('path');
 const os = require('os');
 const { execSync, spawnSync } = require('child_process');
+const { getCliSpawnSupport } = require('../helpers/cli-spawn-support');
 
 // Test directories
 const PKG_ROOT = path.join(__dirname, '..', '..');
 const CLI_PATH = path.join(PKG_ROOT, 'bin', 'index.cjs');
 
-function canSpawnNodeCli() {
-  const probe = spawnSync(process.execPath, ['-e', 'process.stdout.write("ok")'], {
-    cwd: PKG_ROOT,
-    encoding: 'utf8',
-    timeout: 5000,
-    env: { ...process.env, NO_COLOR: '1' },
-  });
-
-  return !probe.error && probe.status === 0 && (probe.stdout || '') === 'ok';
-}
-
-const describeCli = canSpawnNodeCli() ? describe : describe.skip;
+const cliSpawnSupport = getCliSpawnSupport({
+  cwd: PKG_ROOT,
+  env: { NO_COLOR: '1' },
+});
+const describeCli = cliSpawnSupport.available ? describe : describe.skip;
 
 // Temp directory for tests
 let tempDir;
@@ -369,5 +363,16 @@ describe('CLI Integration', () => {
 
     const result = runCli(['validate', 'contracts/features/sub.fc.md'], { cwd: tempDir });
     expect(result.status).toBeDefined();
+  });
+});
+
+describe('CLI command spawn support', () => {
+  it('documents whether child-process CLI execution is available in this environment', () => {
+    if (cliSpawnSupport.available) {
+      expect(cliSpawnSupport.reason).toBeNull();
+      return;
+    }
+
+    expect(cliSpawnSupport.reason).toBeTruthy();
   });
 });

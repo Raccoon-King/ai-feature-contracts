@@ -8,22 +8,16 @@ const os = require('os');
 const path = require('path');
 const yaml = require('yaml');
 const { execSync, spawnSync } = require('child_process');
+const { getCliSpawnSupport } = require('./helpers/cli-spawn-support');
 
 const PKG_ROOT = path.join(__dirname, '..');
 const CLI_PATH = path.join(PKG_ROOT, 'bin', 'index.cjs');
 
-function canSpawnNodeCli() {
-  const probe = spawnSync(process.execPath, ['-e', 'process.stdout.write("ok")'], {
-    cwd: PKG_ROOT,
-    encoding: 'utf8',
-    env: { ...process.env, FORCE_COLOR: '0' },
-    timeout: 5000,
-  });
-
-  return !probe.error && probe.status === 0 && (probe.stdout || '') === 'ok';
-}
-
-const describeCli = canSpawnNodeCli() ? describe : describe.skip;
+const cliSpawnSupport = getCliSpawnSupport({
+  cwd: PKG_ROOT,
+  env: { FORCE_COLOR: '0' },
+});
+const describeCli = cliSpawnSupport.available ? describe : describe.skip;
 
 function stripAnsi(value) {
   return value.replace(/\x1B\[[0-9;]*m/g, '');
@@ -548,5 +542,16 @@ describeCli('CLI integration', () => {
 
     // May succeed or fail depending on .git existence
     expect(result.stdout.length + result.stderr.length).toBeGreaterThan(0);
+  });
+});
+
+describe('CLI spawn support', () => {
+  it('documents whether child-process CLI execution is available in this environment', () => {
+    if (cliSpawnSupport.available) {
+      expect(cliSpawnSupport.reason).toBeNull();
+      return;
+    }
+
+    expect(cliSpawnSupport.reason).toBeTruthy();
   });
 });
