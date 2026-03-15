@@ -91,7 +91,7 @@ Notes:
 
 **Website:** https://grabbyai.com
 **Documentation:** https://docs.grabbyai.com | https://grabby-docs.pages.dev
-**Version:** 2.3.11
+**Version:** 2.3.12
 
 LLM-focused setup instructions are in [docs/LLM_INSTALL.md](docs/LLM_INSTALL.md).
 Documentation home page is [docs/index.html](docs/index.html).
