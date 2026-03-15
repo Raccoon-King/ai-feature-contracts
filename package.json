@@ -1,6 +1,6 @@
 {
   "name": "grabby",
-  "version": "2.3.11",
+  "version": "2.3.12",
   "description": "Token-efficient feature contract system for AI-assisted development",
   "main": "bin/index.cjs",
   "bin": {
