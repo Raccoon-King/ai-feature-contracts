@@ -3,7 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Grabby Docs Home</title>
+  <title>Grabby - AI-Assisted Development with Feature Contracts</title>
+  <meta name="description" content="CLI-first orchestration for AI-assisted development with feature contracts, persona-led workflows, and repo-local guidance.">
   <style>
     :root {
       --bg: #f4f7fa;
@@ -16,9 +17,9 @@
       --brand: #0f766e;
       --brand2: #155e75;
       --accent: #1d4ed8;
-      --hero-grad: linear-gradient(120deg, var(--brand) 0%, var(--brand2) 55%, var(--accent) 100%);
-      --radius: 14px;
-      --shadow: 0 10px 28px rgba(15, 23, 42, 0.08);
+      --hero-grad: linear-gradient(135deg, var(--brand) 0%, var(--brand2) 50%, var(--accent) 100%);
+      --radius: 16px;
+      --shadow: 0 10px 40px rgba(15, 23, 42, 0.08);
       --btn-bg: #ebf8f3;
       --btn-line: #b6d8ce;
       --btn-text: #0f5e56;
@@ -28,8 +29,10 @@
       --pill-bg: #edf8f5;
       --pill-line: #c8e1d9;
       --pill-text: #0f5e56;
-      --sans: "Segoe UI", "Inter", "Trebuchet MS", sans-serif;
-      --mono: "Cascadia Code", "Consolas", monospace;
+      --code-bg: #0f172a;
+      --code-text: #e2e8f0;
+      --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, sans-serif;
+      --mono: "Cascadia Code", "Fira Code", Consolas, monospace;
     }
     :root[data-theme="dark"] {
       --bg: #0b1520;
@@ -39,10 +42,10 @@
       --text: #e7eef8;
       --muted: #9ab0c7;
       --line: #24384c;
-      --brand: #0f6b63;
-      --brand2: #154f64;
-      --accent: #1942a8;
-      --shadow: 0 10px 28px rgba(0, 0, 0, 0.35);
+      --brand: #14b8a6;
+      --brand2: #0891b2;
+      --accent: #3b82f6;
+      --shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
       --btn-bg: #17363f;
       --btn-line: #2f6775;
       --btn-text: #c7ece2;
@@ -53,270 +56,318 @@
       --pill-line: #2f6775;
       --pill-text: #c9f1e5;
     }
-    * { box-sizing: border-box; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
-      margin: 0;
       font-family: var(--sans);
       color: var(--text);
       background:
-        radial-gradient(1000px 480px at -10% -15%, var(--bg-radial-a) 0%, transparent 62%),
-        radial-gradient(900px 460px at 110% -20%, var(--bg-radial-b) 0%, transparent 62%),
+        radial-gradient(ellipse 1200px 600px at -5% -10%, var(--bg-radial-a) 0%, transparent 60%),
+        radial-gradient(ellipse 1000px 500px at 105% -5%, var(--bg-radial-b) 0%, transparent 55%),
         var(--bg);
-      line-height: 1.5;
+      line-height: 1.6;
+      min-height: 100vh;
     }
-    .wrap { max-width: 1080px; margin: 0 auto; padding: 26px 18px 30px; }
-    .topbar {
-      display: flex;
-      justify-content: flex-end;
-      margin-bottom: 10px;
-    }
+    .wrap { max-width: 1100px; margin: 0 auto; padding: 24px 20px 40px; }
+
+    /* Top bar */
+    .topbar { display: flex; justify-content: flex-end; gap: 12px; margin-bottom: 16px; }
     .mode-toggle {
       border: 1px solid var(--toggle-line);
       background: var(--toggle-bg);
       color: var(--toggle-text);
       border-radius: 8px;
-      padding: 7px 12px;
-      font-size: 0.82rem;
+      padding: 8px 14px;
+      font-size: 0.85rem;
       font-weight: 600;
       cursor: pointer;
-      transition: background 0.15s, color 0.15s;
+      transition: all 0.15s;
     }
-    .mode-toggle:hover {
-      background: var(--btn-bg);
-      border-color: var(--btn-line);
-      color: var(--btn-text);
-    }
-    .card-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 10px;
-    }
-    .card-label {
-      display: inline-block;
-      padding: 4px 10px;
-      border-radius: 999px;
-      border: 1px solid var(--pill-line);
-      background: var(--pill-bg);
-      color: var(--pill-text);
-      font-size: 0.72rem;
-      font-weight: 700;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-    }
-    .version-badge {
-      display: inline-block;
-      padding: 4px 10px;
-      border-radius: 999px;
-      border: 1px solid var(--line);
-      background: var(--toggle-bg);
-      color: var(--muted);
-      font-size: 0.72rem;
-      font-weight: 700;
-      font-family: var(--mono);
-      letter-spacing: 0.03em;
-    }
+    .mode-toggle:hover { background: var(--btn-bg); border-color: var(--btn-line); color: var(--btn-text); }
+
+    /* Hero */
     .hero {
       background: var(--hero-grad);
       color: #fff;
-      border-radius: 18px;
-      padding: 24px;
+      border-radius: 20px;
+      padding: 48px 40px;
       box-shadow: var(--shadow);
-      display: grid;
-      grid-template-columns: 1fr 110px;
-      gap: 14px;
+      text-align: center;
+      margin-bottom: 32px;
+    }
+    .hero-badge {
+      display: inline-block;
+      background: rgba(255,255,255,0.2);
+      border: 1px solid rgba(255,255,255,0.3);
+      padding: 6px 14px;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      margin-bottom: 16px;
+    }
+    .hero h1 { font-size: 2.75rem; margin-bottom: 16px; font-weight: 700; }
+    .hero p { font-size: 1.2rem; color: rgba(255,255,255,0.92); max-width: 700px; margin: 0 auto 28px; }
+    .hero-buttons { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+    .hero-btn {
+      display: inline-flex;
       align-items: center;
+      gap: 8px;
+      padding: 12px 24px;
+      border-radius: 10px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: transform 0.15s, box-shadow 0.15s;
     }
-    .hero h1 { margin: 0 0 8px; font-size: 1.8rem; }
-    .hero p { margin: 0; color: rgba(255,255,255,0.94); }
-    .logo {
-      width: 96px; height: 96px; border-radius: 14px;
-      background: #ffffff;
-      border: 1px solid rgba(255,255,255,0.35);
-      padding: 8px;
-      object-fit: contain;
-      justify-self: end;
-      box-shadow: 0 8px 18px rgba(15, 23, 42, 0.2);
+    .hero-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.2); }
+    .hero-btn-primary { background: #fff; color: var(--brand); }
+    .hero-btn-secondary { background: rgba(255,255,255,0.15); color: #fff; border: 1px solid rgba(255,255,255,0.3); }
+
+    /* Install section */
+    .install {
+      background: var(--code-bg);
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 32px;
+      border: 1px solid #243047;
     }
-    .grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 14px; margin-top: 14px; }
+    .install-label { color: #94a3b8; font-size: 0.8rem; margin-bottom: 8px; font-weight: 600; }
+    .install code {
+      display: block;
+      color: #7ee787;
+      font-family: var(--mono);
+      font-size: 1rem;
+      line-height: 1.8;
+    }
+    .install .comment { color: #6b7280; }
+
+    /* Grid */
+    .grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 20px; margin-bottom: 32px; }
+    .span-12 { grid-column: span 12; }
+    .span-6 { grid-column: span 6; }
+    .span-4 { grid-column: span 4; }
+    .span-3 { grid-column: span 3; }
+
+    /* Cards */
     .card {
       background: var(--card);
       border: 1px solid var(--line);
       border-radius: var(--radius);
       box-shadow: var(--shadow);
-      padding: 16px;
+      padding: 24px;
     }
-    .span-12 { grid-column: span 12; }
-    .span-6 { grid-column: span 6; }
-    .span-4 { grid-column: span 4; }
-    .card h2, .card h3 { margin: 0 0 8px; }
-    .card p { margin: 0; color: var(--muted); }
-    .list { margin: 8px 0 0; padding-left: 18px; color: var(--muted); }
-    .list li { margin: 4px 0; }
-    .pill {
-      display: inline-block;
-      margin: 6px 5px 0 0;
-      padding: 4px 8px;
-      border-radius: 999px;
+    .card h2 { font-size: 1.35rem; margin-bottom: 12px; color: var(--text); }
+    .card h3 { font-size: 1.1rem; margin-bottom: 10px; color: var(--text); }
+    .card p { color: var(--muted); margin-bottom: 12px; }
+    .card-icon { font-size: 1.75rem; margin-bottom: 12px; }
+
+    /* Workflow steps */
+    .workflow-steps { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 16px; }
+    .step {
+      display: flex;
+      align-items: center;
+      gap: 8px;
       background: var(--pill-bg);
       border: 1px solid var(--pill-line);
       color: var(--pill-text);
-      font-size: 0.78rem;
-    }
-    .actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
-    .btn {
-      text-decoration: none;
-      display: inline-block;
-      border-radius: 9px;
-      border: 1px solid var(--btn-line);
-      padding: 9px 12px;
-      font-size: 0.9rem;
-      color: var(--btn-text);
-      background: var(--btn-bg);
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-size: 0.85rem;
       font-weight: 600;
     }
-    .btn.secondary {
-      border-color: var(--toggle-line);
-      color: var(--toggle-text);
-      background: var(--toggle-bg);
-      font-weight: 500;
+    .step-num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 22px;
+      height: 22px;
+      background: var(--brand);
+      color: #fff;
+      border-radius: 50%;
+      font-size: 0.75rem;
+      font-weight: 700;
     }
-    pre {
-      margin: 8px 0 0;
-      padding: 10px;
-      border-radius: 10px;
-      background: #0f172a;
-      color: #f8fafc;
-      border: 1px solid #243047;
-      font-family: var(--mono);
-      font-size: 0.84rem;
-      overflow: auto;
+
+    /* Feature list */
+    .features { list-style: none; }
+    .features li {
+      padding: 10px 0;
+      border-bottom: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 0.95rem;
     }
-    footer { margin-top: 16px; color: var(--muted); font-size: 0.84rem; text-align: center; }
-    @media (max-width: 960px) {
-      .hero { grid-template-columns: 1fr; }
-      .logo { justify-self: start; }
-      .span-6, .span-4 { grid-column: span 12; }
+    .features li:last-child { border-bottom: none; }
+    .features strong { color: var(--text); }
+
+    /* Links */
+    .links { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 16px; }
+    .link {
+      display: inline-block;
+      padding: 10px 16px;
+      background: var(--btn-bg);
+      border: 1px solid var(--btn-line);
+      color: var(--btn-text);
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.15s;
+    }
+    .link:hover { background: var(--brand); color: #fff; border-color: var(--brand); }
+    .link-external { background: var(--toggle-bg); border-color: var(--toggle-line); color: var(--toggle-text); }
+
+    /* Personas */
+    .personas { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 12px; }
+    .persona {
+      background: var(--pill-bg);
+      border: 1px solid var(--pill-line);
+      color: var(--pill-text);
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      padding: 24px 0;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+    footer a { color: var(--brand); text-decoration: none; font-weight: 500; }
+    footer a:hover { text-decoration: underline; }
+
+    @media (max-width: 900px) {
+      .hero h1 { font-size: 2rem; }
+      .span-6, .span-4, .span-3 { grid-column: span 12; }
+      .hero { padding: 32px 24px; }
     }
   </style>
 </head>
 <body>
   <div class="wrap">
     <div class="topbar">
-      <button id="themeToggle" class="mode-toggle" type="button">☀ Light Mode</button>
+      <button id="themeToggle" class="mode-toggle" type="button">Light</button>
     </div>
+
     <section class="hero">
-      <div>
-        <h1>Grabby Documentation Home</h1>
-        <p>
-          Grabby is a CLI-first system for contract-governed, AI-assisted software delivery.
-          It standardizes intake, planning, execution, verification, and audit so teams can move quickly with clear scope control.
-        </p>
+      <span class="hero-badge">v2.3.11</span>
+      <h1>Grabby</h1>
+      <p>CLI-first orchestration for AI-assisted development. Feature contracts, persona-led workflows, and governance gates that keep AI work predictable and auditable.</p>
+      <div class="hero-buttons">
+        <a href="./grabby-user-guide.html" class="hero-btn hero-btn-primary">Interactive Guide</a>
+        <a href="https://github.com/Raccoon-King/ai-feature-contracts" class="hero-btn hero-btn-secondary">GitHub</a>
+        <a href="https://www.npmjs.com/package/grabby" class="hero-btn hero-btn-secondary">npm</a>
       </div>
-      <img class="logo" src="./assets/grabby/grabby_vscode.png" alt="Grabby logo">
+    </section>
+
+    <section class="install">
+      <div class="install-label">Quick Install</div>
+      <code>
+        <span class="comment"># Install globally</span><br>
+        npm install -g grabby<br><br>
+        <span class="comment"># Initialize in your project</span><br>
+        grabby init<br><br>
+        <span class="comment"># Start a feature</span><br>
+        grabby task "add user authentication"
+      </code>
     </section>
 
     <div class="grid">
-      <section class="card span-12">
-        <div class="card-header">
-          <span class="card-label">What is Grabby?</span>
-          <span class="version-badge">v2.2.0</span>
-        </div>
-        <h2>About Grabby</h2>
-        <p>
-          Grabby is a CLI-first framework for AI-assisted software development. It turns a plain-language request into a structured
-          feature contract, then moves it through validation, planning, backlog generation, prompt bundling, approval, execution,
-          and post-run audit. In practice, Grabby acts as a repo-local orchestration layer for coding agents: persona-based handoffs,
-          project-specific guidance, and contract artifacts make AI work predictable, reviewable, and repeatable instead of prompt-driven guesswork.
-        </p>
-        <p style="margin-top:8px;">
-          Supported LLM services: ChatGPT, Claude, Gemini, Copilot, or any equivalent provider. Grabby is provider-agnostic.
-        </p>
-        <p style="margin-top:8px;">
-          Repo policy: this project runs in LLM-first mode, so non-workflow command families are intentionally hidden and disabled.
-        </p>
-      </section>
-
-      <section class="card span-12">
-        <h2>Purpose</h2>
-        <p>
-          Grabby helps teams convert natural-language requests into auditable work artifacts and enforce deterministic workflow gates.
-          It reduces ambiguity, improves traceability, and keeps AI-assisted implementation bounded to approved scope.
-        </p>
-        <span class="pill">Contract Driven</span>
-        <span class="pill">Agent Orchestrated</span>
-        <span class="pill">Governance Enforced</span>
-        <span class="pill">Repo Local</span>
+      <section class="card span-6">
+        <h2>What is Grabby?</h2>
+        <p>Grabby transforms natural-language requests into structured feature contracts, then moves them through validation, planning, approval, execution, and audit. It works with any LLM - ChatGPT, Claude, Gemini, Copilot - as a provider-agnostic orchestration layer.</p>
+        <p>Instead of prompt-driven guesswork, you get bounded scope, clear governance, and full traceability for every feature.</p>
       </section>
 
       <section class="card span-6">
-        <h3>Core Functions</h3>
-        <ul class="list">
-          <li>Request intake with ticket shaping (`task`, `ticket`, `orchestrate`)</li>
-          <li>Contract lifecycle (`validate` -> `plan` -> `approve` -> `execute` -> `audit`)</li>
-          <li>Agent/persona workflow (Ari, Archie, Val, Sage, Dev, Tess, Iris, Flash)</li>
-          <li>Feature lifecycle and archive (`features:*`, `feature close`, `feature gc`)</li>
-          <li>Governance checks (`context:lint`, `policy:check`, `guard`)</li>
-          <li>Git/release safety gates (`git:*`, pre-push release policy)</li>
+        <h2>Contract Workflow</h2>
+        <p>Every feature follows a deterministic path:</p>
+        <div class="workflow-steps">
+          <span class="step"><span class="step-num">1</span> Task</span>
+          <span class="step"><span class="step-num">2</span> Validate</span>
+          <span class="step"><span class="step-num">3</span> Plan</span>
+          <span class="step"><span class="step-num">4</span> Approve</span>
+          <span class="step"><span class="step-num">5</span> Execute</span>
+          <span class="step"><span class="step-num">6</span> Audit</span>
+        </div>
+      </section>
+
+      <section class="card span-4">
+        <div class="card-icon">📋</div>
+        <h3>Feature Contracts</h3>
+        <p>Define scope, allowed directories, file changes, and done criteria before any code is written.</p>
+      </section>
+
+      <section class="card span-4">
+        <div class="card-icon">🤖</div>
+        <h3>AI Personas</h3>
+        <p>Specialized agents for each phase: Archie shapes contracts, Val validates, Sage plans, Dev executes, Iris audits.</p>
+        <div class="personas">
+          <span class="persona">Archie</span>
+          <span class="persona">Val</span>
+          <span class="persona">Sage</span>
+          <span class="persona">Dev</span>
+          <span class="persona">Iris</span>
+        </div>
+      </section>
+
+      <section class="card span-4">
+        <div class="card-icon">🔒</div>
+        <h3>Governance Gates</h3>
+        <p>Enforce coding standards, restricted paths, security rules, and test coverage. Execution fails if scope is violated.</p>
+      </section>
+
+      <section class="card span-6">
+        <h3>Core Commands</h3>
+        <ul class="features">
+          <li><strong>grabby task</strong> - Interview-driven task breakdown with persona selection</li>
+          <li><strong>grabby orchestrate</strong> - Full persona handoff: Archie to Iris</li>
+          <li><strong>grabby validate</strong> - Check contract completeness and risk</li>
+          <li><strong>grabby plan</strong> - Generate implementation plan</li>
+          <li><strong>grabby execute</strong> - Bounded execution with guardrails</li>
+          <li><strong>grabby audit</strong> - Post-execution verification</li>
         </ul>
       </section>
 
       <section class="card span-6">
-        <h3>Who Should Use It</h3>
-        <ul class="list">
-          <li>Developers building in AI-assisted workflows</li>
-          <li>Leads who require clear scope and change traceability</li>
-          <li>Teams enforcing standardized delivery in multi-agent environments</li>
-          <li>Repos needing gated release discipline</li>
-        </ul>
-      </section>
-
-      <section class="card span-6">
-        <h3>Start Here</h3>
-        <pre># Main path: prompt Claude to draft the contract first
-# Then run Grabby governance and execution flow
-npm install -g grabby
-grabby init
-grabby init-hooks
-grabby validate contracts/<request-slug>.fc.md
-grabby plan contracts/<request-slug>.fc.md
-grabby approve contracts/<request-slug>.fc.md</pre>
-        <div class="actions">
-          <a class="btn" href="./grabby-user-guide.html">Open Interactive User Guide</a>
-          <a class="btn secondary" href="./QUICKSTART.md">Quickstart</a>
-          <a class="btn secondary" href="./EXECUTION_PROTOCOL.md">Execution Protocol</a>
+        <h3>Documentation</h3>
+        <p>Complete guides for setup, daily workflow, and governance.</p>
+        <div class="links">
+          <a href="./grabby-user-guide.html" class="link">Interactive User Guide</a>
+          <a href="https://github.com/Raccoon-King/ai-feature-contracts#readme" class="link link-external">README</a>
+          <a href="https://github.com/Raccoon-King/ai-feature-contracts/wiki" class="link link-external">Wiki</a>
         </div>
-      </section>
-
-      <section class="card span-6">
-        <h3>Reference Docs</h3>
-        <div class="actions">
-          <a class="btn secondary" href="./CONTRACTS.md">Contracts</a>
-          <a class="btn secondary" href="./AGENT_ARCHITECTURE.md">Agent Architecture</a>
-          <a class="btn secondary" href="./LLM_INSTALL.md">LLM Install</a>
-          <a class="btn secondary" href="./RULESET_CORE.md">Ruleset Core</a>
-          <a class="btn secondary" href="./BMAD_UPGRADE.md">BMAD Upgrade</a>
-        </div>
+        <p style="margin-top: 16px; font-size: 0.85rem;">For developers, leads, and teams enforcing standardized AI-assisted delivery.</p>
       </section>
     </div>
 
     <footer>
-      Keep this page as the docs landing page. Update when CLI surfaces or workflow policy changes.
+      <a href="https://grabbyai.com">grabbyai.com</a> &nbsp;|&nbsp;
+      <a href="https://github.com/Raccoon-King/ai-feature-contracts">GitHub</a> &nbsp;|&nbsp;
+      <a href="https://www.npmjs.com/package/grabby">npm</a>
+      <br>
+      <span style="font-size: 0.85rem;">v2.3.11 &nbsp;|&nbsp; MIT License</span>
     </footer>
   </div>
+
   <script>
-    const themeToggle = document.getElementById("themeToggle");
-    function applyTheme(theme) {
-      document.documentElement.setAttribute("data-theme", theme);
-      themeToggle.textContent = theme === "dark" ? "☾ Dark Mode" : "☀ Light Mode";
+    const toggle = document.getElementById("themeToggle");
+    const stored = localStorage.getItem("grabby-docs-theme");
+    const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+
+    function setTheme(t) {
+      document.documentElement.setAttribute("data-theme", t);
+      toggle.textContent = t === "dark" ? "Dark" : "Light";
     }
-    const storedTheme = localStorage.getItem("grabby-docs-theme");
-    const preferredDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
-    applyTheme(storedTheme || (preferredDark ? "dark" : "light"));
-    themeToggle.addEventListener("click", () => {
+
+    setTheme(stored || (prefersDark ? "dark" : "light"));
+    toggle.addEventListener("click", () => {
       const next = document.documentElement.getAttribute("data-theme") === "dark" ? "light" : "dark";
       localStorage.setItem("grabby-docs-theme", next);
-      applyTheme(next);
+      setTheme(next);
     });
   </script>
 </body>

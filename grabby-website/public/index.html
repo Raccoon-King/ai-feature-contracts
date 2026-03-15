@@ -3,13 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Grabby - Feature Contract System</title>
+  <title>Grabby - Feature Contract System for AI-Assisted Development</title>
+  <meta name="description" content="CLI-first orchestration for AI-assisted development with feature contracts, persona-led workflows, and repo-local guidance.">
   <style>
     :root {
       --bg: #0f1419;
       --text: #e7e9ea;
       --accent: #1d9bf0;
+      --accent2: #0f766e;
       --muted: #71767b;
+      --card-bg: #1a1f26;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
@@ -18,74 +21,168 @@
       color: var(--text);
       line-height: 1.6;
       min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
       padding: 2rem;
     }
-    .container { max-width: 800px; text-align: center; }
-    h1 { font-size: 3rem; margin-bottom: 1rem; }
-    .tagline { font-size: 1.25rem; color: var(--muted); margin-bottom: 2rem; }
-    .cta {
+    .container { max-width: 900px; margin: 0 auto; text-align: center; }
+    .header { margin-bottom: 2rem; }
+    h1 { font-size: 3rem; margin-bottom: 0.5rem; }
+    .version {
       display: inline-block;
-      background: var(--accent);
+      background: var(--accent2);
       color: white;
+      padding: 0.25rem 0.75rem;
+      border-radius: 9999px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+    }
+    .tagline { font-size: 1.25rem; color: var(--muted); margin-bottom: 1.5rem; }
+    .buttons { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; margin-bottom: 2rem; }
+    .btn {
+      display: inline-block;
       padding: 0.75rem 1.5rem;
       border-radius: 9999px;
       text-decoration: none;
       font-weight: 600;
       transition: opacity 0.2s;
     }
-    .cta:hover { opacity: 0.9; }
+    .btn:hover { opacity: 0.9; }
+    .btn-primary { background: var(--accent); color: white; }
+    .btn-secondary { background: var(--accent2); color: white; }
+    .btn-outline { background: transparent; color: var(--text); border: 2px solid var(--muted); }
     pre {
-      background: #1a1f26;
+      background: var(--card-bg);
       padding: 1.5rem;
       border-radius: 8px;
       text-align: left;
       margin: 2rem 0;
       overflow-x: auto;
+      border: 1px solid #2d333b;
     }
     code { color: #7ee787; }
     .features {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
       gap: 1.5rem;
-      margin-top: 3rem;
+      margin: 3rem 0;
       text-align: left;
     }
-    .feature h3 { color: var(--accent); margin-bottom: 0.5rem; }
+    .feature {
+      background: var(--card-bg);
+      padding: 1.25rem;
+      border-radius: 8px;
+      border: 1px solid #2d333b;
+    }
+    .feature h3 { color: var(--accent); margin-bottom: 0.5rem; font-size: 1rem; }
     .feature p { color: var(--muted); font-size: 0.9rem; }
+    .workflow {
+      background: var(--card-bg);
+      padding: 2rem;
+      border-radius: 8px;
+      border: 1px solid #2d333b;
+      margin: 2rem 0;
+      text-align: left;
+    }
+    .workflow h2 { color: var(--accent); margin-bottom: 1rem; font-size: 1.25rem; }
+    .workflow-steps {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 1rem;
+    }
+    .step {
+      text-align: center;
+      padding: 1rem;
+      background: rgba(29, 155, 240, 0.1);
+      border-radius: 8px;
+    }
+    .step-num {
+      display: inline-block;
+      width: 28px;
+      height: 28px;
+      background: var(--accent);
+      color: white;
+      border-radius: 50%;
+      line-height: 28px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      margin-bottom: 0.5rem;
+    }
+    .step-name { font-weight: 600; font-size: 0.9rem; }
+    footer {
+      margin-top: 3rem;
+      padding-top: 2rem;
+      border-top: 1px solid #2d333b;
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+    footer a { color: var(--accent); text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>🦝 Grabby</h1>
-    <p class="tagline">CLI-first feature contract system for AI-assisted development</p>
+    <div class="header">
+      <h1>Grabby</h1>
+      <span class="version">v2.3.11</span>
+      <p class="tagline">CLI-first feature contract system for AI-assisted development</p>
+      <div class="buttons">
+        <a href="https://docs.grabbyai.com" class="btn btn-primary">Documentation</a>
+        <a href="https://github.com/Raccoon-King/ai-feature-contracts" class="btn btn-secondary">GitHub</a>
+        <a href="https://www.npmjs.com/package/grabby" class="btn btn-outline">npm</a>
+      </div>
+    </div>
 
-    <pre><code>npm install -g grabby-ai
+    <pre><code>npm install -g grabby
+grabby init
 grabby task "add user authentication"</code></pre>
 
-    <a href="https://github.com/Raccoon-King/ai-feature-contracts" class="cta">View on GitHub</a>
+    <div class="workflow">
+      <h2>Contract-Driven Workflow</h2>
+      <div class="workflow-steps">
+        <div class="step"><span class="step-num">1</span><div class="step-name">Task</div></div>
+        <div class="step"><span class="step-num">2</span><div class="step-name">Validate</div></div>
+        <div class="step"><span class="step-num">3</span><div class="step-name">Plan</div></div>
+        <div class="step"><span class="step-num">4</span><div class="step-name">Approve</div></div>
+        <div class="step"><span class="step-num">5</span><div class="step-name">Execute</div></div>
+        <div class="step"><span class="step-num">6</span><div class="step-name">Audit</div></div>
+      </div>
+    </div>
 
     <div class="features">
       <div class="feature">
-        <h3>📋 Contracts</h3>
-        <p>Define scope, rules, and boundaries before writing code</p>
+        <h3>Feature Contracts</h3>
+        <p>Define scope, rules, and boundaries before writing code. Contracts enforce what can be modified.</p>
       </div>
       <div class="feature">
-        <h3>🤖 AI Personas</h3>
-        <p>Archie, Val, Sage, Dev, Iris - specialized agents for each phase</p>
+        <h3>AI Personas</h3>
+        <p>Archie, Val, Sage, Dev, Iris - specialized agents for contract shaping, validation, planning, execution, and audit.</p>
       </div>
       <div class="feature">
-        <h3>🔒 Governance</h3>
-        <p>Enforce coding standards, security rules, and test coverage</p>
+        <h3>Governance Gates</h3>
+        <p>Enforce coding standards, security rules, test coverage, and restricted paths with automatic checks.</p>
       </div>
       <div class="feature">
-        <h3>🎯 LLM-First</h3>
-        <p>Designed for external LLM workflows like Claude Code</p>
+        <h3>LLM-First Design</h3>
+        <p>Works with ChatGPT, Claude, Gemini, Copilot, and any LLM. Provider-agnostic orchestration.</p>
+      </div>
+      <div class="feature">
+        <h3>Git Integration</h3>
+        <p>Pre-commit hooks, branch management, PR templates, and release gates built in.</p>
+      </div>
+      <div class="feature">
+        <h3>Audit Trail</h3>
+        <p>Every feature gets validated, planned, approved, and audited with full traceability.</p>
       </div>
     </div>
+
+    <footer>
+      <p>
+        <a href="https://docs.grabbyai.com">Docs</a> |
+        <a href="https://github.com/Raccoon-King/ai-feature-contracts">GitHub</a> |
+        <a href="https://www.npmjs.com/package/grabby">npm</a>
+      </p>
+      <p style="margin-top: 0.5rem;">MIT License</p>
+    </footer>
   </div>
 </body>
 </html>

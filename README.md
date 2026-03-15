@@ -89,11 +89,13 @@ Notes:
 
 ## Quick Start
 
+**Website:** https://grabbyai.com
+**Documentation:** https://docs.grabbyai.com | https://grabby-docs.pages.dev
+**Version:** 2.3.11
+
 LLM-focused setup instructions are in [docs/LLM_INSTALL.md](docs/LLM_INSTALL.md).
 Documentation home page is [docs/index.html](docs/index.html).
 Interactive static guide is in [docs/grabby-user-guide.html](docs/grabby-user-guide.html).
-Website source repo is `Raccoon-King/grabby-website` (private).
-Live docs website: https://grabbyai-com.pages.dev
 
 ```bash
 # Use your own LLM service/client and run Grabby in your repo
