@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Delete head branch
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         with:
           script: |
             const branch = context.payload.pull_request.head.ref;
@@ -45,7 +45,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Delete all branches already merged into development or main
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         with:
           script: |
             const protected = new Set(['main', 'development']);

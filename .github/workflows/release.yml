@@ -145,7 +145,7 @@ jobs:
           git push origin "$TAG"
 
       - name: Create GitHub Release
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         with:
           script: |
             const tag = '${{ steps.version.outputs.tag }}';
@@ -162,7 +162,7 @@ jobs:
             console.log(`Created release ${tag}`);
 
       - name: Open PR to merge development into main
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         with:
           script: |
             const version = '${{ steps.version.outputs.new }}';
