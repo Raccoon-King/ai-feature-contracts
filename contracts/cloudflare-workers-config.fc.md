@@ -77,3 +77,12 @@ Add Cloudflare Workers deployment configuration to serve the `docs/` directory a
 - Contract covers bot-generated commit `8bc5264` from `cloudflare-workers-and-pages[bot]`
 - All file changes are within approved scope
 - No source logic changes — configuration and packaging only
+
+## Lifecycle
+When complete, run garbage collection to archive:
+```bash
+grabby feature gc list          # List candidates for archival
+grabby feature gc archive <ID>  # Archive this contract
+grabby feature gc keep <ID>     # Keep active with reason
+```
+See `lib/features.cjs:garbageCollectCompletedStories()` for batch archival logic.

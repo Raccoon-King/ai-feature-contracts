@@ -77,3 +77,12 @@ Fix the Grabby CLI logic gaps exposed by the calculator integration workflow, es
 ## Context Refs
 - ARCH_INDEX_v1
 - RULESET_CORE_v1
+
+## Lifecycle
+When complete, run garbage collection to archive:
+```bash
+grabby feature gc list          # List candidates for archival
+grabby feature gc archive <ID>  # Archive this contract
+grabby feature gc keep <ID>     # Keep active with reason
+```
+See `lib/features.cjs:garbageCollectCompletedStories()` for batch archival logic.
