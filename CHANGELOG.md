@@ -7,6 +7,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [3.4.0] - 2026-03-15
+
+### Added
+- Calculator CLI test app for full Grabby workflow validation
+- Archived plan YAML preservation in `.grabby/history/` during GC compaction
+- Unit tests for calculator module with 80%+ coverage
+- E2E tests for calculator CLI user flow
+- Test helper utilities for CLI spawn support
+
+### Changed
+- **BREAKING**: GC compaction behavior now preserves plan YAML, deletes all other artifacts
+- Metrics extraction uses `extractContractId` for robust ID parsing
+- `feature gc archive` and `feature close` allowed in `externalLlmOnly` mode
+- Added `.backlog.yaml` and `.prompt.md` to artifact cleanup list
+
+### Fixed
+- GC archive preserves execution context by archiving plan YAML
+- Defensive check in `addToHistory` prevents crash on malformed history files
+- Metrics gracefully handles malformed contracts during ID extraction
+
 ## [2.3.13] - 2026-03-15
 
 ### Fixed

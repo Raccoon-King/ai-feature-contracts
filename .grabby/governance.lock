@@ -1,5 +1,5 @@
 governance:
-  version: 2.3.13
+  version: 3.4.0
   profile: default
   rules_version: v1
   pinned_refs:
