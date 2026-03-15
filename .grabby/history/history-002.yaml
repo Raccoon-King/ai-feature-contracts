@@ -546,4 +546,33 @@ entries:
       including security fix, documentation, and repo professionalization.
     type: RELEASE_CONTRACT
     closedAt: 2026-03-15T00:30:00.000Z
-lastUpdated: 2026-03-15T00:30:00.000Z
+  - id: CLI-CALC-002
+    title: CLI-CALC-002
+    objective: Build a simple CLI calculator that performs basic arithmetic
+      operations (add, subtract, multiply, divide) on two numbers.
+    type: FEATURE_CONTRACT
+    files:
+      - tmp-calc-cli/calculator.js
+      - tmp-calc-cli/cli.js
+      - tmp-calc-cli/package.json
+      - tests/e2e/calculator-cli-user-flow.test.js
+    closedAt: 2026-03-15T22:34:30.859Z
+  - id: CLI-CALC-TEST-001
+    title: Resolve Calculator CLI Test Findings
+    objective: Resolve the concrete issues found while exercising the calculator app
+      through the Grabby CLI.
+    type: feat
+    closedAt: 2026-03-15T22:34:43.163Z
+  - id: CALC-001
+    title: CLI-CALCULATOR-APP
+    objective: Build a CLI calculator application that performs basic arithmetic
+      operations (add, subtract, multiply, divide) on two numbers from command
+      line arg...
+    type: FEATURE_CONTRACT
+    files:
+      - tmp-calc-cli/calculator.js
+      - tmp-calc-cli/cli.js
+      - tmp-calc-cli/package.json
+      - tests/unit/calculator.test.js
+    closedAt: 2026-03-15T22:38:37.192Z
+lastUpdated: 2026-03-15T22:38:37.204Z

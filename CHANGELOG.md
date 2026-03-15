@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.3.13] - 2026-03-15
+
+### Fixed
+- GC archive now preserves plan YAML to `.grabby/history/` instead of deleting it
+- Added `.backlog.yaml` and `.prompt.md` to `ARCHIVABLE_ARTIFACT_SUFFIXES` for proper cleanup
+- `feature gc archive` and `feature close` now allowed in `externalLlmOnly` mode (cleanup ops, not LLM execution)
+- Defensive check in `addToHistory` prevents crash on malformed history files
+- Agent name resolution now uses kebab-case IDs from filenames (e.g., `contract-architect` not `archie`)
+
+### Changed
+- GC compaction now: archives plan YAML, deletes all other artifacts (contract, backlog, prompt, audit)
+
 ## [2.3.9] - 2026-03-14
 
 ### Added

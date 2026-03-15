@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-09T04:31:49.059Z",
+  "generatedAt": "2026-03-15T22:38:37.250Z",
   "trackingMode": "tracked",
   "features": [
     {
@@ -192,6 +192,45 @@
         "tests/commands.test.js",
         "contracts/BUG-203.fc.md"
       ]
+    },
+    {
+      "id": "CALC-001",
+      "title": "CLI-CALCULATOR-APP",
+      "status": "archived",
+      "archivePath": ".grabby/history/history-002.yaml",
+      "closedAt": "2026-03-15T22:38:37.192Z",
+      "objective": "Build a CLI calculator application that performs basic arithmetic operations (add, subtract, multiply, divide) on two numbers from command line arg...",
+      "type": "FEATURE_CONTRACT",
+      "files": [
+        "tmp-calc-cli/calculator.js",
+        "tmp-calc-cli/cli.js",
+        "tmp-calc-cli/package.json",
+        "tests/unit/calculator.test.js"
+      ]
+    },
+    {
+      "id": "CLI-CALC-002",
+      "title": "CLI-CALC-002",
+      "status": "archived",
+      "archivePath": ".grabby/history/history-002.yaml",
+      "closedAt": "2026-03-15T22:34:30.859Z",
+      "objective": "Build a simple CLI calculator that performs basic arithmetic operations (add, subtract, multiply, divide) on two numbers.",
+      "type": "FEATURE_CONTRACT",
+      "files": [
+        "tmp-calc-cli/calculator.js",
+        "tmp-calc-cli/cli.js",
+        "tmp-calc-cli/package.json",
+        "tests/e2e/calculator-cli-user-flow.test.js"
+      ]
+    },
+    {
+      "id": "CLI-CALC-TEST-001",
+      "title": "Resolve Calculator CLI Test Findings",
+      "status": "archived",
+      "archivePath": ".grabby/history/history-002.yaml",
+      "closedAt": "2026-03-15T22:34:43.163Z",
+      "objective": "Resolve the concrete issues found while exercising the calculator app through the Grabby CLI.",
+      "type": "feat"
     },
     {
       "id": "DX-001",
@@ -599,6 +638,30 @@
       "type": "FEATURE_CONTRACT"
     },
     {
+      "id": "FC-2026-CW01",
+      "title": "Cloudflare Workers Configuration",
+      "status": "archived",
+      "archivePath": ".grabby/history/history-002.yaml",
+      "closedAt": "2026-03-15T00:30:00.000Z",
+      "objective": "Add Cloudflare Workers deployment configuration to serve the docs directory as a static asset site via Wrangler.",
+      "type": "FEATURE_CONTRACT",
+      "files": [
+        "wrangler.jsonc",
+        "package.json",
+        "package-lock.json",
+        ".gitignore"
+      ]
+    },
+    {
+      "id": "FC-2026-REL238",
+      "title": "Release v2.3.8",
+      "status": "archived",
+      "archivePath": ".grabby/history/history-002.yaml",
+      "closedAt": "2026-03-15T00:30:00.000Z",
+      "objective": "Release v2.3.8 by promoting all development branch changes into main including security fix, documentation, and repo professionalization.",
+      "type": "RELEASE_CONTRACT"
+    },
+    {
       "id": "GC-001",
       "title": "Garbage Collector Story Artifact Cleanup",
       "status": "archived",
@@ -788,6 +851,20 @@
         "tests/feature-close.test.js",
         "tests/commands.test.js",
         "tests/features-index.test.js"
+      ]
+    },
+    {
+      "id": "GRAB-CLI-001",
+      "title": "Harden CLI parsing and non-interactive workflow behavior",
+      "status": "archived",
+      "archivePath": ".grabby/history/history-002.yaml",
+      "closedAt": "2026-03-15T00:30:00.000Z",
+      "objective": "Fix the Grabby CLI logic gaps exposed by the calculator integration workflow, especially flag parsing in interactive entrypoints and noisy non-interactive task intake behavior.",
+      "type": "FEATURE_CONTRACT",
+      "files": [
+        "lib/interactive-shell.cjs",
+        "lib/interactive-workflows.cjs",
+        "tests/integration/grabby-calculator-integration.test.js"
       ]
     },
     {
