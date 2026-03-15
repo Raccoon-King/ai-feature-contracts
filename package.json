@@ -63,8 +63,8 @@
     "yaml": "^2.3.4"
   },
   "devDependencies": {
-    "jest": "^29.7.0",
-    "wrangler": "^4.72.0"
+    "jest": "^30.3.0",
+    "wrangler": "^4.73.0"
   },
   "jest": {
     "testEnvironment": "node",
