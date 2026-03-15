@@ -64,21 +64,21 @@ npm ci
 npm pack
 ```
 
-That produces a tarball such as `grabby-2.0.0.tgz` with Grabby's runtime dependencies bundled into the package.
+That produces a tarball such as `grabby-2.3.9.tgz` with Grabby's runtime dependencies bundled into the package.
 
 Move the tarball into the airgapped environment, then install from the local file:
 
 Windows PowerShell:
 
 ```powershell
-npm install -g .\grabby-2.0.0.tgz
+npm install -g .\grabby-2.3.9.tgz
 grabby --help
 ```
 
 macOS / Linux:
 
 ```bash
-npm install -g ./grabby-2.0.0.tgz
+npm install -g ./grabby-2.3.9.tgz
 grabby --help
 ```
 

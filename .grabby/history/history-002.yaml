@@ -518,4 +518,32 @@ entries:
       a consi...
     type: FEATURE_CONTRACT
     closedAt: 2026-03-09T04:31:49.004Z
-lastUpdated: 2026-03-09T04:31:49.016Z
+  - id: GRAB-CLI-001
+    title: Harden CLI parsing and non-interactive workflow behavior
+    objective: Fix the Grabby CLI logic gaps exposed by the calculator integration
+      workflow, especially flag parsing in interactive entrypoints and noisy
+      non-interactive task intake behavior.
+    type: FEATURE_CONTRACT
+    files:
+      - lib/interactive-shell.cjs
+      - lib/interactive-workflows.cjs
+      - tests/integration/grabby-calculator-integration.test.js
+    closedAt: 2026-03-15T00:30:00.000Z
+  - id: FC-2026-CW01
+    title: Cloudflare Workers Configuration
+    objective: Add Cloudflare Workers deployment configuration to serve the docs
+      directory as a static asset site via Wrangler.
+    type: FEATURE_CONTRACT
+    files:
+      - wrangler.jsonc
+      - package.json
+      - package-lock.json
+      - .gitignore
+    closedAt: 2026-03-15T00:30:00.000Z
+  - id: FC-2026-REL238
+    title: Release v2.3.8
+    objective: Release v2.3.8 by promoting all development branch changes into main
+      including security fix, documentation, and repo professionalization.
+    type: RELEASE_CONTRACT
+    closedAt: 2026-03-15T00:30:00.000Z
+lastUpdated: 2026-03-15T00:30:00.000Z

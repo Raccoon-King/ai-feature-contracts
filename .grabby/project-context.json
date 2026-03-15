@@ -1,11 +1,10 @@
 {
   "version": 2,
-  "generatedAt": "2026-03-08T17:41:01.735Z",
+  "generatedAt": "2026-03-15T00:14:14.534Z",
   "packageName": "grabby",
-  "stackSummary": "React application",
-  "summary": "React application detected from local repository structure. Primary working areas include lib, hooks, tests. Testing signals are present in the repository.",
+  "stackSummary": "Node.js project",
+  "summary": "Node.js project detected from local repository structure. Primary working areas include lib, hooks, tests. Testing signals are present in the repository.",
   "projectTypes": [
-    "react",
     "node"
   ],
   "projectDirs": [
@@ -19,6 +18,7 @@
     "tests"
   ],
   "scripts": [
+    "deploy",
     "grabby:execute",
     "grabby:guard",
     "grabby:init",
@@ -26,6 +26,7 @@
     "grabby:session",
     "grabby:validate",
     "lint",
+    "preview",
     "test",
     "test:coverage",
     "test:watch"
@@ -34,7 +35,8 @@
     "chokidar",
     "cli-progress",
     "yaml",
-    "jest"
+    "jest",
+    "wrangler"
   ],
   "testing": {
     "hasTests": true,
@@ -75,12 +77,20 @@
       "kind": "dir"
     },
     {
+      "name": "CHANGELOG.md",
+      "kind": "file"
+    },
+    {
       "name": "CLAUDE.md",
       "kind": "file"
     },
     {
       "name": "contracts",
       "kind": "dir"
+    },
+    {
+      "name": "CONTRIBUTING.md",
+      "kind": "file"
     },
     {
       "name": "docs",
@@ -91,23 +101,15 @@
       "kind": "dir"
     },
     {
+      "name": "grabby-2.3.9.tgz",
+      "kind": "file"
+    },
+    {
       "name": "grabby.config.example.json",
       "kind": "file"
     },
     {
       "name": "grabby.config.json",
-      "kind": "file"
-    },
-    {
-      "name": "hooks",
-      "kind": "dir"
-    },
-    {
-      "name": "lib",
-      "kind": "dir"
-    },
-    {
-      "name": "package-lock.json",
       "kind": "file"
     }
   ],

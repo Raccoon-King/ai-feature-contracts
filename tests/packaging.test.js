@@ -29,8 +29,9 @@ describe('offline packaging metadata', () => {
   it('documents the airgapped installation flow', () => {
     expect(readme).toContain('## Airgapped Installation');
     expect(readme).toContain('npm pack');
-    expect(readme).toContain('npm install -g ./grabby-2.0.0.tgz');
-    expect(readme).toContain('npm install -g .\\grabby-2.0.0.tgz');
+    // Version string should match a grabby-<version>.tgz pattern
+    expect(readme).toMatch(/npm install -g \.\/grabby-[\d.]+\.tgz/);
+    expect(readme).toMatch(/npm install -g \.\\grabby-[\d.]+\.tgz/);
     expect(readme).toContain('bundles its runtime dependencies');
   });
 
