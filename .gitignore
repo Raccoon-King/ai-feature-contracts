@@ -4,6 +4,16 @@ node_modules/
 .claude/worktrees/
 .grabby/contracts/
 .grabby/feature-log.json
+.grabby/metrics/
+
+# Test artifacts
+coverage/
+tmp-calc-cli/
+*.tmp*
+.tmp*
+
+# IDE nested duplicates
+.claude/.claude/
 
 # Environment and config files with secrets
 .env

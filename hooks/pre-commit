@@ -75,6 +75,15 @@ if [ "$ACTIVE_COUNT" -gt "0" ]; then
     if [ -n "$contract" ]; then
       NAME=$(basename "$contract" .fc.md)
       echo "  - $NAME"
+
+      # Display pre-op summary if available
+      PREOP_FILE=".grabby/pre-ops/${NAME}.preop.txt"
+      if [ -f "$PREOP_FILE" ]; then
+        echo ""
+        echo "${CYAN}Pre-Op Summary:${NC}"
+        cat "$PREOP_FILE"
+        echo ""
+      fi
     fi
   done
   echo ""

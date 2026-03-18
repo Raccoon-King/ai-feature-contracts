@@ -7,6 +7,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [3.5.0] - 2026-03-17
+
+### Added
+- **Pre-Op Summary**: Formatted contract summary box displayed during ticket creation
+- `formatContractSummaryBox()` in tui.cjs - renders rounded Unicode box for contract summaries
+- `buildPreOpSummary()` and `savePreOpSummary()` in interactive-workflows.cjs
+- Pre-commit hook displays pre-op summary before commits for active contracts
+- Pre-op summaries saved to `.grabby/pre-ops/` for hook access
+- Documentation: `docs/PRE-OP-SUMMARY.md` with full API reference
+
+### Changed
+- Pre-commit hook now shows contract summary box before allowing commits
+- README updated with Pre-Op Summary section
+
+### Fixed
+- Variable naming conflicts in interactive-workflows.cjs (`contractContent` → `preOpContractContent`)
+
+### Removed
+- Cleaned up orphaned metrics files (61 files)
+- Removed legacy `.clinerules.legacy.md`
+- Removed nested `.claude/.claude/` duplicate directory
+- Removed temp file `.tmp_head_bin.txt`
+
+### Improved
+- Added `coverage/`, `tmp-calc-cli/`, `.grabby/metrics/` to `.gitignore`
+
 ## [3.4.0] - 2026-03-15
 
 ### Added

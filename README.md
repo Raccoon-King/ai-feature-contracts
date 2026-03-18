@@ -218,6 +218,34 @@ Grabby uses BMAD-style personalities in the CLI:
 - `Flash`: quick bounded work
 - `Conductor`: orchestrates the full handoff
 
+## Pre-Op Summary
+
+When you create a dev ticket, Grabby displays a formatted pre-op summary showing your contract scope at a glance:
+
+```
+╭──────────────────────────────────────────────────────────────────────╮
+│ Plan to implement                                                    │
+│                                                                      │
+│ Your Feature Title                                                   │
+│                                                                      │
+│ Overview                                                             │
+│ Brief description from the contract...                               │
+│                                                                      │
+│ User Requirements                                                    │
+│ - Requirement from Done When checklist                               │
+│ - Another requirement                                                │
+│ ---                                                                  │
+│ Files to Modify                                                      │
+│ ┌────────────────┬───────────────────────────────────────────────┐   │
+│ │File            │Changes                                        │   │
+│ └────────────────┴───────────────────────────────────────────────┘   │
+╰──────────────────────────────────────────────────────────────────────╯
+```
+
+The pre-op is saved to `.grabby/pre-ops/` and displayed in the pre-commit hook before each commit, keeping developers aligned with their contract scope.
+
+See [docs/PRE-OP-SUMMARY.md](docs/PRE-OP-SUMMARY.md) for full documentation.
+
 ## BMAD-Derived Optional Features
 
 Grabby can enable selected BMAD-inspired behaviors through `bmadFeatures` in `grabby.config.json`:
