@@ -1,0 +1,26 @@
+contract: FC-001-preop-docs.fc.md
+phase: plan
+timestamp: 2026-03-18T02:40:28.060Z
+context: []
+context_token_usage: 0
+context_token_budget: 700
+files:
+  - action: "**MODIFY**"
+    path: README.md
+    reason: Add pre-op feature overview
+  - action: "**CREATE**"
+    path: docs/PRE-OP-SUMMARY.md
+    reason: Detailed pre-op documentation
+rules:
+  - §typescript
+  - §hooks
+  - §testing
+risks:
+  - State synchronization
+  - Type coverage
+  - Edge cases
+status: approved
+approval_token_required: Approved
+execution_mode: plan_only
+approved_at: 2026-03-18T02:40:32.948Z
+approval_token: Approved
