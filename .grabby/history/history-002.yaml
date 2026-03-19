@@ -575,4 +575,14 @@ entries:
       - tmp-calc-cli/package.json
       - tests/unit/calculator.test.js
     closedAt: 2026-03-15T22:38:37.192Z
-lastUpdated: 2026-03-15T22:38:37.204Z
+  - id: FC-001
+    title: Pre-Op Summary Documentation
+    objective: Document the new pre-op summary feature that displays contract
+      summaries in a rounded box format during dev ticket creation and in
+      pre-commit hooks.
+    type: FEATURE_CONTRACT
+    files:
+      - README.md
+      - docs/PRE-OP-SUMMARY.md
+    closedAt: 2026-03-19T00:11:29.006Z
+lastUpdated: 2026-03-19T00:11:29.018Z

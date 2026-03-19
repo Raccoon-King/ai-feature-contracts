@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-15T22:38:37.250Z",
+  "generatedAt": "2026-03-19T00:11:29.068Z",
   "trackingMode": "tracked",
   "features": [
     {
@@ -517,6 +517,19 @@
         "tests/progress.test.js",
         "tests/watcher.test.js",
         "tests/smart-prompts.test.js"
+      ]
+    },
+    {
+      "id": "FC-001",
+      "title": "Pre-Op Summary Documentation",
+      "status": "archived",
+      "archivePath": ".grabby/history/history-002.yaml",
+      "closedAt": "2026-03-19T00:11:29.006Z",
+      "objective": "Document the new pre-op summary feature that displays contract summaries in a rounded box format during dev ticket creation and in pre-commit hooks.",
+      "type": "FEATURE_CONTRACT",
+      "files": [
+        "README.md",
+        "docs/PRE-OP-SUMMARY.md"
       ]
     },
     {
