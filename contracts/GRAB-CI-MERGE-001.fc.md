@@ -571,6 +571,168 @@ rulesets:
           from: null
           to: 1.0.0
           breaking: false
+    - timestamp: 2026-03-21T21:28:10.738Z
+      command: validate
+      status: drift_detected
+      action: warn
+      changes:
+        - ruleset: languages/typescript
+          from: null
+          to: 1.0.0
+          breaking: false
+        - ruleset: languages/javascript
+          from: null
+          to: 1.0.0
+          breaking: false
+        - ruleset: languages/go
+          from: null
+          to: 1.0.0
+          breaking: false
+        - ruleset: languages/python
+          from: null
+          to: 1.0.0
+          breaking: false
+        - ruleset: frameworks/react
+          from: null
+          to: 1.0.0
+          breaking: false
+        - ruleset: frameworks/nextjs
+          from: null
+          to: 1.0.0
+          breaking: false
+        - ruleset: frameworks/express
+          from: null
+          to: 1.0.0
+          breaking: false
+        - ruleset: domains/api-compat
+          from: null
+          to: 1.0.0
+          breaking: false
+        - ruleset: domains/db-safety
+          from: null
+          to: 1.0.0
+          breaking: false
+        - ruleset: domains/frontend-deps
+          from: null
+          to: 1.0.0
+          breaking: false
+        - ruleset: domains/auth
+          from: null
+          to: 1.0.0
+          breaking: false
+        - ruleset: policies/security
+          from: null
+          to: 1.0.0
+          breaking: false
+        - ruleset: policies/git-workflow
+          from: null
+          to: 1.0.0
+          breaking: false
+        - ruleset: policies/code-review
+          from: null
+          to: 1.0.0
+          breaking: false
+        - ruleset: testing/unit
+          from: null
+          to: 1.0.0
+          breaking: false
+        - ruleset: testing/integration
+          from: null
+          to: 1.0.0
+          breaking: false
+        - ruleset: testing/coverage
+          from: null
+          to: 1.0.0
+          breaking: false
+        - ruleset: tooling/linters
+          from: null
+          to: 1.0.0
+          breaking: false
+        - ruleset: tooling/ci-cd
+          from: null
+          to: 1.0.0
+          breaking: false
+    - timestamp: 2026-03-21T21:28:10.814Z
+      command: plan
+      status: drift_detected
+      action: warn
+      changes:
+        - ruleset: languages/typescript
+          from: null
+          to: 1.0.0
+          breaking: false
+        - ruleset: languages/javascript
+          from: null
+          to: 1.0.0
+          breaking: false
+        - ruleset: languages/go
+          from: null
+          to: 1.0.0
+          breaking: false
+        - ruleset: languages/python
+          from: null
+          to: 1.0.0
+          breaking: false
+        - ruleset: frameworks/react
+          from: null
+          to: 1.0.0
+          breaking: false
+        - ruleset: frameworks/nextjs
+          from: null
+          to: 1.0.0
+          breaking: false
+        - ruleset: frameworks/express
+          from: null
+          to: 1.0.0
+          breaking: false
+        - ruleset: domains/api-compat
+          from: null
+          to: 1.0.0
+          breaking: false
+        - ruleset: domains/db-safety
+          from: null
+          to: 1.0.0
+          breaking: false
+        - ruleset: domains/frontend-deps
+          from: null
+          to: 1.0.0
+          breaking: false
+        - ruleset: domains/auth
+          from: null
+          to: 1.0.0
+          breaking: false
+        - ruleset: policies/security
+          from: null
+          to: 1.0.0
+          breaking: false
+        - ruleset: policies/git-workflow
+          from: null
+          to: 1.0.0
+          breaking: false
+        - ruleset: policies/code-review
+          from: null
+          to: 1.0.0
+          breaking: false
+        - ruleset: testing/unit
+          from: null
+          to: 1.0.0
+          breaking: false
+        - ruleset: testing/integration
+          from: null
+          to: 1.0.0
+          breaking: false
+        - ruleset: testing/coverage
+          from: null
+          to: 1.0.0
+          breaking: false
+        - ruleset: tooling/linters
+          from: null
+          to: 1.0.0
+          breaking: false
+        - ruleset: tooling/ci-cd
+          from: null
+          to: 1.0.0
+          breaking: false
 ---
 # FC: Fix CI merge blockers on the current head
 **ID:** GRAB-CI-MERGE-001 | **Status:** approved
