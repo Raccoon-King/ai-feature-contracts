@@ -1,0 +1,31 @@
+# Grabby Ruleset Sync Lock
+# This file tracks the currently active rulesets and their versions
+# Generated automatically by `grabby rules sync`
+
+version: 1
+lastSync: "2026-03-20T10:30:00.000Z"
+
+source:
+  repo: "https://github.com/yourorg/grabby-rules.git"
+  branch: "main"
+  commit: "abc123def456789"
+  version: "1.0.0"
+
+active:
+  - category: languages/typescript
+    version: "1.0.0"
+    hash: "sha256:abc123def456789abc123def456789abc123def456789abc123def456789abc123"
+    fetchedAt: "2026-03-20T10:30:00.000Z"
+
+  - category: frameworks/react
+    version: "1.0.0"
+    hash: "sha256:def456abc123789def456abc123789def456abc123789def456abc123789def456"
+    fetchedAt: "2026-03-20T10:30:00.000Z"
+
+  - category: policies/security
+    version: "1.0.0"
+    hash: "sha256:789abc123def456789abc123def456789abc123def456789abc123def456789abc"
+    fetchedAt: "2026-03-20T10:30:00.000Z"
+
+checksums:
+  manifest: "sha256:xyz789abc123def456xyz789abc123def456xyz789abc123def456xyz789abc123"

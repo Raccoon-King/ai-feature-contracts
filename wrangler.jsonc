@@ -10,5 +10,9 @@
   },
   "compatibility_flags": [
     "nodejs_compat"
+  ],
+  "routes": [
+    { "pattern": "grabbyai.com/*", "zone_name": "grabbyai.com" },
+    { "pattern": "www.grabbyai.com/*", "zone_name": "grabbyai.com" }
   ]
 }

@@ -1,0 +1,10 @@
+version: 1
+lastSync: 2026-03-21T00:42:11.023Z
+source:
+  repo: https://github.com/Raccoon-King/grabby-contracts.git
+  branch: master
+  commit: 604bb9797b022d641953626ac5da7802b39a4920
+  version: 1.0.0
+active: []
+checksums:
+  manifest: ""

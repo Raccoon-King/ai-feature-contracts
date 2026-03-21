@@ -221,7 +221,7 @@ describe('Command handlers', () => {
     expect(logger.lines.join('\n')).toContain('Template: bug-fix');
   });
 
-  it('fails planning when the contract is invalid', () => {
+  it('fails planning when the contract is invalid', async () => {
     const logger = createLogger();
     const exits = [];
     const context = createProjectContext({ cwd: tempDir, pkgRoot: PKG_ROOT });
@@ -234,13 +234,13 @@ describe('Command handlers', () => {
     fs.mkdirSync(context.contractsDir, { recursive: true });
     fs.writeFileSync(path.join(context.contractsDir, 'FC-999.fc.md'), '# FC: Invalid\n**ID:** FC-999 | **Status:** draft\n## Objective\nMissing sections\n', 'utf8');
 
-    handlers.plan('FC-999.fc.md');
+    await handlers.plan('FC-999.fc.md');
 
     expect(exits).toEqual([1]);
     expect(logger.lines.join('\n')).toContain('Contract has validation errors');
   });
 
-  it('fails validation when a completed feature remains in contracts/active', () => {
+  it('fails validation when a completed feature remains in contracts/active', async () => {
     const logger = createLogger();
     const exits = [];
     const context = createProjectContext({ cwd: tempDir, pkgRoot: PKG_ROOT });
@@ -296,13 +296,13 @@ Archive me
 - ENV: test-runner@v1
 `, 'utf8');
 
-    handlers.validate(path.join(activeDir, 'ARCH-9.fc.md'));
+    await handlers.validate(path.join(activeDir, 'ARCH-9.fc.md'));
 
     expect(exits).toEqual([1]);
     expect(logger.lines.join('\n')).toContain('Completed features must not remain in contracts/active/');
   });
 
-  it('warns and does not auto-update scaffolding when governance.lock is older than CLI version', () => {
+  it('warns and does not auto-update scaffolding when governance.lock is older than CLI version', async () => {
     const logger = createLogger();
     const execCommands = [];
     const context = createProjectContext({ cwd: tempDir, pkgRoot: PKG_ROOT });
@@ -325,14 +325,14 @@ Archive me
       },
     }), 'utf8');
 
-    handlers.validate('version-sync.fc.md');
+    await handlers.validate('version-sync.fc.md');
 
     expect(execCommands.some((cmd) => cmd.includes('bin') && cmd.includes('index.cjs') && cmd.includes('init'))).toBe(false);
     expect(logger.lines.join('\n')).toContain('Repo scaffolding is older than this CLI');
     expect(logger.lines.join('\n')).toContain('Re-run this command with --yes');
   });
 
-  it('updates scaffolding when governance.lock is older and --yes is provided', () => {
+  it('updates scaffolding when governance.lock is older and --yes is provided', async () => {
     const logger = createLogger();
     const execCommands = [];
     const context = createProjectContext({ cwd: tempDir, pkgRoot: PKG_ROOT });
@@ -358,7 +358,7 @@ Archive me
     const originalArgv = process.argv;
     process.argv = [...originalArgv, '--yes'];
     try {
-      handlers.validate('version-sync-yes.fc.md');
+      await handlers.validate('version-sync-yes.fc.md');
     } finally {
       process.argv = originalArgv;
     }
@@ -409,7 +409,7 @@ Archive me
     expect(loggerSecond.lines.join('\n')).not.toContain('Repo scaffolding is older than this CLI');
   });
 
-  it('validates baseline contracts without requiring work-item IDs', () => {
+  it('validates baseline contracts without requiring work-item IDs', async () => {
     const logger = createLogger();
     const exits = [];
     const context = createProjectContext({ cwd: tempDir, pkgRoot: PKG_ROOT });
@@ -460,14 +460,14 @@ Capture baseline context.
 - Manual
 `, 'utf8');
 
-    handlers.validate('PROJECT-BASELINE.fc.md');
+    await handlers.validate('PROJECT-BASELINE.fc.md');
 
     expect(exits).toHaveLength(0);
     expect(logger.lines.join('\n')).toContain('Baseline contract detected: skipping work-item ID filename enforcement.');
     expect(logger.lines.join('\n')).toContain('Validation passed');
   });
 
-  it('plans baseline contracts without requiring work-item IDs', () => {
+  it('plans baseline contracts without requiring work-item IDs', async () => {
     const logger = createLogger();
     const exits = [];
     const context = createProjectContext({ cwd: tempDir, pkgRoot: PKG_ROOT });
@@ -518,7 +518,7 @@ Capture baseline context.
 - Manual
 `, 'utf8');
 
-    handlers.plan('PROJECT-BASELINE.fc.md');
+    await handlers.plan('PROJECT-BASELINE.fc.md');
 
     expect(exits).toHaveLength(0);
     expect(fs.existsSync(path.join(contractsDir, 'PROJECT-BASELINE.plan.yaml'))).toBe(true);
@@ -539,7 +539,7 @@ Capture baseline context.
     expect(logger.lines.join('\n')).toContain('No plan found');
   });
 
-  it('fails execution when the plan file is missing', () => {
+  it('fails execution when the plan file is missing', async () => {
     const logger = createLogger();
     const exits = [];
     const context = createProjectContext({ cwd: tempDir, pkgRoot: PKG_ROOT });
@@ -550,13 +550,13 @@ Capture baseline context.
     });
 
     writeValidContract(tempDir, 'valid-feature.fc.md', 'approved');
-    handlers.execute('valid-feature.fc.md');
+    await handlers.execute('valid-feature.fc.md');
 
     expect(exits).toEqual([1]);
     expect(logger.lines.join('\n')).toContain('No plan found');
   });
 
-  it('blocks execute on default/protected branch even when full preflight is disabled', () => {
+  it('blocks execute on default/protected branch even when full preflight is disabled', async () => {
     const logger = createLogger();
     const exits = [];
     const context = createProjectContext({ cwd: tempDir, pkgRoot: PKG_ROOT });
@@ -587,14 +587,14 @@ Capture baseline context.
       files: [{ action: 'modify', path: 'src/feature.ts' }],
     }), 'utf8');
 
-    handlers.execute('valid-feature.fc.md');
+    await handlers.execute('valid-feature.fc.md');
 
     expect(exits).toEqual([1]);
     expect(logger.lines.join('\n')).toContain('Git branch policy failure:');
     expect(logger.lines.join('\n')).toContain('Direct commits/check-ins to protected/default branch "main" are blocked by GitHub policy');
   });
 
-  it('executes legacy plans that use files_to_modify and files_to_create', () => {
+  it('executes legacy plans that use files_to_modify and files_to_create', async () => {
     const logger = createLogger();
     const context = createProjectContext({ cwd: tempDir, pkgRoot: PKG_ROOT });
     const handlers = createCommandHandlers({ context, logger });
@@ -608,7 +608,7 @@ Capture baseline context.
       files_to_modify: ['tests/cli.test.js'],
     }));
 
-    handlers.execute('valid-feature.fc.md');
+    await handlers.execute('valid-feature.fc.md');
 
     const planData = yaml.parse(fs.readFileSync(path.join(tempDir, 'contracts', 'FC-123.plan.yaml'), 'utf8'));
     expect(planData.status).toBe('executing');
@@ -1347,14 +1347,14 @@ Archive the root contract safely.
     expect(logger.lines.join('\n')).toContain('AGILE BACKLOG');
   });
 
-  it('renders a provider-agnostic prompt bundle', () => {
+  it('renders a provider-agnostic prompt bundle', async () => {
     const logger = createLogger();
     const context = createProjectContext({ cwd: tempDir, pkgRoot: PKG_ROOT });
     const handlers = createCommandHandlers({ context, logger, outputMode: 'file' });
 
     writeValidContract(tempDir);
     handlers.backlog('valid-feature.fc.md');
-    handlers.plan('valid-feature.fc.md');
+    await handlers.plan('valid-feature.fc.md');
     handlers.promptBundle('valid-feature.fc.md');
 
     const promptPath = path.join(tempDir, 'contracts', 'valid-feature.prompt.md');
@@ -1517,7 +1517,7 @@ Archive the root contract safely.
     expect(exits).toEqual([1]);
   });
 
-  it('warns about deprecated standalone ticket markdown during validation', () => {
+  it('warns about deprecated standalone ticket markdown during validation', async () => {
     const logger = createLogger();
     const context = createProjectContext({ cwd: tempDir, pkgRoot: PKG_ROOT });
     const handlers = createCommandHandlers({ context, logger });
@@ -1525,7 +1525,7 @@ Archive the root contract safely.
     writeValidContract(tempDir);
     fs.writeFileSync(path.join(tempDir, 'TT-123.md'), '# legacy ticket', 'utf8');
 
-    handlers.validate('valid-feature.fc.md');
+    await handlers.validate('valid-feature.fc.md');
 
     expect(logger.lines.join('\n')).toContain('Standalone ticket markdown is deprecated');
     expect(logger.lines.join('\n')).toContain('TT-123.md');
@@ -2021,7 +2021,7 @@ Archive the root contract safely.
     expect(logger.lines.join('\n')).toContain('context-index.yaml');
   });
 
-  it('fails planning for unapproved architecture change contracts', () => {
+  it('fails planning for unapproved architecture change contracts', async () => {
     const logger = createLogger();
     const exits = [];
     const docsDir = createContextDocs(tempDir);
@@ -2074,7 +2074,7 @@ Change architecture safely.
 - ENV: test-runner@v1
 `, 'utf8');
 
-    handlers.plan('ARCH-100.fc.md');
+    await handlers.plan('ARCH-100.fc.md');
 
     expect(exits).toEqual([1]);
     expect(logger.lines.join('\n')).toContain('ARCH_CHANGE_CONTRACT requires ARCH_APPROVED: true before execution');
@@ -2531,7 +2531,7 @@ paths:
     delete process.env.GRABBY_CHANGED_FILES;
   });
 
-  it('blocks execute for DB change contracts without explicit DB metadata or artifacts', () => {
+  it('blocks execute for DB change contracts without explicit DB metadata or artifacts', async () => {
     const logger = createLogger();
     const exits = [];
     const context = createProjectContext({ cwd: tempDir, pkgRoot: PKG_ROOT });
@@ -2544,13 +2544,13 @@ paths:
       files: [{ action: 'modify', path: 'src/feature.ts' }],
     }), 'utf8');
 
-    handlers.execute('db-exec.fc.md');
+    await handlers.execute('db-exec.fc.md');
 
     expect(exits).toEqual([1]);
     expect(logger.lines.join('\n')).toContain('Governance policy failure');
   });
 
-  it('fails validation for DB change contracts with governance policy violations', () => {
+  it('fails validation for DB change contracts with governance policy violations', async () => {
     const logger = createLogger();
     const exits = [];
     const context = createProjectContext({ cwd: tempDir, pkgRoot: PKG_ROOT });
@@ -2559,14 +2559,14 @@ paths:
     const contractPath = writeValidContract(tempDir, 'db-validate.fc.md', 'draft');
     fs.writeFileSync(contractPath, `${fs.readFileSync(contractPath, 'utf8')}\nAdd migration for users table.\n`, 'utf8');
 
-    handlers.validate('db-validate.fc.md');
+    await handlers.validate('db-validate.fc.md');
 
     expect(exits).toEqual([1]);
     expect(logger.lines.join('\n')).toContain('Data-affecting contract is missing explicit DB impact metadata');
     expect(logger.lines.join('\n')).toContain('Validation failed');
   });
 
-  it('blocks execute for API and dependency change contracts without required artifacts or approvals', () => {
+  it('blocks execute for API and dependency change contracts without required artifacts or approvals', async () => {
     const logger = createLogger();
     const exits = [];
     const context = createProjectContext({ cwd: tempDir, pkgRoot: PKG_ROOT });
@@ -2579,13 +2579,13 @@ paths:
       files: [{ action: 'modify', path: 'specs/openapi.yaml' }],
     }), 'utf8');
 
-    handlers.execute('api-deps-exec.fc.md');
+    await handlers.execute('api-deps-exec.fc.md');
 
     expect(exits).toEqual([1]);
     expect(logger.lines.join('\n')).toContain('Governance policy failure');
   });
 
-  it('fails validation for API/dependency change contracts with governance policy violations', () => {
+  it('fails validation for API/dependency change contracts with governance policy violations', async () => {
     const logger = createLogger();
     const exits = [];
     const context = createProjectContext({ cwd: tempDir, pkgRoot: PKG_ROOT });
@@ -2594,7 +2594,7 @@ paths:
     const contractPath = writeValidContract(tempDir, 'api-deps-validate.fc.md', 'draft');
     fs.writeFileSync(contractPath, `${fs.readFileSync(contractPath, 'utf8')}\nUpdate OpenAPI payload shape and package.json dependencies.\n`, 'utf8');
 
-    handlers.validate('api-deps-validate.fc.md');
+    await handlers.validate('api-deps-validate.fc.md');
 
     expect(exits).toEqual([1]);
     expect(logger.lines.join('\n')).toContain('API-affecting contract is missing explicit API impact metadata');
@@ -2602,7 +2602,7 @@ paths:
     expect(logger.lines.join('\n')).toContain('Validation failed');
   });
 
-  it('surfaces active environment constraints in plan output', () => {
+  it('surfaces active environment constraints in plan output', async () => {
     const logger = createLogger();
     const context = createProjectContext({ cwd: tempDir, pkgRoot: PKG_ROOT });
     const handlers = createCommandHandlers({ context, logger });
@@ -2636,7 +2636,7 @@ paths:
     const contractPath = writeValidContract(tempDir, 'env-plan.fc.md', 'draft');
     fs.writeFileSync(contractPath, fs.readFileSync(contractPath, 'utf8').replace('**ID:** FC-123', '**ID:** ENV-202'), 'utf8');
 
-    handlers.plan('env-plan.fc.md');
+    await handlers.plan('env-plan.fc.md');
 
     const output = logger.lines.join('\n');
     expect(output).toContain('Active environment constraints:');

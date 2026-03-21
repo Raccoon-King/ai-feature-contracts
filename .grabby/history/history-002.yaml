@@ -585,4 +585,69 @@ entries:
       - README.md
       - docs/PRE-OP-SUMMARY.md
     closedAt: 2026-03-19T00:11:29.006Z
-lastUpdated: 2026-03-19T00:11:29.018Z
+  - id: FC-002
+    title: Modular Ruleset System with Central Repository Sync
+    objective: "Implement a fully modular, extensible ruleset system with: - Dynamic
+      category system (not hardcoded) - Central repository for shared rulesets -
+      Git..."
+    type: FEATURE_CONTRACT
+    files:
+      - lib/contract-rulesets.cjs
+      - lib/commands.cjs
+      - tests/contract-rulesets.test.js
+      - docs/CONTRACT_SYNC.md
+    closedAt: 2026-03-21T00:40:53.981Z
+  - id: FC-003
+    title: REST API Foundation - Phase 1
+    objective: Build a local-first REST API server for Grabby that serves as a
+      control plane for contract management and rules repository integration.
+      Phase 1 foc...
+    type: FEATURE_CONTRACT
+    files:
+      - lib/api-server-v2.cjs
+      - lib/api-routes/contracts.cjs
+      - lib/api-routes/rules.cjs
+      - lib/api-routes/health.cjs
+      - lib/middleware/error-handler.cjs
+      - lib/middleware/rate-limiter.cjs
+      - lib/middleware/request-logger.cjs
+      - bin/index.cjs
+      - tests/api/contracts.test.js
+      - tests/api/rules.test.js
+    closedAt: 2026-03-21T03:37:10.296Z
+  - id: FC-004
+    title: Centralize Hardcoded URLs and Project Metadata
+    objective: Inventory and centralize hardcoded URLs, hostnames, repository links,
+      package links, website links, and other project-specific metadata so
+      runtime ...
+    type: FEATURE_CONTRACT
+    files:
+      - contracts/FC-004-metadata-inventory.md
+      - lib/project-metadata.cjs
+      - lib/config.cjs
+      - lib/api-server.cjs
+      - lib/ai-complete.cjs
+      - bin/index.cjs
+      - docs/index.html
+      - grabby-website/public/index.html
+      - tests/
+    closedAt: 2026-03-21T03:44:53.554Z
+  - id: FC-007
+    title: Dedicated Rules Generator/Updater With Protected Shared R...
+    objective: Create a dedicated Grabby rules generator/updater for shared project
+      rules and enforce that the shared rules repository can only be changed
+      through...
+    type: FEATURE_CONTRACT
+    files:
+      - lib/rules-authoring.cjs
+      - tests/rules-authoring.test.js
+      - lib/rules-cli.cjs
+      - lib/ruleset-builder.cjs
+      - lib/commands.cjs
+      - lib/config.cjs
+      - lib/tui.cjs
+      - docs/RULES_CLI.md
+      - README.md
+      - tests/commands.test.js
+    closedAt: 2026-03-21T04:03:27.526Z
+lastUpdated: 2026-03-21T04:03:27.539Z

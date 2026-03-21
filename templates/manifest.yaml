@@ -1,0 +1,146 @@
+# Grabby Central Ruleset Manifest
+# This file defines the available rulesets and presets for your organization
+
+version: "1.0.0"
+lastUpdated: "2026-03-20T00:00:00Z"
+
+categories:
+  languages:
+    description: "Programming language standards and conventions"
+    extensible: false
+    rulesets:
+      - name: typescript
+        version: "1.0.0"
+        tags: [frontend, backend, strict]
+        extends: []
+        compatibleWith: [frameworks/react, frameworks/express]
+
+      - name: javascript
+        version: "1.0.0"
+        tags: [frontend, backend]
+        extends: []
+
+      - name: go
+        version: "1.0.0"
+        tags: [backend, microservices]
+        extends: []
+
+      - name: python
+        version: "1.0.0"
+        tags: [backend, ml, data]
+        extends: []
+
+  frameworks:
+    description: "Framework-specific patterns and best practices"
+    extensible: false
+    rulesets:
+      - name: react
+        version: "1.0.0"
+        tags: [frontend, ui]
+        extends: [languages/typescript]
+
+      - name: nextjs
+        version: "1.0.0"
+        tags: [frontend, fullstack, ssr]
+        extends: [frameworks/react]
+
+      - name: express
+        version: "1.0.0"
+        tags: [backend, api]
+        extends: [languages/typescript]
+
+  domains:
+    description: "Domain-specific constraints and patterns"
+    extensible: true
+    rulesets:
+      - name: api-compat
+        version: "1.0.0"
+        tags: [backend, api, versioning]
+
+      - name: db-safety
+        version: "1.0.0"
+        tags: [backend, database, migrations]
+
+      - name: frontend-deps
+        version: "1.0.0"
+        tags: [frontend, dependencies]
+
+      - name: auth
+        version: "1.0.0"
+        tags: [security, authentication]
+
+  policies:
+    description: "Organizational policies and governance"
+    extensible: true
+    rulesets:
+      - name: security
+        version: "1.0.0"
+        tags: [security, compliance]
+
+      - name: git-workflow
+        version: "1.0.0"
+        tags: [git, collaboration]
+
+      - name: code-review
+        version: "1.0.0"
+        tags: [quality, collaboration]
+
+  testing:
+    description: "Testing standards and coverage requirements"
+    extensible: false
+    rulesets:
+      - name: unit
+        version: "1.0.0"
+        tags: [testing, tdd]
+
+      - name: integration
+        version: "1.0.0"
+        tags: [testing, e2e]
+
+      - name: coverage
+        version: "1.0.0"
+        tags: [testing, quality]
+
+  tooling:
+    description: "Development tooling and CI/CD standards"
+    extensible: false
+    rulesets:
+      - name: linters
+        version: "1.0.0"
+        tags: [quality, automation]
+
+      - name: ci-cd
+        version: "1.0.0"
+        tags: [automation, deployment]
+
+presets:
+  fullstack-typescript:
+    description: "Full-stack TypeScript application with React frontend and Express backend"
+    includes:
+      - languages/typescript
+      - frameworks/react
+      - frameworks/express
+      - domains/api-compat
+      - policies/security
+      - testing/unit
+    tags: [fullstack, typescript, popular]
+
+  react-spa:
+    description: "React single-page application"
+    includes:
+      - languages/typescript
+      - frameworks/react
+      - domains/frontend-deps
+      - policies/security
+      - testing/unit
+    tags: [frontend, spa, react]
+
+  go-microservice:
+    description: "Go microservice with best practices"
+    includes:
+      - languages/go
+      - domains/api-compat
+      - domains/db-safety
+      - policies/security
+      - testing/unit
+    tags: [backend, microservices, go]

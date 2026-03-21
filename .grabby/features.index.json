@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-19T00:11:29.068Z",
+  "generatedAt": "2026-03-21T04:03:27.575Z",
   "trackingMode": "tracked",
   "features": [
     {
@@ -542,6 +542,21 @@
       "type": "feat"
     },
     {
+      "id": "FC-002",
+      "title": "Modular Ruleset System with Central Repository Sync",
+      "status": "archived",
+      "archivePath": ".grabby/history/history-002.yaml",
+      "closedAt": "2026-03-21T00:40:53.981Z",
+      "objective": "Implement a fully modular, extensible ruleset system with: - Dynamic category system (not hardcoded) - Central repository for shared rulesets - Git...",
+      "type": "FEATURE_CONTRACT",
+      "files": [
+        "lib/contract-rulesets.cjs",
+        "lib/commands.cjs",
+        "tests/contract-rulesets.test.js",
+        "docs/CONTRACT_SYNC.md"
+      ]
+    },
+    {
       "id": "FC-003",
       "title": "Contract Level System",
       "status": "archived",
@@ -549,6 +564,94 @@
       "closedAt": "2026-03-03T00:36:45.653Z",
       "objective": "Contract Level System",
       "type": "feat"
+    },
+    {
+      "id": "FC-003",
+      "title": "REST API Foundation - Phase 1",
+      "status": "archived",
+      "archivePath": ".grabby/history/history-002.yaml",
+      "closedAt": "2026-03-21T03:37:10.296Z",
+      "objective": "Build a local-first REST API server for Grabby that serves as a control plane for contract management and rules repository integration. Phase 1 foc...",
+      "type": "FEATURE_CONTRACT",
+      "files": [
+        "lib/api-server-v2.cjs",
+        "lib/api-routes/contracts.cjs",
+        "lib/api-routes/rules.cjs",
+        "lib/api-routes/health.cjs",
+        "lib/middleware/error-handler.cjs",
+        "lib/middleware/rate-limiter.cjs",
+        "lib/middleware/request-logger.cjs",
+        "bin/index.cjs",
+        "tests/api/contracts.test.js",
+        "tests/api/rules.test.js"
+      ]
+    },
+    {
+      "id": "FC-004",
+      "title": "Centralize Hardcoded URLs and Project Metadata",
+      "status": "archived",
+      "archivePath": ".grabby/history/history-002.yaml",
+      "closedAt": "2026-03-21T03:44:53.554Z",
+      "objective": "Inventory and centralize hardcoded URLs, hostnames, repository links, package links, website links, and other project-specific metadata so runtime ...",
+      "type": "FEATURE_CONTRACT",
+      "files": [
+        "contracts/FC-004-metadata-inventory.md",
+        "lib/project-metadata.cjs",
+        "lib/config.cjs",
+        "lib/api-server.cjs",
+        "lib/ai-complete.cjs",
+        "bin/index.cjs",
+        "docs/index.html",
+        "grabby-website/public/index.html",
+        "tests/"
+      ]
+    },
+    {
+      "id": "FC-005",
+      "title": "Evaluate Prompt-Centric Agents vs Runtime-Driven Agents",
+      "type": "FEATURE_CONTRACT",
+      "status": "draft",
+      "branch": null,
+      "lastModifiedAt": "2026-03-21T03:40:21.611Z",
+      "contractPath": "contracts/FC-005.fc.md",
+      "planPath": "contracts/FC-005.plan.yaml",
+      "auditPath": null,
+      "archivePath": null,
+      "closedAt": null
+    },
+    {
+      "id": "FC-006",
+      "title": "Refresh Documentation and Website After FC-005",
+      "type": "FEATURE_CONTRACT",
+      "status": "draft",
+      "branch": null,
+      "lastModifiedAt": "2026-03-21T03:40:36.075Z",
+      "contractPath": "contracts/FC-006.fc.md",
+      "planPath": "contracts/FC-006.plan.yaml",
+      "auditPath": null,
+      "archivePath": null,
+      "closedAt": null
+    },
+    {
+      "id": "FC-007",
+      "title": "Dedicated Rules Generator/Updater With Protected Shared R...",
+      "status": "archived",
+      "archivePath": ".grabby/history/history-002.yaml",
+      "closedAt": "2026-03-21T04:03:27.526Z",
+      "objective": "Create a dedicated Grabby rules generator/updater for shared project rules and enforce that the shared rules repository can only be changed through...",
+      "type": "FEATURE_CONTRACT",
+      "files": [
+        "lib/rules-authoring.cjs",
+        "tests/rules-authoring.test.js",
+        "lib/rules-cli.cjs",
+        "lib/ruleset-builder.cjs",
+        "lib/commands.cjs",
+        "lib/config.cjs",
+        "lib/tui.cjs",
+        "docs/RULES_CLI.md",
+        "README.md",
+        "tests/commands.test.js"
+      ]
     },
     {
       "id": "FC-101",

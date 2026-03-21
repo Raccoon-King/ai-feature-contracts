@@ -1,6 +1,6 @@
 {
   "name": "grabby",
-  "version": "3.6.1",
+  "version": "4.0.0",
   "description": "Token-efficient feature contract system for AI-assisted development",
   "main": "bin/index.cjs",
   "bin": {
@@ -60,10 +60,21 @@
   "dependencies": {
     "chokidar": "^5.0.0",
     "cli-progress": "^3.12.0",
+    "compression": "^1.8.1",
+    "cors": "2.8.x",
+    "express": "^4.22.1",
+    "express-rate-limit": "7.1.x",
+    "express-validator": "7.0.x",
+    "helmet": "7.1.x",
+    "swagger-jsdoc": "6.2.x",
+    "swagger-ui-express": "5.0.x",
+    "winston": "3.11.x",
     "yaml": "^2.3.4"
   },
   "devDependencies": {
     "jest": "^30.3.0",
+    "nock": "13.5.x",
+    "supertest": "6.3.x",
     "wrangler": "^4.73.0"
   },
   "jest": {

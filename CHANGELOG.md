@@ -7,6 +7,39 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [4.0.0] - 2026-03-21
+
+### Added
+- **Shared Rules Authoring**: Dedicated flow for generating and updating protected shared project rules
+  - `grabby rules generate` - Generate shared rules from repository guidance (AGENTS.md, docs/, etc.)
+  - `grabby rules update` - Update existing shared rulesets in place
+  - `grabby rules shared` - List shared rulesets in protected path
+- **Protected Path Model**: Shared rules stored in `.grabby/rulesets/shared/` are write-protected
+  - Normal Grabby operations (task, execute, audit) cannot write to this path
+  - Only explicit authoring commands can modify shared rules
+  - Manual file edits outside Grabby remain permitted
+- New `lib/rules-authoring.cjs` module with:
+  - Authoring context management for write boundary enforcement
+  - Guidance file discovery from configurable sources
+  - LLM-powered rule generation with fallback templates
+- Configuration: `rulesets.authoring` section in grabby.config.json
+  - `enabled` - Enable/disable authoring commands
+  - `protectedPath` - Configurable protected directory
+  - `guidanceSources` - Files to scan for guidance
+- TUI menu options for shared rules authoring in Rulesets menu
+- Comprehensive test suite for rules-authoring module (89%+ coverage)
+- Documentation: Extended `docs/RULES_CLI.md` with authoring commands section
+
+### Changed
+- **BREAKING**: Protected path writes blocked during contract execution
+- Plan phase now warns when files target protected shared rules path
+- Execute phase blocks if plan targets protected shared rules path
+- Rules CLI help updated with authoring commands section
+
+### Security
+- Protected path checks prevent accidental writes outside intended shared rules location
+- Authoring commands validate target paths and reject traversal
+
 ## [3.5.0] - 2026-03-17
 
 ### Added

@@ -1,0 +1,55 @@
+contract: FC-007.fc.md
+phase: plan
+timestamp: 2026-03-21T03:51:50.998Z
+context:
+  - ARCH:setup-validation@v1
+  - RULESET:baseline-governance@v1
+context_token_usage: 7
+context_token_budget: 700
+files:
+  - action: "**CREATE**"
+    path: lib/rules-authoring.cjs
+    reason: Shared helpers for generating/updating shared project rules and
+      enforcing write boundaries
+  - action: "**CREATE**"
+    path: tests/rules-authoring.test.js
+    reason: Validate generation, update, and protected shared-rules behavior
+  - action: "**MODIFY**"
+    path: lib/rules-cli.cjs
+    reason: Add explicit rules authoring/update commands under `grabby rules`
+  - action: "**MODIFY**"
+    path: lib/ruleset-builder.cjs
+    reason: Reuse or adapt ruleset generation logic for shared rules authoring
+  - action: "**MODIFY**"
+    path: lib/commands.cjs
+    reason: Register authoring commands and protect shared rules paths in normal
+      operations
+  - action: "**MODIFY**"
+    path: lib/config.cjs
+    reason: Add configuration for the protected shared rules repo path and authoring
+      defaults
+  - action: "**MODIFY**"
+    path: lib/tui.cjs
+    reason: Expose the dedicated rules authoring flow without weakening write
+      protections
+  - action: "**MODIFY**"
+    path: docs/RULES_CLI.md
+    reason: Document generate/update flows and the protected shared-rules model
+  - action: "**MODIFY**"
+    path: README.md
+    reason: Explain how shared project rules are authored and why normal flows
+      cannot write them
+  - action: "**MODIFY**"
+    path: tests/commands.test.js
+    reason: Cover write-boundary enforcement during normal Grabby operations
+rules:
+  - §typescript
+  - §hooks
+  - §testing
+risks:
+  - State synchronization
+  - Type coverage
+  - Edge cases
+status: pending_approval
+approval_token_required: Approved
+execution_mode: plan_only

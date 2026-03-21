@@ -1,0 +1,38 @@
+contract: FC-005.fc.md
+phase: plan
+timestamp: 2026-03-21T03:40:21.617Z
+context:
+  - ARCH:setup-validation@v1
+  - RULESET:api-compat@v1
+context_token_usage: 10
+context_token_budget: 700
+files:
+  - action: "**CREATE**"
+    path: docs/AGENT_PROMPT_EVALUATION.md
+    reason: Capture current-state analysis, target architecture, and key findings
+  - action: "**CREATE**"
+    path: docs/AGENT_RUNTIME_MIGRATION_PLAN.md
+    reason: Define staged migration plan, pilot candidate, risks, and rollout
+      sequencing
+  - action: "**CREATE**"
+    path: templates/agent-runtime-contract.example.yaml
+    reason: Example runtime-oriented agent contract with explicit inputs, outputs,
+      constraints, and tools
+  - action: "**CREATE**"
+    path: templates/agent-runtime-minimal-prompt.md
+    reason: Example reduced prompt that assumes runtime/tool orchestration already
+      happened
+  - action: "**CREATE**"
+    path: tests/agent-runtime-example-artifacts.test.js
+    reason: Validate example artifacts remain internally consistent and usable
+rules:
+  - §typescript
+  - §hooks
+  - §testing
+risks:
+  - State synchronization
+  - Type coverage
+  - Edge cases
+status: pending_approval
+approval_token_required: Approved
+execution_mode: plan_only
