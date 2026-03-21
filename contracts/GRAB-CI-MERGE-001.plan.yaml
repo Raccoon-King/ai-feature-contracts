@@ -1,0 +1,32 @@
+contract: GRAB-CI-MERGE-001.fc.md
+phase: plan
+version: 4.1.2 > 4.2.0
+timestamp: 2026-03-21T20:44:33.840Z
+context: []
+context_token_usage: 0
+context_token_budget: 700
+files:
+  - action: modify
+    path: contracts/GRAB-CI-MERGE-001.fc.md
+    reason: Keep the governing contract aligned with the actual merge-fix scope
+  - action: modify
+    path: .github/workflows/sync-website-repo-on-tag.yml
+    reason: Correct stale doc source paths so website sync no longer fails on tagged
+      head commits
+  - action: modify
+    path: tests/api/health.test.js
+    reason: Keep the health endpoint timing assertion reliable in hosted CI
+  - action: delete
+    path: tests/unit/calculator.test.js
+    reason: Remove an orphaned test that references a missing calculator module
+rules:
+  - §typescript
+  - §hooks
+  - §testing
+risks:
+  - State synchronization
+  - Type coverage
+  - Edge cases
+status: pending_approval
+approval_token_required: Approved
+execution_mode: plan_only

@@ -26,7 +26,21 @@ jobs:
           grep -q "^Docs Reviewed: yes$" "${AUDIT_FILE}"
           grep -q "^Website Updated: yes$" "${AUDIT_FILE}"
 
+      - name: Check website repo sync token
+        id: website-token
+        env:
+          WEBSITE_REPO_TOKEN: ${{ secrets.WEBSITE_REPO_TOKEN }}
+        run: |
+          set -euo pipefail
+          if [ -z "${WEBSITE_REPO_TOKEN}" ]; then
+            echo "::warning::WEBSITE_REPO_TOKEN is not configured; skipping website repo sync."
+            echo "enabled=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "enabled=true" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Checkout website repo
+        if: steps.website-token.outputs.enabled == 'true'
         uses: actions/checkout@v4
         with:
           repository: Raccoon-King/grabby-website
@@ -35,23 +49,28 @@ jobs:
           ref: main
 
       - name: Sync website files
+        if: steps.website-token.outputs.enabled == 'true'
         run: |
           set -euo pipefail
           mkdir -p website-repo/public/assets/grabby
 
-          cp docs/user-guide/index.html website-repo/public/index.html
-          cp docs/user-guide/technical-portal.html website-repo/public/technical-portal.html
-          cp docs/user-guide/DOCUMENT_MAP.md website-repo/public/DOCUMENT_MAP.md
+          cp docs/index.html website-repo/public/index.html
+          cp docs/grabby-user-guide.html website-repo/public/grabby-user-guide.html
+          cp docs/grabby-user-guide.html website-repo/public/technical-portal.html
+          if [ -f docs/user-guide/DOCUMENT_MAP.md ]; then
+            cp docs/user-guide/DOCUMENT_MAP.md website-repo/public/DOCUMENT_MAP.md
+          fi
           cp docs/assets/grabby/grabby_vscode.png website-repo/public/assets/grabby/grabby_vscode.png
 
       - name: Commit and push website updates
+        if: steps.website-token.outputs.enabled == 'true'
         run: |
           set -euo pipefail
           cd website-repo
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-          git add public/index.html public/technical-portal.html public/DOCUMENT_MAP.md public/assets/grabby/grabby_vscode.png
+          git add -A public/index.html public/grabby-user-guide.html public/technical-portal.html public/DOCUMENT_MAP.md public/assets/grabby/grabby_vscode.png
 
           if git diff --cached --quiet; then
             echo "No website file changes to commit."
@@ -61,7 +80,7 @@ jobs:
           fi
 
       - name: Mirror release tag to website repo
-        if: startsWith(github.ref, 'refs/tags/')
+        if: startsWith(github.ref, 'refs/tags/') && steps.website-token.outputs.enabled == 'true'
         run: |
           set -euo pipefail
           cd website-repo
