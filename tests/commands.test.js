@@ -867,6 +867,41 @@ Capture baseline context.
     expect(repoConfigMentions).toBe(1);
   });
 
+  it('refreshes an existing governance lock to the current CLI version during init', async () => {
+    const logger = createLogger();
+    const context = createProjectContext({ cwd: tempDir, pkgRoot: PKG_ROOT });
+    const handlers = createCommandHandlers({ context, logger });
+    const lockPath = path.join(tempDir, '.grabby', 'governance.lock');
+
+    fs.mkdirSync(path.join(tempDir, '.grabby'), { recursive: true });
+    fs.writeFileSync(path.join(tempDir, 'package.json'), JSON.stringify({
+      name: 'lock-refresh-demo',
+      scripts: { test: 'jest' },
+    }), 'utf8');
+    fs.writeFileSync(lockPath, yaml.stringify({
+      governance: {
+        version: '3.4.0',
+        profile: 'custom',
+        rules_version: 'v9',
+      },
+      setupCompleted: true,
+      scaffoldingSync: {
+        lastWarnedContractCount: 3,
+      },
+    }), 'utf8');
+
+    await handlers.init();
+
+    const lock = yaml.parse(fs.readFileSync(lockPath, 'utf8'));
+    expect(lock.governance.version).toBe(JSON.parse(fs.readFileSync(path.join(PKG_ROOT, 'package.json'), 'utf8')).version);
+    expect(lock.governance.profile).toBe('custom');
+    expect(lock.governance.rules_version).toBe('v9');
+    expect(lock.setupCompleted).toBe(true);
+    expect(lock.scaffoldingSync.lastWarnedContractCount).toBe(3);
+    expect(logger.lines.join('\n')).toContain('Updated:');
+    expect(logger.lines.join('\n')).toContain('.grabby/governance.lock');
+  });
+
   it('preserves existing baseline contracts during init', async () => {
     const logger = createLogger();
     const context = createProjectContext({ cwd: tempDir, pkgRoot: PKG_ROOT });

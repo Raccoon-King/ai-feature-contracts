@@ -1747,6 +1747,10 @@ const command = shouldLaunchMenuByDefault ? tui : (commands[cmd] || help);
 const result = command();
 if (result instanceof Promise) {
   result.catch(err => {
+    // Skip handling if process.exit was already called (test harness throws __GRABBY_EXIT__)
+    if (String(err?.message || '').includes('__GRABBY_EXIT__')) {
+      return; // Already handled by the mocked process.exit
+    }
     console.error('Error:', err.message);
     process.exit(1);
   });

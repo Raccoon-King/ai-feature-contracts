@@ -365,7 +365,7 @@ Grabby supports work-item IDs in the form `KEY-123` (for example `FC-123`, `TT-1
 
 ## Governance Lock + Policy
 
-- `grabby init` creates `.grabby/governance.lock` and stamps the active CLI version.
+- `grabby init` creates `.grabby/governance.lock` and stamps or refreshes the active CLI version.
 - `grabby validate` warns when the local CLI version differs from `governance.lock` (no automatic upgrade).
 - Optional CI gate in `.grabby/config.json`:
 
