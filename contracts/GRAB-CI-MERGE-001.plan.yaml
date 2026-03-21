@@ -1,7 +1,7 @@
 contract: GRAB-CI-MERGE-001.fc.md
 phase: plan
-version: 4.1.2 > 4.1.3
-timestamp: 2026-03-21T21:28:10.830Z
+version: 4.1.4 > 4.1.5
+timestamp: 2026-03-21T17:47:40.6410713-04:00
 context: []
 context_token_usage: 0
 context_token_budget: 700
@@ -19,6 +19,10 @@ files:
     path: .github/workflows/sync-website-repo-on-tag.yml
     reason: Correct stale doc source paths so website sync no longer fails on tagged
       head commits
+  - action: modify
+    path: .github/workflows/release.yml
+    reason: Stop development pushes from creating release bot commits and align
+      release automation with the repo's main-only branch strategy
   - action: modify
     path: lib/api-routes/health.cjs
     reason: Make config and ruleset health reads resilient when repo config is
