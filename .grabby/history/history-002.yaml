@@ -759,4 +759,25 @@ entries:
       - lib/commands.cjs
       - tests/commands.test.js
     closedAt: 2026-03-21T19:59:43.239Z
-lastUpdated: 2026-03-21T19:59:43.253Z
+  - id: SYSTEM-BASELINE
+    title: Grabby System Baseline
+    objective: Establish the baseline Grabby governance contract for `grabby` so
+      initialization, planning, approval, execution, and audit flows start from
+      a consi...
+    type: FEATURE_CONTRACT
+    closedAt: 2026-03-21T20:05:31.471Z
+  - id: PROJECT-BASELINE
+    title: Project Baseline for Node.js project
+    objective: Capture the repository baseline for this node.js project so future
+      feature contracts can stay aligned with the detected structure and
+      tooling.
+    type: FEATURE_CONTRACT
+    closedAt: 2026-03-21T20:05:36.964Z
+  - id: SETUP-BASELINE
+    title: Setup Validation and Project Index Baseline
+    objective: Define the deterministic setup validation and repository indexing
+      procedure that any LLM must follow after `grabby init` so governed
+      workflows star...
+    type: FEATURE_CONTRACT
+    closedAt: 2026-03-21T20:05:37.188Z
+lastUpdated: 2026-03-21T20:05:37.204Z
