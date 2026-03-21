@@ -214,3 +214,23 @@ npm test -- --runInBand
 - Do not edit files outside the approved contract scope.
 - Review `.grabby/project-context.json` before making brownfield changes.
 - If the repo has no active contracts, start with `grabby list` and create one.
+
+## Runtime-Driven Model (v4.0)
+
+Grabby 4.0 uses a runtime-driven architecture where:
+
+- **Validation** is handled by deterministic runtime code, not LLM interpretation
+- **Context** is pre-structured before reaching the LLM
+- **Prompts** are minimal and focused on explanation/decision tasks
+- **Output** is validated against schemas
+
+This means LLM agents work with structured findings instead of parsing raw contracts.
+The runtime handles validation rules, constraint checking, and output format enforcement.
+
+Benefits for LLM integration:
+- Lower token usage (~30-50% reduction)
+- More predictable behavior
+- Testable validation logic
+- Provider-agnostic LLM calls
+
+See `docs/AGENT_ARCHITECTURE.md` for architecture details.

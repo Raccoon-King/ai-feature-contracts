@@ -650,4 +650,35 @@ entries:
       - README.md
       - tests/commands.test.js
     closedAt: 2026-03-21T04:03:27.526Z
-lastUpdated: 2026-03-21T04:03:27.539Z
+  - id: FC-005
+    title: Evaluate Prompt-Centric Agents vs Runtime-Driven Agents
+    objective: Evaluate the current prompt-centric agent model and define a
+      migration path toward runtime-driven agents where contracts, tools, and
+      execution code...
+    type: FEATURE_CONTRACT
+    files:
+      - docs/AGENT_PROMPT_EVALUATION.md
+      - docs/AGENT_RUNTIME_MIGRATION_PLAN.md
+      - templates/agent-runtime-contract.example.yaml
+      - templates/agent-runtime-minimal-prompt.md
+      - tests/agent-runtime-example-artifacts.test.js
+    closedAt: 2026-03-21T04:20:39.082Z
+  - id: FC-006
+    title: Refresh Documentation and Website After FC-005
+    objective: Fully update Grabby's documentation and website after `FC-005` is
+      implemented so public-facing guidance, architecture docs, install flows,
+      command ...
+    type: FEATURE_CONTRACT
+    files:
+      - contracts/FC-006-docs-audit.md
+      - tests/agent-runtime-docs-consistency.test.js
+      - README.md
+      - docs/AGENT_ARCHITECTURE.md
+      - docs/CONTRACTS.md
+      - docs/EXECUTION_PROTOCOL.md
+      - docs/LLM_INSTALL.md
+      - docs/index.html
+      - docs/grabby-user-guide.html
+      - grabby-website/public/index.html
+    closedAt: 2026-03-21T04:20:39.140Z
+lastUpdated: 2026-03-21T04:20:39.148Z

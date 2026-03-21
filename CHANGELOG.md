@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [4.0.1] - 2026-03-21
+
+### Added
+- **Runtime-Driven Agent Architecture Documentation**
+  - `docs/AGENT_PROMPT_EVALUATION.md` - Current state analysis and gap analysis
+  - `docs/AGENT_RUNTIME_MIGRATION_PLAN.md` - Phased migration plan with pilot selection
+  - `templates/agent-runtime-contract.example.yaml` - Example runtime-oriented contract
+  - `templates/agent-runtime-minimal-prompt.md` - Before/after prompt comparison
+- Four-layer architecture sections added to key docs (AGENT_ARCHITECTURE, CONTRACTS, EXECUTION_PROTOCOL, LLM_INSTALL)
+- Documentation consistency tests for runtime-driven model terminology
+
+### Fixed
+- Test files now use Jest syntax (`beforeAll`) instead of Mocha (`before`)
+- Cleaned up stale contract artifacts from previous releases
+
 ## [4.0.0] - 2026-03-21
 
 ### Added

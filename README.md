@@ -91,7 +91,7 @@ Notes:
 
 **Website:** https://grabbyai.com
 **Documentation:** https://docs.grabbyai.com | https://grabby-docs.pages.dev
-**Version:** 2.3.12
+**Version:** 4.0.1
 
 LLM-focused setup instructions are in [docs/LLM_INSTALL.md](docs/LLM_INSTALL.md).
 Documentation home page is [docs/index.html](docs/index.html).
@@ -533,6 +533,27 @@ This system reduces token usage by:
 - Reference-based context envelopes
 - Structured plans instead of prose
 - Two-phase separation of planning and execution
+
+## Runtime-Driven Agent Model (v4.0)
+
+Grabby 4.0 introduces a runtime-driven architecture that separates deterministic
+workflow logic from LLM reasoning:
+
+| Layer | Responsibility |
+|-------|----------------|
+| Contract | Declarative inputs/outputs, tool permissions, success criteria |
+| Runtime | Workflow orchestration, context preparation, validation hooks |
+| Tools | File/git operations, search/analysis |
+| LLM | Bounded reasoning over pre-structured context |
+
+Benefits:
+- **30-50% token reduction** per interaction
+- **Testable** validation logic without LLM calls
+- **Predictable** behavior from deterministic runtime
+- **Provider-agnostic** LLM integration
+
+See `docs/AGENT_ARCHITECTURE.md` for architecture details and
+`docs/AGENT_RUNTIME_MIGRATION_PLAN.md` for the implementation roadmap.
 
 ## Reference Documents
 

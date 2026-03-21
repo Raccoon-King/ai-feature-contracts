@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-21T04:03:27.575Z",
+  "generatedAt": "2026-03-21T04:20:39.172Z",
   "trackingMode": "tracked",
   "features": [
     {
@@ -609,28 +609,39 @@
     {
       "id": "FC-005",
       "title": "Evaluate Prompt-Centric Agents vs Runtime-Driven Agents",
+      "status": "archived",
+      "archivePath": ".grabby/history/history-002.yaml",
+      "closedAt": "2026-03-21T04:20:39.082Z",
+      "objective": "Evaluate the current prompt-centric agent model and define a migration path toward runtime-driven agents where contracts, tools, and execution code...",
       "type": "FEATURE_CONTRACT",
-      "status": "draft",
-      "branch": null,
-      "lastModifiedAt": "2026-03-21T03:40:21.611Z",
-      "contractPath": "contracts/FC-005.fc.md",
-      "planPath": "contracts/FC-005.plan.yaml",
-      "auditPath": null,
-      "archivePath": null,
-      "closedAt": null
+      "files": [
+        "docs/AGENT_PROMPT_EVALUATION.md",
+        "docs/AGENT_RUNTIME_MIGRATION_PLAN.md",
+        "templates/agent-runtime-contract.example.yaml",
+        "templates/agent-runtime-minimal-prompt.md",
+        "tests/agent-runtime-example-artifacts.test.js"
+      ]
     },
     {
       "id": "FC-006",
       "title": "Refresh Documentation and Website After FC-005",
+      "status": "archived",
+      "archivePath": ".grabby/history/history-002.yaml",
+      "closedAt": "2026-03-21T04:20:39.140Z",
+      "objective": "Fully update Grabby's documentation and website after `FC-005` is implemented so public-facing guidance, architecture docs, install flows, command ...",
       "type": "FEATURE_CONTRACT",
-      "status": "draft",
-      "branch": null,
-      "lastModifiedAt": "2026-03-21T03:40:36.075Z",
-      "contractPath": "contracts/FC-006.fc.md",
-      "planPath": "contracts/FC-006.plan.yaml",
-      "auditPath": null,
-      "archivePath": null,
-      "closedAt": null
+      "files": [
+        "contracts/FC-006-docs-audit.md",
+        "tests/agent-runtime-docs-consistency.test.js",
+        "README.md",
+        "docs/AGENT_ARCHITECTURE.md",
+        "docs/CONTRACTS.md",
+        "docs/EXECUTION_PROTOCOL.md",
+        "docs/LLM_INSTALL.md",
+        "docs/index.html",
+        "docs/grabby-user-guide.html",
+        "grabby-website/public/index.html"
+      ]
     },
     {
       "id": "FC-007",

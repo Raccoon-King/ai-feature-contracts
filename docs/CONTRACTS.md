@@ -38,3 +38,20 @@ grabby list                    # List all contracts
 - `SETUP-BASELINE.fc.md` defines deterministic setup validation and project indexing for any LLM
 
 Review generated baseline contracts before using them as implementation scope.
+
+## Runtime-Driven Contracts (v4.0)
+
+Starting with Grabby 4.0, contracts support a runtime-driven model where:
+
+- **Deterministic logic** lives in runtime code, not prompts
+- **LLM receives** pre-structured context instead of raw contract markdown
+- **Validation rules** are enforced by runtime before LLM sees the contract
+- **Output schemas** constrain what the LLM can produce
+
+This reduces token usage, improves predictability, and makes validation testable.
+
+See:
+- `docs/AGENT_ARCHITECTURE.md` for the four-layer architecture
+- `docs/AGENT_PROMPT_EVALUATION.md` for the evaluation of prompt vs runtime models
+- `docs/AGENT_RUNTIME_MIGRATION_PLAN.md` for the phased migration plan
+- `templates/agent-runtime-contract.example.yaml` for an example runtime contract
