@@ -1,0 +1,59 @@
+contract: FC-003.fc.md
+phase: plan
+timestamp: 2026-03-21T03:35:34.696Z
+context:
+  - ARCH:stack@v1
+  - RULESET:imports@v1
+context_token_usage: 6
+context_token_budget: 700
+files:
+  - action: "**CREATE**"
+    path: lib/api-server-v2.cjs
+    reason: New REST API server implementation
+  - action: "**CREATE**"
+    path: lib/api-routes/contracts.cjs
+    reason: Contract CRUD endpoints
+  - action: "**CREATE**"
+    path: lib/api-routes/rules.cjs
+    reason: Rules sync endpoints
+  - action: "**CREATE**"
+    path: lib/api-routes/health.cjs
+    reason: Health check endpoints
+  - action: "**CREATE**"
+    path: lib/middleware/error-handler.cjs
+    reason: Centralized error handling
+  - action: "**CREATE**"
+    path: lib/middleware/rate-limiter.cjs
+    reason: Rate limiting middleware
+  - action: "**CREATE**"
+    path: lib/middleware/request-logger.cjs
+    reason: Request/response logging
+  - action: "**MODIFY**"
+    path: bin/index.cjs
+    reason: Add `grabby serve` command
+  - action: "**CREATE**"
+    path: tests/api/contracts.test.js
+    reason: Contract endpoint tests
+  - action: "**CREATE**"
+    path: tests/api/rules.test.js
+    reason: Rules endpoint tests
+  - action: "**CREATE**"
+    path: tests/api/health.test.js
+    reason: Health endpoint tests
+  - action: "**CREATE**"
+    path: docs/API.md
+    reason: API documentation
+  - action: "**CREATE**"
+    path: docs/openapi.yaml
+    reason: OpenAPI 3.0 specification
+rules:
+  - §typescript
+  - §hooks
+  - §testing
+risks:
+  - State synchronization
+  - Type coverage
+  - Edge cases
+status: pending_approval
+approval_token_required: Approved
+execution_mode: plan_only

@@ -128,6 +128,89 @@ Current recommended mapping:
 - Keep `quick-flow` as an exception path, not the main operating model
 - Add `analyst` as the dedicated intake role
 
+## Runtime-Driven Agent Model (v4.0)
+
+Grabby 4.0 introduces a runtime-driven architecture that separates deterministic
+workflow logic from LLM reasoning. This model follows a four-layer separation:
+
+### Four-Layer Architecture
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│  Layer 1: CONTRACT                                           │
+│  • Declarative specification of inputs/outputs               │
+│  • Explicit tool permissions                                 │
+│  • Validation schemas and success criteria                   │
+├─────────────────────────────────────────────────────────────┤
+│  Layer 2: RUNTIME                                            │
+│  • Workflow orchestration (deterministic)                    │
+│  • Context preparation (what LLM sees)                       │
+│  • Pre/post validation hooks                                 │
+├─────────────────────────────────────────────────────────────┤
+│  Layer 3: TOOLS                                              │
+│  • File operations (read/write/edit)                         │
+│  • Git operations (branch/commit/push)                       │
+│  • Search/analysis (grep/glob/ast)                           │
+├─────────────────────────────────────────────────────────────┤
+│  Layer 4: LLM (Minimal Prompt)                               │
+│  • Receives pre-structured context                           │
+│  • Makes bounded decisions                                   │
+│  • Outputs in constrained format                             │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### Responsibility Shift
+
+| Responsibility | Before (LLM) | After (Runtime) |
+|----------------|--------------|-----------------|
+| Parse contract | LLM reads markdown | Runtime parses to AST |
+| Validate scope | LLM checks rules | Runtime validates pre-execution |
+| Choose files | LLM decides | Runtime provides candidate list |
+| Apply templates | LLM generates | Runtime expands templates |
+| Check constraints | LLM interprets | Runtime enforces |
+| Format output | LLM follows instructions | Runtime validates schema |
+
+### Benefits
+
+1. **Deterministic**: Same input → same validation → predictable output
+2. **Testable**: Unit test runtime logic without LLM calls
+3. **Token Efficient**: Only send decision-relevant context
+4. **Constrained**: LLM can only use provided tools
+5. **Auditable**: Log every runtime decision
+6. **Modular**: Swap LLM providers without changing logic
+
+### Migration Status
+
+See `docs/AGENT_RUNTIME_MIGRATION_PLAN.md` for the phased implementation plan.
+See `docs/AGENT_PROMPT_EVALUATION.md` for the evaluation that motivated this shift.
+
+## REST API Exposure
+
+The agent system is exposed through the REST API at `/v1/agents`:
+
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/v1/agents` | GET | List all agents with metadata |
+| `/v1/agents/:id` | GET | Get agent details and definition |
+| `/v1/agents/:id/workflows` | GET | List workflows for an agent |
+| `/v1/agents/all/workflows` | GET | List all workflows |
+| `/v1/agents/route` | POST | Route a request to appropriate agent |
+| `/v1/agents/lint/all` | GET | Lint all agent definitions |
+
+### Routing via API
+
+External tools can use the routing endpoint to determine which agent should handle a request:
+
+```bash
+curl -X POST http://127.0.0.1:3456/v1/agents/route \
+  -H "Content-Type: application/json" \
+  -d '{"request": "Create a new authentication feature"}'
+```
+
+The response includes the primary agent, next agent in sequence, and the full transition chain.
+
+See `docs/API.md` for full endpoint documentation and examples.
+
 ## Notes
 
 - This model favors sequential orchestration over concurrent multi-agent writes.

@@ -1,0 +1,54 @@
+contract: GRAB-AGENTS-001.fc.md
+phase: plan
+timestamp: 2026-03-21T17:58:58.824Z
+context: []
+context_token_usage: 0
+context_token_budget: 700
+files:
+  - action: modify
+    path: contracts/GRAB-AGENTS-001.fc.md
+    reason: Keep the story aligned with the final implementation scope
+  - action: modify
+    path: agents/
+    reason: Refine the dedicated agent definitions, menus, and ownership boundaries
+  - action: modify
+    path: workflows/
+    reason: Align workflow/task definitions with the dedicated-agent model
+  - action: modify
+    path: lib/personas.cjs
+    reason: Align persona routing and agent ownership metadata
+  - action: modify
+    path: lib/interactive-workflows.cjs
+    reason: Reflect stronger agent-stage ownership in workflow handoffs
+  - action: modify
+    path: lib/api-server-v2.cjs
+    reason: Expose dedicated agent/workflow capabilities through the local API
+  - action: modify
+    path: docs/AGENT_ARCHITECTURE.md
+    reason: Document the agent-first model and task boundaries
+  - action: modify
+    path: docs/API.md
+    reason: Document the agent API surface and usage
+  - action: modify
+    path: docs/openapi.yaml
+    reason: Define the agent/workflow endpoints in the public API contract
+  - action: modify
+    path: tests/personas.test.js
+    reason: Verify persona-to-agent routing behavior
+  - action: modify
+    path: tests/integration/persona-handoff.test.js
+    reason: Verify end-to-end handoff ownership
+  - action: modify
+    path: tests/api-server-v2.test.js
+    reason: Verify agent/workflow API exposure and docs endpoints
+rules:
+  - §typescript
+  - §hooks
+  - §testing
+risks:
+  - State synchronization
+  - Type coverage
+  - Edge cases
+status: pending_approval
+approval_token_required: Approved
+execution_mode: plan_only

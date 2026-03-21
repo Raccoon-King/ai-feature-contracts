@@ -1,0 +1,26 @@
+╭────────────────────────────────────────────────────────────────────╮
+│ Plan to implement                                                  │
+│                                                                    │
+│ Refine the menu structure, labels, grouping, and navigation flow so it feels logical and less confusing│
+│                                                                    │
+│ Overview                                                           │
+│                                                                    │
+│ - ARCH_INDEX_v1                                                    │
+│                                                                    │
+│ User Requirements                                                  │
+│                                                                    │
+│ - Menu sections are logically grouped                              │
+│ - Navigation labels and ordering reduce confusion                  │
+│ - Tests and docs reflect the refined menu behavior                 │
+│ - Tests pass (80%+ coverage)                                       │
+│                                                                    │
+│ ---                                                                │
+│ ---                                                                │
+│ ---                                                                │
+│ Verification Plan                                                  │
+│                                                                    │
+│ 1. Menu sections are logically grouped                             │
+│ 2. Navigation labels and ordering reduce confusion                 │
+│ 3. Tests and docs reflect the refined menu behavior                │
+│ 4. Tests pass (80%+ coverage)                                      │
+╰────────────────────────────────────────────────────────────────────╯

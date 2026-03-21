@@ -1,0 +1,26 @@
+╭────────────────────────────────────────────────────────────────────╮
+│ Plan to implement                                                  │
+│                                                                    │
+│ natural-language 'create a story' requests to workflow option 3 in LLM-first workflow selection│
+│                                                                    │
+│ Overview                                                           │
+│                                                                    │
+│ - ARCH_INDEX_v1                                                    │
+│                                                                    │
+│ User Requirements                                                  │
+│                                                                    │
+│ - 'create a story' selects option 3 routing                        │
+│ - Tests pass (80%+ coverage)                                       │
+│ - Lint passes                                                      │
+│ - Build succeeds                                                   │
+│                                                                    │
+│ ---                                                                │
+│ ---                                                                │
+│ ---                                                                │
+│ Verification Plan                                                  │
+│                                                                    │
+│ 1. 'create a story' selects option 3 routing                       │
+│ 2. Tests pass (80%+ coverage)                                      │
+│ 3. Lint passes                                                     │
+│ 4. Build succeeds                                                  │
+╰────────────────────────────────────────────────────────────────────╯

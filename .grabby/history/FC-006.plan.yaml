@@ -1,0 +1,53 @@
+contract: FC-006.fc.md
+phase: plan
+timestamp: 2026-03-21T03:40:36.081Z
+context:
+  - ARCH:setup-validation@v1
+  - RULESET:fe-deps@v1
+context_token_usage: 8
+context_token_budget: 700
+files:
+  - action: "**CREATE**"
+    path: contracts/FC-006-docs-audit.md
+    reason: Track affected docs/website surfaces, decisions, and completion audit
+  - action: "**CREATE**"
+    path: tests/agent-runtime-docs-consistency.test.js
+    reason: Verify key docs/site references and terminology stay aligned
+  - action: "**MODIFY**"
+    path: README.md
+    reason: Update high-level product framing and command guidance
+  - action: "**MODIFY**"
+    path: docs/AGENT_ARCHITECTURE.md
+    reason: Reflect the accepted runtime-driven agent model
+  - action: "**MODIFY**"
+    path: docs/CONTRACTS.md
+    reason: Update contract workflow guidance where prompt bundles are no longer the
+      primary mental model
+  - action: "**MODIFY**"
+    path: docs/EXECUTION_PROTOCOL.md
+    reason: Document revised execution and handoff expectations
+  - action: "**MODIFY**"
+    path: docs/LLM_INSTALL.md
+    reason: Clarify the reduced role of prompts and how external LLM tools integrate
+  - action: "**MODIFY**"
+    path: docs/index.html
+    reason: Refresh docs landing copy and navigation emphasis
+  - action: "**MODIFY**"
+    path: docs/grabby-user-guide.html
+    reason: Update user-facing guidance and examples
+  - action: "**MODIFY**"
+    path: grabby-website/public/index.html
+    reason: Align marketing copy with the new architecture and product narrative
+rules:
+  - §typescript
+  - §hooks
+  - §testing
+risks:
+  - State synchronization
+  - Type coverage
+  - Edge cases
+status: approved
+approval_token_required: Approved
+execution_mode: plan_only
+approved_at: 2026-03-21T04:15:46.504Z
+approval_token: Approved

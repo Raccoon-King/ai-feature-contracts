@@ -12,13 +12,22 @@ describe('smart-prompts', () => {
   afterEach(() => fs.rmSync(dir, { recursive: true, force: true }));
 
   test('detectProjectType finds react/typescript', () => {
-    fs.writeFileSync(path.join(dir, 'package.json'), '{}');
+    fs.writeFileSync(path.join(dir, 'package.json'), JSON.stringify({ dependencies: { react: '^18.0.0' } }));
     fs.writeFileSync(path.join(dir, 'tsconfig.json'), '{}');
     fs.mkdirSync(path.join(dir, 'src'));
     fs.writeFileSync(path.join(dir, 'src', 'App.tsx'), '');
     const types = detectProjectType(dir);
     expect(types).toContain('react');
     expect(types).toContain('typescript');
+  });
+
+  test('detectProjectType treats plain package.json projects as node, not react', () => {
+    fs.writeFileSync(path.join(dir, 'package.json'), JSON.stringify({ name: 'plain-node-project' }));
+
+    const types = detectProjectType(dir);
+
+    expect(types).toContain('node');
+    expect(types).not.toContain('react');
   });
 
   test('getProjectDirs lists common dirs', () => {

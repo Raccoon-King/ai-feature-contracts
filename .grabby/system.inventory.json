@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-08T17:41:01.758Z",
+  "generatedAt": "2026-03-21T20:02:59.330Z",
   "root": "C:/Users/jesse/ai-feature-contracts",
   "profile": "api-service",
   "packageManager": "npm",
@@ -16,13 +16,23 @@
     ]
   },
   "backend": {
-    "roots": [],
-    "frameworks": [],
-    "manifests": []
+    "roots": [
+      "."
+    ],
+    "frameworks": [
+      "express"
+    ],
+    "manifests": [
+      "package.json"
+    ]
   },
   "api": {
-    "styles": [],
-    "specFiles": []
+    "styles": [
+      "rest-openapi"
+    ],
+    "specFiles": [
+      "docs/openapi.yaml"
+    ]
   },
   "db": {
     "schemaAndMigrationFiles": []

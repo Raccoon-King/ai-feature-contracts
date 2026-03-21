@@ -1,0 +1,34 @@
+contract: cli-calc-002.fc.md
+phase: plan
+timestamp: 2026-03-15T22:20:28.001Z
+context:
+  - RULESET:imports@v1
+  - ENV:test-runner@v1
+context_token_usage: 6
+context_token_budget: 700
+files:
+  - action: "**CREATE**"
+    path: tmp-calc-cli/calculator.js
+    reason: Main calculator module
+  - action: "**CREATE**"
+    path: tmp-calc-cli/cli.js
+    reason: CLI entry point
+  - action: "**CREATE**"
+    path: tmp-calc-cli/package.json
+    reason: Package configuration
+  - action: "**CREATE**"
+    path: tests/e2e/calculator-cli-user-flow.test.js
+    reason: E2E tests for CLI
+rules:
+  - §typescript
+  - §hooks
+  - §testing
+risks:
+  - State synchronization
+  - Type coverage
+  - Edge cases
+status: approved
+approval_token_required: Approved
+execution_mode: plan_only
+approved_at: 2026-03-15T22:20:41.484Z
+approval_token: Approved

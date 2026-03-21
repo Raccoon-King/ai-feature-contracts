@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-09T04:31:49.059Z",
+  "generatedAt": "2026-03-21T20:05:37.244Z",
   "trackingMode": "tracked",
   "features": [
     {
@@ -192,6 +192,45 @@
         "tests/commands.test.js",
         "contracts/BUG-203.fc.md"
       ]
+    },
+    {
+      "id": "CALC-001",
+      "title": "CLI-CALCULATOR-APP",
+      "status": "archived",
+      "archivePath": ".grabby/history/history-002.yaml",
+      "closedAt": "2026-03-15T22:38:37.192Z",
+      "objective": "Build a CLI calculator application that performs basic arithmetic operations (add, subtract, multiply, divide) on two numbers from command line arg...",
+      "type": "FEATURE_CONTRACT",
+      "files": [
+        "tmp-calc-cli/calculator.js",
+        "tmp-calc-cli/cli.js",
+        "tmp-calc-cli/package.json",
+        "tests/unit/calculator.test.js"
+      ]
+    },
+    {
+      "id": "CLI-CALC-002",
+      "title": "CLI-CALC-002",
+      "status": "archived",
+      "archivePath": ".grabby/history/history-002.yaml",
+      "closedAt": "2026-03-15T22:34:30.859Z",
+      "objective": "Build a simple CLI calculator that performs basic arithmetic operations (add, subtract, multiply, divide) on two numbers.",
+      "type": "FEATURE_CONTRACT",
+      "files": [
+        "tmp-calc-cli/calculator.js",
+        "tmp-calc-cli/cli.js",
+        "tmp-calc-cli/package.json",
+        "tests/e2e/calculator-cli-user-flow.test.js"
+      ]
+    },
+    {
+      "id": "CLI-CALC-TEST-001",
+      "title": "Resolve Calculator CLI Test Findings",
+      "status": "archived",
+      "archivePath": ".grabby/history/history-002.yaml",
+      "closedAt": "2026-03-15T22:34:43.163Z",
+      "objective": "Resolve the concrete issues found while exercising the calculator app through the Grabby CLI.",
+      "type": "feat"
     },
     {
       "id": "DX-001",
@@ -481,6 +520,19 @@
       ]
     },
     {
+      "id": "FC-001",
+      "title": "Pre-Op Summary Documentation",
+      "status": "archived",
+      "archivePath": ".grabby/history/history-002.yaml",
+      "closedAt": "2026-03-19T00:11:29.006Z",
+      "objective": "Document the new pre-op summary feature that displays contract summaries in a rounded box format during dev ticket creation and in pre-commit hooks.",
+      "type": "FEATURE_CONTRACT",
+      "files": [
+        "README.md",
+        "docs/PRE-OP-SUMMARY.md"
+      ]
+    },
+    {
       "id": "FC-002",
       "title": "Feature Management System",
       "status": "archived",
@@ -490,6 +542,21 @@
       "type": "feat"
     },
     {
+      "id": "FC-002",
+      "title": "Modular Ruleset System with Central Repository Sync",
+      "status": "archived",
+      "archivePath": ".grabby/history/history-002.yaml",
+      "closedAt": "2026-03-21T00:40:53.981Z",
+      "objective": "Implement a fully modular, extensible ruleset system with: - Dynamic category system (not hardcoded) - Central repository for shared rulesets - Git...",
+      "type": "FEATURE_CONTRACT",
+      "files": [
+        "lib/contract-rulesets.cjs",
+        "lib/commands.cjs",
+        "tests/contract-rulesets.test.js",
+        "docs/CONTRACT_SYNC.md"
+      ]
+    },
+    {
       "id": "FC-003",
       "title": "Contract Level System",
       "status": "archived",
@@ -497,6 +564,105 @@
       "closedAt": "2026-03-03T00:36:45.653Z",
       "objective": "Contract Level System",
       "type": "feat"
+    },
+    {
+      "id": "FC-003",
+      "title": "REST API Foundation - Phase 1",
+      "status": "archived",
+      "archivePath": ".grabby/history/history-002.yaml",
+      "closedAt": "2026-03-21T03:37:10.296Z",
+      "objective": "Build a local-first REST API server for Grabby that serves as a control plane for contract management and rules repository integration. Phase 1 foc...",
+      "type": "FEATURE_CONTRACT",
+      "files": [
+        "lib/api-server-v2.cjs",
+        "lib/api-routes/contracts.cjs",
+        "lib/api-routes/rules.cjs",
+        "lib/api-routes/health.cjs",
+        "lib/middleware/error-handler.cjs",
+        "lib/middleware/rate-limiter.cjs",
+        "lib/middleware/request-logger.cjs",
+        "bin/index.cjs",
+        "tests/api/contracts.test.js",
+        "tests/api/rules.test.js"
+      ]
+    },
+    {
+      "id": "FC-004",
+      "title": "Centralize Hardcoded URLs and Project Metadata",
+      "status": "archived",
+      "archivePath": ".grabby/history/history-002.yaml",
+      "closedAt": "2026-03-21T03:44:53.554Z",
+      "objective": "Inventory and centralize hardcoded URLs, hostnames, repository links, package links, website links, and other project-specific metadata so runtime ...",
+      "type": "FEATURE_CONTRACT",
+      "files": [
+        "contracts/FC-004-metadata-inventory.md",
+        "lib/project-metadata.cjs",
+        "lib/config.cjs",
+        "lib/api-server.cjs",
+        "lib/ai-complete.cjs",
+        "bin/index.cjs",
+        "docs/index.html",
+        "grabby-website/public/index.html",
+        "tests/"
+      ]
+    },
+    {
+      "id": "FC-005",
+      "title": "Evaluate Prompt-Centric Agents vs Runtime-Driven Agents",
+      "status": "archived",
+      "archivePath": ".grabby/history/history-002.yaml",
+      "closedAt": "2026-03-21T04:20:39.082Z",
+      "objective": "Evaluate the current prompt-centric agent model and define a migration path toward runtime-driven agents where contracts, tools, and execution code...",
+      "type": "FEATURE_CONTRACT",
+      "files": [
+        "docs/AGENT_PROMPT_EVALUATION.md",
+        "docs/AGENT_RUNTIME_MIGRATION_PLAN.md",
+        "templates/agent-runtime-contract.example.yaml",
+        "templates/agent-runtime-minimal-prompt.md",
+        "tests/agent-runtime-example-artifacts.test.js"
+      ]
+    },
+    {
+      "id": "FC-006",
+      "title": "Refresh Documentation and Website After FC-005",
+      "status": "archived",
+      "archivePath": ".grabby/history/history-002.yaml",
+      "closedAt": "2026-03-21T04:20:39.140Z",
+      "objective": "Fully update Grabby's documentation and website after `FC-005` is implemented so public-facing guidance, architecture docs, install flows, command ...",
+      "type": "FEATURE_CONTRACT",
+      "files": [
+        "contracts/FC-006-docs-audit.md",
+        "tests/agent-runtime-docs-consistency.test.js",
+        "README.md",
+        "docs/AGENT_ARCHITECTURE.md",
+        "docs/CONTRACTS.md",
+        "docs/EXECUTION_PROTOCOL.md",
+        "docs/LLM_INSTALL.md",
+        "docs/index.html",
+        "docs/grabby-user-guide.html",
+        "grabby-website/public/index.html"
+      ]
+    },
+    {
+      "id": "FC-007",
+      "title": "Dedicated Rules Generator/Updater With Protected Shared R...",
+      "status": "archived",
+      "archivePath": ".grabby/history/history-002.yaml",
+      "closedAt": "2026-03-21T04:03:27.526Z",
+      "objective": "Create a dedicated Grabby rules generator/updater for shared project rules and enforce that the shared rules repository can only be changed through...",
+      "type": "FEATURE_CONTRACT",
+      "files": [
+        "lib/rules-authoring.cjs",
+        "tests/rules-authoring.test.js",
+        "lib/rules-cli.cjs",
+        "lib/ruleset-builder.cjs",
+        "lib/commands.cjs",
+        "lib/config.cjs",
+        "lib/tui.cjs",
+        "docs/RULES_CLI.md",
+        "README.md",
+        "tests/commands.test.js"
+      ]
     },
     {
       "id": "FC-101",
@@ -597,6 +763,30 @@
       "closedAt": "2026-03-09T04:31:48.363Z",
       "objective": "Implement state-aware, substep-aware, confidence-aware routing so Grabby selects the best agent at each step/substep while preserving governance gates",
       "type": "FEATURE_CONTRACT"
+    },
+    {
+      "id": "FC-2026-CW01",
+      "title": "Cloudflare Workers Configuration",
+      "status": "archived",
+      "archivePath": ".grabby/history/history-002.yaml",
+      "closedAt": "2026-03-15T00:30:00.000Z",
+      "objective": "Add Cloudflare Workers deployment configuration to serve the docs directory as a static asset site via Wrangler.",
+      "type": "FEATURE_CONTRACT",
+      "files": [
+        "wrangler.jsonc",
+        "package.json",
+        "package-lock.json",
+        ".gitignore"
+      ]
+    },
+    {
+      "id": "FC-2026-REL238",
+      "title": "Release v2.3.8",
+      "status": "archived",
+      "archivePath": ".grabby/history/history-002.yaml",
+      "closedAt": "2026-03-15T00:30:00.000Z",
+      "objective": "Release v2.3.8 by promoting all development branch changes into main including security fix, documentation, and repo professionalization.",
+      "type": "RELEASE_CONTRACT"
     },
     {
       "id": "GC-001",
@@ -770,6 +960,27 @@
       ]
     },
     {
+      "id": "GRAB-AGENTS-001",
+      "title": "Convert the personas into fully fledged agents with dedic...",
+      "status": "archived",
+      "archivePath": ".grabby/history/history-002.yaml",
+      "closedAt": "2026-03-21T18:01:59.641Z",
+      "objective": "Evolve the current persona model into an agent-first workflow where each persona owns dedicated tasks, menus, and handoff boundaries that can be ex...",
+      "type": "feat",
+      "files": [
+        "contracts/GRAB-AGENTS-001.fc.md",
+        "agents/",
+        "workflows/",
+        "lib/personas.cjs",
+        "lib/interactive-workflows.cjs",
+        "lib/api-server-v2.cjs",
+        "docs/AGENT_ARCHITECTURE.md",
+        "docs/API.md",
+        "docs/openapi.yaml",
+        "tests/personas.test.js"
+      ]
+    },
+    {
       "id": "GRAB-ARCHIVE-001",
       "title": "Archive Completed Features with Close Flow",
       "status": "archived",
@@ -789,6 +1000,33 @@
         "tests/commands.test.js",
         "tests/features-index.test.js"
       ]
+    },
+    {
+      "id": "GRAB-CLI-001",
+      "title": "Harden CLI parsing and non-interactive workflow behavior",
+      "status": "archived",
+      "archivePath": ".grabby/history/history-002.yaml",
+      "closedAt": "2026-03-15T00:30:00.000Z",
+      "objective": "Fix the Grabby CLI logic gaps exposed by the calculator integration workflow, especially flag parsing in interactive entrypoints and noisy non-interactive task intake behavior.",
+      "type": "FEATURE_CONTRACT",
+      "files": [
+        "lib/interactive-shell.cjs",
+        "lib/interactive-workflows.cjs",
+        "tests/integration/grabby-calculator-integration.test.js"
+      ]
+    },
+    {
+      "id": "GRAB-CONTRACT-UI-001",
+      "title": "Add a localhost developer UI for contract visualization and artifact management",
+      "type": "FEATURE_CONTRACT",
+      "status": "draft",
+      "branch": null,
+      "lastModifiedAt": "2026-03-21T19:55:16.951Z",
+      "contractPath": "contracts/GRAB-CONTRACT-UI-001.fc.md",
+      "planPath": null,
+      "auditPath": null,
+      "archivePath": null,
+      "closedAt": null
     },
     {
       "id": "GRAB-DB-201",
@@ -1204,6 +1442,54 @@
       "closedAt": "2026-03-03T00:36:32.528Z",
       "objective": "Modern Ticket Intake Shape",
       "type": "FEATURE_CONTRACT"
+    },
+    {
+      "id": "GRAB-MENU-ENTRY-001",
+      "title": "Make bare 'grabby' open the menu-first home screen and ex...",
+      "status": "archived",
+      "archivePath": ".grabby/history/history-002.yaml",
+      "closedAt": "2026-03-21T18:07:19.087Z",
+      "objective": "Make bare `grabby` open the interactive home menu in supported terminal sessions, preserve clear fallback behavior outside TTY usage, and ensure th...",
+      "type": "feat",
+      "files": [
+        "contracts/GRAB-MENU-ENTRY-001.fc.md",
+        "bin/index.cjs",
+        "lib/tui.cjs",
+        "lib/interactive-shell.cjs",
+        "tests/cli.test.js",
+        "tests/tui.test.js",
+        "docs/grabby-user-guide.html"
+      ]
+    },
+    {
+      "id": "GRAB-MENU-IA-001",
+      "title": "Refine the menu structure, labels, grouping, and navigati...",
+      "status": "archived",
+      "archivePath": ".grabby/history/history-002.yaml",
+      "closedAt": "2026-03-21T19:48:18.069Z",
+      "objective": "Refine Grabby's interactive menu into a clearer information architecture with explicit grouping, clearer labels, and more direct navigation paths s...",
+      "type": "feat",
+      "files": [
+        "contracts/GRAB-MENU-IA-001.fc.md",
+        "lib/tui.cjs",
+        "tests/tui.test.js",
+        "docs/grabby-user-guide.html",
+        "README.md"
+      ]
+    },
+    {
+      "id": "GRAB-PLAN-VERSION-001",
+      "title": "Add semver transition metadata to generated plan artifacts",
+      "status": "archived",
+      "archivePath": ".grabby/history/history-002.yaml",
+      "closedAt": "2026-03-21T19:59:43.239Z",
+      "objective": "Generate `contracts/<ID>.plan.yaml` with a `version` field alongside `phase: plan`, using the current repo version and the governed contract's decl...",
+      "type": "FEATURE_CONTRACT",
+      "files": [
+        "contracts/GRAB-PLAN-VERSION-001.fc.md",
+        "lib/commands.cjs",
+        "tests/commands.test.js"
+      ]
     },
     {
       "id": "GRAB-SYS-101",
@@ -1799,6 +2085,24 @@
       "type": "FEATURE_CONTRACT"
     },
     {
+      "id": "PROJECT-BASELINE",
+      "title": "Project Baseline for Node.js project",
+      "status": "archived",
+      "archivePath": ".grabby/history/history-002.yaml",
+      "closedAt": "2026-03-21T17:42:53.212Z",
+      "objective": "Capture the repository baseline for this node.js project so future feature contracts can stay aligned with the detected structure and tooling.",
+      "type": "FEATURE_CONTRACT"
+    },
+    {
+      "id": "PROJECT-BASELINE",
+      "title": "Project Baseline for Node.js project",
+      "status": "archived",
+      "archivePath": ".grabby/history/history-002.yaml",
+      "closedAt": "2026-03-21T20:05:36.964Z",
+      "objective": "Capture the repository baseline for this node.js project so future feature contracts can stay aligned with the detected structure and tooling.",
+      "type": "FEATURE_CONTRACT"
+    },
+    {
       "id": "SETUP-201",
       "title": "Brownfield Setup Streamlining",
       "status": "archived",
@@ -1845,6 +2149,24 @@
       ]
     },
     {
+      "id": "SETUP-BASELINE",
+      "title": "Setup Validation and Project Index Baseline",
+      "status": "archived",
+      "archivePath": ".grabby/history/history-002.yaml",
+      "closedAt": "2026-03-21T17:42:53.263Z",
+      "objective": "Define the deterministic setup validation and repository indexing procedure that any LLM must follow after `grabby init` so governed workflows star...",
+      "type": "FEATURE_CONTRACT"
+    },
+    {
+      "id": "SETUP-BASELINE",
+      "title": "Setup Validation and Project Index Baseline",
+      "status": "archived",
+      "archivePath": ".grabby/history/history-002.yaml",
+      "closedAt": "2026-03-21T20:05:37.188Z",
+      "objective": "Define the deterministic setup validation and repository indexing procedure that any LLM must follow after `grabby init` so governed workflows star...",
+      "type": "FEATURE_CONTRACT"
+    },
+    {
       "id": "SYSTEM-BASELINE",
       "title": "Grabby System Baseline",
       "status": "archived",
@@ -1864,6 +2186,24 @@
       "status": "archived",
       "archivePath": ".grabby/history/history-002.yaml",
       "closedAt": "2026-03-09T04:31:49.004Z",
+      "objective": "Establish the baseline Grabby governance contract for `grabby` so initialization, planning, approval, execution, and audit flows start from a consi...",
+      "type": "FEATURE_CONTRACT"
+    },
+    {
+      "id": "SYSTEM-BASELINE",
+      "title": "Grabby System Baseline",
+      "status": "archived",
+      "archivePath": ".grabby/history/history-002.yaml",
+      "closedAt": "2026-03-21T17:42:53.147Z",
+      "objective": "Establish the baseline Grabby governance contract for `grabby` so initialization, planning, approval, execution, and audit flows start from a consi...",
+      "type": "FEATURE_CONTRACT"
+    },
+    {
+      "id": "SYSTEM-BASELINE",
+      "title": "Grabby System Baseline",
+      "status": "archived",
+      "archivePath": ".grabby/history/history-002.yaml",
+      "closedAt": "2026-03-21T20:05:31.471Z",
       "objective": "Establish the baseline Grabby governance contract for `grabby` so initialization, planning, approval, execution, and audit flows start from a consi...",
       "type": "FEATURE_CONTRACT"
     }

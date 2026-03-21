@@ -19,6 +19,19 @@ describe('metrics', () => {
     expect(generateReport(data)).toContain('GRABBY METRICS REPORT');
   });
 
+  test('preserves non-numeric contract ids in metrics output', () => {
+    fs.writeFileSync(
+      path.join(dir, 'contracts', 'calculator.fc.md'),
+      '# FC: Calculator\n**ID:** FC-CALC-001 | **Status:** approved\n## Objective\nOk\n## Scope\n- one\n## Done When\n- [ ] tests pass\n',
+    );
+
+    const data = collectMetrics(path.join(dir, 'contracts'));
+    const calculator = data.contracts.find((contract) => contract.title === 'Calculator');
+
+    expect(calculator.id).toBe('FC-CALC-001');
+    expect(generateReport(data)).toContain('ID: FC-CALC-001 | Status: approved');
+  });
+
   test('saves and loads history with trends', () => {
     const metricsDir = path.join(dir, '.grabby', 'metrics');
     const data = collectMetrics(path.join(dir, 'contracts'));

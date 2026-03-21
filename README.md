@@ -64,21 +64,21 @@ npm ci
 npm pack
 ```
 
-That produces a tarball such as `grabby-2.0.0.tgz` with Grabby's runtime dependencies bundled into the package.
+That produces a tarball such as `grabby-2.3.9.tgz` with Grabby's runtime dependencies bundled into the package.
 
 Move the tarball into the airgapped environment, then install from the local file:
 
 Windows PowerShell:
 
 ```powershell
-npm install -g .\grabby-2.0.0.tgz
+npm install -g .\grabby-2.3.9.tgz
 grabby --help
 ```
 
 macOS / Linux:
 
 ```bash
-npm install -g ./grabby-2.0.0.tgz
+npm install -g ./grabby-2.3.9.tgz
 grabby --help
 ```
 
@@ -89,11 +89,13 @@ Notes:
 
 ## Quick Start
 
+**Website:** https://grabbyai.com
+**Documentation:** https://docs.grabbyai.com | https://grabby-docs.pages.dev
+**Version:** 4.0.1
+
 LLM-focused setup instructions are in [docs/LLM_INSTALL.md](docs/LLM_INSTALL.md).
 Documentation home page is [docs/index.html](docs/index.html).
 Interactive static guide is in [docs/grabby-user-guide.html](docs/grabby-user-guide.html).
-Website source repo is `Raccoon-King/grabby-website` (private).
-Live docs website: https://grabbyai-com.pages.dev
 
 ```bash
 # Use your own LLM service/client and run Grabby in your repo
@@ -216,6 +218,34 @@ Grabby uses BMAD-style personalities in the CLI:
 - `Flash`: quick bounded work
 - `Conductor`: orchestrates the full handoff
 
+## Pre-Op Summary
+
+When you create a dev ticket, Grabby displays a formatted pre-op summary showing your contract scope at a glance:
+
+```
+╭──────────────────────────────────────────────────────────────────────╮
+│ Plan to implement                                                    │
+│                                                                      │
+│ Your Feature Title                                                   │
+│                                                                      │
+│ Overview                                                             │
+│ Brief description from the contract...                               │
+│                                                                      │
+│ User Requirements                                                    │
+│ - Requirement from Done When checklist                               │
+│ - Another requirement                                                │
+│ ---                                                                  │
+│ Files to Modify                                                      │
+│ ┌────────────────┬───────────────────────────────────────────────┐   │
+│ │File            │Changes                                        │   │
+│ └────────────────┴───────────────────────────────────────────────┘   │
+╰──────────────────────────────────────────────────────────────────────╯
+```
+
+The pre-op is saved to `.grabby/pre-ops/` and displayed in the pre-commit hook before each commit, keeping developers aligned with their contract scope.
+
+See [docs/PRE-OP-SUMMARY.md](docs/PRE-OP-SUMMARY.md) for full documentation.
+
 ## BMAD-Derived Optional Features
 
 Grabby can enable selected BMAD-inspired behaviors through `bmadFeatures` in `grabby.config.json`:
@@ -335,7 +365,7 @@ Grabby supports work-item IDs in the form `KEY-123` (for example `FC-123`, `TT-1
 
 ## Governance Lock + Policy
 
-- `grabby init` creates `.grabby/governance.lock` and stamps the active CLI version.
+- `grabby init` creates `.grabby/governance.lock` and stamps or refreshes the active CLI version.
 - `grabby validate` warns when the local CLI version differs from `governance.lock` (no automatic upgrade).
 - Optional CI gate in `.grabby/config.json`:
 
@@ -503,6 +533,27 @@ This system reduces token usage by:
 - Reference-based context envelopes
 - Structured plans instead of prose
 - Two-phase separation of planning and execution
+
+## Runtime-Driven Agent Model (v4.0)
+
+Grabby 4.0 introduces a runtime-driven architecture that separates deterministic
+workflow logic from LLM reasoning:
+
+| Layer | Responsibility |
+|-------|----------------|
+| Contract | Declarative inputs/outputs, tool permissions, success criteria |
+| Runtime | Workflow orchestration, context preparation, validation hooks |
+| Tools | File/git operations, search/analysis |
+| LLM | Bounded reasoning over pre-structured context |
+
+Benefits:
+- **30-50% token reduction** per interaction
+- **Testable** validation logic without LLM calls
+- **Predictable** behavior from deterministic runtime
+- **Provider-agnostic** LLM integration
+
+See `docs/AGENT_ARCHITECTURE.md` for architecture details and
+`docs/AGENT_RUNTIME_MIGRATION_PLAN.md` for the implementation roadmap.
 
 ## Reference Documents
 

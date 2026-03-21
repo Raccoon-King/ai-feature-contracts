@@ -1,0 +1,33 @@
+contract: GRAB-MENU-IA-001.fc.md
+phase: plan
+timestamp: 2026-03-21T18:28:14.682Z
+context: []
+context_token_usage: 0
+context_token_budget: 700
+files:
+  - action: modify
+    path: contracts/GRAB-MENU-IA-001.fc.md
+    reason: Keep the governing contract aligned with the revised menu IA scope
+  - action: modify
+    path: lib/tui.cjs
+    reason: Reorganize menu sections, labels, and navigation flow
+  - action: modify
+    path: tests/tui.test.js
+    reason: Verify the revised menu grouping and navigation behavior
+  - action: modify
+    path: docs/grabby-user-guide.html
+    reason: Reflect the refined menu structure for users
+  - action: modify
+    path: README.md
+    reason: Keep top-level usage guidance aligned with the revised menu flow
+rules:
+  - §typescript
+  - §hooks
+  - §testing
+risks:
+  - State synchronization
+  - Type coverage
+  - Edge cases
+status: pending_approval
+approval_token_required: Approved
+execution_mode: plan_only

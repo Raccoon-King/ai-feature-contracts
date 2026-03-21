@@ -1,0 +1,48 @@
+contract: FC-004.fc.md
+phase: plan
+timestamp: 2026-03-21T03:42:52.630Z
+context:
+  - ARCH:stack@v1
+  - RULESET:git-workflow@v1
+context_token_usage: 7
+context_token_budget: 700
+files:
+  - action: "**CREATE**"
+    path: contracts/FC-004-metadata-inventory.md
+    reason: Track discovered hardcoded URLs and project-specific values with
+      classification
+  - action: "**CREATE**"
+    path: lib/project-metadata.cjs
+    reason: Canonical source for project-owned URLs and identifiers
+  - action: "**MODIFY**"
+    path: lib/config.cjs
+    reason: Wire metadata/config resolution into existing config loading
+  - action: "**MODIFY**"
+    path: lib/api-server.cjs
+    reason: Remove hardcoded runtime URLs and host messaging where appropriate
+  - action: "**MODIFY**"
+    path: lib/ai-complete.cjs
+    reason: Centralize provider host defaults and project-specific literals
+  - action: "**MODIFY**"
+    path: bin/index.cjs
+    reason: Replace CLI-facing project URL literals with metadata lookups
+  - action: "**MODIFY**"
+    path: docs/index.html
+    reason: Use canonical project metadata for first-party links
+  - action: "**MODIFY**"
+    path: grabby-website/public/index.html
+    reason: Use canonical project metadata for website links
+  - action: "**MODIFY**"
+    path: tests/
+    reason: Add or update coverage for metadata/config behavior
+rules:
+  - §typescript
+  - §hooks
+  - §testing
+risks:
+  - State synchronization
+  - Type coverage
+  - Edge cases
+status: pending_approval
+approval_token_required: Approved
+execution_mode: plan_only

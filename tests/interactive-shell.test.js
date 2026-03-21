@@ -466,29 +466,44 @@ describe('Interactive shell', () => {
 
   it('renders help and delegates resolveContract', () => {
     const logger = createLogger();
-    const handlers = createShellHandlers({
-      c: createFormatter(),
-      logger,
-      runtime: {
-        resolveContract: (file) => `resolved:${file}`,
-      },
-    });
+    // Use a temp directory without externalLlmOnly config to get regular help output
+    const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'grabby-help-regular-'));
+    const previousCwd = process.cwd();
+    fs.writeFileSync(
+      path.join(tempDir, 'grabby.config.json'),
+      `${JSON.stringify({}, null, 2)}\n`,
+      'utf8',
+    );
 
-    handlers.help();
-    expect(logger.lines.join('\n')).toContain('Grabby - CLI');
-    expect(logger.lines.join('\n')).toContain('grabby                      Open the GrabbyAI home menu');
-    expect(logger.lines.join('\n')).toContain('grabby agent analyst');
-    expect(logger.lines.join('\n')).toContain('grabby agent tester');
-    expect(logger.lines.join('\n')).toContain('grabby backlog <file>');
-    expect(logger.lines.join('\n')).toContain('grabby task <request>');
-    expect(logger.lines.join('\n')).toContain('grabby orchestrate <request>');
-    expect(logger.lines.join('\n')).toContain('grabby run <file>');
-    expect(logger.lines.join('\n')).toContain('grabby tui');
-    expect(logger.lines.join('\n')).toContain('--interactive');
-    expect(logger.lines.join('\n')).toContain('--next <action>');
-    expect(logger.lines.join('\n')).toContain('Ruleset Wizards guide importing existing standards');
+    try {
+      process.chdir(tempDir);
+      const handlers = createShellHandlers({
+        c: createFormatter(),
+        logger,
+        runtime: {
+          resolveContract: (file) => `resolved:${file}`,
+        },
+      });
 
-    expect(handlers.resolveContract('demo.fc.md')).toBe('resolved:demo.fc.md');
+      handlers.help();
+      expect(logger.lines.join('\n')).toContain('Grabby - CLI');
+      expect(logger.lines.join('\n')).toContain('grabby                      Open the GrabbyAI home menu');
+      expect(logger.lines.join('\n')).toContain('grabby agent analyst');
+      expect(logger.lines.join('\n')).toContain('grabby agent tester');
+      expect(logger.lines.join('\n')).toContain('grabby backlog <file>');
+      expect(logger.lines.join('\n')).toContain('grabby task <request>');
+      expect(logger.lines.join('\n')).toContain('grabby orchestrate <request>');
+      expect(logger.lines.join('\n')).toContain('grabby run <file>');
+      expect(logger.lines.join('\n')).toContain('grabby tui');
+      expect(logger.lines.join('\n')).toContain('--interactive');
+      expect(logger.lines.join('\n')).toContain('--next <action>');
+      expect(logger.lines.join('\n')).toContain('Ruleset Wizards guide importing existing standards');
+
+      expect(handlers.resolveContract('demo.fc.md')).toBe('resolved:demo.fc.md');
+    } finally {
+      process.chdir(previousCwd);
+      fs.rmSync(tempDir, { recursive: true, force: true });
+    }
   });
 
   it('renders LLM-first help when workflow.externalLlmOnly is enabled', () => {

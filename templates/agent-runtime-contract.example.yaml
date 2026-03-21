@@ -1,0 +1,205 @@
+# Example: Runtime-Oriented Agent Contract
+# This demonstrates the target format for runtime-driven agents
+# where deterministic logic lives in code, not prompts.
+
+version: "1.0"
+type: runtime-agent-contract
+
+metadata:
+  id: validate-contract-v2
+  name: Contract Validator (Runtime)
+  description: Validates feature contracts using runtime-driven logic
+  version: 1.0.0
+
+# Explicit input specification
+input:
+  required:
+    - name: contractPath
+      type: string
+      format: file-path
+      description: Path to the contract file to validate
+      validation:
+        - exists: true
+        - extension: [".fc.md", ".contract.md"]
+  optional:
+    - name: strictMode
+      type: boolean
+      default: false
+      description: Treat warnings as errors
+    - name: context
+      type: object
+      description: Additional context for validation
+      properties:
+        cwd:
+          type: string
+          format: directory-path
+
+# Explicit output specification
+output:
+  schema: validation-result
+  format: json
+  properties:
+    valid:
+      type: boolean
+      description: Overall validation result
+    errors:
+      type: array
+      items:
+        type: object
+        properties:
+          code: { type: string }
+          message: { type: string }
+          line: { type: integer }
+          severity: { enum: [error, warning, info] }
+    summary:
+      type: string
+      description: Human-readable summary (LLM-generated)
+
+# Tool permissions - what the agent can use
+tools:
+  allowed:
+    - name: read-file
+      description: Read contract file content
+      permissions: [read]
+    - name: parse-contract
+      description: Parse contract to structured format
+      permissions: [read]
+    - name: validate-rules
+      description: Run validation rules
+      permissions: [read]
+  denied:
+    - name: write-file
+      reason: Validation should not modify files
+    - name: execute-command
+      reason: Validation should not run commands
+    - name: network-access
+      reason: Validation is offline-only
+
+# Validation rules - executed by runtime, not LLM
+rules:
+  structural:
+    - id: has-objective
+      check: "contract.sections.objective exists"
+      severity: error
+      message: "Contract must have an Objective section"
+
+    - id: has-scope
+      check: "contract.sections.scope exists"
+      severity: error
+      message: "Contract must have a Scope section"
+
+    - id: has-files
+      check: "contract.sections.files.length > 0"
+      severity: warning
+      message: "Contract should specify files to modify"
+
+  semantic:
+    - id: id-matches-filename
+      check: "contract.id matches filename"
+      severity: error
+      message: "Contract ID must match filename"
+
+    - id: valid-status
+      check: "contract.status in [draft, approved, executing, complete]"
+      severity: error
+      message: "Contract status must be valid"
+
+  security:
+    - id: no-restricted-paths
+      check: "contract.files not in restricted_directories"
+      severity: error
+      message: "Contract targets restricted directory"
+
+    - id: no-env-files
+      check: "contract.files not matches '*.env*'"
+      severity: error
+      message: "Contract cannot modify environment files"
+
+# Runtime workflow - deterministic steps
+workflow:
+  steps:
+    - id: parse
+      action: parse-contract
+      input: "{{ input.contractPath }}"
+      output: contract
+      onError: fail-fast
+
+    - id: validate-structural
+      action: run-rules
+      rules: structural
+      input: "{{ steps.parse.contract }}"
+      output: structural_findings
+
+    - id: validate-semantic
+      action: run-rules
+      rules: semantic
+      input: "{{ steps.parse.contract }}"
+      output: semantic_findings
+
+    - id: validate-security
+      action: run-rules
+      rules: security
+      input: "{{ steps.parse.contract }}"
+      context:
+        restricted_directories: "{{ config.restrictedDirectories }}"
+      output: security_findings
+
+    - id: aggregate
+      action: merge-findings
+      input:
+        - "{{ steps.validate-structural.findings }}"
+        - "{{ steps.validate-semantic.findings }}"
+        - "{{ steps.validate-security.findings }}"
+      output: all_findings
+
+    - id: generate-summary
+      action: llm-call
+      # This is the ONLY step that uses LLM
+      prompt: minimal-validation-summary
+      input:
+        contract_name: "{{ steps.parse.contract.name }}"
+        contract_objective: "{{ steps.parse.contract.objective }}"
+        findings: "{{ steps.aggregate.all_findings }}"
+        error_count: "{{ steps.aggregate.error_count }}"
+        warning_count: "{{ steps.aggregate.warning_count }}"
+      output: summary
+      # LLM output is validated against schema
+      validate: true
+      schema: summary-output
+
+# LLM prompt template - minimal, no logic
+llm:
+  prompts:
+    minimal-validation-summary:
+      description: Generate human-readable validation summary
+      max_tokens: 200
+      temperature: 0.3
+      template: |
+        Contract: {{ contract_name }}
+        Objective: {{ contract_objective }}
+
+        Findings:
+        {% for finding in findings %}
+        - [{{ finding.severity }}] {{ finding.message }}
+        {% endfor %}
+
+        Generate a 1-2 sentence summary of the validation result.
+        Focus on the most important issue if any errors exist.
+        Be concise and actionable.
+      output_format: plain-text
+
+# Success criteria - machine-checkable
+success:
+  conditions:
+    - "output.errors.filter(e => e.severity == 'error').length == 0"
+  on_failure:
+    action: return-findings
+    exit_code: 1
+  on_success:
+    action: return-findings
+    exit_code: 0
+
+# Rollback - not applicable for read-only operation
+rollback:
+  enabled: false
+  reason: "Validation does not modify state"

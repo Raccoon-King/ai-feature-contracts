@@ -148,12 +148,12 @@ function create(name) {
   commandHandlers.create(name);
 }
 
-function validate(file) {
-  commandHandlers.validate(file);
+async function validate(file) {
+  await commandHandlers.validate(file);
 }
 
-function plan(file) {
-  commandHandlers.plan(file);
+async function plan(file) {
+  await commandHandlers.plan(file);
 }
 
 async function approve(file) {
@@ -184,8 +184,8 @@ async function approve(file) {
   }
 }
 
-function execute(file) {
-  commandHandlers.execute(file, getFlagOptions());
+async function execute(file) {
+  await commandHandlers.execute(file, getFlagOptions());
 }
 
 function guard(file) {
@@ -508,19 +508,32 @@ async function serve() {
   const portArg = args.find(a => a.startsWith('--port='));
   const port = portArg ? parseInt(portArg.split('=')[1]) : 3456;
 
+  const logLevelArg = args.find(a => a.startsWith('--log-level='));
+  const logLevel = logLevelArg ? logLevelArg.split('=')[1] : 'info';
+
   console.log(c.heading('\n' + '─'.repeat(50)));
-  console.log(c.heading('GRABBY API SERVER'));
+  console.log(c.heading('GRABBY REST API SERVER'));
   console.log(c.heading('─'.repeat(50) + '\n'));
 
-  const server = createAPIServer(projectContext);
-  await server.start(port);
+  const packageJson = require(path.join(PKG_ROOT, 'package.json'));
+  const apiServerV2 = require('../lib/api-server-v2.cjs');
 
-  // Handle graceful shutdown
-  process.on('SIGINT', async () => {
-    console.log('\nShutting down...');
-    await server.stop();
-    process.exit(0);
-  });
+  const config = {
+    port,
+    host: '127.0.0.1',
+    logLevel,
+    version: packageJson.version,
+    cwd: CWD,
+    rateLimit: 100
+  };
+
+  try {
+    const { server: httpServer, port: actualPort } = await apiServerV2.startServer(config);
+    // Server will handle its own shutdown via setupGracefulShutdown
+  } catch (error) {
+    console.error(c.error('❌ Failed to start API server:'), error.message);
+    process.exit(1);
+  }
 }
 
 
@@ -965,6 +978,135 @@ async function ruleset() {
   }
 }
 
+// Rules management (Phase 2)
+async function rules() {
+  const rulesCli = require('../lib/rules-cli.cjs');
+  const subCommand = args[0];
+
+  try {
+    let exitCode = 0;
+
+    switch (subCommand) {
+      case 'sync': {
+        const options = {
+          force: args.includes('--force'),
+          dryRun: args.includes('--dry-run')
+        };
+        exitCode = await rulesCli.syncCommand(options, CWD);
+        break;
+      }
+
+      case 'list': {
+        const categoryIndex = args.indexOf('--category');
+        const options = {
+          category: categoryIndex !== -1 && args[categoryIndex + 1] ? args[categoryIndex + 1] : null
+        };
+        exitCode = await rulesCli.listCommand(options, CWD);
+        break;
+      }
+
+      case 'search': {
+        const query = args[1];
+        exitCode = await rulesCli.searchCommand(query, {}, CWD);
+        break;
+      }
+
+      case 'show': {
+        const rulesetRef = args[1];
+        exitCode = await rulesCli.showCommand(rulesetRef, {}, CWD);
+        break;
+      }
+
+      case 'add': {
+        const rulesetRef = args[1];
+        exitCode = await rulesCli.addCommand(rulesetRef, {}, CWD);
+        break;
+      }
+
+      case 'remove': {
+        const rulesetRef = args[1];
+        exitCode = await rulesCli.removeCommand(rulesetRef, {}, CWD);
+        break;
+      }
+
+      case 'status': {
+        exitCode = await rulesCli.statusCommand({}, CWD);
+        break;
+      }
+
+      case 'preset': {
+        const presetName = args[1];
+        exitCode = await rulesCli.presetCommand(presetName, {}, CWD);
+        break;
+      }
+
+      // Authoring commands - for managing shared project rules
+      case 'generate': {
+        const titleIndex = args.findIndex(a => a.startsWith('--title='));
+        const goalIndex = args.findIndex(a => a.startsWith('--goal='));
+        const sourcesIndex = args.findIndex(a => a.startsWith('--sources='));
+        const options = {
+          title: titleIndex !== -1 ? args[titleIndex].split('=')[1] : undefined,
+          goal: goalIndex !== -1 ? args[goalIndex].split('=')[1] : undefined,
+          sources: sourcesIndex !== -1 ? args[sourcesIndex].split('=')[1] : undefined,
+        };
+        exitCode = await rulesCli.generateCommand(options, CWD);
+        break;
+      }
+
+      case 'update': {
+        const fileIndex = args.findIndex(a => a.startsWith('--file='));
+        const goalIndex = args.findIndex(a => a.startsWith('--goal='));
+        const sourcesIndex = args.findIndex(a => a.startsWith('--sources='));
+        const options = {
+          file: fileIndex !== -1 ? args[fileIndex].split('=')[1] : args[1],
+          goal: goalIndex !== -1 ? args[goalIndex].split('=')[1] : undefined,
+          sources: sourcesIndex !== -1 ? args[sourcesIndex].split('=')[1] : undefined,
+        };
+        exitCode = await rulesCli.updateCommand(options, CWD);
+        break;
+      }
+
+      case 'shared': {
+        exitCode = await rulesCli.sharedCommand({}, CWD);
+        break;
+      }
+
+      default:
+        console.log(c.heading('\nRules Commands'));
+        console.log('─'.repeat(40));
+        console.log(c.dim('\nCentral Repository:'));
+        console.log('  grabby rules sync [--force]       Sync with central repository');
+        console.log('  grabby rules list [--category]    List available rulesets');
+        console.log('  grabby rules search <query>       Search rulesets');
+        console.log('  grabby rules show <cat/name>      Show ruleset details');
+        console.log('  grabby rules add <cat/name>       Add ruleset to active');
+        console.log('  grabby rules remove <cat/name>    Remove ruleset from active');
+        console.log('  grabby rules status               Show sync status and drift');
+        console.log('  grabby rules preset <name>        Apply preset bundle');
+        console.log(c.dim('\nShared Rules Authoring:'));
+        console.log('  grabby rules generate             Generate shared rules from repo guidance');
+        console.log('  grabby rules update [file]        Update existing shared ruleset');
+        console.log('  grabby rules shared               List shared rulesets');
+        console.log('');
+        console.log(c.dim('Options:'));
+        console.log(c.dim('  --force          Force refresh (sync command)'));
+        console.log(c.dim('  --dry-run        Show what would change (sync command)'));
+        console.log(c.dim('  --category <c>   Filter by category (list command)'));
+        console.log(c.dim('  --title=<name>   Ruleset title (generate command)'));
+        console.log(c.dim('  --goal=<text>    Goal/purpose description (generate/update)'));
+        console.log(c.dim('  --sources=<csv>  Comma-separated guidance sources'));
+    }
+
+    if (exitCode !== 0) {
+      process.exit(exitCode);
+    }
+  } catch (error) {
+    console.log(c.error(`Error: ${error.message}`));
+    process.exit(1);
+  }
+}
+
 // Feature management
 function features() {
   const subCommand = (cmd === 'features:list' ? 'list' : cmd === 'features:status' ? 'status' : cmd === 'features:refresh' ? 'refresh' : args[0]);
@@ -1393,9 +1535,10 @@ const llmFirstOnlyMode = Boolean(
   repoConfig?.workflow?.externalLlmOnly === true
   || repoConfig?.workflow?.llmFirstOnly === true
 );
+// Menu-first: bare `grabby` opens interactive menu in TTY sessions
+// llmFirstOnlyMode blocks explicit `tui` command but not bare startup
 const shouldLaunchMenuByDefault = !cmd
   && Boolean(process.stdin.isTTY && process.stdout.isTTY)
-  && !llmFirstOnlyMode
   && repoConfig?.features?.menuMode !== false;
 
 const commands = {
@@ -1459,6 +1602,7 @@ const commands = {
   'feature:close': feature,
   'feature:gc': feature,
   ruleset,
+  rules,
   agent,
   task,
   ticket,
@@ -1547,7 +1691,7 @@ const llmFirstBlockedCommands = new Set([
   'cicd',
   'plugin',
   'jira',
-  'serve',
+  // 'serve' - Allowed: utility command that doesn't interfere with contract workflow
   'workspace',
   'system',
   'contracts',
@@ -1604,6 +1748,10 @@ const command = shouldLaunchMenuByDefault ? tui : (commands[cmd] || help);
 const result = command();
 if (result instanceof Promise) {
   result.catch(err => {
+    // Skip handling if process.exit was already called (test harness throws __GRABBY_EXIT__)
+    if (String(err?.message || '').includes('__GRABBY_EXIT__')) {
+      return; // Already handled by the mocked process.exit
+    }
     console.error('Error:', err.message);
     process.exit(1);
   });

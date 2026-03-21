@@ -191,6 +191,31 @@ Grabby supports two contract tracking modes via `contracts.trackingMode` in `gra
 - Follow `RULESET_CORE` patterns
 - Before commit, run `grabby guard <contract.fc.md>` to verify plan/contract scope alignment
 
+## Runtime-Driven Execution (v4.0)
+
+Grabby 4.0 shifts from a prompt-centric to a runtime-driven execution model:
+
+### What Runtime Owns
+- Contract parsing and AST generation
+- Validation rule execution (structural, semantic, security)
+- Context preparation for LLM calls
+- Output schema enforcement
+- Tool permission checks
+
+### What LLM Owns
+- Natural language explanation of findings
+- Bounded decision-making over structured input
+- Code generation within constrained scope
+
+### Token Efficiency
+The runtime-driven model reduces token usage by:
+- Pre-validating contracts before LLM sees them
+- Sending only decision-relevant context (not full contract markdown)
+- Using constrained output formats instead of free-form instructions
+- Estimated 30-50% reduction per interaction
+
+See `docs/AGENT_ARCHITECTURE.md` for the four-layer architecture details.
+
 ## Quick Flow Guardrails (Optional)
 
 When `bmadFeatures.quickFlowGuardrails=true`:

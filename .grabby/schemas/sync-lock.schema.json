@@ -1,0 +1,88 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://grabby.dev/schemas/sync-lock.json",
+  "title": "Grabby Ruleset Sync Lock",
+  "description": "Schema for sync.lock.yaml tracking active ruleset versions",
+  "type": "object",
+  "required": ["version", "lastSync", "source", "active"],
+  "properties": {
+    "version": {
+      "type": "integer",
+      "const": 1,
+      "description": "Lock file format version"
+    },
+    "lastSync": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp of last sync"
+    },
+    "source": {
+      "type": "object",
+      "required": ["repo", "branch", "commit", "version"],
+      "properties": {
+        "repo": {
+          "type": "string",
+          "description": "Central repository URL"
+        },
+        "branch": {
+          "type": "string",
+          "description": "Git branch name"
+        },
+        "commit": {
+          "type": "string",
+          "description": "Git commit hash"
+        },
+        "version": {
+          "type": "string",
+          "pattern": "^\\d+\\.\\d+\\.\\d+$",
+          "description": "Manifest version at time of sync"
+        }
+      }
+    },
+    "active": {
+      "type": "array",
+      "description": "Currently active rulesets",
+      "items": {
+        "$ref": "#/definitions/activeRuleset"
+      }
+    },
+    "checksums": {
+      "type": "object",
+      "description": "Checksums for integrity verification",
+      "properties": {
+        "manifest": {
+          "type": "string",
+          "description": "SHA-256 hash of manifest.yaml"
+        }
+      }
+    }
+  },
+  "definitions": {
+    "activeRuleset": {
+      "type": "object",
+      "required": ["category", "version", "hash", "fetchedAt"],
+      "properties": {
+        "category": {
+          "type": "string",
+          "pattern": "^[a-z0-9-]+/[a-z0-9-]+$",
+          "description": "Ruleset reference (category/name)"
+        },
+        "version": {
+          "type": "string",
+          "pattern": "^\\d+\\.\\d+\\.\\d+$",
+          "description": "Semantic version of the ruleset"
+        },
+        "hash": {
+          "type": "string",
+          "pattern": "^sha256:[a-f0-9]{64}$",
+          "description": "SHA-256 content hash with prefix"
+        },
+        "fetchedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO 8601 timestamp when ruleset was fetched"
+        }
+      }
+    }
+  }
+}

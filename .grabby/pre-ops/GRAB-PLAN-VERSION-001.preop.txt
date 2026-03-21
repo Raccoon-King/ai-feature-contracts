@@ -1,0 +1,28 @@
+╭────────────────────────────────────────────────────────────────────╮
+│ Plan to implement                                                  │
+│                                                                    │
+│ Add semantic version bump metadata to generated plan.yaml files so the plan records the expected version transition for the governed change│
+│                                                                    │
+│ Overview                                                           │
+│                                                                    │
+│ - ARCH_INDEX_v1                                                    │
+│                                                                    │
+│ User Requirements                                                  │
+│                                                                    │
+│ - Generated plan.yaml includes a version field under phase: plan   │
+│ - The plan records a semantic version transition such as 1.2.3 ->  │
+│ 1.2.4                                                              │
+│ - Tests cover version metadata generation from contract inputs     │
+│ - Tests pass (80%+ coverage)                                       │
+│                                                                    │
+│ ---                                                                │
+│ ---                                                                │
+│ ---                                                                │
+│ Verification Plan                                                  │
+│                                                                    │
+│ 1. Generated plan.yaml includes a version field under phase: plan  │
+│ 2. The plan records a semantic version transition such as 1.2.3 -> │
+│ 1.2.4                                                              │
+│ 3. Tests cover version metadata generation from contract inputs    │
+│ 4. Tests pass (80%+ coverage)                                      │
+╰────────────────────────────────────────────────────────────────────╯

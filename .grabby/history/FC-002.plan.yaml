@@ -1,0 +1,34 @@
+contract: FC-002-phase3-contract-integration.fc.md
+phase: plan
+timestamp: 2026-03-20T23:40:56.264Z
+context:
+  - ARCH:stack@v1
+  - RULESET:imports@v1
+context_token_usage: 6
+context_token_budget: 700
+files:
+  - action: "**CREATE**"
+    path: lib/contract-rulesets.cjs
+    reason: Contract metadata integration
+  - action: "**MODIFY**"
+    path: lib/commands.cjs
+    reason: Add sync checks to commands
+  - action: "**CREATE**"
+    path: tests/contract-rulesets.test.js
+    reason: Unit tests
+  - action: "**CREATE**"
+    path: docs/CONTRACT_SYNC.md
+    reason: Documentation
+rules:
+  - §typescript
+  - §hooks
+  - §testing
+risks:
+  - State synchronization
+  - Type coverage
+  - Edge cases
+status: approved
+approval_token_required: Approved
+execution_mode: plan_only
+approved_at: 2026-03-20T23:41:21.477Z
+approval_token: Approved
