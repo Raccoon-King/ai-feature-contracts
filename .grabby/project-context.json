@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "generatedAt": "2026-03-15T00:14:14.534Z",
+  "generatedAt": "2026-03-21T20:02:59.311Z",
   "packageName": "grabby",
   "stackSummary": "Node.js project",
   "summary": "Node.js project detected from local repository structure. Primary working areas include lib, hooks, tests. Testing signals are present in the repository.",
@@ -34,8 +34,15 @@
   "dependencySignals": [
     "chokidar",
     "cli-progress",
-    "yaml",
+    "compression",
+    "cors",
+    "express",
+    "express-rate-limit",
+    "express-validator",
+    "helmet",
     "jest",
+    "nock",
+    "supertest",
     "wrangler"
   ],
   "testing": {
@@ -105,11 +112,11 @@
       "kind": "file"
     },
     {
-      "name": "grabby.config.example.json",
-      "kind": "file"
+      "name": "grabby-website",
+      "kind": "dir"
     },
     {
-      "name": "grabby.config.json",
+      "name": "grabby.config.example.json",
       "kind": "file"
     }
   ],

@@ -74,6 +74,24 @@ Ship a bounded feature contract workflow.
   return contractPath;
 }
 
+function writeProjectPackage(tempDir, version = '1.0.0') {
+  fs.writeFileSync(path.join(tempDir, 'package.json'), JSON.stringify({
+    name: 'tmp-project',
+    version,
+  }, null, 2), 'utf8');
+}
+
+function expectedVersionTransition(version, bump = 'patch') {
+  const [major, minor, patch] = version.split('.').map(Number);
+  if (bump === 'major') {
+    return `${version} > ${major + 1}.0.0`;
+  }
+  if (bump === 'minor') {
+    return `${version} > ${major}.${minor + 1}.0`;
+  }
+  return `${version} > ${major}.${minor}.${patch + 1}`;
+}
+
 function createContextDocs(tempDir) {
   const docsDir = path.join(tempDir, 'docs');
   fs.mkdirSync(docsDir, { recursive: true });
@@ -238,6 +256,53 @@ describe('Command handlers', () => {
 
     expect(exits).toEqual([1]);
     expect(logger.lines.join('\n')).toContain('Contract has validation errors');
+  });
+
+  it('writes a patch semver transition into plan artifacts by default', async () => {
+    const logger = createLogger();
+    const context = createProjectContext({ cwd: tempDir, pkgRoot: PKG_ROOT });
+    const handlers = createCommandHandlers({ context, logger });
+
+    writeProjectPackage(tempDir, '2.3.4');
+    const contractPath = writeValidContract(tempDir, 'version-patch.fc.md', 'draft');
+    fs.writeFileSync(contractPath, fs.readFileSync(contractPath, 'utf8').replace('**ID:** FC-123', '**ID:** VER-PATCH-1'), 'utf8');
+
+    await handlers.plan('version-patch.fc.md');
+
+    const rawPlan = fs.readFileSync(path.join(tempDir, 'contracts', 'VER-PATCH-1.plan.yaml'), 'utf8');
+    const plan = yaml.parse(rawPlan);
+    expect(plan.version).toBe(expectedVersionTransition('2.3.4', 'patch'));
+    expect(rawPlan).toContain(`phase: plan\nversion: ${expectedVersionTransition('2.3.4', 'patch')}`);
+  });
+
+  it('writes a minor semver transition when contract metadata flags an impact change', async () => {
+    const logger = createLogger();
+    const context = createProjectContext({ cwd: tempDir, pkgRoot: PKG_ROOT });
+    const handlers = createCommandHandlers({ context, logger });
+
+    writeProjectPackage(tempDir, '2.3.4');
+    const contractPath = writeValidContract(tempDir, 'version-minor.fc.md', 'draft');
+    fs.writeFileSync(contractPath, `${fs.readFileSync(contractPath, 'utf8').replace('**ID:** FC-123', '**ID:** VER-MINOR-1')}\n**API Change:** yes\n\n## API Impact\n- [x] compatibility documented\n- [x] versioning documented\n`, 'utf8');
+
+    await handlers.plan('version-minor.fc.md');
+
+    const plan = yaml.parse(fs.readFileSync(path.join(tempDir, 'contracts', 'VER-MINOR-1.plan.yaml'), 'utf8'));
+    expect(plan.version).toBe(expectedVersionTransition('2.3.4', 'minor'));
+  });
+
+  it('writes a major semver transition when contract metadata approves a breaking API change', async () => {
+    const logger = createLogger();
+    const context = createProjectContext({ cwd: tempDir, pkgRoot: PKG_ROOT });
+    const handlers = createCommandHandlers({ context, logger });
+
+    writeProjectPackage(tempDir, '2.3.4');
+    const contractPath = writeValidContract(tempDir, 'version-major.fc.md', 'draft');
+    fs.writeFileSync(contractPath, `${fs.readFileSync(contractPath, 'utf8').replace('**ID:** FC-123', '**ID:** VER-MAJOR-1')}\n**API Change:** yes\n**Breaking API Change Approved:** yes\n\n## API Impact\n- [x] compatibility documented\n- [x] versioning documented\n`, 'utf8');
+
+    await handlers.plan('version-major.fc.md');
+
+    const plan = yaml.parse(fs.readFileSync(path.join(tempDir, 'contracts', 'VER-MAJOR-1.plan.yaml'), 'utf8'));
+    expect(plan.version).toBe(expectedVersionTransition('2.3.4', 'major'));
   });
 
   it('fails validation when a completed feature remains in contracts/active', async () => {

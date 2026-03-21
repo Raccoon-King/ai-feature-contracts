@@ -1,0 +1,28 @@
+╭────────────────────────────────────────────────────────────────────╮
+│ Plan to implement                                                  │
+│                                                                    │
+│ Make bare 'grabby' open the menu-first home screen and expose adjustable options when no subcommand is provided│
+│                                                                    │
+│ Overview                                                           │
+│                                                                    │
+│ - ARCH_INDEX_v1                                                    │
+│                                                                    │
+│ User Requirements                                                  │
+│                                                                    │
+│ - Running bare grabby in an interactive terminal opens the home    │
+│ menu                                                               │
+│ - Users can adjust menu-related options from within the menu       │
+│ - CLI help and tests describe the menu-first entry behavior        │
+│ - Tests pass (80%+ coverage)                                       │
+│                                                                    │
+│ ---                                                                │
+│ ---                                                                │
+│ ---                                                                │
+│ Verification Plan                                                  │
+│                                                                    │
+│ 1. Running bare grabby in an interactive terminal opens the home   │
+│ menu                                                               │
+│ 2. Users can adjust menu-related options from within the menu      │
+│ 3. CLI help and tests describe the menu-first entry behavior       │
+│ 4. Tests pass (80%+ coverage)                                      │
+╰────────────────────────────────────────────────────────────────────╯

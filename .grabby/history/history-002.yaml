@@ -681,4 +681,82 @@ entries:
       - docs/grabby-user-guide.html
       - grabby-website/public/index.html
     closedAt: 2026-03-21T04:20:39.140Z
-lastUpdated: 2026-03-21T04:20:39.148Z
+  - id: SYSTEM-BASELINE
+    title: Grabby System Baseline
+    objective: Establish the baseline Grabby governance contract for `grabby` so
+      initialization, planning, approval, execution, and audit flows start from
+      a consi...
+    type: FEATURE_CONTRACT
+    closedAt: 2026-03-21T17:42:53.147Z
+  - id: PROJECT-BASELINE
+    title: Project Baseline for Node.js project
+    objective: Capture the repository baseline for this node.js project so future
+      feature contracts can stay aligned with the detected structure and
+      tooling.
+    type: FEATURE_CONTRACT
+    closedAt: 2026-03-21T17:42:53.212Z
+  - id: SETUP-BASELINE
+    title: Setup Validation and Project Index Baseline
+    objective: Define the deterministic setup validation and repository indexing
+      procedure that any LLM must follow after `grabby init` so governed
+      workflows star...
+    type: FEATURE_CONTRACT
+    closedAt: 2026-03-21T17:42:53.263Z
+  - id: GRAB-AGENTS-001
+    title: Convert the personas into fully fledged agents with dedic...
+    objective: Evolve the current persona model into an agent-first workflow where
+      each persona owns dedicated tasks, menus, and handoff boundaries that can
+      be ex...
+    type: feat
+    files:
+      - contracts/GRAB-AGENTS-001.fc.md
+      - agents/
+      - workflows/
+      - lib/personas.cjs
+      - lib/interactive-workflows.cjs
+      - lib/api-server-v2.cjs
+      - docs/AGENT_ARCHITECTURE.md
+      - docs/API.md
+      - docs/openapi.yaml
+      - tests/personas.test.js
+    closedAt: 2026-03-21T18:01:59.641Z
+  - id: GRAB-MENU-ENTRY-001
+    title: Make bare 'grabby' open the menu-first home screen and ex...
+    objective: Make bare `grabby` open the interactive home menu in supported
+      terminal sessions, preserve clear fallback behavior outside TTY usage, and
+      ensure th...
+    type: feat
+    files:
+      - contracts/GRAB-MENU-ENTRY-001.fc.md
+      - bin/index.cjs
+      - lib/tui.cjs
+      - lib/interactive-shell.cjs
+      - tests/cli.test.js
+      - tests/tui.test.js
+      - docs/grabby-user-guide.html
+    closedAt: 2026-03-21T18:07:19.087Z
+  - id: GRAB-MENU-IA-001
+    title: Refine the menu structure, labels, grouping, and navigati...
+    objective: Refine Grabby's interactive menu into a clearer information
+      architecture with explicit grouping, clearer labels, and more direct
+      navigation paths s...
+    type: feat
+    files:
+      - contracts/GRAB-MENU-IA-001.fc.md
+      - lib/tui.cjs
+      - tests/tui.test.js
+      - docs/grabby-user-guide.html
+      - README.md
+    closedAt: 2026-03-21T19:48:18.069Z
+  - id: GRAB-PLAN-VERSION-001
+    title: Add semver transition metadata to generated plan artifacts
+    objective: "Generate `contracts/<ID>.plan.yaml` with a `version` field alongside
+      `phase: plan`, using the current repo version and the governed contract's
+      decl..."
+    type: FEATURE_CONTRACT
+    files:
+      - contracts/GRAB-PLAN-VERSION-001.fc.md
+      - lib/commands.cjs
+      - tests/commands.test.js
+    closedAt: 2026-03-21T19:59:43.239Z
+lastUpdated: 2026-03-21T19:59:43.253Z

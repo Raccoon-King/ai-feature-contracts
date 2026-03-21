@@ -114,6 +114,7 @@ Returns API information and available endpoints.
   "endpoints": {
     "contracts": "/v1/contracts",
     "rules": "/v1/rules",
+    "agents": "/v1/agents",
     "health": "/v1/health",
     "config": "/v1/config"
   }
@@ -331,6 +332,177 @@ Get specific ruleset details.
       "description": "TypeScript coding standards",
       "content": "# TypeScript Rules\n..."
     }
+  }
+}
+```
+
+---
+
+### Agents
+
+#### `GET /v1/agents`
+
+List all available agents.
+
+**Response**:
+```json
+{
+  "status": "success",
+  "data": {
+    "agents": [
+      {
+        "id": "architect",
+        "name": "Archie",
+        "title": "Contract Architect",
+        "mode": "interview",
+        "handoffCommand": "grabby agent architect CC",
+        "rationale": "Designs contracts through interview",
+        "fileName": "archie.agent.yaml",
+        "menuCount": 3,
+        "metadata": {}
+      }
+    ],
+    "total": 9
+  }
+}
+```
+
+#### `GET /v1/agents/:id`
+
+Get agent details including full definition.
+
+**Example**: `GET /v1/agents/architect`
+
+**Response**:
+```json
+{
+  "status": "success",
+  "data": {
+    "agent": {
+      "id": "architect",
+      "name": "Archie",
+      "title": "Contract Architect",
+      "mode": "interview",
+      "menu": [
+        {
+          "trigger": "CC",
+          "command": "grabby agent architect CC",
+          "workflow": "workflows/contract-creation/workflow.yaml"
+        }
+      ],
+      "definition": {
+        "name": "Archie",
+        "title": "Contract Architect"
+      }
+    }
+  }
+}
+```
+
+#### `GET /v1/agents/:id/workflows`
+
+List workflows for a specific agent.
+
+**Example**: `GET /v1/agents/architect/workflows`
+
+**Response**:
+```json
+{
+  "status": "success",
+  "data": {
+    "agentId": "architect",
+    "workflows": [
+      {
+        "trigger": "CC",
+        "command": "grabby agent architect CC",
+        "workflowPath": "workflows/contract-creation/workflow.yaml"
+      }
+    ],
+    "total": 1
+  }
+}
+```
+
+#### `GET /v1/agents/all/workflows`
+
+List all workflows across all agents.
+
+**Response**:
+```json
+{
+  "status": "success",
+  "data": {
+    "workflows": [
+      {
+        "id": "contract-creation",
+        "name": "Contract Creation",
+        "description": "Creates feature contracts",
+        "steps": 5,
+        "path": "workflows/contract-creation/workflow.yaml"
+      }
+    ],
+    "total": 3
+  }
+}
+```
+
+#### `POST /v1/agents/route`
+
+Route a request to the appropriate agent.
+
+**Request Body**:
+```json
+{
+  "request": "Create a new feature contract for user authentication",
+  "context": {}
+}
+```
+
+**Response**:
+```json
+{
+  "status": "success",
+  "data": {
+    "primary": {
+      "id": "architect",
+      "name": "Archie",
+      "title": "Contract Architect",
+      "mode": "interview",
+      "handoffCommand": "grabby agent architect CC"
+    },
+    "next": {
+      "id": "validator",
+      "name": "Val",
+      "title": "Contract Validator"
+    },
+    "decision": "routing_decision",
+    "transitions": [
+      { "stage": "design", "owner": "architect" },
+      { "stage": "validate", "owner": "validator" }
+    ]
+  }
+}
+```
+
+#### `GET /v1/agents/lint/all`
+
+Lint all agent definitions.
+
+**Response**:
+```json
+{
+  "status": "success",
+  "data": {
+    "valid": true,
+    "results": [
+      {
+        "fileName": "archie.agent.yaml",
+        "valid": true,
+        "errors": [],
+        "warnings": [],
+        "personaKey": "architect"
+      }
+    ]
   }
 }
 ```

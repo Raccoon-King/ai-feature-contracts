@@ -1535,9 +1535,10 @@ const llmFirstOnlyMode = Boolean(
   repoConfig?.workflow?.externalLlmOnly === true
   || repoConfig?.workflow?.llmFirstOnly === true
 );
+// Menu-first: bare `grabby` opens interactive menu in TTY sessions
+// llmFirstOnlyMode blocks explicit `tui` command but not bare startup
 const shouldLaunchMenuByDefault = !cmd
   && Boolean(process.stdin.isTTY && process.stdout.isTTY)
-  && !llmFirstOnlyMode
   && repoConfig?.features?.menuMode !== false;
 
 const commands = {

@@ -1,0 +1,41 @@
+contract: GRAB-MENU-ENTRY-001.fc.md
+phase: plan
+timestamp: 2026-03-21T18:03:41.622Z
+context: []
+context_token_usage: 0
+context_token_budget: 700
+files:
+  - action: modify
+    path: contracts/GRAB-MENU-ENTRY-001.fc.md
+    reason: Keep the governing contract aligned with the final startup scope
+  - action: modify
+    path: bin/index.cjs
+    reason: Route bare `grabby` to the interactive menu where appropriate
+  - action: modify
+    path: lib/tui.cjs
+    reason: Ensure the menu-first startup flow lands in a useful adjustable home screen
+  - action: modify
+    path: lib/interactive-shell.cjs
+    reason: Keep CLI help and fallback guidance consistent with menu-first entry
+  - action: modify
+    path: tests/cli.test.js
+    reason: Verify bare CLI startup behavior and help/fallback paths
+  - action: modify
+    path: tests/tui.test.js
+    reason: Verify the home menu and adjustable settings remain reachable
+  - action: modify
+    path: docs/grabby-user-guide.html
+    reason: Document the menu-first startup path for users
+rules:
+  - §typescript
+  - §hooks
+  - §testing
+risks:
+  - State synchronization
+  - Type coverage
+  - Edge cases
+status: approved
+approval_token_required: Approved
+execution_mode: plan_only
+approved_at: 2026-03-21T18:03:48.770Z
+approval_token: Approved

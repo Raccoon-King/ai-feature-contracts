@@ -24,6 +24,8 @@ tags:
     description: Contract CRUD operations and lifecycle management
   - name: Rules
     description: Rules repository sync and management
+  - name: Agents
+    description: Agent catalog and workflow management
   - name: Health
     description: System health and configuration
 
@@ -277,6 +279,111 @@ paths:
         '404':
           $ref: '#/components/responses/NotFoundError'
 
+  /v1/agents:
+    get:
+      tags: [Agents]
+      summary: List all agents
+      description: Returns catalog of all available agents with metadata
+      responses:
+        '200':
+          description: Agent list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AgentsListResponse'
+
+  /v1/agents/{id}:
+    parameters:
+      - $ref: '#/components/parameters/AgentId'
+
+    get:
+      tags: [Agents]
+      summary: Get agent details
+      description: Returns full agent definition including menu and workflows
+      responses:
+        '200':
+          description: Agent details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+
+  /v1/agents/{id}/workflows:
+    parameters:
+      - $ref: '#/components/parameters/AgentId'
+
+    get:
+      tags: [Agents]
+      summary: List agent workflows
+      description: Returns all workflows associated with an agent
+      responses:
+        '200':
+          description: Workflow list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+
+  /v1/agents/all/workflows:
+    get:
+      tags: [Agents]
+      summary: List all workflows
+      description: Returns all workflows across all agents
+      responses:
+        '200':
+          description: All workflows
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+
+  /v1/agents/route:
+    post:
+      tags: [Agents]
+      summary: Route request to agent
+      description: Analyzes a request and routes it to the appropriate agent
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [request]
+              properties:
+                request:
+                  type: string
+                  description: The task/request to route
+                  example: "Implement user authentication"
+                context:
+                  type: object
+                  description: Optional routing context
+      responses:
+        '200':
+          description: Routing decision
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RoutingResponse'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+
+  /v1/agents/lint/all:
+    get:
+      tags: [Agents]
+      summary: Lint all agent definitions
+      description: Validates all agent YAML definitions and returns lint results
+      responses:
+        '200':
+          description: Lint results
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LintResponse'
+
   /v1/health:
     get:
       tags: [Health]
@@ -340,11 +447,20 @@ components:
       name: id
       in: path
       required: true
-      description: Contract ID in format PREFIX-NUMBER (e.g., FC-123)
+      description: Contract ID in format PREFIX-NUMBER (e.g., FC-123, GRAB-001)
       schema:
         type: string
-        pattern: '^[A-Z]+-\d+$'
+        pattern: '^[A-Z][A-Z0-9]*(?:-[A-Z0-9]+)*-\d+$'
       example: FC-123
+
+    AgentId:
+      name: id
+      in: path
+      required: true
+      description: Agent key identifier (e.g., architect, dev, tester)
+      schema:
+        type: string
+      example: architect
 
   schemas:
     SuccessResponse:
@@ -457,6 +573,130 @@ components:
           enum: [ok, degraded, error, unavailable]
         message:
           type: string
+
+    AgentsListResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [success]
+        data:
+          type: object
+          properties:
+            agents:
+              type: array
+              items:
+                $ref: '#/components/schemas/AgentSummary'
+            total:
+              type: integer
+        metadata:
+          $ref: '#/components/schemas/ResponseMetadata'
+
+    AgentSummary:
+      type: object
+      properties:
+        id:
+          type: string
+          example: architect
+        name:
+          type: string
+          example: Archie
+        title:
+          type: string
+          example: Contract Architect
+        mode:
+          type: string
+          enum: [interview, plan, execute, validate, audit]
+        handoffCommand:
+          type: string
+          example: grabby agent architect CC
+        rationale:
+          type: string
+        fileName:
+          type: string
+        menuCount:
+          type: integer
+        metadata:
+          type: object
+
+    RoutingResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [success]
+        data:
+          type: object
+          properties:
+            primary:
+              type: object
+              properties:
+                id:
+                  type: string
+                name:
+                  type: string
+                title:
+                  type: string
+                mode:
+                  type: string
+                handoffCommand:
+                  type: string
+            next:
+              type: object
+              nullable: true
+              properties:
+                id:
+                  type: string
+                name:
+                  type: string
+                title:
+                  type: string
+            decision:
+              type: string
+            transitions:
+              type: array
+              items:
+                type: object
+                properties:
+                  stage:
+                    type: string
+                  owner:
+                    type: string
+        metadata:
+          $ref: '#/components/schemas/ResponseMetadata'
+
+    LintResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [success]
+        data:
+          type: object
+          properties:
+            valid:
+              type: boolean
+            results:
+              type: array
+              items:
+                type: object
+                properties:
+                  fileName:
+                    type: string
+                  valid:
+                    type: boolean
+                  errors:
+                    type: array
+                    items:
+                      type: string
+                  warnings:
+                    type: array
+                    items:
+                      type: string
+                  personaKey:
+                    type: string
+        metadata:
+          $ref: '#/components/schemas/ResponseMetadata'
 
     ResponseMetadata:
       type: object

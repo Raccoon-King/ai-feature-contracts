@@ -1,0 +1,29 @@
+contract: GRAB-PLAN-VERSION-001.fc.md
+phase: plan
+version: 4.1.0 > 4.1.1
+timestamp: 2026-03-21T19:57:57.541Z
+context: []
+context_token_usage: 0
+context_token_budget: 700
+files:
+  - action: modify
+    path: contracts/GRAB-PLAN-VERSION-001.fc.md
+    reason: Keep the governing contract aligned with the actual semver plan-output
+      scope
+  - action: modify
+    path: lib/commands.cjs
+    reason: Generate semver transition metadata when plan artifacts are created
+  - action: modify
+    path: tests/commands.test.js
+    reason: Verify patch, minor, and major version transitions in plan output
+rules:
+  - §typescript
+  - §hooks
+  - §testing
+risks:
+  - State synchronization
+  - Type coverage
+  - Edge cases
+status: pending_approval
+approval_token_required: Approved
+execution_mode: plan_only
