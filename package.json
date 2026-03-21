@@ -23,6 +23,15 @@
   "bundleDependencies": [
     "chokidar",
     "cli-progress",
+    "compression",
+    "cors",
+    "express",
+    "express-rate-limit",
+    "express-validator",
+    "helmet",
+    "swagger-jsdoc",
+    "swagger-ui-express",
+    "winston",
     "yaml"
   ],
   "scripts": {

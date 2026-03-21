@@ -1,4 +1,4 @@
-# Grabby Task Brief: Fix CI and website-sync merge blockers on the current head
+# Grabby Task Brief: Fix remaining CI merge blockers on the current head
 
 ## Request
 fix merge issues on the current PR/development head
@@ -6,11 +6,12 @@ fix merge issues on the current PR/development head
 ## Ticket
 - Ticket ID: GRAB-CI-MERGE-001
 - Who: Grabby maintainers merging release and PR validation work
-- What: fix CI and website-sync merge blockers on the current development head
-- Why: the current tagged development head is showing failing required checks and a broken website sync workflow, which blocks merge confidence and release hygiene
+- What: fix the remaining CI merge blockers on the current development head
+- Why: the current tagged development head is still showing failing required checks across workflow sync, API test stability, and packaging metadata, which blocks merge confidence and release hygiene
 - Definition of Done:
   - CI test suite remains reliable in hosted CI
-  - The orphaned calculator unit test is removed
+  - Rules/config API tests are isolated from shared repo state
+  - Offline packaging metadata matches the shipped runtime dependency set
   - Website sync uses documentation paths that actually exist
 
 ## Facilitator
@@ -20,18 +21,20 @@ fix merge issues on the current PR/development head
 - Why this persona: The work spans CI behavior, workflow wiring, and scoped test cleanup.
 
 ## Objective
-Repair the current head by keeping the test suite deterministic in CI and correcting the broken website-sync workflow inputs.
+Repair the current head by keeping the test suite deterministic in CI, correcting the rules/config route edge cases surfaced by CI, shipping the offline packaging metadata fix, and keeping the website-sync workflow aligned with the repo layout.
 
 ## Scope Breakdown
 - Stabilize the health timing test for CI
-- Remove the dead calculator test
+- Isolate API tests from shared repo config mutations
+- Correct rules/config route assumptions about cache paths, manifest shape, and missing config
+- Ship the runtime dependency bundle metadata needed for offline installation
 - Correct stale website-sync doc paths
 
 ## Constraints
-Stay within `.github/workflows/sync-website-repo-on-tag.yml`, `tests/api/health.test.js`, `tests/unit/calculator.test.js`, and the governing contract artifacts.
+Stay within `.github/workflows/sync-website-repo-on-tag.yml`, `lib/api-routes/`, `tests/api/`, `tests/packaging.test.js`, `package.json`, and the governing contract artifacts.
 
 ## Done When
-The health timing test is CI-safe, the orphaned calculator test is gone, and the website-sync workflow references docs that exist in the repository
+The API tests are deterministic under parallel CI, the rules/config routes stop surfacing 500s for these merge blockers, the runtime dependency bundle metadata is correct, and the website-sync workflow references docs that exist in the repository
 
 ## Recommended Handoff
 `grabby agent architect CC`

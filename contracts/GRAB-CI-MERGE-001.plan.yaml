@@ -1,7 +1,7 @@
 contract: GRAB-CI-MERGE-001.fc.md
 phase: plan
-version: 4.1.2 > 4.2.0
-timestamp: 2026-03-21T20:44:33.840Z
+version: 4.1.2 > 4.1.3
+timestamp: 2026-03-21T21:22:43.492Z
 context: []
 context_token_usage: 0
 context_token_budget: 700
@@ -10,15 +10,36 @@ files:
     path: contracts/GRAB-CI-MERGE-001.fc.md
     reason: Keep the governing contract aligned with the actual merge-fix scope
   - action: modify
+    path: contracts/GRAB-CI-MERGE-001.brief.md
+    reason: Keep the brief aligned with the expanded CI blocker scope
+  - action: modify
+    path: contracts/GRAB-CI-MERGE-001.plan.yaml
+    reason: Keep the plan aligned with the expanded CI blocker scope
+  - action: modify
     path: .github/workflows/sync-website-repo-on-tag.yml
     reason: Correct stale doc source paths so website sync no longer fails on tagged
       head commits
   - action: modify
+    path: lib/api-routes/health.cjs
+    reason: Make config and ruleset health reads resilient when repo config is
+      missing or stale during CI
+  - action: modify
+    path: lib/api-routes/rules.cjs
+    reason: Align rules API cache-path and manifest handling with the CLI and
+      degrade sync failures to service-unavailable responses
+  - action: modify
     path: tests/api/health.test.js
     reason: Keep the health endpoint timing assertion reliable in hosted CI
+  - action: modify
+    path: tests/api/rules.test.js
+    reason: Make rules API coverage deterministic and isolated from shared repo state
   - action: delete
     path: tests/unit/calculator.test.js
     reason: Remove an orphaned test that references a missing calculator module
+  - action: modify
+    path: package.json
+    reason: Bundle all runtime dependencies for offline installation so packaging
+      checks pass in CI
 rules:
   - §typescript
   - §hooks

@@ -2,22 +2,68 @@
  * Health and configuration endpoint tests
  */
 
+const fs = require('fs');
+const os = require('os');
+const path = require('path');
 const request = require('supertest');
 const { createApp } = require('../../lib/api-server-v2.cjs');
-const fs = require('fs');
-const path = require('path');
+
+function createHealthTestRoot({ withConfig = true } = {}) {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'grabby-health-'));
+
+  fs.mkdirSync(path.join(dir, 'contracts'), { recursive: true });
+  fs.mkdirSync(path.join(dir, '.grabby'), { recursive: true });
+  fs.mkdirSync(path.join(dir, 'docs'), { recursive: true });
+  fs.writeFileSync(
+    path.join(dir, 'docs', 'openapi.yaml'),
+    'openapi: 3.0.0\ninfo:\n  title: Temp Grabby API\n  version: 1.0.0\npaths: {}\n',
+    'utf8',
+  );
+
+  if (withConfig) {
+    fs.writeFileSync(
+      path.join(dir, 'grabby.config.json'),
+      JSON.stringify({
+        version: '1.0',
+        ai: {
+          provider: 'anthropic',
+          apiKey: 'sk-abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMN123456',
+        },
+        jira: {
+          enabled: false,
+          apiToken: 'AKIAABCDEFGHIJKLMNOP',
+        },
+        features: {
+          menuMode: true,
+          startupArt: true,
+          rulesetWizard: true,
+        },
+      }, null, 2),
+      'utf8',
+    );
+  }
+
+  return dir;
+}
 
 describe('Health Endpoints', () => {
   let app;
-  const testConfig = {
-    cwd: process.cwd(),
-    version: '3.7.0-test',
-    logLevel: 'error',
-    rateLimit: 1000 // High limit for tests
-  };
+  let tempDir;
 
-  beforeAll(() => {
-    app = createApp(testConfig);
+  beforeEach(() => {
+    tempDir = createHealthTestRoot();
+    app = createApp({
+      cwd: tempDir,
+      version: '3.7.0-test',
+      logLevel: 'error',
+      rateLimit: 1000,
+    });
+  });
+
+  afterEach(() => {
+    if (tempDir && fs.existsSync(tempDir)) {
+      fs.rmSync(tempDir, { recursive: true, force: true });
+    }
   });
 
   describe('GET /v1/health', () => {
@@ -26,9 +72,7 @@ describe('Health Endpoints', () => {
         .get('/v1/health')
         .expect('Content-Type', /json/);
 
-      // Accept both 200 (healthy) and 503 (degraded)
       expect([200, 503]).toContain(res.status);
-
       expect(res.body).toHaveProperty('data');
       expect(res.body.data).toHaveProperty('status');
       expect(['healthy', 'degraded']).toContain(res.body.data.status);
@@ -39,32 +83,29 @@ describe('Health Endpoints', () => {
     });
 
     it('should include filesystem service status', async () => {
-      const res = await request(app)
-        .get('/v1/health');
+      const res = await request(app).get('/v1/health');
 
       expect([200, 503]).toContain(res.status);
       expect(res.body.data.services).toHaveProperty('filesystem');
       expect(res.body.data.services.filesystem).toHaveProperty('status');
       expect(['ok', 'degraded', 'error']).toContain(
-        res.body.data.services.filesystem.status
+        res.body.data.services.filesystem.status,
       );
     });
 
     it('should include git service status', async () => {
-      const res = await request(app)
-        .get('/v1/health');
+      const res = await request(app).get('/v1/health');
 
       expect([200, 503]).toContain(res.status);
       expect(res.body.data.services).toHaveProperty('git');
       expect(res.body.data.services.git).toHaveProperty('status');
       expect(['ok', 'unavailable', 'error']).toContain(
-        res.body.data.services.git.status
+        res.body.data.services.git.status,
       );
     });
 
     it('should include rulesets service status', async () => {
-      const res = await request(app)
-        .get('/v1/health');
+      const res = await request(app).get('/v1/health');
 
       expect([200, 503]).toContain(res.status);
       expect(res.body.data.services).toHaveProperty('rulesets');
@@ -72,8 +113,7 @@ describe('Health Endpoints', () => {
     });
 
     it('should include system metrics', async () => {
-      const res = await request(app)
-        .get('/v1/health');
+      const res = await request(app).get('/v1/health');
 
       expect([200, 503]).toContain(res.status);
       const { system } = res.body.data;
@@ -87,30 +127,25 @@ describe('Health Endpoints', () => {
 
     it('should respond in a reasonable time', async () => {
       const start = Date.now();
-      await request(app)
-        .get('/v1/health');
+      await request(app).get('/v1/health');
       const duration = Date.now() - start;
 
-      // Allow up to 500ms for CI environments which can be slower
       expect(duration).toBeLessThan(500);
     });
 
     it('should include request metadata', async () => {
-      const res = await request(app)
-        .get('/v1/health');
+      const res = await request(app).get('/v1/health');
 
       expect(res.body).toHaveProperty('metadata');
       expect(res.body.metadata).toHaveProperty('timestamp');
       expect(res.body.metadata).toHaveProperty('version', '3.7.0-test');
       expect(res.body.metadata).toHaveProperty('requestId');
       expect(res.body.metadata.requestId).toMatch(
-        /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+        /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i,
       );
     });
 
     it('should return 503 when services are degraded', async () => {
-      // This test would need to mock degraded services
-      // For now, we just verify the status code handling exists
       const res = await request(app).get('/v1/health');
 
       expect([200, 503]).toContain(res.status);
@@ -135,18 +170,10 @@ describe('Health Endpoints', () => {
         .expect(200);
 
       const configStr = JSON.stringify(res.body.data.config);
-      expect(configStr).not.toMatch(/sk-[a-zA-Z0-9]{40,}/); // Anthropic API key pattern
-      expect(configStr).not.toMatch(/AKIA[A-Z0-9]{16}/); // AWS key pattern
-
-      // If ai.apiKey exists, it should be redacted
-      if (res.body.data.config.ai?.apiKey) {
-        expect(res.body.data.config.ai.apiKey).toBe('***REDACTED***');
-      }
-
-      // If jira.apiToken exists, it should be redacted
-      if (res.body.data.config.jira?.apiToken) {
-        expect(res.body.data.config.jira.apiToken).toBe('***REDACTED***');
-      }
+      expect(configStr).not.toMatch(/sk-[a-zA-Z0-9]{40,}/);
+      expect(configStr).not.toMatch(/AKIA[A-Z0-9]{16}/);
+      expect(res.body.data.config.ai.apiKey).toBe('***REDACTED***');
+      expect(res.body.data.config.jira.apiToken).toBe('***REDACTED***');
     });
 
     it('should include metadata', async () => {
@@ -158,35 +185,40 @@ describe('Health Endpoints', () => {
       expect(res.body.metadata).toHaveProperty('timestamp');
       expect(res.body.metadata).toHaveProperty('requestId');
     });
+
+    it('should return default configuration when no config file exists', async () => {
+      const missingConfigDir = createHealthTestRoot({ withConfig: false });
+      const missingConfigApp = createApp({
+        cwd: missingConfigDir,
+        version: '3.7.0-test',
+        logLevel: 'error',
+        rateLimit: 1000,
+      });
+
+      try {
+        const res = await request(missingConfigApp)
+          .get('/v1/config')
+          .expect('Content-Type', /json/)
+          .expect(200);
+
+        expect(res.body.data.config).toHaveProperty('contracts');
+        expect(res.body.data.config).toHaveProperty('rulesets');
+      } finally {
+        fs.rmSync(missingConfigDir, { recursive: true, force: true });
+      }
+    });
   });
 
   describe('PUT /v1/config', () => {
-    const configPath = path.join(process.cwd(), 'grabby.config.json');
-    let originalConfig;
-
-    beforeAll(() => {
-      // Backup original config
-      if (fs.existsSync(configPath)) {
-        originalConfig = fs.readFileSync(configPath, 'utf8');
-      }
-    });
-
-    afterAll(() => {
-      // Restore original config
-      if (originalConfig) {
-        fs.writeFileSync(configPath, originalConfig, 'utf8');
-      }
-    });
-
     it('should update configuration', async () => {
       const res = await request(app)
         .put('/v1/config')
         .send({
           updates: {
             features: {
-              testMode: true
-            }
-          }
+              testMode: true,
+            },
+          },
         })
         .expect('Content-Type', /json/)
         .expect(200);
@@ -195,6 +227,9 @@ describe('Health Endpoints', () => {
       expect(res.body.data).toHaveProperty('message', 'Configuration updated');
       expect(res.body.data).toHaveProperty('updated');
       expect(res.body.data.updated).toContain('features');
+
+      const savedConfig = JSON.parse(fs.readFileSync(path.join(tempDir, 'grabby.config.json'), 'utf8'));
+      expect(savedConfig.features).toEqual(expect.objectContaining({ testMode: true }));
     });
 
     it('should reject request without updates object', async () => {
@@ -212,7 +247,7 @@ describe('Health Endpoints', () => {
       const res = await request(app)
         .put('/v1/config')
         .send({
-          updates: 'not an object'
+          updates: 'not an object',
         })
         .expect('Content-Type', /json/)
         .expect(400);
