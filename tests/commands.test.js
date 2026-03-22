@@ -224,12 +224,12 @@ describe('Command handlers', () => {
     expect(logger.lines.join('\n')).toContain('Contract already exists');
   });
 
-  it('creates a bug-fix contract from natural language input', () => {
+  it('creates a bug-fix contract from natural language input', async () => {
     const logger = createLogger();
     const context = createProjectContext({ cwd: tempDir, pkgRoot: PKG_ROOT });
     const handlers = createCommandHandlers({ context, logger });
 
-    handlers.create('fix login redirect bug');
+    await handlers.create('fix login redirect bug');
 
     const contractPath = path.join(tempDir, 'contracts', 'login-redirect-bug.fc.md');
     const contract = fs.readFileSync(contractPath, 'utf8');
@@ -529,6 +529,80 @@ Capture baseline context.
 
     expect(exits).toHaveLength(0);
     expect(logger.lines.join('\n')).toContain('Baseline contract detected: skipping work-item ID filename enforcement.');
+    expect(logger.lines.join('\n')).toContain('Validation passed');
+  });
+
+  it('continues validation when ruleset integration is unavailable', async () => {
+    const logger = createLogger();
+    const exits = [];
+    const context = createProjectContext({ cwd: tempDir, pkgRoot: PKG_ROOT });
+    const handlers = createCommandHandlers({
+      context,
+      logger,
+      exit: (code) => exits.push(code),
+      loadRulesetIntegration: () => {
+        throw new Error('module missing');
+      },
+      createPluginManagerImpl: () => null,
+    });
+
+    writeValidContract(tempDir, 'optional-rulesets.fc.md', 'draft');
+
+    await handlers.validate('optional-rulesets.fc.md');
+
+    expect(exits).toEqual([]);
+    expect(logger.lines.join('\n')).toContain('Ruleset integration unavailable');
+    expect(logger.lines.join('\n')).toContain('Validation passed');
+  });
+
+  it('treats blocked ruleset sync as advisory when blocking is disabled', async () => {
+    const logger = createLogger();
+    const exits = [];
+    const context = createProjectContext({ cwd: tempDir, pkgRoot: PKG_ROOT });
+    const handlers = createCommandHandlers({
+      context,
+      logger,
+      exit: (code) => exits.push(code),
+      loadRulesetIntegration: () => ({
+        performSyncCheck: async () => ({ blocked: true, skipped: false }),
+        updateContractDriftCheck: async () => true,
+      }),
+      createPluginManagerImpl: () => null,
+    });
+
+    writeValidContract(tempDir, 'advisory-sync.fc.md', 'draft');
+
+    await handlers.validate('advisory-sync.fc.md');
+
+    expect(exits).toEqual([]);
+    expect(logger.lines.join('\n')).toContain('blocking is disabled');
+    expect(logger.lines.join('\n')).toContain('Validation passed');
+  });
+
+  it('dispatches command and validate plugin hooks when plugin manager is available', async () => {
+    const logger = createLogger();
+    const hookCalls = [];
+    const context = createProjectContext({ cwd: tempDir, pkgRoot: PKG_ROOT });
+    const handlers = createCommandHandlers({
+      context,
+      logger,
+      createPluginManagerImpl: () => ({
+        dispatchHook: jest.fn(async (hookName) => {
+          hookCalls.push(hookName);
+          return { cancelled: false, results: [] };
+        }),
+      }),
+      loadRulesetIntegration: () => ({
+        performSyncCheck: async () => ({ skipped: true }),
+        updateContractDriftCheck: async () => true,
+      }),
+    });
+
+    writeValidContract(tempDir, 'plugin-hooks.fc.md', 'draft');
+
+    await handlers.validate('plugin-hooks.fc.md');
+
+    expect(hookCalls).toEqual(['onCommand', 'onValidate']);
     expect(logger.lines.join('\n')).toContain('Validation passed');
   });
 
@@ -2794,6 +2868,166 @@ paths:
     expect(auditArtifact).toContain('## Environment Constraints');
     expect(auditArtifact).toContain('topology.separatedDeployHost=true (dev-box -> deploy-box)');
     expect(auditArtifact).toContain('plugin.kubernetes.generateArtifactsOnly=true');
+  });
+});
+
+describe('preflight command', () => {
+  let tempDir;
+
+  beforeEach(() => {
+    tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'grabby-preflight-'));
+  });
+
+  afterEach(() => {
+    fs.rmSync(tempDir, { recursive: true, force: true });
+  });
+
+  it('passes preflight when no contracts and clean package.json', () => {
+    const logger = createLogger();
+    const context = createProjectContext({ cwd: tempDir, pkgRoot: PKG_ROOT });
+    const handlers = createCommandHandlers({
+      context,
+      logger,
+      exit: () => {},
+      execSyncImpl: () => { throw new Error('Not a git repository'); },
+    });
+
+    fs.mkdirSync(path.join(tempDir, 'contracts'), { recursive: true });
+    fs.writeFileSync(path.join(tempDir, 'package.json'), JSON.stringify({
+      name: 'test-proj',
+      version: '1.0.0',
+      dependencies: { 'yaml': '^2.0.0' },
+    }), 'utf8');
+
+    handlers.preflight({ quick: true });
+
+    const output = logger.lines.join('\n');
+    expect(output).toContain('Preflight passed');
+  });
+
+  it('detects missing bundleDependencies in dependencies', () => {
+    const logger = createLogger();
+    let exitCalled = false;
+    const context = createProjectContext({ cwd: tempDir, pkgRoot: PKG_ROOT });
+    const handlers = createCommandHandlers({
+      context,
+      logger,
+      exit: () => { exitCalled = true; },
+      execSyncImpl: () => { throw new Error('Not a git repository'); },
+    });
+
+    fs.mkdirSync(path.join(tempDir, 'contracts'), { recursive: true });
+    fs.writeFileSync(path.join(tempDir, 'package.json'), JSON.stringify({
+      name: 'test-proj',
+      version: '1.0.0',
+      dependencies: { 'yaml': '^2.0.0' },
+      bundleDependencies: ['yaml', 'missing-pkg'],
+    }), 'utf8');
+
+    handlers.preflight({ quick: true });
+
+    const output = logger.lines.join('\n');
+    expect(output).toContain('bundleDependencies not in dependencies');
+    expect(output).toContain('missing-pkg');
+    expect(exitCalled).toBe(true);
+  });
+
+  it('validates active contracts and reports errors', () => {
+    const logger = createLogger();
+    let exitCalled = false;
+    const context = createProjectContext({ cwd: tempDir, pkgRoot: PKG_ROOT });
+    const handlers = createCommandHandlers({
+      context,
+      logger,
+      exit: () => { exitCalled = true; },
+      execSyncImpl: () => { throw new Error('Not a git repository'); },
+    });
+
+    fs.mkdirSync(path.join(tempDir, 'contracts'), { recursive: true });
+    fs.writeFileSync(path.join(tempDir, 'package.json'), JSON.stringify({
+      name: 'test-proj',
+      version: '1.0.0',
+    }), 'utf8');
+
+    // Write an invalid contract (parseable but missing required sections)
+    // Must have enough structure to be parsed by listContractFeatures
+    fs.writeFileSync(path.join(tempDir, 'contracts', 'INVALID-001.fc.md'), `# FC: Invalid Contract
+**ID:** INVALID-001 | **Status:** draft
+
+## Objective
+Incomplete contract for testing - missing required sections.
+
+## Scope
+- Missing proper structure
+
+## Non-Goals
+- None
+`, 'utf8');
+
+    handlers.preflight({ quick: true });
+
+    const output = logger.lines.join('\n');
+    // Contract is parsed but validation fails
+    expect(output).toContain('INVALID-001');
+    expect(exitCalled).toBe(true);
+  });
+
+  it('passes with valid contracts', () => {
+    const logger = createLogger();
+    const context = createProjectContext({ cwd: tempDir, pkgRoot: PKG_ROOT });
+    const handlers = createCommandHandlers({
+      context,
+      logger,
+      exit: () => {},
+      execSyncImpl: () => { throw new Error('Not a git repository'); },
+    });
+
+    fs.mkdirSync(path.join(tempDir, 'contracts'), { recursive: true });
+    fs.writeFileSync(path.join(tempDir, 'package.json'), JSON.stringify({
+      name: 'test-proj',
+      version: '1.0.0',
+    }), 'utf8');
+
+    // Write a valid contract with matching ID and filename
+    const contractPath = writeValidContract(tempDir, 'FC-123.fc.md', 'approved');
+
+    handlers.preflight({ quick: true });
+
+    const output = logger.lines.join('\n');
+    expect(output).toContain('Preflight passed');
+  });
+
+  it('reports lockfile out of sync warning', () => {
+    const logger = createLogger();
+    const context = createProjectContext({ cwd: tempDir, pkgRoot: PKG_ROOT });
+    const handlers = createCommandHandlers({
+      context,
+      logger,
+      exit: () => {},
+      execSyncImpl: () => { throw new Error('Not a git repository'); },
+    });
+
+    fs.mkdirSync(path.join(tempDir, 'contracts'), { recursive: true });
+
+    // Write lockfile first, then package.json to make package.json newer
+    fs.writeFileSync(path.join(tempDir, 'package-lock.json'), JSON.stringify({
+      name: 'test-proj',
+      lockfileVersion: 3,
+    }), 'utf8');
+
+    // Wait a tiny bit to ensure different mtime
+    const start = Date.now();
+    while (Date.now() - start < 10) { /* spin */ }
+
+    fs.writeFileSync(path.join(tempDir, 'package.json'), JSON.stringify({
+      name: 'test-proj',
+      version: '1.0.0',
+    }), 'utf8');
+
+    handlers.preflight({ quick: false });
+
+    const output = logger.lines.join('\n');
+    expect(output).toContain('package.json newer than package-lock.json');
   });
 });
 

@@ -1,0 +1,8 @@
+{
+  "ticketId": "GRAB-CI-MERGE-001",
+  "updatedAt": "2026-03-22T15:03:32.857Z",
+  "currentPhase": "archive",
+  "lastInteractionPoint": "before-archive-close",
+  "selectedRole": "analyst",
+  "approvedPlanHash": null
+}

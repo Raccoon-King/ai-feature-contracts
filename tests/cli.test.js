@@ -115,6 +115,7 @@ describeCli('CLI integration', () => {
     expect(result.stdout).toContain('grabby backlog <file>');
     expect(result.stdout).toContain('grabby prompt <file>');
     expect(result.stdout).toContain('grabby session <file>');
+    expect(result.stdout).toContain('grabby ui [--port <port>]');
   });
 
   it('shows help with -h flag', () => {

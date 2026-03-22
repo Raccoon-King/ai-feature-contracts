@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-21T20:05:37.244Z",
+  "generatedAt": "2026-03-22T21:08:15.982Z",
   "trackingMode": "tracked",
   "features": [
     {
@@ -765,6 +765,24 @@
       "type": "FEATURE_CONTRACT"
     },
     {
+      "id": "FC-1774137262006",
+      "title": "Separate Grabby engine from ruleset subsystem",
+      "status": "archived",
+      "archivePath": ".grabby/history/history-002.yaml",
+      "closedAt": "2026-03-22T16:06:16.922Z",
+      "objective": "Decouple the Grabby core engine (CLI, contracts, workflows, personas) from the ruleset subsystem (sync, registry, builder) so they can be versioned...",
+      "type": "FEATURE_CONTRACT"
+    },
+    {
+      "id": "FC-1774138747364",
+      "title": "Audit and Update Grabby Rulesets Repository",
+      "status": "archived",
+      "archivePath": ".grabby/history/history-002.yaml",
+      "closedAt": "2026-03-22T16:55:32.812Z",
+      "objective": "Perform a comprehensive audit of the Grabby Rulesets Repository (https://github.com/Raccoon-King/grabby-contracts.git), review all ruleset definiti...",
+      "type": "feat"
+    },
+    {
       "id": "FC-2026-CW01",
       "title": "Cloudflare Workers Configuration",
       "status": "archived",
@@ -1002,6 +1020,27 @@
       ]
     },
     {
+      "id": "GRAB-CI-MERGE-001",
+      "title": "Fix CI merge blockers on the current head",
+      "status": "archived",
+      "archivePath": ".grabby/history/history-002.yaml",
+      "closedAt": "2026-03-22T15:03:32.873Z",
+      "objective": "Repair the current head so the hosted test suite remains green by keeping the API tests deterministic under parallel CI, correcting the rules/confi...",
+      "type": "BUG_FIX_CONTRACT",
+      "files": [
+        "contracts/GRAB-CI-MERGE-001.fc.md",
+        "contracts/GRAB-CI-MERGE-001.brief.md",
+        "contracts/GRAB-CI-MERGE-001.plan.yaml",
+        ".github/workflows/sync-website-repo-on-tag.yml",
+        ".github/workflows/release.yml",
+        "lib/api-routes/health.cjs",
+        "lib/api-routes/rules.cjs",
+        "tests/api/health.test.js",
+        "tests/api/rules.test.js",
+        "tests/unit/calculator.test.js"
+      ]
+    },
+    {
       "id": "GRAB-CLI-001",
       "title": "Harden CLI parsing and non-interactive workflow behavior",
       "status": "archived",
@@ -1014,19 +1053,6 @@
         "lib/interactive-workflows.cjs",
         "tests/integration/grabby-calculator-integration.test.js"
       ]
-    },
-    {
-      "id": "GRAB-CONTRACT-UI-001",
-      "title": "Add a localhost developer UI for contract visualization and artifact management",
-      "type": "FEATURE_CONTRACT",
-      "status": "draft",
-      "branch": null,
-      "lastModifiedAt": "2026-03-21T19:55:16.951Z",
-      "contractPath": "contracts/GRAB-CONTRACT-UI-001.fc.md",
-      "planPath": null,
-      "auditPath": null,
-      "archivePath": null,
-      "closedAt": null
     },
     {
       "id": "GRAB-DB-201",
@@ -1444,6 +1470,27 @@
       "type": "FEATURE_CONTRACT"
     },
     {
+      "id": "GRAB-LOCAL-GUARDRAILS-001",
+      "title": "Add local lint rules, workflow policy checks, contract va...",
+      "status": "archived",
+      "archivePath": ".grabby/history/history-002.yaml",
+      "closedAt": "2026-03-22T16:55:33.984Z",
+      "objective": "Add local lint rules, workflow policy checks, contract validation guardrails, and preflight best-practice automation that catch the recent CI merge...",
+      "type": "FEATURE_CONTRACT",
+      "files": [
+        "contracts/GRAB-LOCAL-GUARDRAILS-001.fc.md",
+        "contracts/GRAB-LOCAL-GUARDRAILS-001.brief.md",
+        "contracts/GRAB-LOCAL-GUARDRAILS-001.plan.yaml",
+        "package.json",
+        "hooks/pre-commit",
+        "hooks/pre-push",
+        "lib/commands.cjs",
+        "lib/git-workflow.cjs",
+        "lib/cicd.cjs",
+        "tests/commands.test.js"
+      ]
+    },
+    {
       "id": "GRAB-MENU-ENTRY-001",
       "title": "Make bare 'grabby' open the menu-first home screen and ex...",
       "status": "archived",
@@ -1489,6 +1536,21 @@
         "contracts/GRAB-PLAN-VERSION-001.fc.md",
         "lib/commands.cjs",
         "tests/commands.test.js"
+      ]
+    },
+    {
+      "id": "GRAB-RULES-LAYOUT-001",
+      "title": "Rules Page Layout Density & Readability",
+      "status": "archived",
+      "archivePath": ".grabby/history/history-003.yaml",
+      "closedAt": "2026-03-22T21:08:15.920Z",
+      "objective": "Optimize the rules page layout for dense information display and comfortable reading of multi-hundred-line ruleset files.",
+      "type": "FEATURE_CONTRACT",
+      "files": [
+        "lib/dashboard/public/index.html",
+        "lib/dashboard/public/styles.css",
+        "lib/dashboard/public/app.js",
+        "tests/dashboard.test.js"
       ]
     },
     {
@@ -1801,6 +1863,75 @@
         "tests/interactive-shell.test.js",
         "tests/commands.test.js",
         "contracts/GRAB-UX-003.fc.md"
+      ]
+    },
+    {
+      "id": "GRAB-WEB-DASHBOARD-001",
+      "title": "Local Web Dashboard for Contract Visualization and Manage...",
+      "status": "archived",
+      "archivePath": ".grabby/history/history-002.yaml",
+      "closedAt": "2026-03-22T20:11:16.954Z",
+      "objective": "Create a local web-based dashboard that serves on localhost, providing developers with a visual interface to view, track, and edit contracts, see w...",
+      "type": "FEATURE_CONTRACT",
+      "files": [
+        "lib/dashboard/index.cjs",
+        "lib/dashboard/routes.cjs",
+        "lib/dashboard/commands.cjs",
+        "lib/dashboard/public/index.html",
+        "lib/dashboard/public/styles.css",
+        "lib/dashboard/public/app.js",
+        "bin/index.cjs",
+        "tests/dashboard.test.js",
+        "docs/commandline-workflow.md"
+      ]
+    },
+    {
+      "id": "GRAB-WEB-RULESETS-002",
+      "title": "Dashboard Ruleset Visibility and Sync Status",
+      "status": "archived",
+      "archivePath": ".grabby/history/history-002.yaml",
+      "closedAt": "2026-03-22T20:11:17.024Z",
+      "objective": "Expose the repository ruleset state inside the local dashboard so users can see the current ruleset source, sync health, and the broader ruleset in...",
+      "type": "FEATURE_CONTRACT",
+      "files": [
+        "lib/dashboard/routes.cjs",
+        "lib/dashboard/public/index.html",
+        "lib/dashboard/public/app.js",
+        "lib/dashboard/public/styles.css",
+        "tests/dashboard.test.js"
+      ]
+    },
+    {
+      "id": "GRAB-WEB-UI-OVERHAUL-003",
+      "title": "Dashboard UI Overhaul for Density, Hierarchy, and Respons...",
+      "status": "archived",
+      "archivePath": ".grabby/history/history-002.yaml",
+      "closedAt": "2026-03-22T20:11:17.066Z",
+      "objective": "Refine the dashboard UI system so the local web experience is denser, clearer, and more consistent across Dashboard, Contracts, CLI, and History wi...",
+      "type": "FEATURE_CONTRACT",
+      "files": [
+        "lib/dashboard/public/index.html",
+        "lib/dashboard/public/app.js",
+        "lib/dashboard/public/styles.css",
+        "tests/dashboard.test.js",
+        "docs/commandline-workflow.md"
+      ]
+    },
+    {
+      "id": "GRAB-WEBSITE-WORKFLOW-001",
+      "title": "workflow website update",
+      "status": "archived",
+      "archivePath": ".grabby/history/history-002.yaml",
+      "closedAt": "2026-03-22T15:03:32.945Z",
+      "objective": "Update the docs website so the published workflow matches the current repo-local Grabby process from intake through release.",
+      "type": "FEATURE_CONTRACT",
+      "files": [
+        "contracts/GRAB-WEBSITE-WORKFLOW-001.fc.md",
+        "contracts/GRAB-WEBSITE-WORKFLOW-001.brief.md",
+        "contracts/GRAB-WEBSITE-WORKFLOW-001.plan.yaml",
+        "docs/index.html",
+        "docs/grabby-user-guide.html",
+        "docs/commandline-workflow.md"
       ]
     },
     {

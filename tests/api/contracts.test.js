@@ -410,22 +410,59 @@ describe('Contracts Endpoints', () => {
 
   describe('POST /v1/contracts/:id/plan', () => {
     it('should generate plan for existing contract', async () => {
-      const listRes = await request(app).get('/v1/contracts');
+      const contractId = `FC-${Date.now()}`;
+      const contractsDir = path.join(process.cwd(), 'contracts');
+      const contractPath = path.join(contractsDir, `${contractId}.fc.md`);
+      const planPath = path.join(contractsDir, `${contractId}.plan.yaml`);
 
-      if (listRes.body.data.contracts.length === 0) {
-        return;
+      fs.writeFileSync(contractPath, `# FC: API Plan Test
+**ID:** ${contractId} | **Status:** draft
+**Data Change:** no
+**API Change:** no
+ARCH_VERSION: v1
+RULESET_VERSION: v1
+ENV_VERSION: v1
+CONTRACT_TYPE: FEATURE_CONTRACT
+
+## Objective
+Generate a plan for a valid API test contract.
+
+## Scope
+- Exercise the plan endpoint against a validation-clean contract.
+
+## Directories
+**Allowed:** \`tests/\`
+
+## Files
+| Action | Path | Reason |
+|--------|------|--------|
+| MODIFY | \`tests/api/contracts.test.js\` | Verify the plan endpoint against a deterministic contract fixture |
+
+## Done When
+- [ ] Plan generation succeeds
+- [ ] Endpoint returns the generated plan path
+
+## Testing
+- Unit: \`tests/api/contracts.test.js\`
+`, 'utf8');
+
+      try {
+        const res = await request(app)
+          .post(`/v1/contracts/${contractId}/plan`)
+          .expect('Content-Type', /json/)
+          .expect(200);
+
+        expect(res.body).toHaveProperty('status', 'success');
+        expect(res.body.data).toHaveProperty('message');
+        expect(res.body.data).toHaveProperty('planPath');
+      } finally {
+        if (fs.existsSync(contractPath)) {
+          fs.unlinkSync(contractPath);
+        }
+        if (fs.existsSync(planPath)) {
+          fs.unlinkSync(planPath);
+        }
       }
-
-      const contractId = listRes.body.data.contracts[0].id;
-
-      const res = await request(app)
-        .post(`/v1/contracts/${contractId}/plan`)
-        .expect('Content-Type', /json/)
-        .expect(200);
-
-      expect(res.body).toHaveProperty('status', 'success');
-      expect(res.body.data).toHaveProperty('message');
-      expect(res.body.data).toHaveProperty('planPath');
     });
 
     it('should return 404 for non-existent contract', async () => {

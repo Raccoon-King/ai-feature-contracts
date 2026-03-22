@@ -1,0 +1,14 @@
+version: "1.0"
+entries:
+  - id: GRAB-RULES-LAYOUT-001
+    title: Rules Page Layout Density & Readability
+    objective: Optimize the rules page layout for dense information display and
+      comfortable reading of multi-hundred-line ruleset files.
+    type: FEATURE_CONTRACT
+    files:
+      - lib/dashboard/public/index.html
+      - lib/dashboard/public/styles.css
+      - lib/dashboard/public/app.js
+      - tests/dashboard.test.js
+    closedAt: 2026-03-22T21:08:15.920Z
+lastUpdated: 2026-03-22T21:08:15.921Z

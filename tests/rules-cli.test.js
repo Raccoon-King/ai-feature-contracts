@@ -15,14 +15,14 @@ const {
 // Mock dependencies
 jest.mock('fs');
 jest.mock('../lib/config.cjs');
-jest.mock('../lib/manifest-parser.cjs');
-jest.mock('../lib/sync-lock.cjs');
-jest.mock('../lib/rules-sync.cjs');
+jest.mock('../lib/rulesets/common/manifest-parser.cjs');
+jest.mock('../lib/rulesets/common/sync-lock.cjs');
+jest.mock('../lib/rulesets/sync.cjs');
 
-const { loadConfig, saveConfig } = require('../lib/config.cjs');
-const { parseManifestFile, getAllRulesets, findRuleset, resolvePreset, listCategories } = require('../lib/manifest-parser.cjs');
-const { readLock, writeLock, initLock, updateActiveRuleset, removeActiveRuleset, findActiveRuleset, getLockAge } = require('../lib/sync-lock.cjs');
-const { syncWithCentral, detectDrift, isGitAvailable } = require('../lib/rules-sync.cjs');
+const { loadConfig, saveRulesetsConfig } = require('../lib/config.cjs');
+const { parseManifestFile, getAllRulesets, findRuleset, resolvePreset, listCategories } = require('../lib/rulesets/common/manifest-parser.cjs');
+const { readLock, writeLock, initLock, updateActiveRuleset, removeActiveRuleset, findActiveRuleset, getLockAge } = require('../lib/rulesets/common/sync-lock.cjs');
+const { syncWithCentral, detectDrift, isGitAvailable } = require('../lib/rulesets/sync.cjs');
 
 // Suppress console output during tests
 global.console = {
@@ -344,7 +344,7 @@ describe('rules-cli', () => {
 
       const exitCode = await addCommand('languages/typescript', {}, tempDir);
       expect(exitCode).toBe(0);
-      expect(saveConfig).toHaveBeenCalled();
+      expect(saveRulesetsConfig).toHaveBeenCalled();
       expect(console.log).toHaveBeenCalledWith(expect.stringContaining('Added languages/typescript'));
     });
 
@@ -381,7 +381,7 @@ describe('rules-cli', () => {
 
       const exitCode = await removeCommand('languages/typescript', {}, tempDir);
       expect(exitCode).toBe(0);
-      expect(saveConfig).toHaveBeenCalled();
+      expect(saveRulesetsConfig).toHaveBeenCalled();
       expect(console.log).toHaveBeenCalledWith(expect.stringContaining('Removed languages/typescript'));
     });
 
@@ -481,7 +481,7 @@ describe('rules-cli', () => {
 
       const exitCode = await presetCommand('fullstack-typescript', {}, tempDir);
       expect(exitCode).toBe(0);
-      expect(saveConfig).toHaveBeenCalled();
+      expect(saveRulesetsConfig).toHaveBeenCalled();
       expect(console.log).toHaveBeenCalledWith(expect.stringContaining('Added 2 rulesets'));
     });
 

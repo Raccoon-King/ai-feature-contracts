@@ -1,6 +1,6 @@
 {
   "name": "grabby",
-  "version": "4.1.4",
+  "version": "4.1.5",
   "description": "Token-efficient feature contract system for AI-assisted development",
   "main": "bin/index.cjs",
   "bin": {
@@ -38,7 +38,9 @@
     "test": "jest --coverage",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage --coverageThreshold='{\"global\":{\"lines\":80,\"branches\":80,\"functions\":80}}'",
-    "lint": "echo 'No lint configured yet'",
+    "lint": "node bin/index.cjs preflight --quick",
+    "preflight": "node bin/index.cjs preflight",
+    "preflight:full": "node bin/index.cjs preflight --all",
     "grabby:init": "node bin/index.cjs init",
     "grabby:validate": "node bin/index.cjs validate",
     "grabby:plan": "node bin/index.cjs plan",

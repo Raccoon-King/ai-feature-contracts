@@ -16,6 +16,7 @@ const { createPluginRegistry, scaffoldPlugin, validatePlugin } = require('../lib
 const { createTUI } = require('../lib/tui.cjs');
 const { isAIAvailable, getAvailableProvider, completeContract, formatSuggestions } = require('../lib/ai-complete.cjs');
 const { createAPIServer } = require('../lib/api-server.cjs');
+const { runDashboard } = require('../lib/dashboard/index.cjs');
 const { getWorkspaceContext, findAllContracts, formatWorkspaceInfo } = require('../lib/multi-repo.cjs');
 const { initConfig, loadConfig, saveConfig, setConfigValue, validateConfig, getConfigPath } = require('../lib/config.cjs');
 const { testConnection, createIssueFromContract, listLinks, linkIssue, unlinkIssue, syncContract, importIssue, importIssuesByJql } = require('../lib/jira.cjs');
@@ -340,6 +341,14 @@ function gitPreflight() {
   commandHandlers.gitPreflight(args[0] || null);
 }
 
+function preflight() {
+  commandHandlers.preflight({
+    quick: args.includes('--quick'),
+    all: args.includes('--all'),
+    verbose: args.includes('--verbose') || args.includes('-v'),
+  });
+}
+
 function dbRefresh() {
   commandHandlers.dbRefresh();
 }
@@ -435,6 +444,42 @@ function cicd() {
 function tui() {
   const app = createTUI({ ...projectContext, commandHandlers, exit: process.exit });
   app.start();
+}
+
+function resolvePortArg(argvList = args, fallback = 3847) {
+  const namedIndex = argvList.indexOf('--port');
+  if (namedIndex !== -1 && argvList[namedIndex + 1]) {
+    return Number.parseInt(argvList[namedIndex + 1], 10);
+  }
+
+  const inline = argvList.find((token) => token.startsWith('--port='));
+  if (inline) {
+    return Number.parseInt(inline.split('=')[1], 10);
+  }
+
+  return fallback;
+}
+
+async function ui() {
+  const port = resolvePortArg(args);
+  const autoOpen = !args.includes('--no-open');
+
+  if (!Number.isInteger(port) || port < 0 || port > 65535) {
+    console.log(c.error('Usage: grabby ui [--port <port>] [--no-open]'));
+    process.exit(1);
+  }
+
+  console.log(c.heading('\n' + 'â”€'.repeat(50)));
+  console.log(c.heading('GRABBY DASHBOARD'));
+  console.log(c.heading('â”€'.repeat(50) + '\n'));
+  console.log(c.dim('Press Ctrl+C to stop the local dashboard server.\n'));
+
+  await runDashboard({
+    cwd: CWD,
+    port,
+    autoOpen,
+    logger: console,
+  });
 }
 
 function workspace() {
@@ -1575,6 +1620,7 @@ const commands = {
   'git:start': gitStart,
   'git:update': gitUpdate,
   'git:preflight': gitPreflight,
+  preflight,
   'api:discover': apiDiscover,
   'api:refresh': apiRefresh,
   'api:lint': apiLint,
@@ -1586,6 +1632,7 @@ const commands = {
   cicd,
   plugin,
   tui,
+  ui,
   ai,
   config: configCmd,
   jira,
@@ -1650,7 +1697,7 @@ function isBootstrapCommandAllowed(commandName, commandArgs) {
     return true;
   }
   // Always allowed commands
-  if (['help', '-h', '--help', 'init', 'tui', 'list', 'setup', 'complete-baseline', 'archive-baseline', 'install:prompt', 'setup:prompt'].includes(commandName)) {
+  if (['help', '-h', '--help', 'init', 'tui', 'ui', 'list', 'setup', 'complete-baseline', 'archive-baseline', 'install:prompt', 'setup:prompt'].includes(commandName)) {
     return true;
   }
   // SETUP-BASELINE-specific workflow commands

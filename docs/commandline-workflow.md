@@ -29,7 +29,47 @@ Install the repo hooks once per clone:
 grabby init-hooks
 ```
 
-Before risky work or push-sensitive updates:
+### Preflight Checks
+
+Run the comprehensive preflight check before pushing to catch issues that would fail CI:
+
+```bash
+# Quick preflight (skips npm audit and some slower checks)
+npm run lint
+# or
+grabby preflight --quick
+
+# Full preflight (recommended before push)
+npm run preflight
+# or
+grabby preflight
+
+# Full preflight with all checks (scripts, lockfile, npm audit)
+npm run preflight:full
+# or
+grabby preflight --all
+```
+
+The preflight command checks:
+- Git branch policy (protected branches, dirty state)
+- All active contract validity
+- Contract policy violations (DB, API, dependency)
+- bundleDependencies consistency with dependencies
+- package-lock.json sync status
+- npm audit for high/critical vulnerabilities
+
+### Recommended Before Push
+
+```bash
+npm run preflight           # Run full preflight checks
+npm test                    # Run tests
+grabby guard <contract>     # Check execution scope
+grabby git:preflight        # Check git state
+```
+
+### Contract-Specific Guardrails
+
+Before risky work or push-sensitive updates on a specific contract:
 
 ```bash
 grabby guard contracts/<ID>.fc.md
@@ -44,6 +84,18 @@ grabby context:lint
 grabby policy:check
 grabby session --check-all
 ```
+
+## Local Dashboard
+
+Launch the local contract dashboard with:
+
+```bash
+grabby ui
+# or
+grabby ui --port 3847
+```
+
+The dashboard binds to `127.0.0.1`, opens in your browser, and exposes contract status, editing, workflow visualization, and lifecycle actions.
 
 ## Canonical Artifacts
 

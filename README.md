@@ -347,6 +347,29 @@ Example repo config:
 }
 ```
 
+## Optional Rulesets
+
+Rulesets now load through the plugin system instead of being a hard dependency of the core engine.
+
+- core commands still run when no rulesets plugin or rulesets config is present
+- ruleset-specific behavior is activated when `rulesets` is configured in `grabby.config.json` or `rulesets.config.json`
+- legacy top-level ruleset imports remain as compatibility shims for the current release cycle
+
+Minimal separate rulesets config:
+
+```json
+{
+  "source": {
+    "repo": "https://github.com/Raccoon-King/grabby-contracts.git",
+    "branch": "main"
+  },
+  "active": [
+    "languages/javascript",
+    "frameworks/express"
+  ]
+}
+```
+
 ## Ticket Key Awareness
 
 Grabby supports work-item IDs in the form `KEY-123` (for example `FC-123`, `TT-123`, `JIRA-123`).
