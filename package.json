@@ -73,7 +73,7 @@
     "cors": "2.8.x",
     "express": "^4.22.1",
     "express-rate-limit": "7.1.x",
-    "express-validator": "7.0.x",
+    "express-validator": "7.3.x",
     "helmet": "7.1.x",
     "swagger-jsdoc": "6.2.x",
     "swagger-ui-express": "5.0.x",
