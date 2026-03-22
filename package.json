@@ -80,7 +80,7 @@
     "swagger-jsdoc": "6.2.x",
     "swagger-ui-express": "5.0.x",
     "winston": "3.19.x",
-    "yaml": "^2.3.4"
+    "yaml": "^2.8.3"
   },
   "devDependencies": {
     "jest": "^30.3.0",
