@@ -1,0 +1,28 @@
+╭────────────────────────────────────────────────────────────────────╮
+│ Plan to implement                                                  │
+│                                                                    │
+│ workflow website update                                            │
+│                                                                    │
+│ Overview                                                           │
+│                                                                    │
+│ - ARCH_INDEX_v1                                                    │
+│                                                                    │
+│ User Requirements                                                  │
+│                                                                    │
+│ - homepage shows the current workflow at a glance                  │
+│ - user guide reflects the repo-local daily workflow and release    │
+│ path                                                               │
+│ - website links to a detailed workflow reference                   │
+│ - workflow wording matches AGENTS.md and current grabby commands   │
+│                                                                    │
+│ ---                                                                │
+│ ---                                                                │
+│ ---                                                                │
+│ Verification Plan                                                  │
+│                                                                    │
+│ 1. homepage shows the current workflow at a glance                 │
+│ 2. user guide reflects the repo-local daily workflow and release   │
+│ path                                                               │
+│ 3. website links to a detailed workflow reference                  │
+│ 4. workflow wording matches AGENTS.md and current grabby commands  │
+╰────────────────────────────────────────────────────────────────────╯

@@ -1,0 +1,8 @@
+{
+  "ticketId": "GRAB-WEBSITE-WORKFLOW-001",
+  "updatedAt": "2026-03-21T23:41:54.195Z",
+  "currentPhase": "contract_ready",
+  "lastInteractionPoint": "after-contract-draft",
+  "selectedRole": "analyst",
+  "approvedPlanHash": null
+}

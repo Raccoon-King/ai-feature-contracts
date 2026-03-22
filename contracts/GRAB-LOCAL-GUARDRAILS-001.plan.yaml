@@ -1,0 +1,64 @@
+contract: GRAB-LOCAL-GUARDRAILS-001.fc.md
+phase: plan
+version: 4.1.4 > 4.2.0
+timestamp: 2026-03-21T23:10:23.480Z
+context: []
+context_token_usage: 0
+context_token_budget: 700
+files:
+  - action: modify
+    path: contracts/GRAB-LOCAL-GUARDRAILS-001.fc.md
+    reason: Keep the story aligned with the real repo scope
+  - action: modify
+    path: contracts/GRAB-LOCAL-GUARDRAILS-001.brief.md
+    reason: Keep the brief aligned with the refined story scope
+  - action: modify
+    path: contracts/GRAB-LOCAL-GUARDRAILS-001.plan.yaml
+    reason: Track the planned implementation files once the story is validated
+  - action: modify
+    path: package.json
+    reason: Replace the placeholder lint command and expose a local preflight
+      entrypoint if needed
+  - action: modify
+    path: hooks/pre-commit
+    reason: Catch more contract and dependency issues before commit
+  - action: modify
+    path: hooks/pre-push
+    reason: Catch branch-policy and release-policy issues before push
+  - action: modify
+    path: lib/commands.cjs
+    reason: Extend the existing local guardrail and preflight commands
+  - action: modify
+    path: lib/git-workflow.cjs
+    reason: Centralize branch-policy and required-check validation used by local
+      preflight
+  - action: modify
+    path: lib/cicd.cjs
+    reason: Keep generated automation guidance aligned with the new local guardrail
+      workflow
+  - action: modify
+    path: tests/commands.test.js
+    reason: Cover the local guardrail command behavior and messaging
+  - action: modify
+    path: tests/git-workflow.test.js
+    reason: Cover branch-policy and preflight regressions locally
+  - action: modify
+    path: tests/cicd.test.js
+    reason: Cover any updated local automation templates or generated commands
+  - action: modify
+    path: docs/commandline-workflow.md
+    reason: Document the local preflight sequence for developers
+  - action: modify
+    path: docs/BEST_PRACTICES.md
+    reason: Document the best-practice checks developers should run locally
+rules:
+  - §typescript
+  - §hooks
+  - §testing
+risks:
+  - State synchronization
+  - Type coverage
+  - Edge cases
+status: pending_approval
+approval_token_required: Approved
+execution_mode: plan_only

@@ -1,10 +1,50 @@
 version: 1
-lastSync: 2026-03-21T00:42:11.023Z
+lastSync: 2026-03-22T00:58:09.128Z
 source:
   repo: https://github.com/Raccoon-King/grabby-contracts.git
   branch: master
-  commit: 604bb9797b022d641953626ac5da7802b39a4920
-  version: 1.0.0
-active: []
+  commit: b400998c1bc52dfac593edbccd54a4d50edfc328
+  version: 1.1.0
+active:
+  - category: languages/javascript
+    name: javascript
+    version: 1.1.0
+    hash: sha256:473ca5f2abdcda389d67cc49837b2d2625bdfebc06b9f8d5cee648ba96fce6bb
+    fetchedAt: 2026-03-22T00:58:09.129Z
+  - category: frameworks/express
+    name: express
+    version: 1.1.0
+    hash: sha256:754c7081f45d1eb6a679169b24dbc8d47dba6c93fb7b6a0cc6f48782fda08e2e
+    fetchedAt: 2026-03-22T00:58:09.129Z
+  - category: domains/api-compat
+    name: api-compat
+    version: 1.1.0
+    hash: sha256:698fc4e1a9f6783e348216cf1441e51c65604215da7244b490750515e0401fc6
+    fetchedAt: 2026-03-22T00:58:09.129Z
+  - category: policies/security
+    name: security
+    version: 1.1.0
+    hash: sha256:a95f6654fb4c2cb6c6aef8a01716a6f4878e5d3ccb7955210fcaab3921d141c8
+    fetchedAt: 2026-03-22T00:58:09.129Z
+  - category: policies/git-workflow
+    name: git-workflow
+    version: 1.1.0
+    hash: sha256:96d776604256f80bf85f94ca2943b5efc282b29da07208099575b8bde11edbec
+    fetchedAt: 2026-03-22T00:58:09.129Z
+  - category: testing/unit
+    name: unit
+    version: 1.1.0
+    hash: sha256:d6c9c000a12f8a85df1225f7d65b5c2c650a4c28f05ad26673bc1880cd319cd6
+    fetchedAt: 2026-03-22T00:58:09.129Z
+  - category: testing/coverage
+    name: coverage
+    version: 1.1.0
+    hash: sha256:c3d89d0d1ee8598f50a73f1919be641aa3d841e5cf2cefeb6e454d59e4faf7f4
+    fetchedAt: 2026-03-22T00:58:09.129Z
+  - category: tooling/ci-cd
+    name: ci-cd
+    version: 1.0.0
+    hash: sha256:915b2e1a929494b38fc624f8ff7e45c19e3356074b06396be676f9dabfba791a
+    fetchedAt: 2026-03-22T00:58:09.129Z
 checksums:
   manifest: ""

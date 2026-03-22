@@ -295,7 +295,7 @@
     <nav id="nav">
       <a href="#overview">Overview</a>
       <a href="#quickstart">Quick Start</a>
-      <a href="#claudeflow">Claude Workflow</a>
+      <a href="#intake">Start Work</a>
       <a href="#setup">Setup</a>
       <a href="#firstday">First Day Plan</a>
       <a href="#workflow">Daily Workflow</a>
@@ -338,47 +338,29 @@
       <p>Use this path for first-time onboarding.</p>
       <div class="quick-grid">
         <a class="quick-link" href="#setup"><strong>1. Setup</strong><span>Install Grabby and initialize your repo.</span></a>
-        <a class="quick-link" href="#claudeflow"><strong>2. Claude Contract</strong><span>Prompt Claude to generate your contract draft.</span></a>
-        <a class="quick-link" href="#workflow"><strong>3. Grabby Gates</strong><span>Validate, plan, approve, execute, audit.</span></a>
+        <a class="quick-link" href="#intake"><strong>2. Start Work</strong><span>Review active work and create the next contract.</span></a>
+        <a class="quick-link" href="#workflow"><strong>3. Grabby Gates</strong><span>Validate, plan, approve, execute, preflight, audit.</span></a>
         <a class="quick-link" href="#release"><strong>4. Release</strong><span>Follow development -> main release process.</span></a>
       </div>
     </section>
 
-    <section id="claudeflow" class="card" style="margin-top:14px;">
-      <h3>Main Workflow: Prompt Claude First</h3>
-      <p style="color:var(--muted); margin-top:0;">Primary path for this repo: create the contract draft in Claude, then enforce delivery with Grabby.</p>
+    <section id="intake" class="card" style="margin-top:14px;">
+      <h3>Start Work: Repo-Local Intake</h3>
+      <p style="color:var(--muted); margin-top:0;">Primary path for this repo: check active contracts, create the next contract in Grabby, then move through the contract gates before implementation.</p>
       <div class="flow">
-        <div class="flow-step"><div class="dot">1</div><div><strong>Prompt Claude to draft the contract</strong><pre><button class="copy">Copy</button>You are helping me create a Grabby feature contract.
-
-Request: &lt;describe the feature request here&gt;
-
-Output requirements:
-- Return a complete feature contract markdown.
-- Include clear scope, non-goals, directories, files, dependencies, testing, and done-when criteria.
-- Keep the contract implementation-ready and bounded.
-
-Use filename: contracts/&lt;request-slug&gt;.fc.md</pre></div></div>
-        <div class="flow-step"><div class="dot">2</div><div><strong>Save contract locally</strong><pre><button class="copy">Copy</button># Save Claude output into:
-# contracts/&lt;request-slug&gt;.fc.md</pre></div></div>
-        <div class="flow-step"><div class="dot">3</div><div><strong>Run Grabby governance gates</strong><pre><button class="copy">Copy</button>grabby validate contracts/&lt;request-slug&gt;.fc.md
-grabby plan contracts/&lt;request-slug&gt;.fc.md
-grabby approve contracts/&lt;request-slug&gt;.fc.md</pre></div></div>
+        <div class="flow-step"><div class="dot">1</div><div><strong>Review active work</strong><pre><button class="copy">Copy</button>grabby list</pre></div></div>
+        <div class="flow-step"><div class="dot">2</div><div><strong>Create the next contract</strong><pre><button class="copy">Copy</button>grabby task "describe the request"</pre></div></div>
+        <div class="flow-step"><div class="dot">3</div><div><strong>Use alternatives when they fit better</strong><pre><button class="copy">Copy</button>grabby orchestrate "complex request"
+grabby quick
+grabby agent architect CC</pre></div></div>
+        <div class="flow-step"><div class="dot">4</div><div><strong>Run the governance gates</strong><pre><button class="copy">Copy</button>grabby validate contracts/&lt;ID&gt;.fc.md
+grabby plan contracts/&lt;ID&gt;.fc.md
+grabby approve contracts/&lt;ID&gt;.fc.md</pre></div></div>
       </div>
       <details style="margin-top:10px;">
-        <summary>Good vs Bad Claude prompt</summary>
-        <p style="margin:8px 0 0; color:var(--muted);"><strong>Good:</strong> clear scope, strict output format, explicit constraints.</p>
-        <pre><button class="copy">Copy</button>Create a Grabby feature contract for this request:
-"Add login regression tests for redirect edge cases."
-
-Output only valid contract markdown for:
-contracts/login-redirect-regression.fc.md
-
-Requirements:
-- Include objective, scope, non-goals, directories, files table, dependencies, testing, and done-when.
-- Keep scope bounded to tests and related auth redirect logic.
-- Do not propose broad refactors or unrelated enhancements.</pre>
-        <p style="margin:8px 0 0; color:var(--muted);"><strong>Bad:</strong> vague request with no boundaries or expected structure.</p>
-        <pre><button class="copy">Copy</button>Make a contract for login.</pre>
+        <summary>Detailed workflow reference</summary>
+        <p style="margin:8px 0 0; color:var(--muted);">Use the repo-local reference for the full command-line sequence and branch policy.</p>
+        <p style="margin:8px 0 0;"><a href="./commandline-workflow.md" class="link">Open Workflow Reference</a></p>
       </details>
     </section>
 
@@ -392,7 +374,8 @@ Requirements:
         <div class="flow-step"><div class="dot">1</div><div><strong>Use your existing LLM service</strong><pre><button class="copy">Copy</button># Keep using your preferred LLM client/service.
 # Grabby runs locally in your repo to enforce workflow and governance.</pre></div></div>
         <div class="flow-step"><div class="dot">2</div><div><strong>Install Grabby CLI (standard user path)</strong><pre><button class="copy">Copy</button>npm install -g grabby
-grabby --help</pre></div></div>
+grabby --help
+grabby</pre></div></div>
         <div class="flow-step"><div class="dot">3</div><div><strong>Initialize your repo</strong><pre><button class="copy">Copy</button>cd your-project
 grabby init
 grabby init-hooks</pre></div></div>
@@ -426,13 +409,15 @@ grabby --help</pre>
     <section id="firstday" class="card" style="margin-top:14px;">
       <h3>First Day Plan (User-Focused)</h3>
       <div class="flow">
-        <div class="flow-step"><div class="dot">A</div><div><strong>Create first contract in Claude</strong><pre><button class="copy">Copy</button># Use the Claude template above to generate:
-# contracts/login-flow-regression.fc.md</pre></div></div>
-        <div class="flow-step"><div class="dot">B</div><div><strong>Pass governance gates</strong><pre><button class="copy">Copy</button>grabby validate contracts/&lt;ID&gt;.fc.md
+        <div class="flow-step"><div class="dot">A</div><div><strong>Initialize and inspect the repo</strong><pre><button class="copy">Copy</button>grabby init
+grabby init-hooks
+grabby list</pre></div></div>
+        <div class="flow-step"><div class="dot">B</div><div><strong>Create and approve your first contract</strong><pre><button class="copy">Copy</button>grabby task "describe the request"
+grabby validate contracts/&lt;ID&gt;.fc.md
 grabby plan contracts/&lt;ID&gt;.fc.md
 grabby approve contracts/&lt;ID&gt;.fc.md</pre></div></div>
-        <div class="flow-step"><div class="dot">C</div><div><strong>Execute + verify</strong><pre><button class="copy">Copy</button>grabby execute contracts/&lt;ID&gt;.fc.md
-grabby session contracts/&lt;ID&gt;.fc.md --check
+        <div class="flow-step"><div class="dot">C</div><div><strong>Execute, preflight, and audit</strong><pre><button class="copy">Copy</button>grabby execute contracts/&lt;ID&gt;.fc.md
+grabby git:preflight contracts/&lt;ID&gt;.fc.md
 grabby audit contracts/&lt;ID&gt;.fc.md</pre></div></div>
       </div>
     </section>
@@ -462,15 +447,19 @@ grabby audit contracts/&lt;ID&gt;.fc.md</pre></div></div>
       <h3>Daily Workflow</h3>
       <p style="color:var(--muted); margin-top:0;">Default path for most work requests.</p>
       <div class="flow">
-        <div class="flow-step"><div class="dot">A</div><div><strong>Contract Draft via Claude</strong><pre><button class="copy">Copy</button># Prompt Claude with the template above.
-# Save output as contracts/&lt;request-slug&gt;.fc.md</pre></div></div>
-        <div class="flow-step"><div class="dot">B</div><div><strong>Contract Gate</strong><pre><button class="copy">Copy</button>grabby validate contracts/&lt;ID&gt;.fc.md
+        <div class="flow-step"><div class="dot">A</div><div><strong>Review and intake</strong><pre><button class="copy">Copy</button>grabby list
+grabby task "describe the request"</pre></div></div>
+        <div class="flow-step"><div class="dot">B</div><div><strong>Contract gates</strong><pre><button class="copy">Copy</button>grabby validate contracts/&lt;ID&gt;.fc.md
 grabby plan contracts/&lt;ID&gt;.fc.md
 grabby approve contracts/&lt;ID&gt;.fc.md</pre></div></div>
-        <div class="flow-step"><div class="dot">C</div><div><strong>Execute + Verify</strong><pre><button class="copy">Copy</button>grabby execute contracts/&lt;ID&gt;.fc.md
-grabby session contracts/&lt;ID&gt;.fc.md --check
-grabby audit contracts/&lt;ID&gt;.fc.md</pre></div></div>
-        <div class="flow-step"><div class="dot">D</div><div><strong>Close Feature</strong><pre><button class="copy">Copy</button>grabby feature:close &lt;id&gt;
+        <div class="flow-step"><div class="dot">C</div><div><strong>Implement within scope</strong><pre><button class="copy">Copy</button>grabby execute contracts/&lt;ID&gt;.fc.md
+# make the scoped changes
+# run the relevant tests</pre></div></div>
+        <div class="flow-step"><div class="dot">D</div><div><strong>Preflight before update or push</strong><pre><button class="copy">Copy</button>grabby guard contracts/&lt;ID&gt;.fc.md
+grabby git:preflight contracts/&lt;ID&gt;.fc.md
+grabby pr-template contracts/&lt;ID&gt;.fc.md</pre></div></div>
+        <div class="flow-step"><div class="dot">E</div><div><strong>Audit and close</strong><pre><button class="copy">Copy</button>grabby audit contracts/&lt;ID&gt;.fc.md
+grabby feature:close &lt;id&gt;
 grabby features:refresh</pre></div></div>
       </div>
     </section>
@@ -505,8 +494,10 @@ grabby workflow &lt;name&gt;</pre>
         <h3>Governance and Safety Gates</h3>
         <div class="warn"><strong>Rule:</strong> do not bypass validate/plan/approve gates before execute.</div>
         <pre><button class="copy">Copy</button>grabby context:lint
+grabby init-hooks
 grabby policy:check
 grabby guard contracts/&lt;ID&gt;.fc.md
+grabby git:preflight contracts/&lt;ID&gt;.fc.md
 grabby session --check-all</pre>
       </section>
     </div>
@@ -573,6 +564,7 @@ git push origin vX.Y.Z</pre></div></div>
   const commands = [
     ["grabby init", "Initialize project scaffolding", "core"],
     ["grabby init-hooks", "Install git hooks", "core"],
+    ["grabby list", "List active contracts", "core"],
     ["grabby setup", "Run setup flow", "core"],
     ["grabby setup --quick", "Auto-complete setup baseline", "core"],
     ["grabby update", "Check/apply CLI updates", "core"],

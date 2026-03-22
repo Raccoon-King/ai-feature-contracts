@@ -1,0 +1,1309 @@
+# Detailed Story Plans: Audit and Update Grabby Rulesets Repository
+# Contract: FC-1774138747364
+# Generated: 2026-03-22
+
+stories:
+
+  #############################################################################
+  # STORY 1.1: Clone and Audit Rulesets Repository
+  #############################################################################
+  - id: story-1.1
+    title: Clone and audit rulesets repository
+    status: ready
+    estimate: 2 points
+
+    objective: |
+      Clone the central rulesets repository and perform a comprehensive audit
+      of all 19 rulesets, documenting current state and identifying gaps.
+
+    prerequisites:
+      - Git access to https://github.com/Raccoon-King/grabby-contracts.git
+      - Write access to create audit report
+
+    execution_steps:
+      - step: 1
+        action: Clone repository
+        commands:
+          - git clone https://github.com/Raccoon-King/grabby-contracts.git /tmp/grabby-rulesets
+          - cd /tmp/grabby-rulesets
+
+      - step: 2
+        action: Analyze manifest structure
+        tasks:
+          - Read manifest.yaml
+          - Document version and lastUpdated
+          - List all categories and rulesets
+          - Note any schema issues
+
+      - step: 3
+        action: Audit each ruleset category
+        categories:
+          - name: languages
+            rulesets: [typescript, javascript, go, python]
+            check:
+              - Rule count
+              - Rule IDs and names
+              - Severity levels used
+              - Guidance quality
+
+          - name: frameworks
+            rulesets: [react, nextjs, express]
+            check:
+              - Framework-specific patterns
+              - Security considerations
+              - Best practices coverage
+
+          - name: domains
+            rulesets: [api-compat, db-safety, frontend-deps, auth]
+            check:
+              - Domain constraints
+              - Breaking change rules
+              - Migration guidance
+
+          - name: policies
+            rulesets: [security, git-workflow, code-review]
+            check:
+              - Policy enforcement
+              - Compliance requirements
+              - Team workflow rules
+
+          - name: testing
+            rulesets: [unit, integration, coverage]
+            check:
+              - Test framework specifics
+              - Coverage requirements
+              - CI integration
+
+          - name: tooling
+            rulesets: [linters, ci-cd]
+            check:
+              - Tool configurations
+              - Pipeline requirements
+
+      - step: 4
+        action: Identify gaps for Node.js/Express/Jest
+        gaps_to_check:
+          - CommonJS patterns in javascript ruleset
+          - Express middleware ordering
+          - Jest-specific mock patterns
+          - Coverage threshold enforcement
+
+      - step: 5
+        action: Create audit report
+        output_file: docs/AUDIT_REPORT.md
+        sections:
+          - Executive Summary
+          - Current State (19 rulesets)
+          - Gap Analysis
+          - Enhancement Priorities
+          - Recommended Actions
+
+    acceptance_criteria:
+      - Audit report created at docs/AUDIT_REPORT.md
+      - All 19 rulesets documented
+      - Gaps identified for JavaScript ecosystem
+      - Priority ranking for enhancements
+
+    deliverables:
+      - docs/AUDIT_REPORT.md
+
+  #############################################################################
+  # STORY 2.1: Enhance JavaScript Ruleset
+  #############################################################################
+  - id: story-2.1
+    title: Enhance JavaScript ruleset
+    status: ready
+    estimate: 3 points
+    depends_on: [story-1.1]
+
+    objective: |
+      Update languages/javascript.yaml with comprehensive rules for modern
+      CommonJS development patterns.
+
+    file: rulesets/languages/javascript.yaml
+
+    execution_steps:
+      - step: 1
+        action: Read current ruleset
+        command: cat rulesets/languages/javascript.yaml
+
+      - step: 2
+        action: Add js-module-imports rule
+        yaml: |
+          - id: js-module-imports
+            name: Module Import Conventions
+            severity: warning
+            tags: [imports, organization]
+            description: Use consistent require() patterns for module imports
+            guidance: |
+              ## Import Organization
+
+              Group require statements in this order:
+              1. Built-in Node.js modules (fs, path, http)
+              2. External packages (express, lodash)
+              3. Internal/local modules (./lib/*, ../utils)
+
+              ## Best Practices
+              - Destructure at import when using specific exports
+              - Use const for all requires
+              - Avoid dynamic requires except for optional dependencies
+
+              ## Examples
+              ```javascript
+              // Good
+              const fs = require('fs');
+              const path = require('path');
+
+              const express = require('express');
+              const { body, validationResult } = require('express-validator');
+
+              const { loadConfig } = require('./config');
+              const utils = require('../utils');
+
+              // Bad - mixed ordering
+              const myModule = require('./myModule');
+              const fs = require('fs');
+              const express = require('express');
+              ```
+
+      - step: 3
+        action: Add js-async-await rule
+        yaml: |
+          - id: js-async-await
+            name: Async/Await Patterns
+            severity: error
+            tags: [async, promises, errors]
+            description: Prefer async/await over callbacks and raw promises
+            guidance: |
+              ## Async Function Patterns
+
+              - Use async/await for all promise-based code
+              - Always wrap await in try/catch for error handling
+              - Avoid mixing callbacks and promises
+
+              ## Error Handling
+              ```javascript
+              // Good
+              async function fetchData() {
+                try {
+                  const result = await api.getData();
+                  return result;
+                } catch (error) {
+                  logger.error('Failed to fetch data', { error });
+                  throw new DataFetchError('Unable to retrieve data', { cause: error });
+                }
+              }
+
+              // Bad - unhandled rejection
+              async function fetchData() {
+                const result = await api.getData(); // No error handling
+                return result;
+              }
+              ```
+
+              ## Parallel Execution
+              ```javascript
+              // Good - parallel when independent
+              const [users, posts] = await Promise.all([
+                getUsers(),
+                getPosts()
+              ]);
+
+              // Bad - sequential when could be parallel
+              const users = await getUsers();
+              const posts = await getPosts();
+              ```
+
+      - step: 4
+        action: Add js-error-handling rule
+        yaml: |
+          - id: js-error-handling
+            name: Error Handling Patterns
+            severity: error
+            tags: [errors, exceptions, logging]
+            description: Consistent error handling with custom error classes
+            guidance: |
+              ## Custom Error Classes
+
+              Create domain-specific error classes:
+              ```javascript
+              class AppError extends Error {
+                constructor(message, { code, statusCode, cause } = {}) {
+                  super(message);
+                  this.name = this.constructor.name;
+                  this.code = code || 'UNKNOWN_ERROR';
+                  this.statusCode = statusCode || 500;
+                  this.cause = cause;
+                  Error.captureStackTrace(this, this.constructor);
+                }
+              }
+
+              class ValidationError extends AppError {
+                constructor(message, details) {
+                  super(message, { code: 'VALIDATION_ERROR', statusCode: 400 });
+                  this.details = details;
+                }
+              }
+              ```
+
+              ## Error Context
+              - Include error codes for programmatic handling
+              - Add context (userId, requestId) for debugging
+              - Log with structured data
+
+              ```javascript
+              logger.error('Operation failed', {
+                errorCode: error.code,
+                userId: req.user?.id,
+                requestId: req.requestId,
+                stack: error.stack
+              });
+              ```
+
+      - step: 5
+        action: Add js-no-var rule
+        yaml: |
+          - id: js-no-var
+            name: No var Declarations
+            severity: error
+            tags: [variables, scope]
+            description: Use const/let instead of var for all declarations
+            guidance: |
+              ## Variable Declarations
+
+              - **const**: Default choice for all bindings that won't be reassigned
+              - **let**: Only when reassignment is necessary
+              - **var**: Never use - causes hoisting and scope issues
+
+              ## Examples
+              ```javascript
+              // Good
+              const config = loadConfig();
+              const MAX_RETRIES = 3;
+
+              let retryCount = 0;
+              while (retryCount < MAX_RETRIES) {
+                retryCount++;
+              }
+
+              // Bad
+              var config = loadConfig();  // Use const
+              var i = 0;                   // Use let
+              ```
+
+              ## Object/Array Mutations
+              ```javascript
+              // const doesn't prevent mutation - this is fine
+              const users = [];
+              users.push(newUser);  // OK - array is same reference
+
+              const config = {};
+              config.debug = true;  // OK - object is same reference
+              ```
+
+    acceptance_criteria:
+      - 4 new rules added to javascript.yaml
+      - Each rule has id, name, severity, tags, description, guidance
+      - Guidance includes code examples
+      - No TypeScript assumptions
+
+    deliverables:
+      - Updated rulesets/languages/javascript.yaml
+
+  #############################################################################
+  # STORY 3.1: Enhance Express Ruleset
+  #############################################################################
+  - id: story-3.1
+    title: Enhance Express ruleset
+    status: ready
+    estimate: 4 points
+    depends_on: [story-1.1]
+
+    objective: |
+      Update frameworks/express.yaml with comprehensive rules for Express.js
+      middleware, security, and error handling patterns.
+
+    file: rulesets/frameworks/express.yaml
+
+    execution_steps:
+      - step: 1
+        action: Read current ruleset
+        command: cat rulesets/frameworks/express.yaml
+
+      - step: 2
+        action: Add express-security-middleware rule
+        yaml: |
+          - id: express-security-middleware
+            name: Security Middleware Required
+            severity: error
+            tags: [security, middleware, helmet, cors]
+            description: All Express apps must use security middleware
+            guidance: |
+              ## Required Security Middleware
+
+              Every Express application must include:
+
+              ### 1. Helmet (Security Headers)
+              ```javascript
+              const helmet = require('helmet');
+              app.use(helmet());
+              ```
+
+              ### 2. CORS (Cross-Origin)
+              ```javascript
+              const cors = require('cors');
+              app.use(cors({
+                origin: process.env.ALLOWED_ORIGINS?.split(',') || 'http://localhost:3000',
+                credentials: true
+              }));
+              ```
+
+              ### 3. Rate Limiting
+              ```javascript
+              const rateLimit = require('express-rate-limit');
+              app.use(rateLimit({
+                windowMs: 15 * 60 * 1000, // 15 minutes
+                max: 100, // limit each IP to 100 requests per window
+                standardHeaders: true,
+                legacyHeaders: false
+              }));
+              ```
+
+              ## Middleware Order
+              ```javascript
+              // Correct order
+              app.use(helmet());           // 1. Security headers first
+              app.use(cors(corsOptions));  // 2. CORS before routes
+              app.use(rateLimit(limiter)); // 3. Rate limiting
+              app.use(express.json());     // 4. Body parsers
+              app.use(express.urlencoded({ extended: true }));
+
+              // Then routes
+              app.use('/api', apiRoutes);
+
+              // Error handler last
+              app.use(errorHandler);
+              ```
+
+      - step: 3
+        action: Add express-error-handler rule
+        yaml: |
+          - id: express-error-handler
+            name: Error Handler Implementation
+            severity: error
+            tags: [errors, middleware, responses]
+            description: Centralized error handling middleware
+            guidance: |
+              ## Error Handler Pattern
+
+              Create a centralized error handler as the LAST middleware:
+
+              ```javascript
+              // middleware/error-handler.js
+              function errorHandler(err, req, res, next) {
+                // Log error
+                logger.error('Request error', {
+                  error: err.message,
+                  stack: err.stack,
+                  requestId: req.requestId,
+                  path: req.path,
+                  method: req.method
+                });
+
+                // Determine status code
+                const statusCode = err.statusCode || 500;
+
+                // Send response
+                res.status(statusCode).json({
+                  status: 'error',
+                  error: {
+                    code: err.code || 'INTERNAL_ERROR',
+                    message: statusCode === 500
+                      ? 'Internal server error'
+                      : err.message
+                  },
+                  metadata: {
+                    requestId: req.requestId,
+                    timestamp: new Date().toISOString()
+                  }
+                });
+              }
+
+              module.exports = { errorHandler };
+              ```
+
+              ## Registration (MUST be last)
+              ```javascript
+              // app.js
+              app.use('/api', routes);
+              app.use(notFoundHandler);  // 404 handler
+              app.use(errorHandler);     // Error handler LAST
+              ```
+
+      - step: 4
+        action: Add express-validation rule
+        yaml: |
+          - id: express-validation
+            name: Request Validation
+            severity: error
+            tags: [validation, security, express-validator]
+            description: Validate all request inputs before processing
+            guidance: |
+              ## Input Validation Pattern
+
+              Use express-validator for all route inputs:
+
+              ```javascript
+              const { body, param, query, validationResult } = require('express-validator');
+
+              // Validation middleware
+              const validateRequest = (req, res, next) => {
+                const errors = validationResult(req);
+                if (!errors.isEmpty()) {
+                  return res.status(400).json({
+                    status: 'error',
+                    error: {
+                      code: 'VALIDATION_ERROR',
+                      message: 'Invalid request parameters',
+                      details: errors.array()
+                    }
+                  });
+                }
+                next();
+              };
+
+              // Route with validation
+              router.post('/users',
+                body('email').isEmail().normalizeEmail(),
+                body('password').isLength({ min: 8 }),
+                body('name').trim().notEmpty(),
+                validateRequest,
+                userController.create
+              );
+
+              router.get('/users/:id',
+                param('id').isUUID(),
+                validateRequest,
+                userController.getById
+              );
+              ```
+
+              ## Sanitization
+              - Always sanitize inputs before use
+              - Use trim(), escape(), normalizeEmail()
+              - Validate types strictly
+
+      - step: 5
+        action: Add express-route-organization rule
+        yaml: |
+          - id: express-route-organization
+            name: Route Organization
+            severity: warning
+            tags: [routes, organization, versioning]
+            description: Organize routes by domain with versioning
+            guidance: |
+              ## Route Structure
+
+              ```
+              lib/
+              ├── api-routes/
+              │   ├── index.js         # Route aggregator
+              │   ├── users.js         # /v1/users/*
+              │   ├── contracts.js     # /v1/contracts/*
+              │   └── health.js        # /v1/health
+              ```
+
+              ## Router Pattern
+              ```javascript
+              // lib/api-routes/users.js
+              const router = require('express').Router();
+
+              router.get('/', listUsers);
+              router.get('/:id', getUser);
+              router.post('/', createUser);
+              router.put('/:id', updateUser);
+              router.delete('/:id', deleteUser);
+
+              module.exports = router;
+              ```
+
+              ## Mounting with Versioning
+              ```javascript
+              // lib/api-routes/index.js
+              const router = require('express').Router();
+
+              router.use('/users', require('./users'));
+              router.use('/contracts', require('./contracts'));
+              router.use('/health', require('./health'));
+
+              module.exports = router;
+
+              // app.js
+              app.use('/v1', require('./lib/api-routes'));
+              ```
+
+      - step: 6
+        action: Add express-async-handlers rule
+        yaml: |
+          - id: express-async-handlers
+            name: Async Route Handlers
+            severity: error
+            tags: [async, errors, middleware]
+            description: Properly handle async errors in route handlers
+            guidance: |
+              ## Problem
+
+              Unhandled promise rejections in async route handlers crash the server:
+              ```javascript
+              // BAD - crashes on error
+              router.get('/data', async (req, res) => {
+                const data = await fetchData(); // Throws, crashes server
+                res.json(data);
+              });
+              ```
+
+              ## Solution 1: Wrapper Function
+              ```javascript
+              const asyncHandler = (fn) => (req, res, next) => {
+                Promise.resolve(fn(req, res, next)).catch(next);
+              };
+
+              router.get('/data', asyncHandler(async (req, res) => {
+                const data = await fetchData();
+                res.json(data);
+              }));
+              ```
+
+              ## Solution 2: Try/Catch
+              ```javascript
+              router.get('/data', async (req, res, next) => {
+                try {
+                  const data = await fetchData();
+                  res.json({ status: 'success', data });
+                } catch (error) {
+                  next(error); // Forward to error handler
+                }
+              });
+              ```
+
+              ## Best Practice
+              - Use wrapper for simple handlers
+              - Use try/catch when you need to handle specific errors
+              - Always forward errors to centralized handler
+
+    acceptance_criteria:
+      - 5 new rules added to express.yaml
+      - Security middleware rules with code examples
+      - Error handling patterns documented
+      - Middleware ordering specified
+
+    deliverables:
+      - Updated rulesets/frameworks/express.yaml
+
+  #############################################################################
+  # STORY 4.1: Enhance Jest Unit Testing Rules
+  #############################################################################
+  - id: story-4.1
+    title: Enhance Jest unit testing rules
+    status: ready
+    estimate: 3 points
+    depends_on: [story-1.1]
+
+    objective: |
+      Update testing/unit.yaml with Jest-specific testing patterns and
+      best practices.
+
+    file: rulesets/testing/unit.yaml
+
+    execution_steps:
+      - step: 1
+        action: Add jest-file-naming rule
+        yaml: |
+          - id: jest-file-naming
+            name: Test File Naming
+            severity: warning
+            tags: [naming, organization]
+            description: Consistent test file naming conventions
+            guidance: |
+              ## File Naming
+
+              - Pattern: `{module}.test.js` or `{module}.spec.js`
+              - Location: `tests/` directory or `__tests__/` alongside source
+
+              ## Examples
+              ```
+              lib/
+              ├── config.cjs
+              ├── commands.cjs
+              └── features.cjs
+
+              tests/
+              ├── config.test.js
+              ├── commands.test.js
+              └── features.test.js
+              ```
+
+              ## Subdirectory Structure
+              ```
+              tests/
+              ├── unit/           # Unit tests
+              │   ├── config.test.js
+              │   └── commands.test.js
+              ├── integration/    # Integration tests
+              │   └── api.test.js
+              └── fixtures/       # Test data
+                  └── sample-contract.md
+              ```
+
+      - step: 2
+        action: Add jest-describe-structure rule
+        yaml: |
+          - id: jest-describe-structure
+            name: Test Organization with Describe Blocks
+            severity: warning
+            tags: [structure, organization]
+            description: Organize tests using describe blocks
+            guidance: |
+              ## Structure Pattern
+
+              ```javascript
+              describe('ModuleName', () => {
+                // Setup for all tests in this describe
+                beforeEach(() => {
+                  // Reset state
+                });
+
+                afterEach(() => {
+                  // Cleanup
+                });
+
+                describe('functionName', () => {
+                  it('should handle normal input', () => {
+                    // Test case
+                  });
+
+                  it('should throw on invalid input', () => {
+                    // Error case
+                  });
+
+                  describe('when condition X', () => {
+                    it('should behave differently', () => {
+                      // Conditional behavior
+                    });
+                  });
+                });
+              });
+              ```
+
+              ## Naming Conventions
+              - Top describe: Module or class name
+              - Nested describe: Function or method name
+              - it(): "should {expected behavior}"
+
+      - step: 3
+        action: Add jest-mock-patterns rule
+        yaml: |
+          - id: jest-mock-patterns
+            name: Jest Mock Patterns
+            severity: warning
+            tags: [mocks, stubs, spies]
+            description: Consistent mocking patterns for Jest
+            guidance: |
+              ## Module Mocks
+              ```javascript
+              // Mock entire module
+              jest.mock('fs');
+              const fs = require('fs');
+
+              // Mock with implementation
+              jest.mock('./config', () => ({
+                loadConfig: jest.fn(() => ({ debug: true }))
+              }));
+              ```
+
+              ## Spy on Methods
+              ```javascript
+              const obj = require('./myModule');
+
+              // Spy without changing implementation
+              const spy = jest.spyOn(obj, 'method');
+
+              // Spy with mock implementation
+              jest.spyOn(obj, 'method').mockReturnValue('mocked');
+
+              // Restore after test
+              afterEach(() => {
+                jest.restoreAllMocks();
+              });
+              ```
+
+              ## Mock Reset
+              ```javascript
+              beforeEach(() => {
+                jest.clearAllMocks();  // Clear call history
+              });
+
+              afterEach(() => {
+                jest.restoreAllMocks(); // Restore original implementation
+              });
+              ```
+
+              ## Prefer Dependency Injection
+              ```javascript
+              // Better than mocking - inject dependencies
+              function createHandler({ db, logger }) {
+                return async (req, res) => {
+                  const data = await db.query('...');
+                  logger.info('Fetched data');
+                  res.json(data);
+                };
+              }
+
+              // In test - inject mocks
+              const handler = createHandler({
+                db: { query: jest.fn().mockResolvedValue([]) },
+                logger: { info: jest.fn() }
+              });
+              ```
+
+      - step: 4
+        action: Add jest-assertions rule
+        yaml: |
+          - id: jest-assertions
+            name: Assertion Best Practices
+            severity: warning
+            tags: [assertions, matchers]
+            description: Clear and specific test assertions
+            guidance: |
+              ## One Assertion Per Concept
+              ```javascript
+              // Good - focused tests
+              it('should return user by ID', async () => {
+                const user = await getUser(123);
+                expect(user.id).toBe(123);
+              });
+
+              it('should include user email', async () => {
+                const user = await getUser(123);
+                expect(user.email).toBeDefined();
+              });
+
+              // Acceptable - related assertions
+              it('should return complete user object', async () => {
+                const user = await getUser(123);
+                expect(user).toMatchObject({
+                  id: 123,
+                  email: expect.any(String),
+                  createdAt: expect.any(Date)
+                });
+              });
+              ```
+
+              ## Specific Matchers
+              ```javascript
+              // Good - specific
+              expect(fn).toHaveBeenCalledWith(123, { flag: true });
+              expect(array).toContain('item');
+              expect(obj).toHaveProperty('key', 'value');
+
+              // Avoid - too generic
+              expect(fn).toHaveBeenCalled();  // Doesn't check arguments
+              expect(result).toBeTruthy();    // Doesn't check actual value
+              ```
+
+              ## Error Testing
+              ```javascript
+              // Good - test error type and message
+              await expect(asyncFn()).rejects.toThrow(ValidationError);
+              await expect(asyncFn()).rejects.toThrow('Invalid input');
+
+              // Sync errors
+              expect(() => syncFn()).toThrow(TypeError);
+              ```
+
+    acceptance_criteria:
+      - 4 new rules added to unit.yaml
+      - Jest-specific patterns documented
+      - Mock patterns with examples
+      - Assertion best practices
+
+    deliverables:
+      - Updated rulesets/testing/unit.yaml
+
+  #############################################################################
+  # STORY 4.2: Enhance Coverage Rules
+  #############################################################################
+  - id: story-4.2
+    title: Enhance coverage rules
+    status: ready
+    estimate: 2 points
+    depends_on: [story-1.1]
+
+    objective: |
+      Update testing/coverage.yaml with threshold requirements and
+      CI integration guidance.
+
+    file: rulesets/testing/coverage.yaml
+
+    execution_steps:
+      - step: 1
+        action: Add coverage-thresholds rule
+        yaml: |
+          - id: coverage-thresholds
+            name: Coverage Thresholds
+            severity: error
+            tags: [coverage, quality, ci]
+            description: Minimum coverage requirements
+            guidance: |
+              ## Required Thresholds
+
+              | Metric     | Minimum | Preferred |
+              |------------|---------|-----------|
+              | Lines      | 80%     | 90%       |
+              | Branches   | 67%     | 80%       |
+              | Functions  | 80%     | 90%       |
+              | Statements | 80%     | 90%       |
+
+              ## Jest Configuration
+              ```javascript
+              // jest.config.js or package.json
+              {
+                "coverageThreshold": {
+                  "global": {
+                    "lines": 80,
+                    "branches": 67,
+                    "functions": 80,
+                    "statements": 80
+                  }
+                }
+              }
+              ```
+
+              ## Per-File Thresholds
+              ```javascript
+              {
+                "coverageThreshold": {
+                  "global": { ... },
+                  "./lib/critical-module.js": {
+                    "lines": 95,
+                    "branches": 90
+                  }
+                }
+              }
+              ```
+
+      - step: 2
+        action: Add coverage-exclusions rule
+        yaml: |
+          - id: coverage-exclusions
+            name: Coverage Exclusions
+            severity: warning
+            tags: [coverage, configuration]
+            description: What to exclude from coverage
+            guidance: |
+              ## Standard Exclusions
+
+              ```javascript
+              // jest.config.js
+              {
+                "collectCoverageFrom": [
+                  "lib/**/*.{js,cjs}",
+                  "!lib/**/*.test.js",
+                  "!lib/**/fixtures/**",
+                  "!lib/**/mocks/**",
+                  "!**/node_modules/**"
+                ],
+                "coveragePathIgnorePatterns": [
+                  "/node_modules/",
+                  "/coverage/",
+                  "/dist/",
+                  "/__tests__/",
+                  "/fixtures/"
+                ]
+              }
+              ```
+
+              ## Inline Exclusions
+              ```javascript
+              /* istanbul ignore next */
+              function debugOnly() {
+                // Development-only code
+              }
+
+              /* istanbul ignore if */
+              if (process.env.DEBUG) {
+                console.log('debug info');
+              }
+              ```
+
+              ## Document All Exclusions
+              - Every exclusion should have a reason
+              - Review exclusions quarterly
+              - Don't exclude to hide low coverage
+
+      - step: 3
+        action: Add coverage-ci rule
+        yaml: |
+          - id: coverage-ci
+            name: CI Coverage Enforcement
+            severity: error
+            tags: [ci, automation, enforcement]
+            description: Enforce coverage in CI/CD pipeline
+            guidance: |
+              ## GitHub Actions
+              ```yaml
+              - name: Run tests with coverage
+                run: npm test -- --coverage
+
+              - name: Check coverage thresholds
+                run: npm test -- --coverage --coverageThreshold='{"global":{"lines":80}}'
+              ```
+
+              ## npm Scripts
+              ```json
+              {
+                "scripts": {
+                  "test": "jest --coverage",
+                  "test:ci": "jest --coverage --ci --reporters=default --reporters=jest-junit"
+                }
+              }
+              ```
+
+              ## Coverage Reports
+              - Generate HTML report for local review
+              - Upload to coverage service (Codecov, Coveralls)
+              - Add coverage badge to README
+
+              ```yaml
+              - name: Upload coverage
+                uses: codecov/codecov-action@v3
+                with:
+                  files: ./coverage/lcov.info
+                  fail_ci_if_error: true
+              ```
+
+    acceptance_criteria:
+      - Coverage thresholds defined (80% lines minimum)
+      - Exclusion patterns documented
+      - CI integration guidance with examples
+
+    deliverables:
+      - Updated rulesets/testing/coverage.yaml
+
+  #############################################################################
+  # STORY 5.1: Enhance API Compatibility Rules
+  #############################################################################
+  - id: story-5.1
+    title: Enhance API compatibility rules
+    status: ready
+    estimate: 3 points
+    depends_on: [story-1.1]
+
+    objective: |
+      Update domains/api-compat.yaml with REST API versioning and
+      breaking change detection rules.
+
+    file: rulesets/domains/api-compat.yaml
+
+    execution_steps:
+      - step: 1
+        action: Add api-versioning rule
+        yaml: |
+          - id: api-versioning
+            name: API Versioning Strategy
+            severity: error
+            tags: [versioning, rest, compatibility]
+            description: All APIs must be versioned
+            guidance: |
+              ## URL Path Versioning (Preferred)
+              ```
+              /v1/users
+              /v1/contracts
+              /v2/users  (new version)
+              ```
+
+              ## Version Support
+              - Support current version (vN) and previous (vN-1)
+              - Deprecation notice 6 months before removal
+              - Document migration path
+
+              ## Implementation
+              ```javascript
+              // Mount versioned routes
+              app.use('/v1', require('./routes/v1'));
+              app.use('/v2', require('./routes/v2'));
+
+              // Version header (optional, for debugging)
+              app.use((req, res, next) => {
+                res.setHeader('X-API-Version', '1.0.0');
+                next();
+              });
+              ```
+
+      - step: 2
+        action: Add api-breaking-changes rule
+        yaml: |
+          - id: api-breaking-changes
+            name: Breaking Change Detection
+            severity: error
+            tags: [compatibility, changes, migration]
+            description: Identify and document breaking changes
+            guidance: |
+              ## Breaking Changes (NEVER do without major version bump)
+
+              - Removing an endpoint
+              - Removing a field from response
+              - Changing field type (string → number)
+              - Adding required field to request
+              - Changing authentication requirements
+              - Changing error response format
+
+              ## Non-Breaking Changes (Safe)
+
+              - Adding new endpoints
+              - Adding optional request fields
+              - Adding response fields
+              - Adding new error codes
+
+              ## Documentation Required
+              ```markdown
+              ## Breaking Changes in v2
+
+              ### Removed: GET /v1/legacy-endpoint
+              - Use GET /v2/new-endpoint instead
+              - Migration: Update client to new path
+
+              ### Changed: User response format
+              - `fullName` split into `firstName` and `lastName`
+              - Migration: Concatenate fields or update client
+              ```
+
+      - step: 3
+        action: Add api-response-format rule
+        yaml: |
+          - id: api-response-format
+            name: Response Format Standards
+            severity: warning
+            tags: [responses, format, consistency]
+            description: Consistent API response structure
+            guidance: |
+              ## Success Response
+              ```json
+              {
+                "status": "success",
+                "data": {
+                  "user": { "id": 123, "name": "John" }
+                },
+                "metadata": {
+                  "timestamp": "2024-01-01T00:00:00Z",
+                  "requestId": "abc-123"
+                }
+              }
+              ```
+
+              ## Error Response
+              ```json
+              {
+                "status": "error",
+                "error": {
+                  "code": "VALIDATION_ERROR",
+                  "message": "Invalid email format",
+                  "details": [
+                    { "field": "email", "message": "Must be valid email" }
+                  ]
+                },
+                "metadata": {
+                  "timestamp": "2024-01-01T00:00:00Z",
+                  "requestId": "abc-123"
+                }
+              }
+              ```
+
+              ## Pagination
+              ```json
+              {
+                "status": "success",
+                "data": {
+                  "items": [...],
+                  "pagination": {
+                    "page": 1,
+                    "perPage": 20,
+                    "total": 100,
+                    "totalPages": 5
+                  }
+                }
+              }
+              ```
+
+    acceptance_criteria:
+      - API versioning strategy documented
+      - Breaking vs non-breaking changes defined
+      - Response format standardized
+
+    deliverables:
+      - Updated rulesets/domains/api-compat.yaml
+
+  #############################################################################
+  # STORY 6.1: Enhance Security Rules
+  #############################################################################
+  - id: story-6.1
+    title: Enhance security rules
+    status: ready
+    estimate: 3 points
+    depends_on: [story-1.1]
+
+    objective: |
+      Update policies/security.yaml with comprehensive security checklist.
+
+    file: rulesets/policies/security.yaml
+
+    rules_to_add:
+      - security-input-validation
+      - security-no-secrets
+      - security-auth
+      - security-dependencies
+
+    # Full rule definitions in execution_steps...
+
+    acceptance_criteria:
+      - Security checklist comprehensive
+      - Input validation rules clear
+      - Secret management documented
+      - Dependency security enforced
+
+    deliverables:
+      - Updated rulesets/policies/security.yaml
+
+  #############################################################################
+  # STORY 6.2: Enhance Git Workflow Rules
+  #############################################################################
+  - id: story-6.2
+    title: Enhance git workflow rules
+    status: ready
+    estimate: 2 points
+    depends_on: [story-1.1]
+
+    objective: |
+      Update policies/git-workflow.yaml with branch naming, commit format,
+      and PR requirements.
+
+    file: rulesets/policies/git-workflow.yaml
+
+    rules_to_add:
+      - git-branch-naming
+      - git-commit-format
+      - git-pr-requirements
+
+    acceptance_criteria:
+      - Branch naming conventions defined
+      - Commit message format documented
+      - PR checklist provided
+
+    deliverables:
+      - Updated rulesets/policies/git-workflow.yaml
+
+  #############################################################################
+  # STORY 7.1: Fix Manifest and Add Schema
+  #############################################################################
+  - id: story-7.1
+    title: Fix manifest and add schema
+    status: ready
+    estimate: 2 points
+    depends_on: [story-6.2]
+
+    objective: |
+      Validate manifest.yaml structure and create JSON schema for
+      ruleset validation.
+
+    files:
+      - manifest.yaml
+      - schemas/ruleset.schema.json
+
+    execution_steps:
+      - step: 1
+        action: Validate manifest structure
+        checks:
+          - version field present
+          - lastUpdated is ISO date
+          - All categories have description and rulesets array
+          - All rulesets have name, version, tags
+
+      - step: 2
+        action: Update manifest version
+        change: Bump to 1.1.0 for this update
+
+      - step: 3
+        action: Create JSON schema
+        file: schemas/ruleset.schema.json
+        purpose: Validate individual ruleset YAML files
+
+    acceptance_criteria:
+      - Manifest validates without errors
+      - Version bumped to 1.1.0
+      - JSON schema created
+
+    deliverables:
+      - Updated manifest.yaml
+      - schemas/ruleset.schema.json
+
+  #############################################################################
+  # STORY 7.2: Create Documentation
+  #############################################################################
+  - id: story-7.2
+    title: Create documentation
+    status: ready
+    estimate: 2 points
+    depends_on: [story-7.1]
+
+    objective: |
+      Create ruleset authoring guide and update README.
+
+    files:
+      - docs/RULESET_AUTHORING.md
+      - README.md
+
+    execution_steps:
+      - step: 1
+        action: Create authoring guide
+        sections:
+          - Ruleset File Format
+          - Rule Structure
+          - Severity Levels
+          - Tags Convention
+          - Guidance Best Practices
+          - Examples
+
+      - step: 2
+        action: Update README
+        sections:
+          - Available Rulesets
+          - How to Use
+          - Contributing New Rules
+
+    acceptance_criteria:
+      - Authoring guide complete
+      - Examples provided
+      - README updated
+
+    deliverables:
+      - docs/RULESET_AUTHORING.md
+      - Updated README.md
+
+#############################################################################
+# EXECUTION SUMMARY
+#############################################################################
+
+execution_order:
+  - story-1.1  # Audit first
+  - story-2.1  # JavaScript
+  - story-3.1  # Express (parallel with 2.1)
+  - story-4.1  # Jest (parallel with 2.1, 3.1)
+  - story-4.2  # Coverage
+  - story-5.1  # API Compat
+  - story-6.1  # Security
+  - story-6.2  # Git Workflow
+  - story-7.1  # Manifest
+  - story-7.2  # Documentation
+
+total_estimate: 26 story points
+sprints: 2

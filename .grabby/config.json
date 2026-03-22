@@ -32,27 +32,6 @@
       "architectural_change"
     ]
   },
-  "workflow": {
-    "defaultBranch": "development",
-    "protectedBranches": ["main", "development"],
-    "mergeStrategy": "squash",
-    "branchFlow": [
-      "feature/* -> development (squash PR)",
-      "development -> release tag (semver via release workflow)",
-      "release tag -> main (via release PR)"
-    ],
-    "releaseRules": {
-      "tagFrom": "development",
-      "semverAuto": true,
-      "requireAuditArtifact": true,
-      "requireEmptyContracts": true
-    },
-    "semver": {
-      "major": ["BREAKING CHANGE", "!:"],
-      "minor": ["feat:"],
-      "patch": ["fix:", "perf:", "refactor:", "chore:", "docs:"]
-    }
-  },
   "agile": {
     "enabled": true,
     "levels": [
@@ -72,5 +51,43 @@
       "taskPrefix": "TASK",
       "subtaskPrefix": "SUBTASK"
     }
+  },
+  "workflow": {
+    "defaultBranch": "development",
+    "protectedBranches": [
+      "main",
+      "development"
+    ],
+    "mergeStrategy": "squash",
+    "branchFlow": [
+      "feature/* -> development (squash PR)",
+      "development -> release tag (semver via release workflow)",
+      "release tag -> main (via release PR)"
+    ],
+    "releaseRules": {
+      "tagFrom": "development",
+      "semverAuto": true,
+      "requireAuditArtifact": true,
+      "requireEmptyContracts": true
+    },
+    "semver": {
+      "major": [
+        "BREAKING CHANGE",
+        "!:"
+      ],
+      "minor": [
+        "feat:"
+      ],
+      "patch": [
+        "fix:",
+        "perf:",
+        "refactor:",
+        "chore:",
+        "docs:"
+      ]
+    }
+  },
+  "interactive": {
+    "enabled": true
   }
 }

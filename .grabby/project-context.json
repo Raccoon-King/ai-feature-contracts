@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "generatedAt": "2026-03-21T20:02:59.311Z",
+  "generatedAt": "2026-03-22T00:14:15.036Z",
   "packageName": "grabby",
   "stackSummary": "Node.js project",
   "summary": "Node.js project detected from local repository structure. Primary working areas include lib, hooks, tests. Testing signals are present in the repository.",
@@ -108,15 +108,15 @@
       "kind": "dir"
     },
     {
-      "name": "grabby-2.3.9.tgz",
-      "kind": "file"
-    },
-    {
       "name": "grabby-website",
       "kind": "dir"
     },
     {
       "name": "grabby.config.example.json",
+      "kind": "file"
+    },
+    {
+      "name": "grabby.config.json",
       "kind": "file"
     }
   ],

@@ -253,7 +253,7 @@
     </div>
 
     <section class="hero">
-      <span class="hero-badge">v4.1.2</span>
+      <span class="hero-badge">v4.1.4</span>
       <h1>Grabby</h1>
       <p>CLI-first orchestration for AI-assisted development. Feature contracts, persona-led workflows, and governance gates that keep AI work predictable and auditable.</p>
       <div class="hero-buttons">
@@ -269,9 +269,13 @@
       <code>
         <span class="comment"># Install globally</span><br>
         npm install -g grabby<br><br>
-        <span class="comment"># Initialize in your project</span><br>
+        <span class="comment"># Open the menu or inspect commands</span><br>
+        grabby<br><br>
+        <span class="comment"># Initialize once per repo</span><br>
         grabby init<br><br>
-        <span class="comment"># Start a feature</span><br>
+        grabby init-hooks<br><br>
+        <span class="comment"># Start governed work</span><br>
+        grabby list<br>
         grabby task "add user authentication"
       </code>
     </section>
@@ -284,16 +288,18 @@
       </section>
 
       <section class="card span-6">
-        <h2>Contract Workflow</h2>
-        <p>Every feature follows a deterministic path:</p>
+        <h2>Current Workflow</h2>
+        <p>Default repo-local flow from intake through audit:</p>
         <div class="workflow-steps">
-          <span class="step"><span class="step-num">1</span> Task</span>
-          <span class="step"><span class="step-num">2</span> Validate</span>
-          <span class="step"><span class="step-num">3</span> Plan</span>
-          <span class="step"><span class="step-num">4</span> Approve</span>
-          <span class="step"><span class="step-num">5</span> Execute</span>
-          <span class="step"><span class="step-num">6</span> Audit</span>
+          <span class="step"><span class="step-num">1</span> List</span>
+          <span class="step"><span class="step-num">2</span> Task</span>
+          <span class="step"><span class="step-num">3</span> Validate</span>
+          <span class="step"><span class="step-num">4</span> Plan</span>
+          <span class="step"><span class="step-num">5</span> Approve</span>
+          <span class="step"><span class="step-num">6</span> Execute</span>
+          <span class="step"><span class="step-num">7</span> Audit</span>
         </div>
+        <p style="margin-top: 14px;">For complex intake use <strong>grabby orchestrate</strong>. For very small bounded changes use <strong>grabby quick</strong>. Before pushing, run <strong>grabby git:preflight</strong>.</p>
       </section>
 
       <section class="card span-4">
@@ -324,12 +330,14 @@
       <section class="card span-6">
         <h3>Core Commands</h3>
         <ul class="features">
-          <li><strong>grabby task</strong> - Interview-driven task breakdown with persona selection</li>
-          <li><strong>grabby orchestrate</strong> - Full persona handoff: Archie to Iris</li>
-          <li><strong>grabby validate</strong> - Check contract completeness and risk</li>
-          <li><strong>grabby plan</strong> - Generate implementation plan</li>
-          <li><strong>grabby execute</strong> - Bounded execution with guardrails</li>
-          <li><strong>grabby audit</strong> - Post-execution verification</li>
+          <li><strong>grabby list</strong> - Review active contracts before starting work</li>
+          <li><strong>grabby task</strong> - Create a bounded feature contract from the request</li>
+          <li><strong>grabby validate</strong> - Check contract completeness and governance fit</li>
+          <li><strong>grabby plan</strong> - Generate the plan artifact for the contract</li>
+          <li><strong>grabby approve</strong> - Record approval before implementation starts</li>
+          <li><strong>grabby execute</strong> - Run the bounded execution flow</li>
+          <li><strong>grabby git:preflight</strong> - Verify local readiness before risky work or push</li>
+          <li><strong>grabby audit</strong> - Post-execution verification and compliance review</li>
         </ul>
       </section>
 
@@ -338,6 +346,7 @@
         <p>Complete guides for setup, daily workflow, and governance.</p>
         <div class="links">
           <a href="./grabby-user-guide.html" class="link">Interactive User Guide</a>
+          <a href="./commandline-workflow.md" class="link">Workflow Reference</a>
           <a href="./BRAND_STYLE_GUIDE.md" class="link">Brand Style Guide</a>
           <!-- Documentation URLs: Constructed from package.json repository.url -->
           <a href="https://github.com/Raccoon-King/ai-feature-contracts#readme" class="link link-external">README</a>
@@ -353,7 +362,7 @@
       <a href="https://github.com/Raccoon-King/ai-feature-contracts">GitHub</a> &nbsp;|&nbsp;
       <a href="https://www.npmjs.com/package/grabby">npm</a>
       <br>
-      <span style="font-size: 0.85rem;">v4.1.2 &nbsp;|&nbsp; MIT License</span>
+      <span style="font-size: 0.85rem;">v4.1.4 &nbsp;|&nbsp; MIT License</span>
     </footer>
   </div>
 

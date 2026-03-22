@@ -1,0 +1,430 @@
+contract_id: FC-1774138747364
+title: Audit and Update Grabby Rulesets Repository
+status: approved
+created_at: 2026-03-21T00:30:00Z
+objective: |
+  Perform comprehensive audit of the Grabby Rulesets Repository, review all
+  ruleset definitions, enhance rules for Node.js/Express/Jest stack, fix
+  schema issues, and ensure manifest is properly structured.
+target_repository: https://github.com/Raccoon-King/grabby-contracts.git
+phases:
+  - id: phase-1
+    name: Repository Audit
+    description: Clone and analyze current ruleset structure
+    stories:
+      - id: story-1.1
+        title: Clone and audit rulesets repository
+        type: research
+        priority: high
+        estimate: 2
+        tasks:
+          - Clone https://github.com/Raccoon-King/grabby-contracts.git
+          - Review manifest.yaml structure
+          - Document all 19 rulesets and their current rules
+          - Identify gaps for Node.js/Express/Jest stack
+          - Create audit report
+        acceptance:
+          - Audit report documenting all rulesets
+          - Gap analysis for JavaScript ecosystem
+          - List of enhancement priorities
+        output: docs/AUDIT_REPORT.md
+  - id: phase-2
+    name: Language Rulesets
+    description: Enhance JavaScript language rules
+    stories:
+      - id: story-2.1
+        title: Enhance JavaScript ruleset
+        type: feature
+        priority: high
+        estimate: 3
+        file: rulesets/languages/javascript.yaml
+        rules_to_add:
+          - id: js-module-imports
+            name: Module Import Conventions
+            description: Use consistent require() patterns
+            guidance: |
+              - Group requires: built-in, external, internal
+              - Destructure at import when possible
+              - Avoid dynamic requires except for optional deps
+            severity: warning
+          - id: js-async-await
+            name: Async/Await Patterns
+            description: Prefer async/await over callbacks
+            guidance: |
+              - Use async/await for promise chains
+              - Always handle errors with try/catch
+              - Avoid mixing callbacks and promises
+            severity: error
+          - id: js-error-handling
+            name: Error Handling
+            description: Consistent error handling patterns
+            guidance: |
+              - Create custom error classes for domains
+              - Include error codes and context
+              - Log errors with structured data
+            severity: error
+          - id: js-no-var
+            name: No var declarations
+            description: Use const/let instead of var
+            guidance: |
+              - Prefer const for immutable bindings
+              - Use let for reassignable variables
+              - Never use var
+            severity: error
+        acceptance:
+          - JavaScript ruleset has 4+ new rules
+          - Rules cover modern CommonJS patterns
+          - No TypeScript assumptions
+  - id: phase-3
+    name: Framework Rulesets
+    description: Enhance Express framework rules
+    stories:
+      - id: story-3.1
+        title: Enhance Express ruleset
+        type: feature
+        priority: high
+        estimate: 4
+        file: rulesets/frameworks/express.yaml
+        rules_to_add:
+          - id: express-security-middleware
+            name: Security Middleware Required
+            description: Must use security middleware
+            guidance: |
+              - helmet() for security headers
+              - cors() with explicit origins
+              - express-rate-limit for rate limiting
+              - Order: helmet, cors, rate-limit, body parsers
+            severity: error
+          - id: express-error-handler
+            name: Error Handler Placement
+            description: Error handler must be last middleware
+            guidance: |
+              - Error handler has 4 params (err, req, res, next)
+              - Must be registered after all routes
+              - Should log errors and return JSON response
+            severity: error
+          - id: express-validation
+            name: Request Validation
+            description: Validate all request inputs
+            guidance: |
+              - Use express-validator for param/body validation
+              - Validate before processing
+              - Return 400 with validation errors
+            severity: error
+          - id: express-route-organization
+            name: Route Organization
+            description: Organize routes by domain
+            guidance: |
+              - Use express.Router() for route modules
+              - Group by feature/domain
+              - Mount at versioned paths (/v1/*, /v2/*)
+            severity: warning
+          - id: express-async-handlers
+            name: Async Route Handlers
+            description: Handle async errors properly
+            guidance: |
+              - Wrap async handlers or use express-async-handler
+              - Never let unhandled rejections crash server
+              - Forward errors to error handler with next(err)
+            severity: error
+        acceptance:
+          - Express ruleset has 5+ new rules
+          - Security middleware rules enforced
+          - Error handling patterns documented
+  - id: phase-4
+    name: Testing Rulesets
+    description: Enhance Jest testing rules
+    stories:
+      - id: story-4.1
+        title: Enhance Jest unit testing rules
+        type: feature
+        priority: high
+        estimate: 3
+        file: rulesets/testing/unit.yaml
+        rules_to_add:
+          - id: jest-file-naming
+            name: Test File Naming
+            description: Consistent test file naming
+            guidance: |
+              - Name: {module}.test.js or {module}.spec.js
+              - Place in tests/ or __tests__/ directory
+              - Mirror source structure
+            severity: warning
+          - id: jest-describe-structure
+            name: Describe Block Structure
+            description: Organize tests with describe blocks
+            guidance: |
+              - Top describe matches module/function name
+              - Nested describes for scenarios
+              - Use beforeEach/afterEach for setup
+            severity: warning
+          - id: jest-mock-patterns
+            name: Mock Patterns
+            description: Consistent mocking approach
+            guidance: |
+              - Use jest.mock() for module mocks
+              - Use jest.spyOn() for partial mocks
+              - Reset mocks in afterEach
+              - Prefer dependency injection over mocks
+            severity: warning
+          - id: jest-assertions
+            name: Assertion Best Practices
+            description: Clear and specific assertions
+            guidance: |
+              - One logical assertion per test
+              - Use specific matchers (toHaveBeenCalledWith vs toBeCalled)
+              - Test error cases explicitly
+            severity: warning
+        acceptance:
+          - Unit testing ruleset has Jest-specific guidance
+          - Mock patterns documented
+          - Naming conventions enforced
+      - id: story-4.2
+        title: Enhance coverage rules
+        type: feature
+        priority: high
+        estimate: 2
+        file: rulesets/testing/coverage.yaml
+        rules_to_add:
+          - id: coverage-thresholds
+            name: Coverage Thresholds
+            description: Minimum coverage requirements
+            guidance: |
+              - Lines: 80% minimum
+              - Branches: 67% minimum (80% preferred)
+              - Functions: 80% minimum
+              - Statements: 80% minimum
+            severity: error
+          - id: coverage-exclusions
+            name: Coverage Exclusions
+            description: What to exclude from coverage
+            guidance: |
+              - Exclude: test files, mocks, fixtures
+              - Exclude: generated code, vendor
+              - Document all exclusions in jest.config
+            severity: warning
+          - id: coverage-ci
+            name: CI Coverage Enforcement
+            description: Enforce coverage in CI
+            guidance: |
+              - Run with --coverage flag
+              - Fail build if thresholds not met
+              - Upload reports to coverage service
+            severity: error
+        acceptance:
+          - Coverage thresholds defined (80%+)
+          - Exclusion patterns documented
+          - CI integration guidance
+  - id: phase-5
+    name: Domain Rulesets
+    description: Enhance API compatibility rules
+    stories:
+      - id: story-5.1
+        title: Enhance API compatibility rules
+        type: feature
+        priority: medium
+        estimate: 3
+        file: rulesets/domains/api-compat.yaml
+        rules_to_add:
+          - id: api-versioning
+            name: API Versioning
+            description: Version all APIs
+            guidance: |
+              - Use URL path versioning (/v1/, /v2/)
+              - Document version in OpenAPI spec
+              - Support at least N-1 version
+            severity: error
+          - id: api-openapi
+            name: OpenAPI Specification
+            description: Maintain OpenAPI spec
+            guidance: |
+              - Keep docs/openapi.yaml up to date
+              - Version must match API version
+              - All endpoints documented
+            severity: warning
+          - id: api-breaking-changes
+            name: Breaking Change Detection
+            description: Detect and document breaking changes
+            guidance: |
+              - Removing endpoints is breaking
+              - Removing required fields is breaking
+              - Changing field types is breaking
+              - Document in CHANGELOG with migration
+            severity: error
+          - id: api-response-format
+            name: Response Format Standards
+            description: Consistent response structure
+            guidance: |
+              - Success: { status: "success", data: {...} }
+              - Error: { status: "error", error: { code, message } }
+              - Include metadata (timestamp, requestId)
+            severity: warning
+        acceptance:
+          - API versioning rules defined
+          - Breaking change detection guidance
+          - Response format standards
+  - id: phase-6
+    name: Policy Rulesets
+    description: Enhance security and workflow rules
+    stories:
+      - id: story-6.1
+        title: Enhance security rules
+        type: feature
+        priority: high
+        estimate: 3
+        file: rulesets/policies/security.yaml
+        rules_to_add:
+          - id: security-input-validation
+            name: Input Validation
+            description: Validate all external input
+            guidance: |
+              - Validate at system boundaries
+              - Use allowlists over denylists
+              - Sanitize before use
+              - Reject invalid input with 400
+            severity: error
+          - id: security-no-secrets
+            name: No Hardcoded Secrets
+            description: Never commit secrets
+            guidance: |
+              - Use environment variables
+              - Use .env files (gitignored)
+              - Audit for leaked secrets
+              - Rotate compromised secrets
+            severity: error
+          - id: security-auth
+            name: Authentication Requirements
+            description: Secure authentication
+            guidance: |
+              - Use established auth libraries
+              - Hash passwords with bcrypt/argon2
+              - Use secure session management
+              - Implement rate limiting on auth
+            severity: error
+          - id: security-dependencies
+            name: Dependency Security
+            description: Keep dependencies secure
+            guidance: |
+              - Run npm audit regularly
+              - No high/critical vulnerabilities
+              - Update dependencies monthly
+              - Review new dependency additions
+            severity: error
+        acceptance:
+          - Security checklist comprehensive
+          - Input validation rules clear
+          - Dependency security enforced
+      - id: story-6.2
+        title: Enhance git workflow rules
+        type: feature
+        priority: medium
+        estimate: 2
+        file: rulesets/policies/git-workflow.yaml
+        rules_to_add:
+          - id: git-branch-naming
+            name: Branch Naming Convention
+            description: Consistent branch names
+            guidance: |
+              - feature/{ticket}-{description}
+              - fix/{ticket}-{description}
+              - chore/{description}
+              - release/{version}
+            severity: warning
+          - id: git-commit-format
+            name: Commit Message Format
+            description: Conventional commit messages
+            guidance: |
+              - Format: type(scope): description
+              - Types: feat, fix, docs, style, refactor, test, chore
+              - Include ticket reference when applicable
+            severity: warning
+          - id: git-pr-requirements
+            name: Pull Request Requirements
+            description: PR checklist
+            guidance: |
+              - Descriptive title and summary
+              - Link to related issues/contracts
+              - All checks passing
+              - At least one approval
+            severity: warning
+        acceptance:
+          - Branch naming conventions defined
+          - Commit format documented
+          - PR requirements listed
+  - id: phase-7
+    name: Manifest & Documentation
+    description: Fix manifest and create documentation
+    stories:
+      - id: story-7.1
+        title: Fix manifest and add schema
+        type: feature
+        priority: high
+        estimate: 2
+        files:
+          - manifest.yaml
+          - schemas/ruleset.schema.json
+        tasks:
+          - Validate manifest.yaml structure
+          - Ensure all 19 rulesets registered
+          - Add version field updates
+          - Create JSON schema for ruleset validation
+        acceptance:
+          - Manifest validates without errors
+          - All rulesets have correct metadata
+          - Schema can validate ruleset files
+      - id: story-7.2
+        title: Create documentation
+        type: docs
+        priority: medium
+        estimate: 2
+        files:
+          - docs/RULESET_AUTHORING.md
+          - README.md
+        tasks:
+          - Document ruleset file format
+          - Explain rule severity levels
+          - Provide examples for custom rules
+          - Update README with usage
+        acceptance:
+          - Authoring guide complete
+          - Examples provided
+          - README updated
+dependencies:
+  - from: story-2.1
+    to: story-1.1
+    reason: Need audit before enhancing
+  - from: story-3.1
+    to: story-1.1
+    reason: Need audit before enhancing
+  - from: story-4.1
+    to: story-1.1
+    reason: Need audit before enhancing
+  - from: story-7.1
+    to: story-6.2
+    reason: Update manifest after all changes
+estimates:
+  total_story_points: 26
+  recommended_sprints: 2
+  sprint_breakdown:
+    sprint_1:
+      - story-1.1
+      - story-2.1
+      - story-3.1
+      - story-4.1
+      - story-4.2
+    sprint_2:
+      - story-5.1
+      - story-6.1
+      - story-6.2
+      - story-7.1
+      - story-7.2
+execution_notes: |
+  This contract targets the EXTERNAL rulesets repository, not the local Grabby
+  codebase. Work should be done by:
+  1. Cloning https://github.com/Raccoon-King/grabby-contracts.git
+  2. Making changes to ruleset YAML files
+  3. Validating with manifest parser
+  4. Pushing changes to the rulesets repository
+  5. Running `grabby rules sync` locally to pull updates
+approved_at: 2026-03-22T00:21:38.199Z
+approval_token: Approved
