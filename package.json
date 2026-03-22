@@ -82,9 +82,9 @@
   },
   "devDependencies": {
     "jest": "^30.3.0",
-    "nock": "13.5.x",
-    "supertest": "6.3.x",
-    "wrangler": "^4.73.0"
+    "nock": "14.0.x",
+    "supertest": "7.2.x",
+    "wrangler": "^4.76.0"
   },
   "jest": {
     "testEnvironment": "node",
