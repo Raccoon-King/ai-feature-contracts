@@ -65,7 +65,8 @@ describe('rules-cli', () => {
       loadConfig.mockReturnValue({
         rulesets: {
           source: { repo: 'https://github.com/test/repo.git', branch: 'main' },
-          lockPath: '.grabby/rulesets/sync.lock.yaml'
+          lockPath: '.grabby/rulesets/sync.lock.yaml',
+          active: ['languages/typescript']
         }
       });
       isGitAvailable.mockReturnValue(true);
@@ -75,6 +76,7 @@ describe('rules-cli', () => {
           version: '1.0.0',
           categories: {}
         },
+        manifestPath: '/tmp/test/.grabby/rulesets/cache/central-repo/manifest.yaml',
         source: {
           repo: 'https://github.com/test/repo.git',
           branch: 'main',
@@ -89,12 +91,22 @@ describe('rules-cli', () => {
         source: {},
         active: []
       });
-      getAllRulesets.mockReturnValue([]);
+      getAllRulesets.mockReturnValue([
+        { ref: 'languages/typescript', name: 'typescript', version: '1.0.0' }
+      ]);
+      fs.existsSync.mockReturnValue(false);
 
       const exitCode = await syncCommand({}, tempDir);
       expect(exitCode).toBe(0);
       expect(syncWithCentral).toHaveBeenCalled();
       expect(writeLock).toHaveBeenCalled();
+      expect(writeLock.mock.calls[0][0].active).toEqual([
+        expect.objectContaining({
+          category: 'languages/typescript',
+          name: 'typescript',
+          version: '1.0.0'
+        })
+      ]);
       expect(console.log).toHaveBeenCalledWith(expect.stringContaining('Sync successful'));
     });
 
