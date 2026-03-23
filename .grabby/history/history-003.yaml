@@ -200,4 +200,22 @@ entries:
       global ...
     type: FEATURE_CONTRACT
     closedAt: 2026-03-23T03:10:25.607Z
-lastUpdated: 2026-03-23T03:10:25.609Z
+  - id: GRAB-MERGE-PR47-001
+    title: PR 47 merge resolution
+    objective: Resolve the conflicts between main and development for pull request
+      47 and produce a mergeable development branch.
+    type: FEATURE_CONTRACT
+    files:
+      - .claude/settings.local.json
+      - .grabby/features.index.json
+      - .grabby/governance.lock
+      - .grabby/history/history-002.yaml
+      - .grabby/project-context.json
+      - .grabby/rulesets/sync.lock.yaml
+      - .grabby/system.inventory.json
+      - CHANGELOG.md
+      - bin/index.cjs
+      - docs/grabby-calculator-regression-report.md
+    targetedRelease: v4.1.6
+    closedAt: 2026-03-23T04:47:35.260Z
+lastUpdated: 2026-03-23T04:47:35.264Z

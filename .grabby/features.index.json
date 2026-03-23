@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-23T03:10:25.628Z",
+  "generatedAt": "2026-03-23T04:47:35.322Z",
   "trackingMode": "tracked",
   "features": [
     {
@@ -1756,6 +1756,29 @@
         "README.md"
       ],
       "targetedRelease": null,
+      "garbageCollect": false
+    },
+    {
+      "id": "GRAB-MERGE-PR47-001",
+      "title": "PR 47 merge resolution",
+      "status": "archived",
+      "archivePath": ".grabby/history/history-003.yaml",
+      "closedAt": "2026-03-23T04:47:35.260Z",
+      "objective": "Resolve the conflicts between main and development for pull request 47 and produce a mergeable development branch.",
+      "type": "FEATURE_CONTRACT",
+      "files": [
+        ".claude/settings.local.json",
+        ".grabby/features.index.json",
+        ".grabby/governance.lock",
+        ".grabby/history/history-002.yaml",
+        ".grabby/project-context.json",
+        ".grabby/rulesets/sync.lock.yaml",
+        ".grabby/system.inventory.json",
+        "CHANGELOG.md",
+        "bin/index.cjs",
+        "docs/grabby-calculator-regression-report.md"
+      ],
+      "targetedRelease": "v4.1.6",
       "garbageCollect": false
     },
     {
