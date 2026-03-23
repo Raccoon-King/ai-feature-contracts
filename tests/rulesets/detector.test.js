@@ -38,6 +38,12 @@ describe('signals', () => {
       expect(matchGlob('src/components/Button.tsx', 'src/**/*.tsx')).toBe(true);
       expect(matchGlob('lib/components/Button.tsx', 'src/**/*.tsx')).toBe(false);
     });
+
+    it('escapes regex metacharacters in literal path segments', () => {
+      expect(matchGlob('src/file[1].ts', 'src/file[1].ts')).toBe(true);
+      expect(matchGlob('src/file1.ts', 'src/file[1].ts')).toBe(false);
+      expect(matchGlob('src\\nested\\file(1).ts', 'src\\**\\file(1).ts')).toBe(true);
+    });
   });
 
   describe('checkSignal', () => {

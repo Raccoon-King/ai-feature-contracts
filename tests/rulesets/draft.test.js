@@ -8,6 +8,7 @@ const os = require('os');
 const {
   verifyDraft,
   renderDraft,
+  generateUpdate,
   saveDraft,
   listDrafts,
   applyDraft,
@@ -479,6 +480,24 @@ describe('draft file operations', () => {
 
       assert.ok(result.appliedTo.includes('languages-typescript.md'));
     });
+
+    it('should sanitize metadata-derived target filenames', () => {
+      const draft = createValidDraft({ metadata: { id: '../../escape' } });
+      const markdown = renderDraft(draft);
+      const saved = saveDraft(draft, markdown, tempDir);
+
+      const result = applyDraft(path.basename(saved.draftPath), tempDir);
+
+      assert.ok(result.appliedTo.includes('.grabby/rulesets/shared/'));
+      assert.ok(!result.appliedTo.includes('..'));
+      assert.ok(fs.existsSync(path.join(tempDir, result.appliedTo)));
+    });
+
+    it('should reject traversal in the draft filename', () => {
+      assert.throws(() => {
+        applyDraft('../escape.md', tempDir);
+      }, /Invalid draft filename/);
+    });
   });
 
   describe('discardDraft', () => {
@@ -503,6 +522,31 @@ describe('draft file operations', () => {
       // Should not throw
       discardDraft('nonexistent.md', tempDir);
     });
+
+    it('should reject traversal in the draft filename', () => {
+      assert.throws(() => {
+        discardDraft('../escape.md', tempDir);
+      }, /Invalid draft filename/);
+    });
+  });
+});
+
+describe('generateUpdate', () => {
+  let tempDir;
+
+  beforeEach(() => {
+    tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'grabby-update-test-'));
+  });
+
+  afterEach(() => {
+    fs.rmSync(tempDir, { recursive: true, force: true });
+  });
+
+  it('rejects paths outside the workspace', async () => {
+    await assert.rejects(
+      () => generateUpdate({ goal: 'Update rules', existingFile: '../outside.md', cwd: tempDir }),
+      /Path must stay within the workspace/
+    );
   });
 });
 

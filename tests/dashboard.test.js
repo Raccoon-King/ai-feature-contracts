@@ -308,6 +308,7 @@ describe('dashboard', () => {
       .get('/dashboard')
       .expect(200);
 
+    expect(html.headers['ratelimit-limit']).toBeDefined();
     expect(html.text).toContain('Grabby');
     expect(html.text).toContain('Local Dashboard');
     expect(html.text).toContain('CLI');
