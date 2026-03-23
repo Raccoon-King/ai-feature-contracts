@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [4.2.0] - 2026-03-23
+
+### Added
+- Minor release audit artifact for `v4.2.0` with docs and website release gate confirmations
+
+### Changed
+- Synced Grabby rulesets to central manifest `1.2.0`
+- Updated the tracked rules sync lockfile to upstream commit `5bf4bf0249f0b71e2b49ee9a3d69ef817b767797`
+- Refreshed the bundled `tooling/ci-cd` ruleset from `1.0.0` to `1.1.0`
+- Updated package metadata and docs site version markers for `4.2.0`
+
 ## [4.1.6] - 2026-03-23
 
 ### Added
