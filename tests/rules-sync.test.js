@@ -146,7 +146,7 @@ describe('rules-sync', () => {
       expect(drift.changes[0].type).toBe('removed');
     });
 
-    test('detects added ruleset (non-breaking)', () => {
+    test('does not treat inactive remote rulesets as drift', () => {
       const lock = {
         version: 1,
         lastSync: '2026-03-20T10:30:00Z',
@@ -159,9 +159,9 @@ describe('rules-sync', () => {
       ]);
 
       const drift = detectDrift(lock, manifest);
-      expect(drift.detected).toBe(true);
+      expect(drift.detected).toBe(false);
       expect(drift.breaking).toBe(false);
-      expect(drift.changes[0].type).toBe('added');
+      expect(drift.changes).toEqual([]);
     });
 
     test('detects major version as breaking', () => {
@@ -187,6 +187,31 @@ describe('rules-sync', () => {
       expect(drift.detected).toBe(true);
       expect(drift.breaking).toBe(true);
       expect(drift.changes[0].changeType).toBe('major');
+    });
+
+    test('supports legacy lock entries that split category and name', () => {
+      const lock = {
+        version: 1,
+        lastSync: '2026-03-20T10:30:00Z',
+        source: {},
+        active: [
+          {
+            category: 'languages',
+            name: 'typescript',
+            version: '1.0.0',
+            hash: 'sha256:abc123',
+            fetchedAt: '2026-03-20T10:30:00Z'
+          }
+        ]
+      };
+
+      const manifest = createManifest([
+        { name: 'typescript', version: '1.0.0' }
+      ]);
+
+      const drift = detectDrift(lock, manifest);
+      expect(drift.detected).toBe(false);
+      expect(drift.changes).toEqual([]);
     });
   });
 

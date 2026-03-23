@@ -1,0 +1,27 @@
+contract: DASH-MERGE-001.fc.md
+phase: plan
+version: 4.1.5 > 4.1.6
+timestamp: 2026-03-23T00:39:09.206Z
+context: []
+context_token_usage: 0
+context_token_budget: 700
+files:
+  - action: modify
+    path: lib/dashboard/index.cjs
+    reason: Fix the dashboard catch-all and API fallthrough behavior
+  - action: modify
+    path: tests/dashboard.test.js
+    reason: Lock the regression with startup and route-fallthrough coverage
+rules:
+  - §typescript
+  - §hooks
+  - §testing
+risks:
+  - State synchronization
+  - Type coverage
+  - Edge cases
+status: approved
+approval_token_required: Approved
+execution_mode: plan_only
+approved_at: 2026-03-23T00:39:10.846Z
+approval_token: Approved

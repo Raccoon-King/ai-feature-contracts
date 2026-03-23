@@ -64,6 +64,20 @@ if [ "$is_dev_branch_push" -eq 1 ] && [ "$GRABBY_RELEASE" != "1" ]; then
   fi
   echo "${YELLOW}[grabby] Warning: direct push to development.${NC}"
   echo "Preferred workflow: open a PR from your feature branch."
+
+  # Advisory: check for contracts that should be closed before release prep
+  if [ -d "contracts" ]; then
+    OPEN_CONTRACTS=$(ls contracts/*.fc.md 2>/dev/null | while read contract; do
+      if grep -q '**Status:** approved\|**Status:** executing\|**Status:** draft' "$contract" 2>/dev/null; then
+        echo "$contract"
+      fi
+    done)
+    OPEN_COUNT=$(echo "$OPEN_CONTRACTS" | grep -c '.' 2>/dev/null || echo "0")
+    if [ "$OPEN_COUNT" -gt "0" ]; then
+      echo "${YELLOW}[grabby] Info: ${OPEN_COUNT} open contract(s) remain.${NC}"
+      echo "Close contracts before preparing a release tag."
+    fi
+  fi
 fi
 
 # Rule 3: release tags must be cut from development (or main for hotfixes)
@@ -96,6 +110,31 @@ if [ "$is_release_tag_push" -eq 1 ]; then
   fi
 
   echo "${GREEN}[grabby] Release tag gate passed: from ${current_branch}, contracts/ is empty.${NC}"
+
+  # Rule 3b: version in package.json should match tag
+  if [ -f "package.json" ]; then
+    PKG_VERSION=$(node -e "console.log(require('./package.json').version)" 2>/dev/null || echo "")
+    for tag in $release_tags; do
+      TAG_VERSION=$(echo "$tag" | sed 's/^v//')
+      if [ "$PKG_VERSION" != "$TAG_VERSION" ]; then
+        echo "${RED}[grabby] Release tag blocked.${NC}"
+        echo "Tag version (${TAG_VERSION}) does not match package.json version (${PKG_VERSION})."
+        echo "Update package.json version to match the release tag."
+        exit 1
+      fi
+    done
+  fi
+
+  # Rule 3c: CHANGELOG.md should be updated for the release
+  if [ -f "CHANGELOG.md" ]; then
+    for tag in $release_tags; do
+      TAG_VERSION=$(echo "$tag" | sed 's/^v//')
+      if ! grep -q "$TAG_VERSION" CHANGELOG.md; then
+        echo "${YELLOW}[grabby] Warning: CHANGELOG.md does not mention version ${TAG_VERSION}.${NC}"
+        echo "Consider updating CHANGELOG.md before release."
+      fi
+    done
+  fi
 
   # Rule 4: require tag-specific documentation/website audit artifact
   for tag in $release_tags; do

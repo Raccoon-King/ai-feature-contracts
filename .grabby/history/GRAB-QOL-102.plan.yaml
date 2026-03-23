@@ -1,0 +1,54 @@
+contract: GRAB-QOL-102.fc.md
+phase: plan
+version: 4.1.5 > 4.2.0
+timestamp: 2026-03-23T02:31:59.960Z
+context: []
+context_token_usage: 0
+context_token_budget: 700
+files:
+  - action: modify
+    path: templates/contract.md
+    reason: Add targeted-release and garbage-collect metadata to the base contract
+      template
+  - action: modify
+    path: lib/task-artifacts.cjs
+    reason: Add the same metadata to task-generated contracts
+  - action: modify
+    path: lib/features.cjs
+    reason: Parse, preserve, and expose the new metadata in active and archived
+      feature views
+  - action: modify
+    path: lib/dashboard/routes.cjs
+    reason: Read and persist the metadata and gate archive behavior on the checkbox
+  - action: modify
+    path: lib/dashboard/public/index.html
+    reason: Add targeted-release and garbage-collect controls near the top of the
+      contract editor
+  - action: modify
+    path: lib/dashboard/public/app.js
+    reason: Render, save, and honor the metadata in dashboard flows
+  - action: modify
+    path: lib/dashboard/public/styles.css
+    reason: Style the new metadata controls in the contract workspace
+  - action: modify
+    path: tests/task-artifacts.test.js
+    reason: Verify generated contracts include the new metadata
+  - action: modify
+    path: tests/features.test.js
+    reason: Verify metadata parsing and preservation through archive/index flows
+  - action: modify
+    path: tests/dashboard.test.js
+    reason: Verify dashboard editing and checkbox-driven archive behavior
+rules:
+  - §typescript
+  - §hooks
+  - §testing
+risks:
+  - State synchronization
+  - Type coverage
+  - Edge cases
+status: approved
+approval_token_required: Approved
+execution_mode: plan_only
+approved_at: 2026-03-23T02:47:50.634Z
+approval_token: Approved

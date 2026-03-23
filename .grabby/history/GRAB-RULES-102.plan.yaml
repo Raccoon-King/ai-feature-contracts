@@ -1,0 +1,36 @@
+contract: GRAB-RULES-102.fc.md
+phase: plan
+version: 4.1.5 > 4.2.0
+timestamp: 2026-03-23T00:28:05.485Z
+context: []
+context_token_usage: 0
+context_token_budget: 700
+files:
+  - action: create
+    path: lib/rulesets/detector.cjs
+    reason: Core signal detection logic
+  - action: create
+    path: lib/rulesets/signals.cjs
+    reason: Signal pattern definitions and matchers
+  - action: modify
+    path: bin/index.cjs
+    reason: Add `grabby detect` command
+  - action: modify
+    path: lib/dashboard/routes.cjs
+    reason: Add detection endpoint
+  - action: create
+    path: tests/rulesets/detector.test.js
+    reason: Unit tests for detection
+rules:
+  - §typescript
+  - §hooks
+  - §testing
+risks:
+  - State synchronization
+  - Type coverage
+  - Edge cases
+status: approved
+approval_token_required: Approved
+execution_mode: plan_only
+approved_at: 2026-03-23T00:28:11.762Z
+approval_token: Approved

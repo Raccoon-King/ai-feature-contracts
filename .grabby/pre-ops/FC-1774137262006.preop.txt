@@ -1,0 +1,28 @@
+╭────────────────────────────────────────────────────────────────────╮
+│ Plan to implement                                                  │
+│                                                                    │
+│ Separate Grabby engine from ruleset subsystem                      │
+│                                                                    │
+│ Overview                                                           │
+│                                                                    │
+│ - ARCH_INDEX_v1                                                    │
+│                                                                    │
+│ User Requirements                                                  │
+│                                                                    │
+│ - Engine runs without ruleset modules; rulesets load as optional   │
+│ plugin; separate configs; all tests pass                           │
+│ - Tests pass (80%+ coverage)                                       │
+│ - Lint passes                                                      │
+│ - Build succeeds                                                   │
+│                                                                    │
+│ ---                                                                │
+│ ---                                                                │
+│ ---                                                                │
+│ Verification Plan                                                  │
+│                                                                    │
+│ 1. Engine runs without ruleset modules; rulesets load as optional  │
+│ plugin; separate configs; all tests pass                           │
+│ 2. Tests pass (80%+ coverage)                                      │
+│ 3. Lint passes                                                     │
+│ 4. Build succeeds                                                  │
+╰────────────────────────────────────────────────────────────────────╯

@@ -1,0 +1,43 @@
+contract: GRAB-QOL-101.fc.md
+phase: plan
+version: 4.1.5 > 4.1.6
+timestamp: 2026-03-23T02:31:35.778Z
+context: []
+context_token_usage: 0
+context_token_budget: 700
+files:
+  - action: modify
+    path: lib/config.cjs
+    reason: Define and normalize the repo-configurable dashboard port setting
+  - action: modify
+    path: bin/index.cjs
+    reason: Prefer config-driven dashboard port when `grabby ui` is run without
+      `--port`
+  - action: modify
+    path: lib/dashboard/index.cjs
+    reason: Resolve the startup port from config while preserving explicit overrides
+  - action: modify
+    path: grabby.config.example.json
+    reason: Document the new dashboard port setting in the canonical config example
+  - action: modify
+    path: docs/commandline-workflow.md
+    reason: Document the config-based dashboard port workflow
+  - action: modify
+    path: tests/config.test.js
+    reason: Verify config defaults and normalization for the new setting
+  - action: modify
+    path: tests/dashboard.test.js
+    reason: Verify dashboard startup respects config and CLI override precedence
+rules:
+  - §typescript
+  - §hooks
+  - §testing
+risks:
+  - State synchronization
+  - Type coverage
+  - Edge cases
+status: approved
+approval_token_required: Approved
+execution_mode: plan_only
+approved_at: 2026-03-23T02:47:47.586Z
+approval_token: Approved

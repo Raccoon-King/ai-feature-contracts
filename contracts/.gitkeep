@@ -1,0 +1,1 @@
+# Keep the contracts directory present so release hooks can verify that it is empty.

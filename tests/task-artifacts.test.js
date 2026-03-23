@@ -48,6 +48,8 @@ describe('Task artifacts', () => {
     });
 
     expect(contract).toContain('# FC: login redirect bug');
+    expect(contract).toContain('**Targeted Release:** -');
+    expect(contract).toContain('**Garbage Collect:** no');
     expect(contract).toContain('## Security Considerations');
     expect(contract).toContain('| modify | `src/login.ts` | Bug fix |');
     expect(contract).toContain('- [ ] Bug no longer reproduces');

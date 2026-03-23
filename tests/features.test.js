@@ -554,4 +554,250 @@ Existing.
       expect(tags).toEqual(['test']);
     });
   });
+
+  describe('parseRunOrder', () => {
+    it('should parse run order from contract content', () => {
+      const content = '**ID:** FC-001 | **Status:** draft | **Run Order:** 5';
+      const runOrder = features.parseRunOrder(content);
+      expect(runOrder).toBe(5);
+    });
+
+    it('should return 0 for contracts without run order', () => {
+      const content = '**ID:** FC-001 | **Status:** draft';
+      const runOrder = features.parseRunOrder(content);
+      expect(runOrder).toBe(0);
+    });
+
+    it('should handle run order on separate line', () => {
+      const content = '**ID:** FC-001\n**Status:** draft\n**Run Order:** 3';
+      const runOrder = features.parseRunOrder(content);
+      expect(runOrder).toBe(3);
+    });
+  });
+
+  describe('contract metadata parsing and archive preservation', () => {
+    function writeContract(dir, name, content) {
+      const contractsDir = path.join(dir, 'contracts');
+      fs.mkdirSync(contractsDir, { recursive: true });
+      fs.writeFileSync(path.join(contractsDir, name), content, 'utf8');
+    }
+
+    it('parses targeted release and garbage collect metadata from active contracts', () => {
+      writeContract(tempDir, 'FC-001.fc.md', `# FC: Metadata
+**ID:** FC-001 | **Status:** draft | **Run Order:** 2
+**Targeted Release:** v4.2.0
+**Garbage Collect:** yes
+
+## Objective
+Metadata contract
+`);
+
+      const contracts = features.listContractFeatures(tempDir);
+      expect(contracts[0].targetedRelease).toBe('v4.2.0');
+      expect(contracts[0].garbageCollect).toBe(true);
+    });
+
+    it('preserves targeted release and garbage collect metadata in archived history', () => {
+      writeContract(tempDir, 'FC-001.fc.md', `# FC: Metadata
+**ID:** FC-001 | **Status:** complete
+**Targeted Release:** v4.2.1
+**Garbage Collect:** yes
+
+## Objective
+Archive contract
+`);
+      fs.writeFileSync(path.join(tempDir, 'contracts', 'FC-001.plan.yaml'), yaml.stringify({
+        files: [{ path: 'lib/example.cjs' }],
+      }), 'utf8');
+
+      const archived = features.createArchiveBundle('FC-001', tempDir);
+      expect(archived.historyFile).toContain('.grabby/history');
+
+      const history = features.listArchivedFeatures(tempDir);
+      expect(history[0].targetedRelease).toBe('v4.2.1');
+      expect(history[0].garbageCollect).toBe(true);
+    });
+  });
+
+  describe('listContractFeatures ordering', () => {
+    function writeContract(dir, name, content) {
+      const contractsDir = path.join(dir, 'contracts');
+      fs.mkdirSync(contractsDir, { recursive: true });
+      fs.writeFileSync(path.join(contractsDir, name), content, 'utf8');
+    }
+
+    it('should sort contracts by run order', () => {
+      writeContract(tempDir, 'FC-001.fc.md', `# FC: First
+**ID:** FC-001 | **Status:** draft | **Run Order:** 2
+
+## Objective
+First contract
+`);
+      writeContract(tempDir, 'FC-002.fc.md', `# FC: Second
+**ID:** FC-002 | **Status:** draft | **Run Order:** 1
+
+## Objective
+Second contract
+`);
+      writeContract(tempDir, 'FC-003.fc.md', `# FC: Third
+**ID:** FC-003 | **Status:** draft | **Run Order:** 3
+
+## Objective
+Third contract
+`);
+
+      const contracts = features.listContractFeatures(tempDir);
+      expect(contracts.map(c => c.id)).toEqual(['FC-002', 'FC-001', 'FC-003']);
+    });
+
+    it('should sort by ID when run order is equal', () => {
+      writeContract(tempDir, 'FC-002.fc.md', `# FC: B
+**ID:** FC-002 | **Status:** draft | **Run Order:** 1
+
+## Objective
+B
+`);
+      writeContract(tempDir, 'FC-001.fc.md', `# FC: A
+**ID:** FC-001 | **Status:** draft | **Run Order:** 1
+
+## Objective
+A
+`);
+
+      const contracts = features.listContractFeatures(tempDir);
+      expect(contracts.map(c => c.id)).toEqual(['FC-001', 'FC-002']);
+    });
+
+    it('should default to 0 for contracts without run order', () => {
+      writeContract(tempDir, 'FC-001.fc.md', `# FC: NoOrder
+**ID:** FC-001 | **Status:** draft
+
+## Objective
+No run order
+`);
+      writeContract(tempDir, 'FC-002.fc.md', `# FC: WithOrder
+**ID:** FC-002 | **Status:** draft | **Run Order:** 1
+
+## Objective
+Has run order
+`);
+
+      const contracts = features.listContractFeatures(tempDir);
+      expect(contracts[0].id).toBe('FC-001');
+      expect(contracts[0].runOrder).toBe(0);
+    });
+  });
+
+  describe('updateContractRunOrder', () => {
+    function writeContract(dir, name, content) {
+      const contractsDir = path.join(dir, 'contracts');
+      fs.mkdirSync(contractsDir, { recursive: true });
+      fs.writeFileSync(path.join(contractsDir, name), content, 'utf8');
+    }
+
+    it('should update existing run order', () => {
+      writeContract(tempDir, 'FC-001.fc.md', `# FC: Test
+**ID:** FC-001 | **Status:** draft | **Run Order:** 1
+
+## Objective
+Test
+`);
+
+      const result = features.updateContractRunOrder('FC-001', 5, tempDir);
+      expect(result.runOrder).toBe(5);
+
+      const contracts = features.listContractFeatures(tempDir);
+      expect(contracts[0].runOrder).toBe(5);
+    });
+
+    it('should add run order to contract without one', () => {
+      writeContract(tempDir, 'FC-001.fc.md', `# FC: Test
+**ID:** FC-001 | **Status:** draft
+
+## Objective
+Test
+`);
+
+      const result = features.updateContractRunOrder('FC-001', 3, tempDir);
+      expect(result.runOrder).toBe(3);
+
+      const content = fs.readFileSync(path.join(tempDir, 'contracts', 'FC-001.fc.md'), 'utf8');
+      expect(content).toContain('**Run Order:** 3');
+    });
+
+    it('should throw error for non-existent contract', () => {
+      expect(() => features.updateContractRunOrder('FC-NONEXISTENT', 1, tempDir))
+        .toThrow('Contract FC-NONEXISTENT not found');
+    });
+
+    it('should throw error for invalid run order', () => {
+      writeContract(tempDir, 'FC-001.fc.md', `# FC: Test
+**ID:** FC-001 | **Status:** draft
+
+## Objective
+Test
+`);
+
+      expect(() => features.updateContractRunOrder('FC-001', -1, tempDir))
+        .toThrow('Invalid run order: -1');
+    });
+  });
+
+  describe('reorderContracts', () => {
+    function writeContract(dir, name, content) {
+      const contractsDir = path.join(dir, 'contracts');
+      fs.mkdirSync(contractsDir, { recursive: true });
+      fs.writeFileSync(path.join(contractsDir, name), content, 'utf8');
+    }
+
+    it('should reorder multiple contracts', () => {
+      writeContract(tempDir, 'FC-001.fc.md', `# FC: A
+**ID:** FC-001 | **Status:** draft | **Run Order:** 0
+
+## Objective
+A
+`);
+      writeContract(tempDir, 'FC-002.fc.md', `# FC: B
+**ID:** FC-002 | **Status:** draft | **Run Order:** 1
+
+## Objective
+B
+`);
+
+      const result = features.reorderContracts([
+        { id: 'FC-001', runOrder: 1 },
+        { id: 'FC-002', runOrder: 0 }
+      ], tempDir);
+
+      expect(result.updated).toHaveLength(2);
+      expect(result.errors).toHaveLength(0);
+
+      const contracts = features.listContractFeatures(tempDir);
+      expect(contracts[0].id).toBe('FC-002');
+      expect(contracts[1].id).toBe('FC-001');
+    });
+
+    it('should collect errors for failed updates', () => {
+      writeContract(tempDir, 'FC-001.fc.md', `# FC: A
+**ID:** FC-001 | **Status:** draft
+
+## Objective
+A
+`);
+
+      const result = features.reorderContracts([
+        { id: 'FC-001', runOrder: 1 },
+        { id: 'FC-NONEXISTENT', runOrder: 2 }
+      ], tempDir);
+
+      expect(result.updated).toHaveLength(1);
+      expect(result.errors).toHaveLength(1);
+      expect(result.errors[0].id).toBe('FC-NONEXISTENT');
+    });
+
+    it('should throw error for empty updates array', () => {
+      expect(() => features.reorderContracts([], tempDir))
+        .toThrow('Updates must be a non-empty array');
+    });
+  });
 });

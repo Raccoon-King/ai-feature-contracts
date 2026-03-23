@@ -1,7 +1,7 @@
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
-const { initConfig, loadConfig, setConfigValue, validateConfig, resolveEnv, getTrackingMode, getContractsDirectory, normalizeConfig, normalizePortablePath } = require('../lib/config.cjs');
+const { initConfig, loadConfig, loadRulesetsConfig, saveRulesetsConfig, setConfigValue, validateConfig, resolveEnv, getTrackingMode, getContractsDirectory, normalizeConfig, normalizePortablePath } = require('../lib/config.cjs');
 
 describe('config', () => {
   let dir;
@@ -52,8 +52,21 @@ describe('config', () => {
   test('defaults contract tracking mode to tracked', () => {
     initConfig(dir);
     const cfg = loadConfig(dir);
+    expect(cfg.dashboard.port).toBe(3847);
     expect(getTrackingMode(cfg, dir)).toBe('tracked');
     expect(getContractsDirectory(dir, cfg)).toBe(path.join(dir, 'contracts'));
+  });
+
+  test('validateConfig accepts valid dashboard ports and rejects invalid values', () => {
+    expect(validateConfig({
+      contracts: { directory: 'contracts', trackingMode: 'tracked' },
+      dashboard: { port: 4123 },
+    }).errors).not.toContain('dashboard.port must be an integer between 1 and 65535');
+
+    expect(validateConfig({
+      contracts: { directory: 'contracts', trackingMode: 'tracked' },
+      dashboard: { port: 70000 },
+    }).errors).toContain('dashboard.port must be an integer between 1 and 65535');
   });
 
   test('resolves local-only tracking mode to .grabby/contracts', () => {
@@ -82,6 +95,51 @@ describe('config', () => {
 
   test('loadConfig returns null when no config file exists', () => {
     expect(loadConfig(dir)).toBeNull();
+  });
+
+  test('loadRulesetsConfig returns null when no embedded or sidecar rulesets config exists', () => {
+    initConfig(dir);
+    const cfg = loadConfig(dir);
+    delete cfg.rulesets;
+    fs.writeFileSync(path.join(dir, 'grabby.config.json'), JSON.stringify(cfg, null, 2), 'utf8');
+
+    expect(loadRulesetsConfig(dir)).toBeNull();
+  });
+
+  test('loadRulesetsConfig prefers sidecar overrides over embedded rulesets config', () => {
+    initConfig(dir);
+    const cfg = loadConfig(dir);
+    cfg.rulesets.source.repo = 'https://example.com/embedded.git';
+    cfg.rulesets.sync.interval = '24h';
+    require('../lib/config.cjs').saveConfig(cfg, dir);
+    fs.writeFileSync(path.join(dir, 'rulesets.config.json'), JSON.stringify({
+      source: {
+        repo: 'https://example.com/sidecar.git',
+      },
+      sync: {
+        interval: '12h',
+      },
+    }, null, 2), 'utf8');
+
+    const rulesets = loadRulesetsConfig(dir);
+    expect(rulesets.source.repo).toBe('https://example.com/sidecar.git');
+    expect(rulesets.sync.interval).toBe('12h');
+    expect(rulesets.sync.mode).toBe('warn');
+  });
+
+  test('saveRulesetsConfig writes to sidecar when sidecar file already exists', () => {
+    initConfig(dir);
+    fs.writeFileSync(path.join(dir, 'rulesets.config.json'), '{}', 'utf8');
+
+    const savedPath = saveRulesetsConfig({
+      source: { repo: 'https://example.com/rules.git' },
+      cacheDir: '.grabby\\rulesets\\cache\\',
+    }, dir);
+
+    expect(savedPath).toBe(path.join(dir, 'rulesets.config.json'));
+    const saved = JSON.parse(fs.readFileSync(savedPath, 'utf8'));
+    expect(saved.source.repo).toBe('https://example.com/rules.git');
+    expect(saved.cacheDir).toBe('.grabby/rulesets/cache');
   });
 
   test('setConfigValue coerces numbers, JSON, nested objects, and rejects invalid paths', () => {

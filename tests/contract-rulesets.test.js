@@ -15,14 +15,14 @@ const {
 // Mock dependencies
 jest.mock('fs');
 jest.mock('../lib/config.cjs');
-jest.mock('../lib/sync-lock.cjs');
-jest.mock('../lib/rules-sync.cjs');
-jest.mock('../lib/manifest-parser.cjs');
+jest.mock('../lib/rulesets/common/sync-lock.cjs');
+jest.mock('../lib/rulesets/sync.cjs');
+jest.mock('../lib/rulesets/common/manifest-parser.cjs');
 
-const { loadConfig } = require('../lib/config.cjs');
-const { readLock, writeLock, isLockStale, getLockAge } = require('../lib/sync-lock.cjs');
-const { detectDrift, applySyncMode, parseDuration } = require('../lib/rules-sync.cjs');
-const { parseManifestFile } = require('../lib/manifest-parser.cjs');
+const { loadConfig, loadRulesetsConfig } = require('../lib/config.cjs');
+const { readLock, writeLock, isLockStale, getLockAge } = require('../lib/rulesets/common/sync-lock.cjs');
+const { detectDrift, applySyncMode, parseDuration } = require('../lib/rulesets/sync.cjs');
+const { parseManifestFile } = require('../lib/rulesets/common/manifest-parser.cjs');
 
 describe('contract-rulesets', () => {
   let mockConfig;
@@ -95,6 +95,7 @@ describe('contract-rulesets', () => {
     };
 
     loadConfig.mockReturnValue(mockConfig);
+    loadRulesetsConfig.mockReturnValue(mockConfig.rulesets);
     readLock.mockReturnValue(mockLock);
     parseManifestFile.mockReturnValue(mockManifest);
     fs.existsSync.mockReturnValue(true);
@@ -139,6 +140,7 @@ describe('contract-rulesets', () => {
   describe('performSyncCheck', () => {
     it('skips check when rulesets not configured', async () => {
       loadConfig.mockReturnValue({});
+      loadRulesetsConfig.mockReturnValue(null);
 
       const result = await performSyncCheck('task', { logger: consoleSpy });
 
@@ -578,6 +580,7 @@ Content`;
 
     it('skips when rulesets not configured', async () => {
       loadConfig.mockReturnValue({});
+      loadRulesetsConfig.mockReturnValue(null);
 
       const result = await addRulesetSnapshotToContract(
         '/path/to/contract.md'
@@ -652,6 +655,7 @@ Content`;
 
     it('skips when rulesets not configured', async () => {
       loadConfig.mockReturnValue({});
+      loadRulesetsConfig.mockReturnValue(null);
 
       const result = await updateContractDriftCheck(
         '/path/to/contract.md',

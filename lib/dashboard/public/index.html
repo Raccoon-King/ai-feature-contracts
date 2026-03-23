@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Grabby Local Dashboard</title>
+  <link rel="stylesheet" href="/styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js" defer></script>
+  <script src="/diff.js" defer></script>
+  <script src="/app.js" defer></script>
+</head>
+<body>
+  <header class="page-header panel">
+    <div class="page-header-top">
+      <div class="brand-card brand-card-compact">
+        <p class="eyebrow">Local Dashboard</p>
+        <h1>Grabby</h1>
+      </div>
+      <nav id="page-nav" class="tab-buttons page-nav" aria-label="Workspace pages">
+        <a class="tab-button page-link is-active" data-page="dashboard" href="/dashboard">Dashboard</a>
+        <a class="tab-button page-link" data-page="contracts" href="/contracts">Contracts</a>
+        <a class="tab-button page-link" data-page="rules" href="/rules">Rules</a>
+        <a class="tab-button page-link" data-page="cli" href="/cli">CLI</a>
+        <a class="tab-button page-link" data-page="history" href="/history">History</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="shell">
+    <div id="contracts-drawer-backdrop" class="contracts-drawer-backdrop" aria-hidden="true"></div>
+    <aside id="contracts-drawer" class="contracts-drawer panel" aria-label="Contracts drawer" aria-hidden="true">
+      <div class="panel-header contracts-drawer-header">
+        <div>
+          <p class="eyebrow">Contracts</p>
+          <h3>Browse</h3>
+        </div>
+        <button id="contracts-drawer-close" class="ghost-button compact-button" type="button">Close</button>
+      </div>
+      <div class="search-row">
+        <input id="contract-search" type="search" placeholder="Search contracts...">
+        <button id="refresh-button" class="ghost-button compact-button" type="button">Refresh</button>
+      </div>
+      <div id="status-summary" class="status-summary"></div>
+      <div class="run-order-info">
+        <p class="run-order-explanation">Contracts are displayed in <strong>run order</strong> - the intended sequence for working through active contracts. Lower positions run earlier. Use the arrows to reorder.</p>
+      </div>
+      <div class="section-heading">
+        <span>Active</span>
+        <span id="contract-count" class="quiet-pill">0</span>
+      </div>
+      <div id="contract-list" class="contract-list">
+        <div class="empty-state">Loading...</div>
+      </div>
+    </aside>
+
+    <main class="canvas">
+      <!-- Dashboard Overview -->
+      <section class="board" data-page-panel="dashboard">
+        <article class="panel panel-overview">
+          <div class="panel-header">
+            <div>
+              <p class="eyebrow">Overview</p>
+              <h3>Contract Status</h3>
+            </div>
+            <button id="refresh-dashboard-button" class="ghost-button compact-button" type="button">Refresh</button>
+          </div>
+          <div id="dashboard-status-summary" class="status-summary"></div>
+          <div class="section-heading">
+            <span>Active Contracts</span>
+            <span id="dashboard-contract-count" class="quiet-pill">0</span>
+          </div>
+          <div id="dashboard-contract-list" class="dashboard-contract-list"></div>
+        </article>
+
+        <article class="panel panel-lifecycle-dashboard">
+          <div class="panel-header">
+            <div>
+              <p class="eyebrow">Workflow</p>
+              <h3>Lifecycle Phases</h3>
+            </div>
+          </div>
+          <div id="dashboard-phase-track" class="phase-track"></div>
+          <div id="dashboard-workflow-diagram" class="diagram-frame">
+            <div class="empty-state">Select a contract to view workflow</div>
+          </div>
+        </article>
+      </section>
+
+      <!-- Contracts Workspace -->
+      <section class="hero panel" data-page-panel="contracts">
+        <button id="contracts-drawer-toggle" class="ghost-button contracts-drawer-toggle" type="button" aria-controls="contracts-drawer" aria-expanded="false">Select Another<br>Contract</button>
+        <div class="hero-copy">
+          <h2 id="hero-title">Select a contract</h2>
+          <p id="hero-subtitle" class="lede">Contract details, workflow state, and actions will appear here.</p>
+          <div id="hero-meta" class="hero-meta"></div>
+        </div>
+        <div class="hero-controls">
+          <select id="status-select" disabled>
+            <option value="draft">draft</option>
+            <option value="approved">approved</option>
+            <option value="executing">executing</option>
+            <option value="complete">complete</option>
+            <option value="completed">completed</option>
+            <option value="paused">paused</option>
+          </select>
+          <button id="save-button" class="primary-button" type="button" disabled>Save</button>
+        </div>
+      </section>
+
+      <section class="board" data-page-panel="contracts">
+        <!-- Contracts Workspace Nav -->
+        <article class="panel panel-contract-tabs">
+          <div id="contract-workspace-nav" class="contract-workspace-nav">
+            <button class="contract-workspace-button is-active" data-contracts-view="editor" type="button">Editor</button>
+            <button class="contract-workspace-button" data-contracts-view="summary" type="button">Summary</button>
+            <button class="contract-workspace-button" data-contracts-view="lifecycle" type="button">Lifecycle</button>
+          </div>
+          <div id="editor-badges" class="badge-row"></div>
+          <p id="mode-note" class="mode-note"></p>
+        </article>
+
+        <!-- Editor Panel -->
+        <article class="panel panel-editor" data-contracts-panel="editor">
+          <div id="editor-mode-switch" class="editor-mode-switch">
+            <button class="editor-mode-button is-active" data-editor-mode="structured" type="button">Structured</button>
+            <button class="editor-mode-button" data-editor-mode="raw" type="button">Raw</button>
+          </div>
+          <div id="structured-editor" class="structured-editor"></div>
+          <textarea id="contract-editor" spellcheck="false" placeholder="Select a contract to edit." disabled></textarea>
+          <div class="action-strip">
+            <div id="action-buttons" class="action-buttons"></div>
+          </div>
+          <div class="panel-subgrid">
+            <div class="subpanel">
+              <div class="section-heading">
+                <span>Output</span>
+                <button id="clear-log-button" class="ghost-button compact-button" type="button">Clear</button>
+              </div>
+              <pre id="action-log" class="code-block">No actions run yet.</pre>
+            </div>
+            <div class="subpanel">
+              <div class="section-heading"><span>Validation</span></div>
+              <div id="validation-summary" class="validation-summary"></div>
+            </div>
+          </div>
+        </article>
+
+        <!-- Lifecycle Panel (in contracts view) -->
+        <article class="panel panel-lifecycle is-hidden" data-contracts-panel="lifecycle">
+          <div class="panel-header">
+            <div>
+              <p class="eyebrow">Lifecycle</p>
+              <h3>Workflow</h3>
+            </div>
+            <div id="phase-pill" class="phase-pill">Not loaded</div>
+          </div>
+          <div id="phase-track" class="phase-track"></div>
+          <div id="workflow-diagram" class="diagram-frame">
+            <div class="empty-state">Workflow diagram</div>
+          </div>
+          <div class="panel-subgrid">
+            <div class="subpanel">
+              <div class="section-heading"><span>Timeline</span></div>
+              <div id="timeline" class="timeline">
+                <div class="empty-state compact-empty">No events</div>
+              </div>
+            </div>
+            <div class="subpanel">
+              <div class="section-heading"><span>Artifacts</span></div>
+              <div id="artifact-list" class="artifact-list"></div>
+            </div>
+          </div>
+        </article>
+
+        <!-- Summary Panel -->
+        <article class="panel panel-summary is-hidden" data-contracts-panel="summary">
+          <div class="summary-grid">
+            <section class="summary-card">
+              <h4>Objective</h4>
+              <p id="summary-objective" class="long-copy">No contract selected.</p>
+            </section>
+            <section class="summary-card">
+              <h4>Scope</h4>
+              <pre id="summary-scope" class="plain-copy"></pre>
+            </section>
+            <section class="summary-card">
+              <h4>Testing</h4>
+              <pre id="summary-testing" class="plain-copy"></pre>
+            </section>
+            <section class="summary-card">
+              <h4>Done When</h4>
+              <div id="done-when-list" class="checklist"></div>
+            </section>
+          </div>
+          <div class="artifact-panels">
+            <section class="summary-card">
+              <h4>Plan</h4>
+              <pre id="plan-content" class="code-block compact">No plan artifact.</pre>
+            </section>
+            <section class="summary-card">
+              <h4>Audit</h4>
+              <pre id="audit-content" class="code-block compact">No audit artifact.</pre>
+            </section>
+          </div>
+        </article>
+      </section>
+
+      <!-- Rules Tab - Three Pane Editor -->
+      <section class="rules-layout rules-three-pane" data-page-panel="rules">
+        <!-- Left Pane: Rules List -->
+        <aside class="panel rules-sidebar">
+          <div class="panel-header">
+            <div>
+              <p class="eyebrow">Governance</p>
+              <h3>Rulesets</h3>
+            </div>
+            <div id="rulesets-sync-status" class="sync-status-pill"></div>
+          </div>
+
+          <div class="rules-actions">
+            <button id="rules-detect-btn" class="ghost-button compact-button" type="button">Detect</button>
+            <button id="rules-generate-btn" class="ghost-button compact-button" type="button">Generate</button>
+          </div>
+
+          <div class="rules-section">
+            <div class="section-heading">
+              <span>Drafts</span>
+              <span id="drafts-count" class="quiet-pill">0</span>
+            </div>
+            <div id="drafts-panel" class="rules-list">
+              <div class="empty-state compact-empty">No pending drafts</div>
+            </div>
+          </div>
+
+          <div class="rules-section">
+            <div class="section-heading">
+              <span>Local</span>
+              <span id="local-rulesets-count" class="quiet-pill">0</span>
+            </div>
+            <div id="local-rulesets-panel" class="rules-list">
+              <div class="empty-state compact-empty">Loading...</div>
+            </div>
+          </div>
+
+          <div class="rules-section">
+            <div class="section-heading">
+              <span>Repo</span>
+              <span id="repo-rulesets-count" class="quiet-pill">0</span>
+            </div>
+            <div id="repo-rulesets-panel" class="rules-list">
+              <div class="empty-state compact-empty">Loading...</div>
+            </div>
+          </div>
+
+          <div class="rules-section rules-sync-section">
+            <div class="section-heading"><span>Sync Info</span></div>
+            <div id="sync-info-panel" class="sync-info-panel">
+              <div class="empty-state compact-empty">Loading...</div>
+            </div>
+          </div>
+        </aside>
+
+        <!-- Center Pane: Editor -->
+        <article class="panel rules-editor">
+          <div class="panel-header">
+            <div>
+              <p class="eyebrow">Editor</p>
+              <h3 id="rules-editor-title">Rule Content</h3>
+            </div>
+            <div class="rules-editor-mode-switch">
+              <button class="editor-mode-button is-active" data-rules-editor-mode="edit" type="button">Edit</button>
+              <button class="editor-mode-button" data-rules-editor-mode="preview" type="button">Preview</button>
+            </div>
+          </div>
+          <div id="rules-editor-panel" class="rules-editor-panel">
+            <textarea id="rules-editor-textarea" class="rules-editor-textarea" placeholder="Select a rule to edit, or use Generate to create a new draft." disabled></textarea>
+            <div id="rules-editor-preview" class="rules-editor-preview is-hidden">
+              <div class="empty-state">Preview will appear here</div>
+            </div>
+          </div>
+          <div class="rules-editor-footer">
+            <span id="rules-editor-status" class="rules-editor-status"></span>
+            <div class="rules-editor-actions">
+              <button id="rules-save-draft-btn" class="ghost-button compact-button" type="button" disabled>Save Draft</button>
+            </div>
+          </div>
+        </article>
+
+        <!-- Right Pane: Diff & Apply -->
+        <article class="panel rules-diff">
+          <div class="panel-header">
+            <div>
+              <p class="eyebrow">Changes</p>
+              <h3>Diff Preview</h3>
+            </div>
+          </div>
+          <div id="rules-diff-panel" class="rules-diff-panel">
+            <div class="empty-state">Edit a rule to see changes here</div>
+          </div>
+          <div class="rules-diff-actions">
+            <button id="rules-discard-btn" class="ghost-button compact-button" type="button" disabled>Discard</button>
+            <button id="rules-apply-btn" class="primary-button compact-button" type="button" disabled>Apply Changes</button>
+          </div>
+        </article>
+      </section>
+
+      <!-- CLI Commands Panel -->
+      <section class="board" data-page-panel="cli">
+        <article class="panel panel-commands">
+          <div class="panel-header">
+            <div>
+              <p class="eyebrow">Reference</p>
+              <h3>CLI Commands</h3>
+            </div>
+          </div>
+          <div id="commands-panel" class="commands-panel">
+            <div class="empty-state">Loading commands...</div>
+          </div>
+        </article>
+      </section>
+
+      <!-- History Panel -->
+      <section class="board" data-page-panel="history">
+        <article class="panel panel-history">
+          <div class="panel-header">
+            <div>
+              <p class="eyebrow">Archive</p>
+              <h3>Past Contracts</h3>
+            </div>
+            <span id="history-count" class="quiet-pill">0</span>
+          </div>
+          <div id="history-list" class="history-list">
+            <div class="empty-state">No archived contracts.</div>
+          </div>
+        </article>
+      </section>
+    </main>
+  </div>
+</body>
+</html>

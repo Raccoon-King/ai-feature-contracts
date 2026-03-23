@@ -1,0 +1,51 @@
+contract: CONTRACT-RUNORDER-001.fc.md
+phase: plan
+version: 4.1.5 > 4.2.0
+timestamp: 2026-03-23T00:47:49.691Z
+context: []
+context_token_usage: 0
+context_token_budget: 700
+files:
+  - action: modify
+    path: templates/contract.md
+    reason: Add run-order metadata to the base contract template
+  - action: modify
+    path: lib/task-artifacts.cjs
+    reason: Ensure task-generated contracts include the run-order field
+  - action: modify
+    path: lib/features.cjs
+    reason: Parse, persist, and sort contracts by run order
+  - action: modify
+    path: lib/dashboard/routes.cjs
+    reason: Expose run-order metadata and accept reorder updates
+  - action: modify
+    path: lib/dashboard/public/index.html
+    reason: Add Contracts-tab explanatory copy and reorder controls
+  - action: modify
+    path: lib/dashboard/public/app.js
+    reason: Render run-order UI and call the reorder flow
+  - action: modify
+    path: lib/dashboard/public/styles.css
+    reason: Style the run-order explanation and controls
+  - action: modify
+    path: tests/task-artifacts.test.js
+    reason: Verify generated contracts include run-order metadata
+  - action: modify
+    path: tests/features.test.js
+    reason: Verify parsing and ordering of contracts by run order
+  - action: modify
+    path: tests/dashboard.test.js
+    reason: Verify Contracts-tab explanation, reordering, and persistence
+rules:
+  - §typescript
+  - §hooks
+  - §testing
+risks:
+  - State synchronization
+  - Type coverage
+  - Edge cases
+status: approved
+approval_token_required: Approved
+execution_mode: plan_only
+approved_at: 2026-03-23T01:28:14.333Z
+approval_token: Approved

@@ -1,0 +1,42 @@
+contract: GRAB-RULES-101.fc.md
+phase: plan
+version: 4.1.5 > 4.1.6
+timestamp: 2026-03-23T00:20:45.636Z
+context: []
+context_token_usage: 0
+context_token_budget: 700
+files:
+  - action: modify
+    path: lib/rulesets/registry.cjs
+    reason: Add frontmatter parsing and field extraction
+  - action: create
+    path: lib/rulesets/frontmatter.cjs
+    reason: Dedicated module for frontmatter parsing using existing yaml package
+  - action: create
+    path: definitions/ruleset-frontmatter.json
+    reason: JSON definition for verifying frontmatter structure
+  - action: create
+    path: templates/rulesets/languages/dotnet.md
+    reason: Example global language ruleset
+  - action: create
+    path: templates/rulesets/frameworks/aspnet-core.md
+    reason: Example global framework ruleset
+  - action: create
+    path: tests/rulesets/frontmatter.test.js
+    reason: Unit tests for frontmatter parsing
+  - action: modify
+    path: tests/rulesets/registry.test.js
+    reason: Integration tests for field loading
+rules:
+  - §typescript
+  - §hooks
+  - §testing
+risks:
+  - State synchronization
+  - Type coverage
+  - Edge cases
+status: approved
+approval_token_required: Approved
+execution_mode: plan_only
+approved_at: 2026-03-23T00:20:51.778Z
+approval_token: Approved

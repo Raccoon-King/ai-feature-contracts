@@ -1,0 +1,40 @@
+contract: GRAB-WEBSITE-WORKFLOW-001.fc.md
+phase: plan
+version: 4.1.4 > 4.1.5
+timestamp: 2026-03-21T23:43:42.715Z
+context: []
+context_token_usage: 0
+context_token_budget: 700
+files:
+  - action: modify
+    path: contracts/GRAB-WEBSITE-WORKFLOW-001.fc.md
+    reason: Keep the docs contract aligned with the real website scope
+  - action: modify
+    path: contracts/GRAB-WEBSITE-WORKFLOW-001.brief.md
+    reason: Keep the brief aligned with the refined docs scope
+  - action: modify
+    path: contracts/GRAB-WEBSITE-WORKFLOW-001.plan.yaml
+    reason: Track the planned website documentation files
+  - action: modify
+    path: docs/index.html
+    reason: Update the homepage workflow summary and link to the detailed reference
+  - action: modify
+    path: docs/grabby-user-guide.html
+    reason: Update the interactive guide to reflect the current repo-local workflow
+      and release path
+  - action: create
+    path: docs/commandline-workflow.md
+    reason: Add the detailed workflow reference the website can point developers to
+rules:
+  - §typescript
+  - §hooks
+  - §testing
+risks:
+  - State synchronization
+  - Type coverage
+  - Edge cases
+status: approved
+approval_token_required: Approved
+execution_mode: plan_only
+approved_at: 2026-03-21T23:43:52.496Z
+approval_token: Approved

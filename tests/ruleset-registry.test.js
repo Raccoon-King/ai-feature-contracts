@@ -63,6 +63,16 @@ extends: core-typescript@v1, api-safety@v2, security@v1
       expect(parsed.name).toBe('my-project-rules');
     });
 
+    it('parses shared ruleset name', () => {
+      const content = `# SHARED RULESET: shared-project-rules
+
+## Purpose
+- Shared standards
+`;
+      const parsed = parseRuleset(content, 'test.md');
+      expect(parsed.name).toBe('shared-project-rules');
+    });
+
     it('extracts sections as bullet points', () => {
       const content = `# RULESET: test-rules
 
@@ -336,6 +346,21 @@ This is not a ruleset.
       expect(rulesets.some(r => r.type === 'local')).toBe(true);
       expect(rulesets.some(r => r.type === 'shared')).toBe(true);
       expect(rulesets.some(r => r.type === 'builtin')).toBe(true);
+    });
+
+    it('lists nested local rulesets under .grabby/rulesets', () => {
+      const localDir = path.join(tempDir, '.grabby', 'rulesets', 'shared');
+      fs.mkdirSync(localDir, { recursive: true });
+      fs.writeFileSync(path.join(localDir, 'team.ruleset.md'), `# RULESET: team
+## Standards
+- Team rule
+`);
+
+      const rulesets = listRulesets(tempDir);
+      expect(rulesets.find(r => r.name === 'team')).toMatchObject({
+        type: 'local',
+        file: path.join('.grabby', 'rulesets', 'shared', 'team.ruleset.md'),
+      });
     });
 
     it('includes extends information', () => {

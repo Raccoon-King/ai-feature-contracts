@@ -1,0 +1,31 @@
+contract: GRAB-QOL-103.fc.md
+phase: plan
+version: 4.1.5 > 4.1.6
+timestamp: 2026-03-23T02:31:50.500Z
+context: []
+context_token_usage: 0
+context_token_budget: 700
+files:
+  - action: modify
+    path: tests/integration/grabby-calculator-integration.test.js
+    reason: Expand calculator-project workflow and arithmetic coverage
+  - action: modify
+    path: tests/e2e/calculator-cli-user-flow.test.js
+    reason: Tighten CLI user-flow assertions around calculator-based workflows
+  - action: modify
+    path: docs/grabby-calculator-regression-report.md
+    reason: Keep the calculator regression report aligned with the broader harness
+      scope
+rules:
+  - §typescript
+  - §hooks
+  - §testing
+risks:
+  - State synchronization
+  - Type coverage
+  - Edge cases
+status: approved
+approval_token_required: Approved
+execution_mode: plan_only
+approved_at: 2026-03-23T02:47:51.547Z
+approval_token: Approved

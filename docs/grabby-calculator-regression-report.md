@@ -6,6 +6,8 @@ Contract: `GRABBY-TEST-001`
 ## Scope
 
 - Calculator project workflow coverage
+- Calculator arithmetic fixture coverage for add, subtract, multiply, divide, and divide-by-zero handling
+- Full contract workflow coverage with phase-specific checks for validate, plan, backlog, approve, execute, and audit
 - REST API route coverage
 - API server helper function coverage
 - Persona and agent workflow coverage
@@ -37,6 +39,8 @@ npx.cmd jest --runInBand tests\api-server-v2.test.js tests\api\health.test.js te
 - `tests/interactive-workflows.test.js` passed.
 - `tests/core.test.js` passed.
 - `tests/e2e/calculator-cli-user-flow.test.js` passed.
+- The calculator CLI and integration harnesses now assert phase-specific success markers for `validate`, `plan`, `backlog`, `approve`, `execute`, and `audit` instead of only checking for the absence of crashes.
+- The calculator fixture explicitly exercises add, subtract, multiply, divide, and divide-by-zero arithmetic behavior in both integration and CLI-oriented coverage.
 
 ## Failing Areas (FIXED)
 

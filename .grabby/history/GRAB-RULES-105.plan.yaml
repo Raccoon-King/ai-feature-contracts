@@ -1,0 +1,45 @@
+contract: GRAB-RULES-105.fc.md
+phase: plan
+version: 4.1.5 > 4.2.0
+timestamp: 2026-03-23T00:34:20.108Z
+context: []
+context_token_usage: 0
+context_token_budget: 700
+files:
+  - action: create
+    path: lib/rulesets/resolver.cjs
+    reason: Dependency resolution and topological sort
+  - action: create
+    path: lib/rulesets/merger.cjs
+    reason: Rule composition and conflict detection
+  - action: modify
+    path: lib/rulesets/registry.cjs
+    reason: Integrate resolver and merger
+  - action: modify
+    path: bin/index.cjs
+    reason: Add `grabby rules effective` command
+  - action: modify
+    path: lib/dashboard/routes.cjs
+    reason: Add effective rules endpoint
+  - action: modify
+    path: docs/commandline-workflow.md
+    reason: Document precedence rules
+  - action: create
+    path: tests/rulesets/resolver.test.js
+    reason: Unit tests for resolution
+  - action: create
+    path: tests/rulesets/merger.test.js
+    reason: Unit tests for merging
+rules:
+  - §typescript
+  - §hooks
+  - §testing
+risks:
+  - State synchronization
+  - Type coverage
+  - Edge cases
+status: approved
+approval_token_required: Approved
+execution_mode: plan_only
+approved_at: 2026-03-23T00:34:21.818Z
+approval_token: Approved

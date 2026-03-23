@@ -148,6 +148,33 @@ describe('sync-lock', () => {
       };
       expect(() => validateLock(lock)).toThrow('hash must start with "sha256:"');
     });
+
+    test('accepts legacy active rulesets with split category and name', () => {
+      const lock = {
+        version: 1,
+        lastSync: '2026-03-20T10:30:00Z',
+        source: {
+          repo: 'https://github.com/test/repo.git',
+          branch: 'main',
+          commit: 'abc123',
+          version: '1.0.0'
+        },
+        active: [
+          {
+            category: 'languages',
+            name: 'typescript',
+            version: '1.0.0',
+            hash: 'sha256:abc123def456',
+            fetchedAt: '2026-03-20T10:30:00Z'
+          }
+        ],
+        checksums: {
+          manifest: 'abc123'
+        }
+      };
+
+      expect(validateLock(lock)).toBe(true);
+    });
   });
 
   describe('createEmptyLock', () => {
@@ -283,6 +310,30 @@ describe('sync-lock', () => {
       const updated = updateActiveRuleset(lock, ruleset);
       expect(updated.active[0].hash).toBe('sha256:abc123');
     });
+
+    test('replaces legacy split-category entries using normalized ref matching', () => {
+      const lock = createEmptyLock('https://github.com/test/repo.git');
+      lock.active = [
+        {
+          category: 'languages',
+          name: 'typescript',
+          version: '1.0.0',
+          hash: 'sha256:old',
+          fetchedAt: '2026-03-20T10:30:00Z'
+        }
+      ];
+
+      const updated = updateActiveRuleset(lock, {
+        category: 'languages/typescript',
+        version: '1.1.0',
+        hash: 'sha256:new'
+      });
+
+      expect(updated.active).toHaveLength(1);
+      expect(updated.active[0].category).toBe('languages/typescript');
+      expect(updated.active[0].name).toBe('typescript');
+      expect(updated.active[0].version).toBe('1.1.0');
+    });
   });
 
   describe('removeActiveRuleset', () => {
@@ -307,6 +358,22 @@ describe('sync-lock', () => {
       expect(updated.active).toHaveLength(1);
       expect(updated.active[0].category).toBe('languages/javascript');
     });
+
+    test('removes legacy split-category active ruleset by normalized ref', () => {
+      const lock = createEmptyLock('https://github.com/test/repo.git');
+      lock.active = [
+        {
+          category: 'languages',
+          name: 'typescript',
+          version: '1.0.0',
+          hash: 'sha256:abc',
+          fetchedAt: '2026-03-20T10:30:00Z'
+        }
+      ];
+
+      const updated = removeActiveRuleset(lock, 'languages/typescript');
+      expect(updated.active).toHaveLength(0);
+    });
   });
 
   describe('findActiveRuleset', () => {
@@ -329,6 +396,23 @@ describe('sync-lock', () => {
     test('returns null for non-existent ruleset', () => {
       const ruleset = findActiveRuleset(lock, 'languages/python');
       expect(ruleset).toBeNull();
+    });
+
+    test('finds legacy split-category ruleset by normalized ref', () => {
+      const legacyLock = createEmptyLock('https://github.com/test/repo.git');
+      legacyLock.active = [
+        {
+          category: 'languages',
+          name: 'typescript',
+          version: '1.0.0',
+          hash: 'sha256:abc',
+          fetchedAt: '2026-03-20T10:30:00Z'
+        }
+      ];
+
+      const ruleset = findActiveRuleset(legacyLock, 'languages/typescript');
+      expect(ruleset).toBeDefined();
+      expect(ruleset.name).toBe('typescript');
     });
   });
 

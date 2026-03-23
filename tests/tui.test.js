@@ -946,6 +946,11 @@ Test
     expect(output).toContain('GRABBY METRICS REPORT');
   });
 
+  test('createTUI includes the dashboard menu entry', () => {
+    const output = runTuiKeys([]);
+    expect(output).toContain('Open Dashboard');
+  });
+
   test('createTUI enters watch mode', () => {
     const watcher = require('../lib/watcher.cjs');
     const spy = jest.spyOn(watcher, 'runWatchMode').mockImplementation(() => {});
@@ -1199,7 +1204,7 @@ Test
       throw new Error(`exit:${code}`);
     });
 
-    expect(() => runTuiAction(10)).toThrow('exit:0');
+    expect(() => runTuiAction(11)).toThrow('exit:0');
 
     exitSpy.mockRestore();
   });

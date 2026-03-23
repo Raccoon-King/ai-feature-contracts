@@ -308,6 +308,56 @@ export GRABBY_STRICT=1
 }
 ```
 
+## Local Preflight Workflow
+
+Before pushing code, run preflight checks to catch CI blockers locally:
+
+### Quick Preflight (Before Commits)
+
+```bash
+npm run lint
+```
+
+This runs a quick preflight that checks:
+- Git branch policy
+- Active contract validity
+- Basic dependency consistency
+
+### Full Preflight (Before Push)
+
+```bash
+npm run preflight
+```
+
+This runs comprehensive checks:
+- Git branch policy (protected branches, dirty state)
+- All active contract validation
+- Contract policy violations (DB, API, dependency)
+- bundleDependencies consistency
+- package-lock.json sync status
+- npm audit for vulnerabilities
+
+### Complete Preflight (Before Release)
+
+```bash
+npm run preflight:full
+```
+
+This adds additional checks:
+- Required npm scripts (lint, test, build)
+- Placeholder script detection
+- Full dependency analysis
+
+### Preflight Checklist
+
+Before opening or updating a PR:
+
+- [ ] Run `npm run preflight` and fix all errors
+- [ ] Run `npm test` and ensure tests pass
+- [ ] Run `grabby guard <contract>` if modifying contract scope
+- [ ] Verify coverage meets 80% threshold
+- [ ] Update CHANGELOG.md for version bumps
+
 ## Code Review Checklist
 
 - [ ] Tests included and passing

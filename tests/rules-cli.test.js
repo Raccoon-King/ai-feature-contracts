@@ -15,14 +15,14 @@ const {
 // Mock dependencies
 jest.mock('fs');
 jest.mock('../lib/config.cjs');
-jest.mock('../lib/manifest-parser.cjs');
-jest.mock('../lib/sync-lock.cjs');
-jest.mock('../lib/rules-sync.cjs');
+jest.mock('../lib/rulesets/common/manifest-parser.cjs');
+jest.mock('../lib/rulesets/common/sync-lock.cjs');
+jest.mock('../lib/rulesets/sync.cjs');
 
-const { loadConfig, saveConfig } = require('../lib/config.cjs');
-const { parseManifestFile, getAllRulesets, findRuleset, resolvePreset, listCategories } = require('../lib/manifest-parser.cjs');
-const { readLock, writeLock, initLock, updateActiveRuleset, removeActiveRuleset, findActiveRuleset, getLockAge } = require('../lib/sync-lock.cjs');
-const { syncWithCentral, detectDrift, isGitAvailable } = require('../lib/rules-sync.cjs');
+const { loadConfig, saveRulesetsConfig } = require('../lib/config.cjs');
+const { parseManifestFile, getAllRulesets, findRuleset, resolvePreset, listCategories } = require('../lib/rulesets/common/manifest-parser.cjs');
+const { readLock, writeLock, initLock, updateActiveRuleset, removeActiveRuleset, findActiveRuleset, getLockAge } = require('../lib/rulesets/common/sync-lock.cjs');
+const { syncWithCentral, detectDrift, isGitAvailable } = require('../lib/rulesets/sync.cjs');
 
 // Suppress console output during tests
 global.console = {
@@ -65,7 +65,8 @@ describe('rules-cli', () => {
       loadConfig.mockReturnValue({
         rulesets: {
           source: { repo: 'https://github.com/test/repo.git', branch: 'main' },
-          lockPath: '.grabby/rulesets/sync.lock.yaml'
+          lockPath: '.grabby/rulesets/sync.lock.yaml',
+          active: ['languages/typescript']
         }
       });
       isGitAvailable.mockReturnValue(true);
@@ -75,6 +76,7 @@ describe('rules-cli', () => {
           version: '1.0.0',
           categories: {}
         },
+        manifestPath: '/tmp/test/.grabby/rulesets/cache/central-repo/manifest.yaml',
         source: {
           repo: 'https://github.com/test/repo.git',
           branch: 'main',
@@ -89,12 +91,22 @@ describe('rules-cli', () => {
         source: {},
         active: []
       });
-      getAllRulesets.mockReturnValue([]);
+      getAllRulesets.mockReturnValue([
+        { ref: 'languages/typescript', name: 'typescript', version: '1.0.0' }
+      ]);
+      fs.existsSync.mockReturnValue(false);
 
       const exitCode = await syncCommand({}, tempDir);
       expect(exitCode).toBe(0);
       expect(syncWithCentral).toHaveBeenCalled();
       expect(writeLock).toHaveBeenCalled();
+      expect(writeLock.mock.calls[0][0].active).toEqual([
+        expect.objectContaining({
+          category: 'languages/typescript',
+          name: 'typescript',
+          version: '1.0.0'
+        })
+      ]);
       expect(console.log).toHaveBeenCalledWith(expect.stringContaining('Sync successful'));
     });
 
@@ -332,7 +344,7 @@ describe('rules-cli', () => {
 
       const exitCode = await addCommand('languages/typescript', {}, tempDir);
       expect(exitCode).toBe(0);
-      expect(saveConfig).toHaveBeenCalled();
+      expect(saveRulesetsConfig).toHaveBeenCalled();
       expect(console.log).toHaveBeenCalledWith(expect.stringContaining('Added languages/typescript'));
     });
 
@@ -369,7 +381,7 @@ describe('rules-cli', () => {
 
       const exitCode = await removeCommand('languages/typescript', {}, tempDir);
       expect(exitCode).toBe(0);
-      expect(saveConfig).toHaveBeenCalled();
+      expect(saveRulesetsConfig).toHaveBeenCalled();
       expect(console.log).toHaveBeenCalledWith(expect.stringContaining('Removed languages/typescript'));
     });
 
@@ -469,7 +481,7 @@ describe('rules-cli', () => {
 
       const exitCode = await presetCommand('fullstack-typescript', {}, tempDir);
       expect(exitCode).toBe(0);
-      expect(saveConfig).toHaveBeenCalled();
+      expect(saveRulesetsConfig).toHaveBeenCalled();
       expect(console.log).toHaveBeenCalledWith(expect.stringContaining('Added 2 rulesets'));
     });
 

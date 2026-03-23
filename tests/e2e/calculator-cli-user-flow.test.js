@@ -283,6 +283,25 @@ function runCli(cwd, args) {
   };
 }
 
+function expectSuccessfulCliStep(step, result, options = {}) {
+  const output = result.stdout + result.stderr;
+
+  expect(result.status).toBe(0);
+  if (options.contains) {
+    expect(output).toContain(options.contains);
+  }
+  if (options.notContains) {
+    expect(output).not.toContain(options.notContains);
+  }
+  expect(output.toLowerCase()).not.toMatch(/unhandled|typeerror|syntaxerror/i);
+
+  if (options.filePath) {
+    expect(fs.existsSync(options.filePath)).toBe(true);
+  }
+
+  return output;
+}
+
 function writeCalculatorContract(projectDir) {
   const contractsDir = path.join(projectDir, 'contracts');
   fs.mkdirSync(contractsDir, { recursive: true });
@@ -329,38 +348,46 @@ describeCli('Calculator CLI user flow', () => {
     writeCalculatorContract(tempDir);
 
     const validate = runCli(tempDir, ['validate', 'calculator-web-app.fc.md']);
-    expect(validate.status).toBe(0);
-    expect(validate.stdout).toContain('Validation passed');
-    expect(validate.stdout).not.toContain('Validation passed with warnings');
+    expectSuccessfulCliStep('validate', validate, {
+      contains: 'Validation passed',
+      notContains: 'Validation passed with warnings',
+    });
 
     const plan = runCli(tempDir, ['plan', 'calculator-web-app.fc.md']);
-    expect(plan.status).toBe(0);
-    expect(plan.stdout).toContain('PHASE 1: PLAN');
-    expect(fs.existsSync(path.join(tempDir, 'contracts', 'FC-CALC-001.plan.yaml'))).toBe(true);
+    expectSuccessfulCliStep('plan', plan, {
+      contains: 'PHASE 1: PLAN',
+      filePath: path.join(tempDir, 'contracts', 'FC-CALC-001.plan.yaml'),
+    });
 
     const backlog = runCli(tempDir, ['backlog', 'calculator-web-app.fc.md']);
-    expect(backlog.status).toBe(0);
-    expect(backlog.stdout).toContain('AGILE BACKLOG');
-    expect(fs.existsSync(path.join(tempDir, 'contracts', 'calculator-web-app.backlog.yaml'))).toBe(true);
+    expectSuccessfulCliStep('backlog', backlog, {
+      contains: 'AGILE BACKLOG',
+      filePath: path.join(tempDir, 'contracts', 'calculator-web-app.backlog.yaml'),
+    });
 
     const prompt = runCli(tempDir, ['prompt', 'calculator-web-app.fc.md']);
     expect(prompt.status).toBe(0);
     expect(fs.existsSync(path.join(tempDir, 'contracts', 'calculator-web-app.prompt.md'))).toBe(true);
 
     const approve = runCli(tempDir, ['approve', 'calculator-web-app.fc.md']);
-    expect(approve.status).toBe(0);
+    expectSuccessfulCliStep('approve', approve, {
+      contains: 'Contract approved',
+    });
     expect(fs.readFileSync(path.join(tempDir, 'contracts', 'calculator-web-app.fc.md'), 'utf8'))
       .toContain('**Status:** approved');
 
     const execute = runCli(tempDir, ['execute', 'calculator-web-app.fc.md']);
-    expect(execute.status).toBe(0);
-    expect(execute.stdout).toContain('PHASE 2: EXECUTE');
+    expectSuccessfulCliStep('execute', execute, {
+      contains: 'PHASE 2: EXECUTE',
+    });
 
     writeCalculatorSource(tempDir);
 
     const audit = runCli(tempDir, ['audit', 'calculator-web-app.fc.md']);
-    expect(audit.status).toBe(0);
-    expect(fs.existsSync(path.join(tempDir, 'contracts', 'FC-CALC-001.audit.md'))).toBe(true);
+    expectSuccessfulCliStep('audit', audit, {
+      contains: 'POST-EXECUTION AUDIT',
+      filePath: path.join(tempDir, 'contracts', 'FC-CALC-001.audit.md'),
+    });
 
     const features = runCli(tempDir, ['features:list']);
     expect(features.status).toBe(0);

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-21T20:05:37.244Z",
+  "generatedAt": "2026-03-23T03:10:25.628Z",
   "trackingMode": "tracked",
   "features": [
     {
@@ -21,7 +21,9 @@
         "tests/personas.test.js",
         "tests/interactive-shell.test.js",
         "tests/core.test.js"
-      ]
+      ],
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "AGENT-202",
@@ -42,7 +44,9 @@
         "tests/personas.test.js",
         "tests/interactive-shell.test.js",
         "tests/core.test.js"
-      ]
+      ],
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "AIR-001",
@@ -56,7 +60,9 @@
         "package.json",
         "README.md",
         "tests/packaging.test.js"
-      ]
+      ],
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "BMAD-201",
@@ -68,7 +74,9 @@
       "type": "feat",
       "files": [
         "contracts/BMAD-201.stories.md"
-      ]
+      ],
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "BMAD-211",
@@ -83,7 +91,9 @@
         "lib/commands.cjs",
         "tests/help-adaptive-routing.test.js",
         "README.md"
-      ]
+      ],
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "BMAD-212",
@@ -99,7 +109,9 @@
         "lib/interactive-workflows.cjs",
         "tests/quick-flow-guardrails.test.js",
         "docs/EXECUTION_PROTOCOL.md"
-      ]
+      ],
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "BMAD-213",
@@ -115,7 +127,9 @@
         "lib/interactive-shell.cjs",
         "tests/sprint-status-workflow.test.js",
         "docs/EXECUTION_PROTOCOL.md"
-      ]
+      ],
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "BMAD-214",
@@ -131,7 +145,9 @@
         "lib/commands.cjs",
         "tests/verification-tiering.test.js",
         "docs/AGENT_ARCHITECTURE.md"
-      ]
+      ],
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "BMAD-215",
@@ -147,7 +163,9 @@
         "grabby.config.example.json",
         "docs/BMAD_UPGRADE.md",
         "tests/bmad-compatibility-flags.test.js"
-      ]
+      ],
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "BMAD-216",
@@ -161,7 +179,9 @@
         "contracts/BMAD-216.import-matrix.md",
         "contracts/BMAD-216.rubric.md",
         "contracts/BMAD-201.stories.md"
-      ]
+      ],
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "BUG-202",
@@ -175,7 +195,9 @@
         "lib/core.cjs",
         "tests/core.test.js",
         "contracts/BUG-202.fc.md"
-      ]
+      ],
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "BUG-203",
@@ -191,7 +213,9 @@
         "tests/feature-close.test.js",
         "tests/commands.test.js",
         "contracts/BUG-203.fc.md"
-      ]
+      ],
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "CALC-001",
@@ -206,7 +230,9 @@
         "tmp-calc-cli/cli.js",
         "tmp-calc-cli/package.json",
         "tests/unit/calculator.test.js"
-      ]
+      ],
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "CLI-CALC-002",
@@ -221,7 +247,9 @@
         "tmp-calc-cli/cli.js",
         "tmp-calc-cli/package.json",
         "tests/e2e/calculator-cli-user-flow.test.js"
-      ]
+      ],
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "CLI-CALC-TEST-001",
@@ -230,7 +258,47 @@
       "archivePath": ".grabby/history/history-002.yaml",
       "closedAt": "2026-03-15T22:34:43.163Z",
       "objective": "Resolve the concrete issues found while exercising the calculator app through the Grabby CLI.",
-      "type": "feat"
+      "type": "feat",
+      "targetedRelease": null,
+      "garbageCollect": false
+    },
+    {
+      "id": "CONTRACT-RUNORDER-001",
+      "title": "Add contract run order metadata and dashboard reordering ...",
+      "status": "archived",
+      "archivePath": ".grabby/history/history-003.yaml",
+      "closedAt": "2026-03-23T02:19:52.949Z",
+      "objective": "Introduce a user-managed run order for contracts and expose it in the dashboard so users can understand what run order means and reorder active con...",
+      "type": "FEATURE_CONTRACT",
+      "files": [
+        "templates/contract.md",
+        "lib/task-artifacts.cjs",
+        "lib/features.cjs",
+        "lib/dashboard/routes.cjs",
+        "lib/dashboard/public/index.html",
+        "lib/dashboard/public/app.js",
+        "lib/dashboard/public/styles.css",
+        "tests/task-artifacts.test.js",
+        "tests/features.test.js",
+        "tests/dashboard.test.js"
+      ],
+      "targetedRelease": null,
+      "garbageCollect": false
+    },
+    {
+      "id": "DASH-MERGE-001",
+      "title": "Fix dashboard catch-all routing regression after Express ...",
+      "status": "archived",
+      "archivePath": ".grabby/history/history-003.yaml",
+      "closedAt": "2026-03-23T03:10:25.300Z",
+      "objective": "Restore clean dashboard startup and correct route fallthrough so the dashboard serves the SPA shell for non-API requests without intercepting unmat...",
+      "type": "FEATURE_CONTRACT",
+      "files": [
+        "lib/dashboard/index.cjs",
+        "tests/dashboard.test.js"
+      ],
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "DX-001",
@@ -248,7 +316,9 @@
         "lib/git-workflow.cjs",
         "lib/config.cjs",
         "lib/commands.cjs"
-      ]
+      ],
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "DX-002",
@@ -261,7 +331,9 @@
       "files": [
         "lib/api-server.cjs",
         "tests/api-server.test.js"
-      ]
+      ],
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "DX-003",
@@ -279,7 +351,9 @@
         "tests/features.test.js",
         "tests/interactive-workflows.test.js",
         "tests/interactive-shell.test.js"
-      ]
+      ],
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "DX-004",
@@ -300,7 +374,9 @@
         "lib/commands/index.cjs",
         "lib/commands.cjs",
         "tests/commands.test.js"
-      ]
+      ],
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "DX-005",
@@ -317,7 +393,9 @@
         "lib/config.cjs",
         "lib/id-utils.cjs",
         "lib/interactive-workflows.cjs"
-      ]
+      ],
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "DX-006",
@@ -332,7 +410,9 @@
         "lib/commands.cjs",
         "lib/core.cjs",
         "lib/config.cjs"
-      ]
+      ],
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "DX-007",
@@ -349,7 +429,9 @@
         "lib/tui.cjs",
         "bin/index.cjs",
         "lib/interactive-shell.cjs"
-      ]
+      ],
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "DX-008",
@@ -362,7 +444,9 @@
       "files": [
         "lib/features.cjs",
         "tests/features.test.js"
-      ]
+      ],
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "DX-009",
@@ -377,7 +461,9 @@
         "docs/CONFIG_SCHEMA.md",
         "lib/config.cjs",
         "tests/config.test.js"
-      ]
+      ],
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "DX-010",
@@ -393,7 +479,9 @@
         "lib/dev-modes.cjs",
         "tests/dev-modes.test.js",
         "docs/EXECUTION_PROTOCOL.md"
-      ]
+      ],
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "DX-011",
@@ -409,7 +497,9 @@
         "lib/config.cjs",
         "tests/validation-rules.test.js",
         "docs/CONFIG_SCHEMA.md"
-      ]
+      ],
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "DX-012",
@@ -418,7 +508,9 @@
       "archivePath": ".grabby/history/history-002.yaml",
       "closedAt": "2026-03-08T18:20:27.843Z",
       "objective": "Extend grabby's project awareness to index custom UI components for React/Vue projects and understand complete developer tooling setups for Go, Pyt...",
-      "type": "FEATURE_CONTRACT"
+      "type": "FEATURE_CONTRACT",
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "DX-013",
@@ -427,7 +519,9 @@
       "archivePath": ".grabby/history/history-002.yaml",
       "closedAt": "2026-03-08T18:20:28.066Z",
       "objective": "Enable grabby to share governance rules across repositories and provide better guidance to LLMs when building contracts, ensuring consistent qualit...",
-      "type": "FEATURE_CONTRACT"
+      "type": "FEATURE_CONTRACT",
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "DX-014",
@@ -436,7 +530,9 @@
       "archivePath": ".grabby/history/history-002.yaml",
       "closedAt": "2026-03-08T18:20:28.293Z",
       "objective": "Replace the complex 5-step bootstrap workflow with a single `grabby setup` command that handles all initialization, baseline completion, and gate c...",
-      "type": "FEATURE_CONTRACT"
+      "type": "FEATURE_CONTRACT",
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "DX-015",
@@ -450,7 +546,9 @@
         "lib/tui.cjs",
         "lib/commands.cjs",
         "tests/tui-contract-control.test.js"
-      ]
+      ],
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "DX-016",
@@ -465,7 +563,9 @@
         "lib/config.cjs",
         "lib/governance.cjs",
         "tests/bootstrap-gate.test.js"
-      ]
+      ],
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "DX-017",
@@ -480,7 +580,9 @@
         "lib/core.cjs",
         "lib/smart-prompts.cjs",
         "tests/change-assessment.test.js"
-      ]
+      ],
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "ENV-202",
@@ -497,7 +599,9 @@
         "tests/config.test.js",
         "tests/tui.test.js",
         "tests/commands.test.js"
-      ]
+      ],
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "FC-001",
@@ -517,7 +621,9 @@
         "tests/progress.test.js",
         "tests/watcher.test.js",
         "tests/smart-prompts.test.js"
-      ]
+      ],
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "FC-001",
@@ -530,7 +636,9 @@
       "files": [
         "README.md",
         "docs/PRE-OP-SUMMARY.md"
-      ]
+      ],
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "FC-002",
@@ -539,7 +647,9 @@
       "archivePath": ".grabby/history/history-001.yaml",
       "closedAt": "2026-03-03T00:36:45.496Z",
       "objective": "Feature Management System",
-      "type": "feat"
+      "type": "feat",
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "FC-002",
@@ -554,7 +664,9 @@
         "lib/commands.cjs",
         "tests/contract-rulesets.test.js",
         "docs/CONTRACT_SYNC.md"
-      ]
+      ],
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "FC-003",
@@ -563,7 +675,9 @@
       "archivePath": ".grabby/history/history-001.yaml",
       "closedAt": "2026-03-03T00:36:45.653Z",
       "objective": "Contract Level System",
-      "type": "feat"
+      "type": "feat",
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "FC-003",
@@ -584,7 +698,9 @@
         "bin/index.cjs",
         "tests/api/contracts.test.js",
         "tests/api/rules.test.js"
-      ]
+      ],
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "FC-004",
@@ -604,7 +720,9 @@
         "docs/index.html",
         "grabby-website/public/index.html",
         "tests/"
-      ]
+      ],
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "FC-005",
@@ -620,7 +738,9 @@
         "templates/agent-runtime-contract.example.yaml",
         "templates/agent-runtime-minimal-prompt.md",
         "tests/agent-runtime-example-artifacts.test.js"
-      ]
+      ],
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "FC-006",
@@ -641,7 +761,9 @@
         "docs/index.html",
         "docs/grabby-user-guide.html",
         "grabby-website/public/index.html"
-      ]
+      ],
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "FC-007",
@@ -662,7 +784,9 @@
         "docs/RULES_CLI.md",
         "README.md",
         "tests/commands.test.js"
-      ]
+      ],
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "FC-101",
@@ -682,7 +806,9 @@
         "tests/progress.test.js",
         "tests/watcher.test.js",
         "tests/smart-prompts.test.js"
-      ]
+      ],
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "FC-102",
@@ -700,7 +826,9 @@
         "lib/core.cjs",
         "tests/complexity.test.js",
         "tests/metrics.test.js"
-      ]
+      ],
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "FC-103",
@@ -719,7 +847,9 @@
         "tests/plugins.test.js",
         "tests/tui.test.js",
         "tests/ai-complete.test.js"
-      ]
+      ],
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "FC-104",
@@ -736,7 +866,9 @@
         "bin/server.cjs",
         "tests/api-server.test.js",
         "tests/multi-repo.test.js"
-      ]
+      ],
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "FC-1772597818229",
@@ -753,7 +885,9 @@
         "tests/cicd.test.js",
         "tests/tui.test.js",
         "contracts/automation-setup-wizards-for-github-actions-pr-templates-hooks-and-config.fc.md"
-      ]
+      ],
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "FC-1773025401846",
@@ -762,7 +896,31 @@
       "archivePath": ".grabby/history/history-002.yaml",
       "closedAt": "2026-03-09T04:31:48.363Z",
       "objective": "Implement state-aware, substep-aware, confidence-aware routing so Grabby selects the best agent at each step/substep while preserving governance gates",
-      "type": "FEATURE_CONTRACT"
+      "type": "FEATURE_CONTRACT",
+      "targetedRelease": null,
+      "garbageCollect": false
+    },
+    {
+      "id": "FC-1774137262006",
+      "title": "Separate Grabby engine from ruleset subsystem",
+      "status": "archived",
+      "archivePath": ".grabby/history/history-002.yaml",
+      "closedAt": "2026-03-22T16:06:16.922Z",
+      "objective": "Decouple the Grabby core engine (CLI, contracts, workflows, personas) from the ruleset subsystem (sync, registry, builder) so they can be versioned...",
+      "type": "FEATURE_CONTRACT",
+      "targetedRelease": null,
+      "garbageCollect": false
+    },
+    {
+      "id": "FC-1774138747364",
+      "title": "Audit and Update Grabby Rulesets Repository",
+      "status": "archived",
+      "archivePath": ".grabby/history/history-002.yaml",
+      "closedAt": "2026-03-22T16:55:32.812Z",
+      "objective": "Perform a comprehensive audit of the Grabby Rulesets Repository (https://github.com/Raccoon-King/grabby-contracts.git), review all ruleset definiti...",
+      "type": "feat",
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "FC-2026-CW01",
@@ -777,7 +935,9 @@
         "package.json",
         "package-lock.json",
         ".gitignore"
-      ]
+      ],
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "FC-2026-REL238",
@@ -786,7 +946,9 @@
       "archivePath": ".grabby/history/history-002.yaml",
       "closedAt": "2026-03-15T00:30:00.000Z",
       "objective": "Release v2.3.8 by promoting all development branch changes into main including security fix, documentation, and repo professionalization.",
-      "type": "RELEASE_CONTRACT"
+      "type": "RELEASE_CONTRACT",
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "GC-001",
@@ -800,7 +962,9 @@
         "lib/features.cjs",
         "tests/feature-close.test.js",
         "tests/commands.test.js"
-      ]
+      ],
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "GRAB-002",
@@ -817,7 +981,9 @@
         "templates/system-baseline.md",
         "tests/commands.test.js",
         "tests/ai-complete.test.js"
-      ]
+      ],
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "GRAB-301",
@@ -830,7 +996,9 @@
       "files": [
         "lib/interactive-shell.cjs",
         "tests/interactive-shell.test.js"
-      ]
+      ],
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "GRAB-302",
@@ -845,7 +1013,9 @@
         "lib/governance-runtime.cjs",
         "tests/llm-context-policy.test.js",
         "tests/commands.test.js"
-      ]
+      ],
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "GRAB-303",
@@ -860,7 +1030,9 @@
         "docs/EXECUTION_PROTOCOL.md",
         "lib/interactive-shell.cjs",
         "tests/help-adaptive-routing.test.js"
-      ]
+      ],
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "GRAB-304",
@@ -877,7 +1049,9 @@
         "lib/config.cjs",
         "lib/api-server.cjs",
         "tests/fs-utils.test.js"
-      ]
+      ],
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "GRAB-305",
@@ -893,7 +1067,9 @@
         "lib/core.cjs",
         "lib/config.cjs",
         "tests/contract-validation.test.js"
-      ]
+      ],
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "GRAB-306",
@@ -907,7 +1083,9 @@
         "lib/path-security.cjs",
         "lib/api-server.cjs",
         "tests/api-server.test.js"
-      ]
+      ],
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "GRAB-307",
@@ -924,7 +1102,9 @@
         "lib/jira.cjs",
         "lib/api-server.cjs",
         "tests/io-parsing-utils.test.js"
-      ]
+      ],
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "GRAB-312",
@@ -941,7 +1121,9 @@
         "lib/commands.cjs",
         "lib/api-server.cjs",
         "tests/errors.test.js"
-      ]
+      ],
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "GRAB-313",
@@ -957,7 +1139,9 @@
         "tests/interactive-shell.test.js",
         "tests/features-index.test.js",
         "tests/e2e-workflow.test.js"
-      ]
+      ],
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "GRAB-AGENTS-001",
@@ -978,7 +1162,9 @@
         "docs/API.md",
         "docs/openapi.yaml",
         "tests/personas.test.js"
-      ]
+      ],
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "GRAB-ARCHIVE-001",
@@ -999,7 +1185,32 @@
         "tests/feature-close.test.js",
         "tests/commands.test.js",
         "tests/features-index.test.js"
-      ]
+      ],
+      "targetedRelease": null,
+      "garbageCollect": false
+    },
+    {
+      "id": "GRAB-CI-MERGE-001",
+      "title": "Fix CI merge blockers on the current head",
+      "status": "archived",
+      "archivePath": ".grabby/history/history-002.yaml",
+      "closedAt": "2026-03-22T15:03:32.873Z",
+      "objective": "Repair the current head so the hosted test suite remains green by keeping the API tests deterministic under parallel CI, correcting the rules/confi...",
+      "type": "BUG_FIX_CONTRACT",
+      "files": [
+        "contracts/GRAB-CI-MERGE-001.fc.md",
+        "contracts/GRAB-CI-MERGE-001.brief.md",
+        "contracts/GRAB-CI-MERGE-001.plan.yaml",
+        ".github/workflows/sync-website-repo-on-tag.yml",
+        ".github/workflows/release.yml",
+        "lib/api-routes/health.cjs",
+        "lib/api-routes/rules.cjs",
+        "tests/api/health.test.js",
+        "tests/api/rules.test.js",
+        "tests/unit/calculator.test.js"
+      ],
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "GRAB-CLI-001",
@@ -1013,20 +1224,9 @@
         "lib/interactive-shell.cjs",
         "lib/interactive-workflows.cjs",
         "tests/integration/grabby-calculator-integration.test.js"
-      ]
-    },
-    {
-      "id": "GRAB-CONTRACT-UI-001",
-      "title": "Add a localhost developer UI for contract visualization and artifact management",
-      "type": "FEATURE_CONTRACT",
-      "status": "draft",
-      "branch": null,
-      "lastModifiedAt": "2026-03-21T19:55:16.951Z",
-      "contractPath": "contracts/GRAB-CONTRACT-UI-001.fc.md",
-      "planPath": null,
-      "auditPath": null,
-      "archivePath": null,
-      "closedAt": null
+      ],
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "GRAB-DB-201",
@@ -1035,7 +1235,9 @@
       "archivePath": ".grabby/history/history-001.yaml",
       "closedAt": "2026-03-04T04:49:03.518Z",
       "objective": "Track the phased rollout of deterministic DB discovery, relationship analysis, code access mapping, dependency graphing, and DB safety enforcement ...",
-      "type": "FEATURE_CONTRACT"
+      "type": "FEATURE_CONTRACT",
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "GRAB-DB-211",
@@ -1051,7 +1253,9 @@
         "bin/index.cjs",
         "tests/db-awareness.test.js",
         "contracts/GRAB-DB-211.fc.md"
-      ]
+      ],
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "GRAB-DB-212",
@@ -1067,7 +1271,9 @@
         "bin/index.cjs",
         "tests/db-awareness.test.js",
         "contracts/GRAB-DB-212.fc.md"
-      ]
+      ],
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "GRAB-DB-213",
@@ -1083,7 +1289,9 @@
         ".grabby/governance.lock",
         "tests/db-ruleset.test.js",
         "contracts/GRAB-DB-213.fc.md"
-      ]
+      ],
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "GRAB-DB-215",
@@ -1099,7 +1307,9 @@
         "bin/index.cjs",
         "tests/dependency-analyzer.test.js",
         "contracts/GRAB-DB-215.fc.md"
-      ]
+      ],
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "GRAB-DB-216",
@@ -1115,7 +1325,9 @@
         "bin/index.cjs",
         "tests/db-awareness.test.js",
         "contracts/GRAB-DB-216.fc.md"
-      ]
+      ],
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "GRAB-DB-217",
@@ -1130,7 +1342,9 @@
         "lib/cicd.cjs",
         "tests/commands.test.js",
         "contracts/GRAB-DB-217.fc.md"
-      ]
+      ],
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "GRAB-DB-218",
@@ -1146,7 +1360,9 @@
         "tests/commands.test.js",
         "tests/core.test.js",
         "contracts/GRAB-DB-218.fc.md"
-      ]
+      ],
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "GRAB-DB-219",
@@ -1164,7 +1380,9 @@
         "tests/db-awareness.test.js",
         "tests/dependency-analyzer.test.js",
         "contracts/GRAB-DB-219.fc.md"
-      ]
+      ],
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "GRAB-ENV-201",
@@ -1183,7 +1401,9 @@
         "tests/commands.test.js",
         "tests/config.test.js",
         "tests/packaging.test.js"
-      ]
+      ],
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "GRAB-FEATURES-001",
@@ -1192,7 +1412,9 @@
       "archivePath": ".grabby/history/history-001.yaml",
       "closedAt": "2026-03-03T00:36:32.182Z",
       "objective": "Contract-Backed Feature Index",
-      "type": "FEATURE_CONTRACT"
+      "type": "FEATURE_CONTRACT",
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "GRAB-GIT-101",
@@ -1207,7 +1429,9 @@
         "lib/commands.cjs",
         "bin/index.cjs",
         "tests/git-workflow.test.js"
-      ]
+      ],
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "GRAB-GIT-102",
@@ -1222,7 +1446,9 @@
         "lib/commands.cjs",
         "bin/index.cjs",
         "tests/git-workflow.test.js"
-      ]
+      ],
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "GRAB-GIT-103",
@@ -1238,7 +1464,9 @@
         "bin/index.cjs",
         "tests/git-workflow.test.js",
         "tests/id-utils.test.js"
-      ]
+      ],
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "GRAB-GIT-104",
@@ -1256,7 +1484,9 @@
         "lib/config.cjs",
         "tests/config.test.js",
         "tests/db-ruleset.test.js"
-      ]
+      ],
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "GRAB-GIT-105",
@@ -1272,7 +1502,9 @@
         "bin/index.cjs",
         "tests/git-workflow.test.js",
         "tests/commands.test.js"
-      ]
+      ],
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "GRAB-GIT-106",
@@ -1289,7 +1521,9 @@
         "lib/config.cjs",
         "tests/git-workflow.test.js",
         "tests/commands.test.js"
-      ]
+      ],
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "GRAB-GIT-107",
@@ -1304,7 +1538,9 @@
         "lib/commands.cjs",
         "tests/git-workflow.test.js",
         "tests/commands.test.js"
-      ]
+      ],
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "GRAB-GIT-108",
@@ -1319,7 +1555,9 @@
         "lib/interactive-shell.cjs",
         "tests/git-workflow.test.js",
         "tests/interactive-shell.test.js"
-      ]
+      ],
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "GRAB-GIT-109",
@@ -1334,7 +1572,9 @@
         "lib/git-workflow.cjs",
         "tests/commands.test.js",
         "README.md"
-      ]
+      ],
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "GRAB-GIT-110",
@@ -1350,7 +1590,9 @@
         "lib/config.cjs",
         "tests/git-workflow.test.js",
         "tests/commands.test.js"
-      ]
+      ],
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "GRAB-GIT-111",
@@ -1365,7 +1607,9 @@
         "lib/git-workflow.cjs",
         "tests/config.test.js",
         "tests/git-workflow.test.js"
-      ]
+      ],
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "GRAB-GIT-112",
@@ -1381,7 +1625,9 @@
         "lib/interactive-shell.cjs",
         "tests/commands.test.js",
         "tests/git-workflow.test.js"
-      ]
+      ],
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "GRAB-GOV-001",
@@ -1402,7 +1648,9 @@
         ".clinerules/00-grabby-core.md",
         ".continue/rules/00-grabby-core.md",
         ".codex/prompts/router.md"
-      ]
+      ],
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "GRAB-IMODE-001",
@@ -1423,7 +1671,9 @@
         "tests/interactive-workflows.test.js",
         "tests/commands.test.js",
         "contracts/GRAB-IMODE-001.fc.md"
-      ]
+      ],
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "GRAB-INTAKE-002",
@@ -1432,7 +1682,9 @@
       "archivePath": ".grabby/history/history-001.yaml",
       "closedAt": "2026-03-03T00:36:32.367Z",
       "objective": "Ticket Generator Wizard",
-      "type": "FEATURE_CONTRACT"
+      "type": "FEATURE_CONTRACT",
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "GRAB-INTAKE-003",
@@ -1441,7 +1693,32 @@
       "archivePath": ".grabby/history/history-001.yaml",
       "closedAt": "2026-03-03T00:36:32.528Z",
       "objective": "Modern Ticket Intake Shape",
-      "type": "FEATURE_CONTRACT"
+      "type": "FEATURE_CONTRACT",
+      "targetedRelease": null,
+      "garbageCollect": false
+    },
+    {
+      "id": "GRAB-LOCAL-GUARDRAILS-001",
+      "title": "Add local lint rules, workflow policy checks, contract va...",
+      "status": "archived",
+      "archivePath": ".grabby/history/history-002.yaml",
+      "closedAt": "2026-03-22T16:55:33.984Z",
+      "objective": "Add local lint rules, workflow policy checks, contract validation guardrails, and preflight best-practice automation that catch the recent CI merge...",
+      "type": "FEATURE_CONTRACT",
+      "files": [
+        "contracts/GRAB-LOCAL-GUARDRAILS-001.fc.md",
+        "contracts/GRAB-LOCAL-GUARDRAILS-001.brief.md",
+        "contracts/GRAB-LOCAL-GUARDRAILS-001.plan.yaml",
+        "package.json",
+        "hooks/pre-commit",
+        "hooks/pre-push",
+        "lib/commands.cjs",
+        "lib/git-workflow.cjs",
+        "lib/cicd.cjs",
+        "tests/commands.test.js"
+      ],
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "GRAB-MENU-ENTRY-001",
@@ -1459,7 +1736,9 @@
         "tests/cli.test.js",
         "tests/tui.test.js",
         "docs/grabby-user-guide.html"
-      ]
+      ],
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "GRAB-MENU-IA-001",
@@ -1475,7 +1754,9 @@
         "tests/tui.test.js",
         "docs/grabby-user-guide.html",
         "README.md"
-      ]
+      ],
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "GRAB-PLAN-VERSION-001",
@@ -1489,7 +1770,260 @@
         "contracts/GRAB-PLAN-VERSION-001.fc.md",
         "lib/commands.cjs",
         "tests/commands.test.js"
-      ]
+      ],
+      "targetedRelease": null,
+      "garbageCollect": false
+    },
+    {
+      "id": "GRAB-QOL-001",
+      "title": "QoL umbrella for dashboard config, contract metadata, and...",
+      "status": "archived",
+      "archivePath": ".grabby/history/history-003.yaml",
+      "closedAt": "2026-03-23T03:10:25.356Z",
+      "objective": "Track the QoL work at the umbrella level while execution moves through smaller, completion-sized child contracts.",
+      "type": "FEATURE_CONTRACT",
+      "targetedRelease": null,
+      "garbageCollect": false
+    },
+    {
+      "id": "GRAB-QOL-101",
+      "title": "Add repo-configurable dashboard port support",
+      "status": "archived",
+      "archivePath": ".grabby/history/history-003.yaml",
+      "closedAt": "2026-03-23T03:10:25.391Z",
+      "objective": "Allow repositories to set the default dashboard port in config so `grabby ui` uses a predictable local port without requiring a manual CLI override...",
+      "type": "FEATURE_CONTRACT",
+      "files": [
+        "lib/config.cjs",
+        "bin/index.cjs",
+        "lib/dashboard/index.cjs",
+        "grabby.config.example.json",
+        "docs/commandline-workflow.md",
+        "tests/config.test.js",
+        "tests/dashboard.test.js"
+      ],
+      "targetedRelease": null,
+      "garbageCollect": false
+    },
+    {
+      "id": "GRAB-QOL-102",
+      "title": "Add targeted-release metadata and dashboard archive controls",
+      "status": "archived",
+      "archivePath": ".grabby/history/history-003.yaml",
+      "closedAt": "2026-03-23T03:10:25.423Z",
+      "objective": "Make contract metadata explicit and controllable by adding a targeted-release field plus a top-level garbage-collect checkbox that drives dashboard...",
+      "type": "FEATURE_CONTRACT",
+      "files": [
+        "templates/contract.md",
+        "lib/task-artifacts.cjs",
+        "lib/features.cjs",
+        "lib/dashboard/routes.cjs",
+        "lib/dashboard/public/index.html",
+        "lib/dashboard/public/app.js",
+        "lib/dashboard/public/styles.css",
+        "tests/task-artifacts.test.js",
+        "tests/features.test.js",
+        "tests/dashboard.test.js"
+      ],
+      "targetedRelease": null,
+      "garbageCollect": false
+    },
+    {
+      "id": "GRAB-QOL-103",
+      "title": "Expand calculator-project workflow regression coverage",
+      "status": "archived",
+      "archivePath": ".grabby/history/history-003.yaml",
+      "closedAt": "2026-03-23T03:10:25.452Z",
+      "objective": "Use the calculator project harness as a deterministic regression suite for both core calculator behavior and the main Grabby workflow stages.",
+      "type": "FEATURE_CONTRACT",
+      "files": [
+        "tests/integration/grabby-calculator-integration.test.js",
+        "tests/e2e/calculator-cli-user-flow.test.js",
+        "docs/grabby-calculator-regression-report.md"
+      ],
+      "targetedRelease": null,
+      "garbageCollect": false
+    },
+    {
+      "id": "GRAB-RULES-001",
+      "title": "Hierarchical Ruleset System - Umbrella Contract",
+      "status": "archived",
+      "archivePath": ".grabby/history/history-003.yaml",
+      "closedAt": "2026-03-23T03:10:25.480Z",
+      "objective": "Track the hierarchical ruleset work at the umbrella level while execution moves through smaller, completion-sized child contracts.",
+      "type": "FEATURE_CONTRACT",
+      "targetedRelease": null,
+      "garbageCollect": false
+    },
+    {
+      "id": "GRAB-RULES-101",
+      "title": "Add structured YAML frontmatter to rulesets",
+      "status": "archived",
+      "archivePath": ".grabby/history/history-003.yaml",
+      "closedAt": "2026-03-23T01:27:52.032Z",
+      "objective": "Extend the ruleset format to support YAML frontmatter with structured fields that enable unique identifiers, scope declarations, inheritance, and c...",
+      "type": "FEATURE_CONTRACT",
+      "files": [
+        "lib/rulesets/registry.cjs",
+        "lib/rulesets/frontmatter.cjs",
+        "definitions/ruleset-frontmatter.json",
+        "templates/rulesets/languages/dotnet.md",
+        "templates/rulesets/frameworks/aspnet-core.md",
+        "tests/rulesets/frontmatter.test.js",
+        "tests/rulesets/registry.test.js"
+      ],
+      "targetedRelease": null,
+      "garbageCollect": false
+    },
+    {
+      "id": "GRAB-RULES-101",
+      "title": "Add structured YAML frontmatter metadata to rulesets",
+      "status": "archived",
+      "archivePath": ".grabby/history/history-003.yaml",
+      "closedAt": "2026-03-23T03:10:25.509Z",
+      "objective": "Enable rulesets to carry structured metadata through YAML frontmatter so later detection, drafting, and merge logic can operate on typed rule metad...",
+      "type": "FEATURE_CONTRACT",
+      "targetedRelease": null,
+      "garbageCollect": false
+    },
+    {
+      "id": "GRAB-RULES-102",
+      "title": "Add repo signal detector for proposing candidate global r...",
+      "status": "archived",
+      "archivePath": ".grabby/history/history-003.yaml",
+      "closedAt": "2026-03-23T01:27:52.085Z",
+      "objective": "Build a signal detection system that scans repository for technology signals, matches them against ruleset definitions, and proposes candidate rule...",
+      "type": "FEATURE_CONTRACT",
+      "files": [
+        "lib/rulesets/detector.cjs",
+        "lib/rulesets/signals.cjs",
+        "bin/index.cjs",
+        "lib/dashboard/routes.cjs",
+        "tests/rulesets/detector.test.js"
+      ],
+      "targetedRelease": null,
+      "garbageCollect": false
+    },
+    {
+      "id": "GRAB-RULES-102",
+      "title": "Add repo signal detector for ruleset suggestions",
+      "status": "archived",
+      "archivePath": ".grabby/history/history-003.yaml",
+      "closedAt": "2026-03-23T03:10:25.536Z",
+      "objective": "Scan the repo for technology signals, propose candidate rulesets, and expose the results through both CLI and dashboard surfaces.",
+      "type": "FEATURE_CONTRACT",
+      "targetedRelease": null,
+      "garbageCollect": false
+    },
+    {
+      "id": "GRAB-RULES-103",
+      "title": "Add draft flow for generating rules as drafts",
+      "status": "archived",
+      "archivePath": ".grabby/history/history-003.yaml",
+      "closedAt": "2026-03-23T01:27:52.117Z",
+      "objective": "Build a draft workflow that generates structured JSON from LLM, verifies the structure, renders to markdown, and returns drafts for preview without...",
+      "type": "FEATURE_CONTRACT",
+      "files": [
+        "lib/rulesets/builder.cjs",
+        "lib/rulesets/authoring.cjs",
+        "lib/rulesets/draft.cjs",
+        "lib/rulesets/prompts.cjs",
+        "bin/index.cjs",
+        "lib/dashboard/routes.cjs",
+        "tests/rulesets/draft.test.js"
+      ],
+      "targetedRelease": null,
+      "garbageCollect": false
+    },
+    {
+      "id": "GRAB-RULES-103",
+      "title": "Add ruleset draft generation flow",
+      "status": "archived",
+      "archivePath": ".grabby/history/history-003.yaml",
+      "closedAt": "2026-03-23T03:10:25.560Z",
+      "objective": "Support structured ruleset draft generation, validation, rendering, and draft-file lifecycle operations for the dashboard and CLI surfaces.",
+      "type": "FEATURE_CONTRACT",
+      "targetedRelease": null,
+      "garbageCollect": false
+    },
+    {
+      "id": "GRAB-RULES-104",
+      "title": "Add dashboard editor with three-pane layout for ruleset m...",
+      "status": "archived",
+      "archivePath": ".grabby/history/history-003.yaml",
+      "closedAt": "2026-03-23T01:27:52.149Z",
+      "objective": "Build a dashboard ruleset editor that displays rules list in left pane, editable content in center pane with preview, and diff/apply controls in ri...",
+      "type": "FEATURE_CONTRACT",
+      "files": [
+        "lib/dashboard/public/index.html",
+        "lib/dashboard/public/app.js",
+        "lib/dashboard/public/style.css",
+        "lib/dashboard/routes.cjs",
+        "lib/dashboard/public/diff.js",
+        "tests/dashboard/editor.test.js"
+      ],
+      "targetedRelease": null,
+      "garbageCollect": false
+    },
+    {
+      "id": "GRAB-RULES-104",
+      "title": "Add dashboard rules editor with three-pane layout",
+      "status": "archived",
+      "archivePath": ".grabby/history/history-003.yaml",
+      "closedAt": "2026-03-23T03:10:25.585Z",
+      "objective": "Provide a three-pane dashboard experience for rules authoring with list, editor, and diff/apply surfaces backed by shared editor state logic.",
+      "type": "FEATURE_CONTRACT",
+      "targetedRelease": null,
+      "garbageCollect": false
+    },
+    {
+      "id": "GRAB-RULES-105",
+      "title": "Add merge/precedence logic for local rules activating glo...",
+      "status": "archived",
+      "archivePath": ".grabby/history/history-003.yaml",
+      "closedAt": "2026-03-23T01:27:52.177Z",
+      "objective": "Build a ruleset resolution system that resolves extends/include references, applies precedence rules, evaluates appliesWhen conditions, merges stan...",
+      "type": "FEATURE_CONTRACT",
+      "files": [
+        "lib/rulesets/resolver.cjs",
+        "lib/rulesets/merger.cjs",
+        "lib/rulesets/registry.cjs",
+        "bin/index.cjs",
+        "lib/dashboard/routes.cjs",
+        "docs/commandline-workflow.md",
+        "tests/rulesets/resolver.test.js",
+        "tests/rulesets/merger.test.js"
+      ],
+      "targetedRelease": null,
+      "garbageCollect": false
+    },
+    {
+      "id": "GRAB-RULES-105",
+      "title": "Add ruleset merge and precedence resolution",
+      "status": "archived",
+      "archivePath": ".grabby/history/history-003.yaml",
+      "closedAt": "2026-03-23T03:10:25.607Z",
+      "objective": "Resolve ruleset dependencies and merge effective rule content so dashboard and CLI surfaces can show the final composed result of local and global ...",
+      "type": "FEATURE_CONTRACT",
+      "targetedRelease": null,
+      "garbageCollect": false
+    },
+    {
+      "id": "GRAB-RULES-LAYOUT-001",
+      "title": "Rules Page Layout Density & Readability",
+      "status": "archived",
+      "archivePath": ".grabby/history/history-003.yaml",
+      "closedAt": "2026-03-22T21:08:15.920Z",
+      "objective": "Optimize the rules page layout for dense information display and comfortable reading of multi-hundred-line ruleset files.",
+      "type": "FEATURE_CONTRACT",
+      "files": [
+        "lib/dashboard/public/index.html",
+        "lib/dashboard/public/styles.css",
+        "lib/dashboard/public/app.js",
+        "tests/dashboard.test.js"
+      ],
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "GRAB-SYS-101",
@@ -1504,7 +2038,9 @@
         "lib/commands.cjs",
         "tests/system-awareness.test.js",
         "tests/commands.test.js"
-      ]
+      ],
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "GRAB-SYS-102",
@@ -1521,7 +2057,9 @@
         "docs/ENV_STACK.md",
         ".grabby/governance.lock",
         "tests/db-ruleset.test.js"
-      ]
+      ],
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "GRAB-SYS-103",
@@ -1536,7 +2074,9 @@
         "bin/index.cjs",
         "README.md",
         "tests/commands.test.js"
-      ]
+      ],
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "GRAB-SYS-104",
@@ -1551,7 +2091,9 @@
         "lib/commands.cjs",
         "tests/db-awareness.test.js",
         "tests/commands.test.js"
-      ]
+      ],
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "GRAB-SYS-105",
@@ -1564,7 +2106,9 @@
       "files": [
         "lib/db-awareness.cjs",
         "tests/db-awareness.test.js"
-      ]
+      ],
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "GRAB-SYS-106",
@@ -1579,7 +2123,9 @@
         "lib/commands.cjs",
         "tests/system-awareness.test.js",
         "tests/commands.test.js"
-      ]
+      ],
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "GRAB-SYS-107",
@@ -1595,7 +2141,9 @@
         "lib/commands.cjs",
         "tests/system-awareness.test.js",
         "tests/dependency-analyzer.test.js"
-      ]
+      ],
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "GRAB-SYS-108",
@@ -1610,7 +2158,9 @@
         "lib/commands.cjs",
         "tests/system-awareness.test.js",
         "tests/commands.test.js"
-      ]
+      ],
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "GRAB-SYS-109",
@@ -1623,7 +2173,9 @@
       "files": [
         "lib/system-awareness.cjs",
         "tests/system-awareness.test.js"
-      ]
+      ],
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "GRAB-SYS-110",
@@ -1640,7 +2192,9 @@
         "tests/db-awareness.test.js",
         "tests/system-awareness.test.js",
         "tests/commands.test.js"
-      ]
+      ],
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "GRAB-SYS-111",
@@ -1653,7 +2207,9 @@
       "files": [
         "lib/commands.cjs",
         "tests/commands.test.js"
-      ]
+      ],
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "GRAB-SYS-112",
@@ -1668,7 +2224,9 @@
         "lib/core.cjs",
         "tests/commands.test.js",
         "tests/core.test.js"
-      ]
+      ],
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "GRAB-SYS-113",
@@ -1683,7 +2241,9 @@
         "lib/system-awareness.cjs",
         "tests/config.test.js",
         "tests/system-awareness.test.js"
-      ]
+      ],
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "GRAB-SYS-114",
@@ -1697,7 +2257,9 @@
         "lib/commands.cjs",
         "lib/system-awareness.cjs",
         "tests/commands.test.js"
-      ]
+      ],
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "GRAB-SYS-115",
@@ -1711,7 +2273,9 @@
         "lib/commands.cjs",
         "tests/commands.test.js",
         "README.md"
-      ]
+      ],
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "GRAB-SYS-116",
@@ -1725,7 +2289,9 @@
         "lib/commands.cjs",
         "tests/commands.test.js",
         "tests/interactive-workflows.test.js"
-      ]
+      ],
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "GRAB-TRACKING-001",
@@ -1746,7 +2312,9 @@
         "README.md",
         "docs/EXECUTION_PROTOCOL.md",
         "tests/tracking-mode.test.js"
-      ]
+      ],
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "GRAB-UX-001",
@@ -1766,7 +2334,9 @@
         "tests/ruleset-builder.test.js",
         "tests/interactive-shell.test.js",
         "contracts/GRAB-UX-001.fc.md"
-      ]
+      ],
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "GRAB-UX-002",
@@ -1780,7 +2350,9 @@
         "lib/tui.cjs",
         "tests/tui.test.js",
         "contracts/GRAB-UX-002.fc.md"
-      ]
+      ],
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "GRAB-UX-003",
@@ -1801,7 +2373,86 @@
         "tests/interactive-shell.test.js",
         "tests/commands.test.js",
         "contracts/GRAB-UX-003.fc.md"
-      ]
+      ],
+      "targetedRelease": null,
+      "garbageCollect": false
+    },
+    {
+      "id": "GRAB-WEB-DASHBOARD-001",
+      "title": "Local Web Dashboard for Contract Visualization and Manage...",
+      "status": "archived",
+      "archivePath": ".grabby/history/history-002.yaml",
+      "closedAt": "2026-03-22T20:11:16.954Z",
+      "objective": "Create a local web-based dashboard that serves on localhost, providing developers with a visual interface to view, track, and edit contracts, see w...",
+      "type": "FEATURE_CONTRACT",
+      "files": [
+        "lib/dashboard/index.cjs",
+        "lib/dashboard/routes.cjs",
+        "lib/dashboard/commands.cjs",
+        "lib/dashboard/public/index.html",
+        "lib/dashboard/public/styles.css",
+        "lib/dashboard/public/app.js",
+        "bin/index.cjs",
+        "tests/dashboard.test.js",
+        "docs/commandline-workflow.md"
+      ],
+      "targetedRelease": null,
+      "garbageCollect": false
+    },
+    {
+      "id": "GRAB-WEB-RULESETS-002",
+      "title": "Dashboard Ruleset Visibility and Sync Status",
+      "status": "archived",
+      "archivePath": ".grabby/history/history-002.yaml",
+      "closedAt": "2026-03-22T20:11:17.024Z",
+      "objective": "Expose the repository ruleset state inside the local dashboard so users can see the current ruleset source, sync health, and the broader ruleset in...",
+      "type": "FEATURE_CONTRACT",
+      "files": [
+        "lib/dashboard/routes.cjs",
+        "lib/dashboard/public/index.html",
+        "lib/dashboard/public/app.js",
+        "lib/dashboard/public/styles.css",
+        "tests/dashboard.test.js"
+      ],
+      "targetedRelease": null,
+      "garbageCollect": false
+    },
+    {
+      "id": "GRAB-WEB-UI-OVERHAUL-003",
+      "title": "Dashboard UI Overhaul for Density, Hierarchy, and Respons...",
+      "status": "archived",
+      "archivePath": ".grabby/history/history-002.yaml",
+      "closedAt": "2026-03-22T20:11:17.066Z",
+      "objective": "Refine the dashboard UI system so the local web experience is denser, clearer, and more consistent across Dashboard, Contracts, CLI, and History wi...",
+      "type": "FEATURE_CONTRACT",
+      "files": [
+        "lib/dashboard/public/index.html",
+        "lib/dashboard/public/app.js",
+        "lib/dashboard/public/styles.css",
+        "tests/dashboard.test.js",
+        "docs/commandline-workflow.md"
+      ],
+      "targetedRelease": null,
+      "garbageCollect": false
+    },
+    {
+      "id": "GRAB-WEBSITE-WORKFLOW-001",
+      "title": "workflow website update",
+      "status": "archived",
+      "archivePath": ".grabby/history/history-002.yaml",
+      "closedAt": "2026-03-22T15:03:32.945Z",
+      "objective": "Update the docs website so the published workflow matches the current repo-local Grabby process from intake through release.",
+      "type": "FEATURE_CONTRACT",
+      "files": [
+        "contracts/GRAB-WEBSITE-WORKFLOW-001.fc.md",
+        "contracts/GRAB-WEBSITE-WORKFLOW-001.brief.md",
+        "contracts/GRAB-WEBSITE-WORKFLOW-001.plan.yaml",
+        "docs/index.html",
+        "docs/grabby-user-guide.html",
+        "docs/commandline-workflow.md"
+      ],
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "GRABBY-001",
@@ -1810,7 +2461,9 @@
       "archivePath": ".grabby/history/history-001.yaml",
       "closedAt": "2026-03-03T23:51:06.229Z",
       "objective": "Track the remaining repository-wide test coverage work for Grabby at the umbrella level while execution continues through smaller module-group cont...",
-      "type": "FEATURE_CONTRACT"
+      "type": "FEATURE_CONTRACT",
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "GRABBY-101",
@@ -1825,7 +2478,9 @@
         "tests/interactive-shell.test.js",
         "contracts/GRABBY-101.fc.md",
         "coverage/"
-      ]
+      ],
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "GRABBY-102",
@@ -1841,7 +2496,9 @@
         "tests/features-index.test.js",
         "contracts/GRABBY-102.fc.md",
         "coverage/"
-      ]
+      ],
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "GRABBY-103",
@@ -1858,7 +2515,9 @@
         "tests/ai-complete.test.js",
         "contracts/GRABBY-103.fc.md",
         "coverage/"
-      ]
+      ],
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "GRABBY-105",
@@ -1877,7 +2536,9 @@
         "tests/*.test.js",
         "contracts/GRABBY-105.fc.md",
         "coverage/"
-      ]
+      ],
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "GRABBY-106",
@@ -1898,7 +2559,9 @@
         "lib/tui.cjs",
         "lib/jira.cjs",
         "lib/commands.cjs"
-      ]
+      ],
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "IMP-201",
@@ -1907,7 +2570,9 @@
       "archivePath": ".grabby/history/history-001.yaml",
       "closedAt": "2026-03-04T03:59:27.483Z",
       "objective": "Track the BMAD-to-Grabby integration roadmap at the umbrella level while execution happens through smaller completion-sized contracts.",
-      "type": "FEATURE_CONTRACT"
+      "type": "FEATURE_CONTRACT",
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "IMP-211",
@@ -1916,7 +2581,9 @@
       "archivePath": ".grabby/history/history-001.yaml",
       "closedAt": "2026-03-04T03:59:12.814Z",
       "objective": "Formalize Grabby's agent-definition model so agent files, prompts, menu entries, and routing metadata can be validated before they break workflows.",
-      "type": "FEATURE_CONTRACT"
+      "type": "FEATURE_CONTRACT",
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "IMP-214",
@@ -1925,7 +2592,9 @@
       "archivePath": ".grabby/history/history-001.yaml",
       "closedAt": "2026-03-04T03:59:12.843Z",
       "objective": "Make Grabby's help and menu layers smarter about current repo state, installed capabilities, and recommended next actions.",
-      "type": "FEATURE_CONTRACT"
+      "type": "FEATURE_CONTRACT",
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "IMP-215",
@@ -1934,7 +2603,9 @@
       "archivePath": ".grabby/history/history-001.yaml",
       "closedAt": "2026-03-04T03:59:12.941Z",
       "objective": "Introduce reusable checklist-driven review prompts so Grabby's verification and audit stages are more explicit, consistent, and role-aware.",
-      "type": "FEATURE_CONTRACT"
+      "type": "FEATURE_CONTRACT",
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "INSTALL-301",
@@ -1953,7 +2624,9 @@
         "tests/commands.test.js",
         "tests/assessment.test.js",
         "docs/LLM_INSTALL.md"
-      ]
+      ],
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "PLUG-201",
@@ -1962,7 +2635,9 @@
       "archivePath": ".grabby/history/history-002.yaml",
       "closedAt": "2026-03-04T15:09:36.863Z",
       "objective": "Track the platform plugin expansion backlog for Grabby across cluster, registry, identity, and GitOps integrations while execution happens through ...",
-      "type": "feat"
+      "type": "feat",
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "PLUG-211",
@@ -1971,7 +2646,9 @@
       "archivePath": ".grabby/history/history-001.yaml",
       "closedAt": "2026-03-04T14:48:54.642Z",
       "objective": "Add a dedicated Grabby plugin for Helm chart discovery, validation context, and release-governance workflows so contracts can reason about chart st...",
-      "type": "feat"
+      "type": "feat",
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "PLUG-212",
@@ -1980,7 +2657,9 @@
       "archivePath": ".grabby/history/history-001.yaml",
       "closedAt": "2026-03-04T14:52:08.478Z",
       "objective": "Add a dedicated Grabby plugin for Argo CD so Grabby can understand applications, app-of-apps layouts, sync policies, project boundaries, and deploy...",
-      "type": "feat"
+      "type": "feat",
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "PLUG-213",
@@ -1989,7 +2668,9 @@
       "archivePath": ".grabby/history/history-002.yaml",
       "closedAt": "2026-03-04T14:57:49.317Z",
       "objective": "Add a Harbor plugin so Grabby can understand registry projects, image references, retention and replication config, and image-promotion workflows f...",
-      "type": "feat"
+      "type": "feat",
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "PLUG-214",
@@ -1998,7 +2679,9 @@
       "archivePath": ".grabby/history/history-002.yaml",
       "closedAt": "2026-03-04T15:05:18.892Z",
       "objective": "Add an Artifactory plugin so Grabby can understand JFrog repository usage, artifact source locations, promotion paths, and package-governance signa...",
-      "type": "feat"
+      "type": "feat",
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "PLUG-215",
@@ -2014,7 +2697,9 @@
         "tests/plugins.test.js",
         "tests/rancher-plugin.test.js",
         "README.md"
-      ]
+      ],
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "PLUG-216",
@@ -2023,7 +2708,9 @@
       "archivePath": ".grabby/history/history-001.yaml",
       "closedAt": "2026-03-04T14:48:52.886Z",
       "objective": "Add a Kubernetes plugin so Grabby can understand core Kubernetes manifests, workload relationships, namespace boundaries, service exposure, and dep...",
-      "type": "feat"
+      "type": "feat",
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "PLUG-217",
@@ -2032,7 +2719,9 @@
       "archivePath": ".grabby/history/history-002.yaml",
       "closedAt": "2026-03-04T14:57:49.341Z",
       "objective": "Add an OpenShift plugin so Grabby can understand OpenShift-specific resources, security constraints, routes, and deployment context from repo-owned...",
-      "type": "feat"
+      "type": "feat",
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "PLUG-218",
@@ -2041,7 +2730,9 @@
       "archivePath": ".grabby/history/history-002.yaml",
       "closedAt": "2026-03-04T15:05:18.925Z",
       "objective": "Add a Keycloak plugin so Grabby can understand realms, clients, roles, groups, identity providers, and auth-related integration risk from repo-owne...",
-      "type": "feat"
+      "type": "feat",
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "PLUG-219",
@@ -2050,7 +2741,9 @@
       "archivePath": ".grabby/history/history-001.yaml",
       "closedAt": "2026-03-04T14:47:22.937Z",
       "objective": "Add an intuitive plugin manager to the Grabby menu so developers can discover, enable, disable, inspect, and validate stack-specific plugins withou...",
-      "type": "feat"
+      "type": "feat",
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "PLUG-220",
@@ -2059,7 +2752,9 @@
       "archivePath": ".grabby/history/history-001.yaml",
       "closedAt": "2026-03-04T14:47:22.870Z",
       "objective": "Define a simple, portable plugin configuration model so any stack-specific plugin can be added to Grabby and controlled consistently across repos.",
-      "type": "feat"
+      "type": "feat",
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "PROJECT-BASELINE",
@@ -2073,7 +2768,9 @@
         "contracts/PROJECT-BASELINE.fc.md",
         "contracts/PROJECT-BASELINE.fc.md",
         "contracts/README.md"
-      ]
+      ],
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "PROJECT-BASELINE",
@@ -2082,7 +2779,9 @@
       "archivePath": ".grabby/history/history-002.yaml",
       "closedAt": "2026-03-09T04:31:48.575Z",
       "objective": "Capture the repository baseline for this react application so future feature contracts can stay aligned with the detected structure and tooling.",
-      "type": "FEATURE_CONTRACT"
+      "type": "FEATURE_CONTRACT",
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "PROJECT-BASELINE",
@@ -2091,7 +2790,9 @@
       "archivePath": ".grabby/history/history-002.yaml",
       "closedAt": "2026-03-21T17:42:53.212Z",
       "objective": "Capture the repository baseline for this node.js project so future feature contracts can stay aligned with the detected structure and tooling.",
-      "type": "FEATURE_CONTRACT"
+      "type": "FEATURE_CONTRACT",
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "PROJECT-BASELINE",
@@ -2100,7 +2801,9 @@
       "archivePath": ".grabby/history/history-002.yaml",
       "closedAt": "2026-03-21T20:05:36.964Z",
       "objective": "Capture the repository baseline for this node.js project so future feature contracts can stay aligned with the detected structure and tooling.",
-      "type": "FEATURE_CONTRACT"
+      "type": "FEATURE_CONTRACT",
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "SETUP-201",
@@ -2116,7 +2819,9 @@
         "README.md",
         "docs/QUICKSTART.md",
         "contracts/SETUP-201.fc.md"
-      ]
+      ],
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "SETUP-BASELINE",
@@ -2131,7 +2836,9 @@
         "contracts/SETUP-BASELINE.fc.md",
         ".grabby/project-context.json",
         "contracts/README.md"
-      ]
+      ],
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "SETUP-BASELINE",
@@ -2146,7 +2853,9 @@
         "contracts/SETUP-BASELINE.fc.md",
         ".grabby/project-context.json",
         "contracts/README.md"
-      ]
+      ],
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "SETUP-BASELINE",
@@ -2155,7 +2864,9 @@
       "archivePath": ".grabby/history/history-002.yaml",
       "closedAt": "2026-03-21T17:42:53.263Z",
       "objective": "Define the deterministic setup validation and repository indexing procedure that any LLM must follow after `grabby init` so governed workflows star...",
-      "type": "FEATURE_CONTRACT"
+      "type": "FEATURE_CONTRACT",
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "SETUP-BASELINE",
@@ -2164,7 +2875,9 @@
       "archivePath": ".grabby/history/history-002.yaml",
       "closedAt": "2026-03-21T20:05:37.188Z",
       "objective": "Define the deterministic setup validation and repository indexing procedure that any LLM must follow after `grabby init` so governed workflows star...",
-      "type": "FEATURE_CONTRACT"
+      "type": "FEATURE_CONTRACT",
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "SYSTEM-BASELINE",
@@ -2178,7 +2891,9 @@
         "contracts/SYSTEM-BASELINE.fc.md",
         "contracts/PROJECT-BASELINE.fc.md",
         "contracts/README.md"
-      ]
+      ],
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "SYSTEM-BASELINE",
@@ -2187,7 +2902,9 @@
       "archivePath": ".grabby/history/history-002.yaml",
       "closedAt": "2026-03-09T04:31:49.004Z",
       "objective": "Establish the baseline Grabby governance contract for `grabby` so initialization, planning, approval, execution, and audit flows start from a consi...",
-      "type": "FEATURE_CONTRACT"
+      "type": "FEATURE_CONTRACT",
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "SYSTEM-BASELINE",
@@ -2196,7 +2913,9 @@
       "archivePath": ".grabby/history/history-002.yaml",
       "closedAt": "2026-03-21T17:42:53.147Z",
       "objective": "Establish the baseline Grabby governance contract for `grabby` so initialization, planning, approval, execution, and audit flows start from a consi...",
-      "type": "FEATURE_CONTRACT"
+      "type": "FEATURE_CONTRACT",
+      "targetedRelease": null,
+      "garbageCollect": false
     },
     {
       "id": "SYSTEM-BASELINE",
@@ -2205,7 +2924,9 @@
       "archivePath": ".grabby/history/history-002.yaml",
       "closedAt": "2026-03-21T20:05:31.471Z",
       "objective": "Establish the baseline Grabby governance contract for `grabby` so initialization, planning, approval, execution, and audit flows start from a consi...",
-      "type": "FEATURE_CONTRACT"
+      "type": "FEATURE_CONTRACT",
+      "targetedRelease": null,
+      "garbageCollect": false
     }
   ]
 }

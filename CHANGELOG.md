@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [4.1.6] - 2026-03-23
+
+### Added
+- Structured ruleset frontmatter, repo signal detection, draft generation, merge resolution, and dashboard rules editing artifacts for hierarchical rules workflows
+- Contract metadata for targeted release and garbage collection, plus dashboard support for editing and honoring those fields
+- Repo-configurable dashboard port support with CLI override precedence
+
+### Changed
+- Contract queue cleanup now archives the completed QoL, rules, and dashboard merge work into `.grabby/history/`
+- Calculator workflow regression coverage now asserts phase-specific success markers across validate, plan, backlog, approve, execute, and audit
+
+### Fixed
+- Dashboard Express 5 catch-all routing regression for API fallthrough vs SPA shell handling
+- Rules draft persistence now avoids same-millisecond filename collisions
+
 ## [4.0.1] - 2026-03-21
 
 ### Added

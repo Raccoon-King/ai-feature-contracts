@@ -1,0 +1,33 @@
+contract: rules-layout-density.fc.md
+phase: plan
+version: 4.1.4 > 4.1.5
+timestamp: 2026-03-22T21:07:06.037Z
+context: []
+context_token_usage: 0
+context_token_budget: 700
+files:
+  - action: modify
+    path: lib/dashboard/public/index.html
+    reason: Restructure rules page markup
+  - action: modify
+    path: lib/dashboard/public/styles.css
+    reason: Density-focused CSS overhaul
+  - action: modify
+    path: lib/dashboard/public/app.js
+    reason: Update rendering and interactions
+  - action: modify
+    path: tests/dashboard.test.js
+    reason: Update assertions for new structure
+rules:
+  - §typescript
+  - §hooks
+  - §testing
+risks:
+  - State synchronization
+  - Type coverage
+  - Edge cases
+status: approved
+approval_token_required: Approved
+execution_mode: plan_only
+approved_at: 2026-03-22T21:07:12.256Z
+approval_token: Approved

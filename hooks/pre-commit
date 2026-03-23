@@ -140,6 +140,68 @@ if [ -n "$PACKAGE_CHANGES" ]; then
   echo ""
 fi
 
+# Validate active contracts have required metadata
+if [ "$ACTIVE_COUNT" -gt "0" ]; then
+  for contract in $APPROVED_CONTRACTS; do
+    if [ -n "$contract" ]; then
+      CONTRACT_NAME=$(basename "$contract" .fc.md)
+
+      # Check for missing ID field
+      if ! grep -q '\*\*ID:\*\*' "$contract" 2>/dev/null; then
+        echo "${YELLOW}⚠ Contract missing ID field: ${CONTRACT_NAME}${NC}"
+      fi
+
+      # Check for empty Done When section
+      if grep -q '## Done When' "$contract" 2>/dev/null; then
+        DONE_WHEN_CONTENT=$(sed -n '/## Done When/,/^## /p' "$contract" | grep -E '^\s*-\s+\[' | head -1)
+        if [ -z "$DONE_WHEN_CONTENT" ]; then
+          echo "${YELLOW}⚠ Contract has empty Done When section: ${CONTRACT_NAME}${NC}"
+        fi
+      else
+        echo "${YELLOW}⚠ Contract missing Done When section: ${CONTRACT_NAME}${NC}"
+      fi
+
+      # Check for plan if contract is approved/executing
+      PLAN_FILE="contracts/${CONTRACT_NAME}.plan.yaml"
+      if [ -f "$PLAN_FILE" ]; then
+        PLAN_STATUS=$(grep -E '^status:' "$PLAN_FILE" | head -1 | sed 's/status:\s*//')
+        if [ "$PLAN_STATUS" != "approved" ] && [ "$PLAN_STATUS" != "executing" ]; then
+          echo "${YELLOW}⚠ Contract plan not approved: ${CONTRACT_NAME} (status: ${PLAN_STATUS:-unknown})${NC}"
+        fi
+      fi
+    fi
+  done
+  echo ""
+fi
+
+# Check bundleDependencies consistency
+if [ -f "package.json" ]; then
+  # Extract bundleDependencies and check if they exist in dependencies
+  BUNDLED=$(node -e "const p=require('./package.json'); console.log((p.bundleDependencies||p.bundledDependencies||[]).join(' '))" 2>/dev/null || echo "")
+  if [ -n "$BUNDLED" ]; then
+    DEPS=$(node -e "const p=require('./package.json'); const d={...p.dependencies,...p.devDependencies}; console.log(Object.keys(d).join(' '))" 2>/dev/null || echo "")
+    MISSING=""
+    for pkg in $BUNDLED; do
+      if ! echo "$DEPS" | grep -qw "$pkg"; then
+        MISSING="$MISSING $pkg"
+      fi
+    done
+    if [ -n "$MISSING" ]; then
+      echo "${YELLOW}⚠ bundleDependencies not in dependencies:${MISSING}${NC}"
+    fi
+  fi
+fi
+
+# Check lockfile freshness
+if [ -f "package.json" ] && [ -f "package-lock.json" ]; then
+  PKG_TIME=$(stat -c %Y package.json 2>/dev/null || stat -f %m package.json 2>/dev/null || echo "0")
+  LOCK_TIME=$(stat -c %Y package-lock.json 2>/dev/null || stat -f %m package-lock.json 2>/dev/null || echo "0")
+  if [ "$PKG_TIME" -gt "$LOCK_TIME" ]; then
+    echo "${YELLOW}⚠ package.json is newer than package-lock.json (run npm install)${NC}"
+    echo ""
+  fi
+fi
+
 echo "${GREEN}✓ Pre-commit checks passed.${NC}"
 echo ""
 

@@ -1,0 +1,39 @@
+contract: GRAB-RULES-104.fc.md
+phase: plan
+version: 4.1.5 > 4.2.0
+timestamp: 2026-03-23T01:10:55.626Z
+context: []
+context_token_usage: 0
+context_token_budget: 700
+files:
+  - action: modify
+    path: lib/dashboard/public/index.html
+    reason: Add three-pane layout structure
+  - action: modify
+    path: lib/dashboard/public/app.js
+    reason: Implement editor logic and state management
+  - action: modify
+    path: lib/dashboard/public/style.css
+    reason: Styles for three-pane layout and diff view
+  - action: modify
+    path: lib/dashboard/routes.cjs
+    reason: Add save, apply, and discard endpoints
+  - action: create
+    path: lib/dashboard/public/diff.js
+    reason: Client-side diff computation and rendering
+  - action: create
+    path: tests/dashboard/editor.test.js
+    reason: Unit tests for editor state management
+rules:
+  - §typescript
+  - §hooks
+  - §testing
+risks:
+  - State synchronization
+  - Type coverage
+  - Edge cases
+status: approved
+approval_token_required: Approved
+execution_mode: plan_only
+approved_at: 2026-03-23T01:10:59.774Z
+approval_token: Approved

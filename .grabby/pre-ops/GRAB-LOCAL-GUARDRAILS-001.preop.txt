@@ -1,0 +1,31 @@
+╭────────────────────────────────────────────────────────────────────╮
+│ Plan to implement                                                  │
+│                                                                    │
+│ Add local lint rules, workflow policy checks, contract validation guardrails, and preflight best-practice automation that catch the recent CI merge blockers before code is pushed│
+│                                                                    │
+│ Overview                                                           │
+│                                                                    │
+│ - ARCH_INDEX_v1                                                    │
+│                                                                    │
+│ User Requirements                                                  │
+│                                                                    │
+│ - Local preflight checks catch release-workflow branch-policy drift│
+│ - Local validation catches contract metadata gaps before CI        │
+│ - Local packaging or dependency checks catch runtime bundle        │
+│ regressions before CI                                              │
+│ - Documentation explains the local guardrail workflow and when to  │
+│ run it                                                             │
+│                                                                    │
+│ ---                                                                │
+│ ---                                                                │
+│ ---                                                                │
+│ Verification Plan                                                  │
+│                                                                    │
+│ 1. Local preflight checks catch release-workflow branch-policy     │
+│ drift                                                              │
+│ 2. Local validation catches contract metadata gaps before CI       │
+│ 3. Local packaging or dependency checks catch runtime bundle       │
+│ regressions before CI                                              │
+│ 4. Documentation explains the local guardrail workflow and when to │
+│ run it                                                             │
+╰────────────────────────────────────────────────────────────────────╯

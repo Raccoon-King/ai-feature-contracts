@@ -18,6 +18,7 @@ jobs:
   validate-contracts:
     name: Validate Contracts
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     permissions:
       contents: read
 
@@ -34,24 +35,42 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Detect active contracts
+        id: contracts
+        shell: bash
+        run: |
+          shopt -s nullglob
+          contracts=(contracts/*.fc.md)
+          if [ ${#contracts[@]} -eq 0 ]; then
+            echo "found=false" >> "$GITHUB_OUTPUT"
+            echo "No active contracts found. Skipping contract validation."
+            exit 0
+          fi
+
+          echo "found=true" >> "$GITHUB_OUTPUT"
+          echo "files=${contracts[*]}" >> "$GITHUB_OUTPUT"
+
       - name: Validate all contracts
+        if: steps.contracts.outputs.found == 'true'
+        shell: bash
         run: |
           echo "Validating contracts..."
-          for contract in contracts/*.fc.md; do
-            if [ -f "$contract" ]; then
-              echo "Checking: $contract"
-              node bin/index.cjs validate "$contract"
-            fi
+          for contract in ${{ steps.contracts.outputs.files }}; do
+            echo "Checking: $contract"
+            node bin/index.cjs validate "$contract"
           done
 
       - name: Check for unapproved contracts
+        if: steps.contracts.outputs.found == 'true'
+        shell: bash
         run: |
-          unapproved=$(grep -l "Status.*draft" contracts/*.fc.md 2>/dev/null || true)
+          unapproved=$(grep -l "Status.*draft" ${{ steps.contracts.outputs.files }} 2>/dev/null || true)
           if [ -n "$unapproved" ]; then
             echo "::warning::Found draft contracts: $unapproved"
           fi
 
       - name: Generate metrics
+        if: steps.contracts.outputs.found == 'true'
         run: node bin/index.cjs metrics > contract-metrics.json
         continue-on-error: true
 
@@ -61,4 +80,4 @@ jobs:
           name: contract-metrics
           path: contract-metrics.json
           retention-days: 30
-        if: always()
+        if: always() && steps.contracts.outputs.found == 'true'
