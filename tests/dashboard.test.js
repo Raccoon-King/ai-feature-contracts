@@ -395,6 +395,7 @@ describe('dashboard', () => {
     expect(response.body.contract.metadata).toEqual({
       targetedRelease: 'v4.2.0',
       garbageCollect: true,
+      splitStory: false,
     });
     expect(response.body.contract.timeline.map((entry) => entry.id)).toEqual(expect.arrayContaining(['contract', 'plan', 'approve', 'audit']));
   });
@@ -418,6 +419,7 @@ describe('dashboard', () => {
     expect(response.body.contract.metadata).toEqual({
       targetedRelease: 'v4.2.1',
       garbageCollect: true,
+      splitStory: false,
     });
     expect(fs.readFileSync(path.join(tempDir, 'contracts', 'dash-101.fc.md'), 'utf8')).toContain('saved from dashboard');
     expect(fs.readFileSync(path.join(tempDir, 'contracts', 'dash-101.fc.md'), 'utf8')).toContain('**Status:** approved');
