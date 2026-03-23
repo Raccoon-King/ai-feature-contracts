@@ -378,6 +378,25 @@ async function runGrabby(args, { cwd } = {}) {
   };
 }
 
+function expectSuccessfulWorkflowStep(step, result, options = {}) {
+  const output = result.stdout + result.stderr;
+
+  expect(result.status).toBe(0);
+  if (options.contains) {
+    expect(output).toContain(options.contains);
+  }
+  if (options.notContains) {
+    expect(output).not.toContain(options.notContains);
+  }
+  expect(output.toLowerCase()).not.toMatch(/unhandled|typeerror|syntaxerror/i);
+
+  if (options.filePath) {
+    expect(fs.existsSync(options.filePath)).toBe(true);
+  }
+
+  return output;
+}
+
 /**
  * Retry helper: run `fn(projectDir)` with a fresh project.
  * If it throws or returns a failure, delete the project, create a new one,
@@ -732,35 +751,37 @@ describe('Grabby Calculator Integration — Grabby Repo Only', () => {
 
           // Step 2: validate
           const validateResult = await runGrabby(['validate', contractFile], { cwd: dir });
-          expect(validateResult.status).toBe(0);
-          const validateOut = validateResult.stdout + validateResult.stderr;
-          expect(validateOut.toLowerCase()).not.toMatch(/unhandled|typeerror/i);
+          expectSuccessfulWorkflowStep('validate', validateResult, {
+            contains: 'Validation passed',
+            notContains: 'Validation passed with warnings',
+          });
 
           // Step 3: plan
           const planResult = await runGrabby(['plan', contractFile], { cwd: dir });
-          expect(planResult.status).toBe(0);
-          expect(fs.existsSync(getPlanPath(dir))).toBe(true);
-          const planOut = planResult.stdout + planResult.stderr;
-          expect(planOut.toLowerCase()).not.toMatch(/unhandled|typeerror/i);
+          expectSuccessfulWorkflowStep('plan', planResult, {
+            contains: 'PHASE 1: PLAN',
+            filePath: getPlanPath(dir),
+          });
 
           // Step 4: backlog
           const backlogResult = await runGrabby(['backlog', contractFile], { cwd: dir });
-          expect(backlogResult.status).toBe(0);
-          expect(fs.existsSync(getBacklogPath(dir))).toBe(true);
-          const backlogOut = backlogResult.stdout + backlogResult.stderr;
-          expect(backlogOut.toLowerCase()).not.toMatch(/unhandled|typeerror/i);
+          expectSuccessfulWorkflowStep('backlog', backlogResult, {
+            contains: 'AGILE BACKLOG',
+            filePath: getBacklogPath(dir),
+          });
 
           // Step 5: approve
           const approveResult = await runGrabby(['approve', contractFile], { cwd: dir });
-          expect(approveResult.status).toBe(0);
-          const approveOut = approveResult.stdout + approveResult.stderr;
-          expect(approveOut.toLowerCase()).not.toMatch(/unhandled|typeerror/i);
+          expectSuccessfulWorkflowStep('approve', approveResult, {
+            contains: 'Contract approved',
+          });
+          expect(fs.readFileSync(getContractPath(dir, contractFile), 'utf8')).toContain('**Status:** approved');
 
           // Step 6: execute
           const executeResult = await runGrabby(['execute', contractFile], { cwd: dir });
-          expect(executeResult.status).toBe(0);
-          const executeOut = executeResult.stdout + executeResult.stderr;
-          expect(executeOut.toLowerCase()).not.toMatch(/unhandled|typeerror/i);
+          expectSuccessfulWorkflowStep('execute', executeResult, {
+            contains: 'PHASE 2: EXECUTE',
+          });
 
           // Step 7: implement (write calculator source files)
           writeCalculatorSourceFiles(dir);
@@ -770,10 +791,10 @@ describe('Grabby Calculator Integration — Grabby Repo Only', () => {
 
           // Step 8: audit
           const auditResult = await runGrabby(['audit', contractFile], { cwd: dir });
-          expect(auditResult.status).toBe(0);
-          expect(fs.existsSync(getAuditPath(dir))).toBe(true);
-          const auditOut = auditResult.stdout + auditResult.stderr;
-          expect(auditOut.toLowerCase()).not.toMatch(/unhandled|typeerror/i);
+          expectSuccessfulWorkflowStep('audit', auditResult, {
+            contains: 'POST-EXECUTION AUDIT',
+            filePath: getAuditPath(dir),
+          });
         },
         async (dir) => {
           // Repair before retry: write contract and source files

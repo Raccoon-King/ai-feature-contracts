@@ -319,3 +319,94 @@ describe('rulesets plugin hooks', () => {
     expect(result.cancel).toBe(false);
   });
 });
+
+describe('registry frontmatter integration', () => {
+  const { parseRuleset, parseRulesetWithFrontmatter, DEFAULT_METADATA } = require('../../lib/rulesets/registry.cjs');
+
+  test('parseRuleset extracts metadata from frontmatter', () => {
+    const content = `---
+id: languages/dotnet
+scope: global
+kind: language
+priority: 100
+extends:
+  - policies/security
+---
+
+# RULESET: .NET
+
+## Purpose
+- Standards for C# and .NET projects
+
+## Standards
+- Use SDK-style projects`;
+
+    const result = parseRuleset(content, 'test-source');
+
+    expect(result.name).toBe('.NET');
+    expect(result.source).toBe('test-source');
+    expect(result.metadata.id).toBe('languages/dotnet');
+    expect(result.metadata.scope).toBe('global');
+    expect(result.metadata.kind).toBe('language');
+    expect(result.metadata.priority).toBe(100);
+    expect(result.extends).toContain('policies/security');
+    expect(result.frontmatterValid).toBe(true);
+  });
+
+  test('parseRuleset handles legacy rulesets without frontmatter', () => {
+    const content = `# RULESET: Legacy Rules
+
+extends: base-rules
+
+## Purpose
+- Legacy format support
+
+## Standards
+- Follow existing patterns`;
+
+    const result = parseRuleset(content, 'legacy-source');
+
+    expect(result.name).toBe('Legacy Rules');
+    expect(result.metadata).toEqual(DEFAULT_METADATA);
+    expect(result.extends).toContain('base-rules');
+    expect(result.frontmatterValid).toBe(true);
+  });
+
+  test('parseRuleset reports frontmatter validation errors', () => {
+    const content = `---
+scope: invalid-scope
+kind: not-a-kind
+---
+
+# RULESET: Invalid`;
+
+    const result = parseRuleset(content, 'invalid-source');
+
+    expect(result.frontmatterValid).toBe(false);
+    expect(result.frontmatterErrors.length).toBeGreaterThan(0);
+  });
+
+  test('parseRuleset uses frontmatter extends over content extends', () => {
+    const content = `---
+extends:
+  - frontmatter/base
+---
+
+# RULESET: Priority Test
+
+extends: content-base
+
+## Purpose
+- Test priority`;
+
+    const result = parseRuleset(content, 'priority-test');
+
+    expect(result.extends).toContain('frontmatter/base');
+    expect(result.extends).not.toContain('content-base');
+  });
+
+  test('parseRulesetWithFrontmatter is re-exported', () => {
+    expect(typeof parseRulesetWithFrontmatter).toBe('function');
+    expect(typeof DEFAULT_METADATA).toBe('object');
+  });
+});

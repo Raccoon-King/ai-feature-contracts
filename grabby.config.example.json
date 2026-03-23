@@ -127,6 +127,10 @@
     "postComplete": []
   },
 
+  "dashboard": {
+    "port": 3847
+  },
+
   "metrics": {
     "enabled": true,
     "trackCosts": false,

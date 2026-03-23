@@ -52,8 +52,21 @@ describe('config', () => {
   test('defaults contract tracking mode to tracked', () => {
     initConfig(dir);
     const cfg = loadConfig(dir);
+    expect(cfg.dashboard.port).toBe(3847);
     expect(getTrackingMode(cfg, dir)).toBe('tracked');
     expect(getContractsDirectory(dir, cfg)).toBe(path.join(dir, 'contracts'));
+  });
+
+  test('validateConfig accepts valid dashboard ports and rejects invalid values', () => {
+    expect(validateConfig({
+      contracts: { directory: 'contracts', trackingMode: 'tracked' },
+      dashboard: { port: 4123 },
+    }).errors).not.toContain('dashboard.port must be an integer between 1 and 65535');
+
+    expect(validateConfig({
+      contracts: { directory: 'contracts', trackingMode: 'tracked' },
+      dashboard: { port: 70000 },
+    }).errors).toContain('dashboard.port must be an integer between 1 and 65535');
   });
 
   test('resolves local-only tracking mode to .grabby/contracts', () => {

@@ -1,0 +1,137 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://grabby.dev/schemas/ruleset-frontmatter.json",
+  "title": "Grabby Ruleset Frontmatter",
+  "description": "Schema for YAML frontmatter in Grabby ruleset files",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]*/[a-z][a-z0-9-]*$",
+      "description": "Unique identifier in category/name format (e.g., 'languages/dotnet')"
+    },
+    "scope": {
+      "type": "string",
+      "enum": ["global", "local"],
+      "default": "local",
+      "description": "Scope of the ruleset: 'global' for reusable packs, 'local' for repo-specific activation"
+    },
+    "kind": {
+      "type": "string",
+      "enum": ["language", "framework", "domain", "policy", "testing", "tooling"],
+      "default": "domain",
+      "description": "Classification of the ruleset"
+    },
+    "priority": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 1000,
+      "default": 0,
+      "description": "Priority for merge resolution (higher = takes precedence)"
+    },
+    "signals": {
+      "type": "object",
+      "description": "File patterns that indicate this ruleset should apply",
+      "properties": {
+        "any": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/signal" },
+          "description": "Ruleset applies if ANY signal matches"
+        },
+        "all": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/signal" },
+          "description": "Ruleset applies only if ALL signals match"
+        }
+      },
+      "additionalProperties": false
+    },
+    "extends": {
+      "type": "array",
+      "items": { "type": "string" },
+      "default": [],
+      "description": "Ruleset IDs to inherit from (standards are merged)"
+    },
+    "include": {
+      "type": "array",
+      "items": { "type": "string" },
+      "default": [],
+      "description": "Global ruleset IDs to activate (for local rules)"
+    },
+    "appliesWhen": {
+      "type": "object",
+      "description": "Conditions for when this local rule activates global packs",
+      "properties": {
+        "any": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/condition" },
+          "description": "Activates if ANY condition matches"
+        },
+        "all": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/condition" },
+          "description": "Activates only if ALL conditions match"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": true,
+  "definitions": {
+    "signal": {
+      "type": "object",
+      "description": "A detection signal for auto-proposing rulesets",
+      "properties": {
+        "glob": {
+          "type": "string",
+          "description": "Glob pattern to match files (e.g., '**/*.sln')"
+        },
+        "file": {
+          "type": "string",
+          "description": "Exact file name to check for (e.g., 'package.json')"
+        },
+        "packageDep": {
+          "type": "string",
+          "description": "Package dependency to check in package.json (e.g., 'react')"
+        },
+        "content": {
+          "type": "string",
+          "description": "Content pattern to search for in matched files"
+        },
+        "weight": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "default": 1,
+          "description": "Confidence weight for this signal (0-1)"
+        }
+      },
+      "minProperties": 1,
+      "additionalProperties": false
+    },
+    "condition": {
+      "type": "object",
+      "description": "A condition for when a local rule activates",
+      "properties": {
+        "pathPrefix": {
+          "type": "string",
+          "description": "Path prefix to match (e.g., 'src/services')"
+        },
+        "repoSignal": {
+          "type": "string",
+          "description": "Detected repo signal to check (e.g., 'dotnet')"
+        },
+        "hasFile": {
+          "type": "string",
+          "description": "File that must exist"
+        },
+        "notHasFile": {
+          "type": "string",
+          "description": "File that must not exist"
+        }
+      },
+      "minProperties": 1,
+      "additionalProperties": false
+    }
+  }
+}

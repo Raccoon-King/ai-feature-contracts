@@ -11,4 +11,193 @@ entries:
       - lib/dashboard/public/app.js
       - tests/dashboard.test.js
     closedAt: 2026-03-22T21:08:15.920Z
-lastUpdated: 2026-03-22T21:08:15.921Z
+  - id: GRAB-RULES-101
+    title: Add structured YAML frontmatter to rulesets
+    objective: Extend the ruleset format to support YAML frontmatter with structured
+      fields that enable unique identifiers, scope declarations, inheritance,
+      and c...
+    type: FEATURE_CONTRACT
+    files:
+      - lib/rulesets/registry.cjs
+      - lib/rulesets/frontmatter.cjs
+      - definitions/ruleset-frontmatter.json
+      - templates/rulesets/languages/dotnet.md
+      - templates/rulesets/frameworks/aspnet-core.md
+      - tests/rulesets/frontmatter.test.js
+      - tests/rulesets/registry.test.js
+    closedAt: 2026-03-23T01:27:52.032Z
+  - id: GRAB-RULES-102
+    title: Add repo signal detector for proposing candidate global r...
+    objective: Build a signal detection system that scans repository for technology
+      signals, matches them against ruleset definitions, and proposes candidate
+      rule...
+    type: FEATURE_CONTRACT
+    files:
+      - lib/rulesets/detector.cjs
+      - lib/rulesets/signals.cjs
+      - bin/index.cjs
+      - lib/dashboard/routes.cjs
+      - tests/rulesets/detector.test.js
+    closedAt: 2026-03-23T01:27:52.085Z
+  - id: GRAB-RULES-103
+    title: Add draft flow for generating rules as drafts
+    objective: Build a draft workflow that generates structured JSON from LLM,
+      verifies the structure, renders to markdown, and returns drafts for
+      preview without...
+    type: FEATURE_CONTRACT
+    files:
+      - lib/rulesets/builder.cjs
+      - lib/rulesets/authoring.cjs
+      - lib/rulesets/draft.cjs
+      - lib/rulesets/prompts.cjs
+      - bin/index.cjs
+      - lib/dashboard/routes.cjs
+      - tests/rulesets/draft.test.js
+    closedAt: 2026-03-23T01:27:52.117Z
+  - id: GRAB-RULES-104
+    title: Add dashboard editor with three-pane layout for ruleset m...
+    objective: Build a dashboard ruleset editor that displays rules list in left
+      pane, editable content in center pane with preview, and diff/apply
+      controls in ri...
+    type: FEATURE_CONTRACT
+    files:
+      - lib/dashboard/public/index.html
+      - lib/dashboard/public/app.js
+      - lib/dashboard/public/style.css
+      - lib/dashboard/routes.cjs
+      - lib/dashboard/public/diff.js
+      - tests/dashboard/editor.test.js
+    closedAt: 2026-03-23T01:27:52.149Z
+  - id: GRAB-RULES-105
+    title: Add merge/precedence logic for local rules activating glo...
+    objective: Build a ruleset resolution system that resolves extends/include
+      references, applies precedence rules, evaluates appliesWhen conditions,
+      merges stan...
+    type: FEATURE_CONTRACT
+    files:
+      - lib/rulesets/resolver.cjs
+      - lib/rulesets/merger.cjs
+      - lib/rulesets/registry.cjs
+      - bin/index.cjs
+      - lib/dashboard/routes.cjs
+      - docs/commandline-workflow.md
+      - tests/rulesets/resolver.test.js
+      - tests/rulesets/merger.test.js
+    closedAt: 2026-03-23T01:27:52.177Z
+  - id: CONTRACT-RUNORDER-001
+    title: Add contract run order metadata and dashboard reordering ...
+    objective: Introduce a user-managed run order for contracts and expose it in the
+      dashboard so users can understand what run order means and reorder active
+      con...
+    type: FEATURE_CONTRACT
+    files:
+      - templates/contract.md
+      - lib/task-artifacts.cjs
+      - lib/features.cjs
+      - lib/dashboard/routes.cjs
+      - lib/dashboard/public/index.html
+      - lib/dashboard/public/app.js
+      - lib/dashboard/public/styles.css
+      - tests/task-artifacts.test.js
+      - tests/features.test.js
+      - tests/dashboard.test.js
+    closedAt: 2026-03-23T02:19:52.949Z
+  - id: DASH-MERGE-001
+    title: Fix dashboard catch-all routing regression after Express ...
+    objective: Restore clean dashboard startup and correct route fallthrough so the
+      dashboard serves the SPA shell for non-API requests without intercepting
+      unmat...
+    type: FEATURE_CONTRACT
+    files:
+      - lib/dashboard/index.cjs
+      - tests/dashboard.test.js
+    closedAt: 2026-03-23T03:10:25.300Z
+  - id: GRAB-QOL-001
+    title: QoL umbrella for dashboard config, contract metadata, and...
+    objective: Track the QoL work at the umbrella level while execution moves
+      through smaller, completion-sized child contracts.
+    type: FEATURE_CONTRACT
+    closedAt: 2026-03-23T03:10:25.356Z
+  - id: GRAB-QOL-101
+    title: Add repo-configurable dashboard port support
+    objective: Allow repositories to set the default dashboard port in config so
+      `grabby ui` uses a predictable local port without requiring a manual CLI
+      override...
+    type: FEATURE_CONTRACT
+    files:
+      - lib/config.cjs
+      - bin/index.cjs
+      - lib/dashboard/index.cjs
+      - grabby.config.example.json
+      - docs/commandline-workflow.md
+      - tests/config.test.js
+      - tests/dashboard.test.js
+    closedAt: 2026-03-23T03:10:25.391Z
+  - id: GRAB-QOL-102
+    title: Add targeted-release metadata and dashboard archive controls
+    objective: Make contract metadata explicit and controllable by adding a
+      targeted-release field plus a top-level garbage-collect checkbox that
+      drives dashboard...
+    type: FEATURE_CONTRACT
+    files:
+      - templates/contract.md
+      - lib/task-artifacts.cjs
+      - lib/features.cjs
+      - lib/dashboard/routes.cjs
+      - lib/dashboard/public/index.html
+      - lib/dashboard/public/app.js
+      - lib/dashboard/public/styles.css
+      - tests/task-artifacts.test.js
+      - tests/features.test.js
+      - tests/dashboard.test.js
+    closedAt: 2026-03-23T03:10:25.423Z
+  - id: GRAB-QOL-103
+    title: Expand calculator-project workflow regression coverage
+    objective: Use the calculator project harness as a deterministic regression
+      suite for both core calculator behavior and the main Grabby workflow
+      stages.
+    type: FEATURE_CONTRACT
+    files:
+      - tests/integration/grabby-calculator-integration.test.js
+      - tests/e2e/calculator-cli-user-flow.test.js
+      - docs/grabby-calculator-regression-report.md
+    closedAt: 2026-03-23T03:10:25.452Z
+  - id: GRAB-RULES-001
+    title: Hierarchical Ruleset System - Umbrella Contract
+    objective: Track the hierarchical ruleset work at the umbrella level while
+      execution moves through smaller, completion-sized child contracts.
+    type: FEATURE_CONTRACT
+    closedAt: 2026-03-23T03:10:25.480Z
+  - id: GRAB-RULES-101
+    title: Add structured YAML frontmatter metadata to rulesets
+    objective: Enable rulesets to carry structured metadata through YAML frontmatter
+      so later detection, drafting, and merge logic can operate on typed rule
+      metad...
+    type: FEATURE_CONTRACT
+    closedAt: 2026-03-23T03:10:25.509Z
+  - id: GRAB-RULES-102
+    title: Add repo signal detector for ruleset suggestions
+    objective: Scan the repo for technology signals, propose candidate rulesets, and
+      expose the results through both CLI and dashboard surfaces.
+    type: FEATURE_CONTRACT
+    closedAt: 2026-03-23T03:10:25.536Z
+  - id: GRAB-RULES-103
+    title: Add ruleset draft generation flow
+    objective: Support structured ruleset draft generation, validation, rendering,
+      and draft-file lifecycle operations for the dashboard and CLI surfaces.
+    type: FEATURE_CONTRACT
+    closedAt: 2026-03-23T03:10:25.560Z
+  - id: GRAB-RULES-104
+    title: Add dashboard rules editor with three-pane layout
+    objective: Provide a three-pane dashboard experience for rules authoring with
+      list, editor, and diff/apply surfaces backed by shared editor state logic.
+    type: FEATURE_CONTRACT
+    closedAt: 2026-03-23T03:10:25.585Z
+  - id: GRAB-RULES-105
+    title: Add ruleset merge and precedence resolution
+    objective: Resolve ruleset dependencies and merge effective rule content so
+      dashboard and CLI surfaces can show the final composed result of local and
+      global ...
+    type: FEATURE_CONTRACT
+    closedAt: 2026-03-23T03:10:25.607Z
+lastUpdated: 2026-03-23T03:10:25.609Z

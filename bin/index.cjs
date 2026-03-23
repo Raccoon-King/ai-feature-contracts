@@ -16,7 +16,7 @@ const { createPluginRegistry, scaffoldPlugin, validatePlugin } = require('../lib
 const { createTUI } = require('../lib/tui.cjs');
 const { isAIAvailable, getAvailableProvider, completeContract, formatSuggestions } = require('../lib/ai-complete.cjs');
 const { createAPIServer } = require('../lib/api-server.cjs');
-const { runDashboard } = require('../lib/dashboard/index.cjs');
+const { runDashboard, resolveDashboardPort } = require('../lib/dashboard/index.cjs');
 const { getWorkspaceContext, findAllContracts, formatWorkspaceInfo } = require('../lib/multi-repo.cjs');
 const { initConfig, loadConfig, saveConfig, setConfigValue, validateConfig, getConfigPath } = require('../lib/config.cjs');
 const { testConnection, createIssueFromContract, listLinks, linkIssue, unlinkIssue, syncContract, importIssue, importIssuesByJql } = require('../lib/jira.cjs');
@@ -446,7 +446,7 @@ function tui() {
   app.start();
 }
 
-function resolvePortArg(argvList = args, fallback = 3847) {
+function resolvePortArg(argvList = args, fallback = undefined) {
   const namedIndex = argvList.indexOf('--port');
   if (namedIndex !== -1 && argvList[namedIndex + 1]) {
     return Number.parseInt(argvList[namedIndex + 1], 10);
@@ -461,10 +461,10 @@ function resolvePortArg(argvList = args, fallback = 3847) {
 }
 
 async function ui() {
-  const port = resolvePortArg(args);
+  const explicitPort = resolvePortArg(args);
   const autoOpen = !args.includes('--no-open');
 
-  if (!Number.isInteger(port) || port < 0 || port > 65535) {
+  if (explicitPort !== undefined && (!Number.isInteger(explicitPort) || explicitPort < 0 || explicitPort > 65535)) {
     console.log(c.error('Usage: grabby ui [--port <port>] [--no-open]'));
     process.exit(1);
   }
@@ -476,7 +476,7 @@ async function ui() {
 
   await runDashboard({
     cwd: CWD,
-    port,
+    port: resolveDashboardPort({ cwd: CWD, port: explicitPort }),
     autoOpen,
     logger: console,
   });
@@ -1117,6 +1117,246 @@ async function rules() {
         break;
       }
 
+      case 'detect': {
+        const { proposeRulesets, formatProposals } = require('../lib/rulesets/detector.cjs');
+        const minConfidence = (() => {
+          const idx = args.indexOf('--min-confidence');
+          return idx !== -1 && args[idx + 1] ? parseFloat(args[idx + 1]) / 100 : 0.5;
+        })();
+        const jsonOutput = args.includes('--json');
+        const proposals = proposeRulesets(CWD, { minConfidence });
+
+        if (jsonOutput) {
+          console.log(JSON.stringify({ proposals }, null, 2));
+        } else {
+          console.log(formatProposals(proposals));
+        }
+        break;
+      }
+
+      case 'effective': {
+        const { resolveRulesetChain } = require('../lib/rulesets/resolver.cjs');
+        const { getEffectiveRules, formatEffectiveRules } = require('../lib/rulesets/merger.cjs');
+        const { detectSignals } = require('../lib/rulesets/detector.cjs');
+
+        const pathIndex = args.indexOf('--path');
+        const contextPath = pathIndex !== -1 && args[pathIndex + 1] ? args[pathIndex + 1] : '';
+        const jsonOutput = args.includes('--json');
+        const verbose = args.includes('--verbose');
+
+        // Get active rulesets from config
+        const cfg = loadConfig(CWD);
+        const activeRulesets = cfg?.rulesets?.active || [];
+
+        if (activeRulesets.length === 0) {
+          console.log(c.dim('No active rulesets configured. Run "grabby rules add <ruleset>" to activate.'));
+          break;
+        }
+
+        // Detect repo signals for context
+        const signals = detectSignals(CWD);
+        const context = {
+          path: contextPath,
+          signals: signals.map(s => s.key),
+        };
+
+        // Resolve and merge
+        const { chain, errors } = resolveRulesetChain(activeRulesets, CWD);
+
+        if (errors.length > 0) {
+          errors.forEach(e => console.log(c.warn(`Warning: ${e}`)));
+        }
+
+        const effective = getEffectiveRules(chain, context);
+
+        if (jsonOutput) {
+          console.log(JSON.stringify(effective, null, 2));
+        } else {
+          if (contextPath) {
+            console.log(`Effective rules for: ${contextPath}\n`);
+          }
+          console.log(formatEffectiveRules({
+            ...effective.resolution.effective,
+            sources: effective.resolution.chain,
+            conflicts: effective.resolution.conflicts,
+          }, { verbose }));
+        }
+        break;
+      }
+
+      case 'draft': {
+        const { generateDraft, generateUpdate, saveDraft, listDrafts, applyDraft, discardDraft } = require('../lib/rulesets/draft.cjs');
+        const draftSubCommand = args[1];
+        const jsonOutput = args.includes('--json');
+
+        switch (draftSubCommand) {
+          case 'new':
+          case 'create': {
+            const goal = args.slice(2).filter(a => !a.startsWith('--')).join(' ');
+            const categoryIndex = args.indexOf('--category');
+            const category = categoryIndex !== -1 && args[categoryIndex + 1] ? args[categoryIndex + 1] : 'domain';
+            const save = args.includes('--save');
+
+            console.log(c.heading('Generating ruleset draft...\n'));
+
+            try {
+              const result = await generateDraft({
+                goal: goal || 'Create a project ruleset with best practices',
+                category,
+                cwd: CWD,
+              });
+
+              if (!result.verification.valid) {
+                console.log(c.error('Draft verification failed:'));
+                result.verification.errors.forEach(e => console.log(`  ${c.error('•')} ${e}`));
+                process.exit(1);
+              }
+
+              if (result.verification.warnings.length > 0) {
+                result.verification.warnings.forEach(w => console.log(c.warn(`Warning: ${w}`)));
+              }
+
+              if (jsonOutput) {
+                console.log(JSON.stringify(result, null, 2));
+              } else {
+                console.log(c.success('Draft generated successfully.\n'));
+                console.log('--- PREVIEW ---\n');
+                console.log(result.markdown);
+                console.log('\n--- END PREVIEW ---');
+              }
+
+              if (save) {
+                const saved = saveDraft(result.draft, result.markdown, CWD);
+                console.log(c.success(`\nDraft saved:`));
+                console.log(`  Markdown: ${saved.draftPath}`);
+                console.log(`  JSON: ${saved.jsonPath}`);
+                console.log(c.dim('\nRun "grabby rules draft apply <file>" to move to shared rulesets.'));
+              } else {
+                console.log(c.dim('\nAdd --save to persist the draft for later review.'));
+              }
+            } catch (err) {
+              console.log(c.error(`Error: ${err.message}`));
+              process.exit(1);
+            }
+            break;
+          }
+
+          case 'update': {
+            const existingFile = args[2];
+            const goal = args.slice(3).filter(a => !a.startsWith('--')).join(' ');
+            const save = args.includes('--save');
+
+            if (!existingFile) {
+              console.log(c.error('Usage: grabby rules draft update <existing-file> [goal]'));
+              process.exit(1);
+            }
+
+            console.log(c.heading('Generating ruleset update draft...\n'));
+
+            try {
+              const result = await generateUpdate({
+                goal: goal || 'Improve the ruleset',
+                existingFile,
+                cwd: CWD,
+              });
+
+              if (!result.verification.valid) {
+                console.log(c.error('Draft verification failed:'));
+                result.verification.errors.forEach(e => console.log(`  ${c.error('•')} ${e}`));
+                process.exit(1);
+              }
+
+              if (jsonOutput) {
+                console.log(JSON.stringify(result, null, 2));
+              } else {
+                console.log(c.success('Update draft generated.\n'));
+                console.log('--- PREVIEW ---\n');
+                console.log(result.markdown);
+                console.log('\n--- END PREVIEW ---');
+              }
+
+              if (save) {
+                const saved = saveDraft(result.draft, result.markdown, CWD);
+                console.log(c.success(`\nDraft saved:`));
+                console.log(`  Markdown: ${saved.draftPath}`);
+                console.log(`  JSON: ${saved.jsonPath}`);
+              }
+            } catch (err) {
+              console.log(c.error(`Error: ${err.message}`));
+              process.exit(1);
+            }
+            break;
+          }
+
+          case 'list': {
+            const drafts = listDrafts(CWD);
+
+            if (drafts.length === 0) {
+              console.log(c.dim('No pending drafts.'));
+            } else {
+              console.log(c.heading('Pending Drafts\n'));
+              drafts.forEach(d => {
+                console.log(`  ${c.bold(d.id)}`);
+                console.log(`    File: ${d.file}`);
+                console.log(`    Created: ${d.createdAt}`);
+                console.log('');
+              });
+              console.log(c.dim('Use "grabby rules draft apply <file>" to apply a draft.'));
+            }
+            break;
+          }
+
+          case 'apply': {
+            const draftFile = args[2];
+            if (!draftFile) {
+              console.log(c.error('Usage: grabby rules draft apply <draft-file>'));
+              process.exit(1);
+            }
+
+            try {
+              const result = applyDraft(draftFile, CWD);
+              console.log(c.success(`Draft applied to: ${result.appliedTo}`));
+            } catch (err) {
+              console.log(c.error(`Error: ${err.message}`));
+              process.exit(1);
+            }
+            break;
+          }
+
+          case 'discard': {
+            const draftFile = args[2];
+            if (!draftFile) {
+              console.log(c.error('Usage: grabby rules draft discard <draft-file>'));
+              process.exit(1);
+            }
+
+            try {
+              discardDraft(draftFile, CWD);
+              console.log(c.success(`Draft discarded: ${draftFile}`));
+            } catch (err) {
+              console.log(c.error(`Error: ${err.message}`));
+              process.exit(1);
+            }
+            break;
+          }
+
+          default:
+            console.log(c.heading('\nDraft Commands'));
+            console.log('─'.repeat(40));
+            console.log('  grabby rules draft new [goal]      Generate new ruleset draft');
+            console.log('  grabby rules draft update <file>   Generate update draft for existing ruleset');
+            console.log('  grabby rules draft list            List pending drafts');
+            console.log('  grabby rules draft apply <file>    Apply draft to shared rulesets');
+            console.log('  grabby rules draft discard <file>  Discard a draft');
+            console.log('');
+            console.log(c.dim('Options:'));
+            console.log(c.dim('  --category <cat>  Category for new rulesets (default: domain)'));
+            console.log(c.dim('  --save            Persist draft to disk for later review'));
+            console.log(c.dim('  --json            Output as JSON'));
+        }
+        break;
+      }
+
       default:
         console.log(c.heading('\nRules Commands'));
         console.log('─'.repeat(40));
@@ -1129,10 +1369,18 @@ async function rules() {
         console.log('  grabby rules remove <cat/name>    Remove ruleset from active');
         console.log('  grabby rules status               Show sync status and drift');
         console.log('  grabby rules preset <name>        Apply preset bundle');
-        console.log(c.dim('\nShared Rules Authoring:'));
+        console.log(c.dim('\nDetection & Authoring:'));
+        console.log('  grabby rules detect [--json]      Detect technologies and propose rulesets');
+        console.log('  grabby rules effective [--path]   Show effective merged rules');
         console.log('  grabby rules generate             Generate shared rules from repo guidance');
         console.log('  grabby rules update [file]        Update existing shared ruleset');
         console.log('  grabby rules shared               List shared rulesets');
+        console.log(c.dim('\nDraft Workflow:'));
+        console.log('  grabby rules draft new [goal]     Generate new ruleset draft');
+        console.log('  grabby rules draft update <file>  Generate update draft');
+        console.log('  grabby rules draft list           List pending drafts');
+        console.log('  grabby rules draft apply <file>   Apply draft to shared rulesets');
+        console.log('  grabby rules draft discard <file> Discard a draft');
         console.log('');
         console.log(c.dim('Options:'));
         console.log(c.dim('  --force          Force refresh (sync command)'));
@@ -1141,6 +1389,7 @@ async function rules() {
         console.log(c.dim('  --title=<name>   Ruleset title (generate command)'));
         console.log(c.dim('  --goal=<text>    Goal/purpose description (generate/update)'));
         console.log(c.dim('  --sources=<csv>  Comma-separated guidance sources'));
+        console.log(c.dim('  --save           Persist draft to disk (draft command)'));
     }
 
     if (exitCode !== 0) {

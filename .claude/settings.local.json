@@ -51,7 +51,8 @@
       "Bash(grep -v node_modules echo -e \"\\\\n=== Double nested .claude ===\" find . -path \"*/.claude/.claude/*\" -not -path \"./node_modules/*\" echo -e \"\\\\n=== Test tmp directories ===\" find . -type d -name \"tmp-*\" -not -path \"./node_modules/*\")",
       "Bash(grabby orchestrate:*)",
       "Bash(python -m json.tool:*)",
-      "Bash(npx jest:*)"
+      "Bash(npx jest:*)",
+      "Bash(npm run lint:*)"
     ]
   }
 }

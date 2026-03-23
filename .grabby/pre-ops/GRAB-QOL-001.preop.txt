@@ -1,0 +1,30 @@
+╭────────────────────────────────────────────────────────────────────╮
+│ Plan to implement                                                  │
+│                                                                    │
+│ configurable port settings, targeted release metadata in contracts, broader calculator-based workflow regression coverage, and a dashboard garbage-collection checkbox for completed tickets│
+│                                                                    │
+│ Overview                                                           │
+│                                                                    │
+│ - ARCH_INDEX_v1                                                    │
+│                                                                    │
+│ User Requirements                                                  │
+│                                                                    │
+│ - Port is configurable from repo config and documented             │
+│ - Contracts support targeted release metadata end-to-end           │
+│ - Calculator regression suite covers core application functions and│
+│ full workflow paths                                                │
+│ - Dashboard exposes a garbage-collect checkbox for completed       │
+│ tickets and archives correctly when selected                       │
+│                                                                    │
+│ ---                                                                │
+│ ---                                                                │
+│ ---                                                                │
+│ Verification Plan                                                  │
+│                                                                    │
+│ 1. Port is configurable from repo config and documented            │
+│ 2. Contracts support targeted release metadata end-to-end          │
+│ 3. Calculator regression suite covers core application functions   │
+│ and full workflow paths                                            │
+│ 4. Dashboard exposes a garbage-collect checkbox for completed      │
+│ tickets and archives correctly when selected                       │
+╰────────────────────────────────────────────────────────────────────╯

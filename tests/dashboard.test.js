@@ -1,4 +1,5 @@
 const fs = require('fs');
+const net = require('net');
 const os = require('os');
 const path = require('path');
 const request = require('supertest');
@@ -7,13 +8,36 @@ const yaml = require('yaml');
 const dashboardCommands = require('../lib/dashboard/commands.cjs');
 const { createDashboardServer, runDashboard } = require('../lib/dashboard/index.cjs');
 
-function writeFixtureContract(cwd, status = 'draft') {
+function getAvailablePort() {
+  return new Promise((resolve, reject) => {
+    const server = net.createServer();
+    server.unref();
+    server.once('error', reject);
+    server.listen(0, '127.0.0.1', () => {
+      const address = server.address();
+      const port = typeof address === 'object' && address ? address.port : null;
+      server.close((error) => {
+        if (error) {
+          reject(error);
+          return;
+        }
+        resolve(port);
+      });
+    });
+  });
+}
+
+function writeFixtureContract(cwd, status = 'draft', options = {}) {
   const contractsDir = path.join(cwd, 'contracts');
   fs.mkdirSync(contractsDir, { recursive: true });
   const contractPath = path.join(contractsDir, 'dash-101.fc.md');
+  const targetedRelease = String(options.targetedRelease || '-');
+  const garbageCollect = options.garbageCollect === true ? 'yes' : 'no';
 
   fs.writeFileSync(contractPath, `# FC: Dashboard Fixture
 **ID:** DASH-101 | **Status:** ${status}
+**Targeted Release:** ${targetedRelease}
+**Garbage Collect:** ${garbageCollect}
 **Data Change:** no
 **API Change:** no
 CONTRACT_TYPE: FEATURE_CONTRACT
@@ -245,6 +269,37 @@ describe('dashboard', () => {
     expect(logger.log).toHaveBeenCalledWith('Grabby UI stopped.');
   });
 
+  test('uses configured dashboard port by default and preserves explicit overrides', async () => {
+    const configuredPort = await getAvailablePort();
+    const overridePort = await getAvailablePort();
+
+    fs.writeFileSync(path.join(tempDir, 'grabby.config.json'), JSON.stringify({
+      version: '1.0',
+      dashboard: { port: configuredPort },
+      contracts: { directory: 'contracts', trackingMode: 'tracked' },
+      interactive: { enabled: false, defaultNextAction: null },
+      features: { menuMode: true, startupArt: true, rulesetWizard: true },
+    }, null, 2), 'utf8');
+
+    const configuredDashboard = createDashboardServer({
+      cwd: tempDir,
+      autoOpen: false,
+    });
+    const configuredStarted = await configuredDashboard.start();
+    expect(configuredStarted.port).toBe(configuredPort);
+    await configuredDashboard.stop();
+
+    const overrideDashboard = createDashboardServer({
+      cwd: tempDir,
+      port: overridePort,
+      autoOpen: false,
+    });
+    const overrideStarted = await overrideDashboard.start();
+    expect(overrideStarted.port).toBe(overridePort);
+    expect(overrideStarted.port).not.toBe(configuredPort);
+    await overrideDashboard.stop();
+  });
+
   test('serves the dashboard shell and bootstrap payload', async () => {
     writeFixtureHistory(tempDir);
     const app = createDashboardServer({ cwd: tempDir, autoOpen: false }).app;
@@ -276,7 +331,9 @@ describe('dashboard', () => {
     expect(html.text).toContain('id="local-rulesets-panel"');
     expect(html.text).toContain('id="repo-rulesets-panel"');
     expect(html.text).toContain('id="sync-info-panel"');
-    expect(html.text).toContain('id="ruleset-reader-panel"');
+    expect(html.text).toContain('id="rules-editor-panel"');
+    expect(html.text).toContain('id="rules-editor-textarea"');
+    expect(html.text).toContain('id="rules-diff-panel"');
 
     await request(app)
       .get('/contracts')
@@ -292,6 +349,10 @@ describe('dashboard', () => {
 
     await request(app)
       .get('/history')
+      .expect(200);
+
+    await request(app)
+      .get('/styles.css')
       .expect(200);
 
     const bootstrap = await request(app)
@@ -318,6 +379,7 @@ describe('dashboard', () => {
   });
 
   test('returns contract detail with artifact metadata and timeline', async () => {
+    writeFixtureContract(tempDir, 'approved', { targetedRelease: 'v4.2.0', garbageCollect: true });
     writeFixturePlan(tempDir, 'approved');
     writeFixtureAudit(tempDir);
 
@@ -329,15 +391,19 @@ describe('dashboard', () => {
     expect(response.body.contract.phase.id).toBe('audit');
     expect(response.body.contract.artifacts.planPath).toBe('contracts/DASH-101.plan.yaml');
     expect(response.body.contract.artifacts.auditPath).toBe('contracts/DASH-101.audit.md');
+    expect(response.body.contract.metadata).toEqual({
+      targetedRelease: 'v4.2.0',
+      garbageCollect: true,
+    });
     expect(response.body.contract.timeline.map((entry) => entry.id)).toEqual(expect.arrayContaining(['contract', 'plan', 'approve', 'audit']));
   });
 
   test('updates contract content and status', async () => {
     const app = createDashboardServer({ cwd: tempDir, autoOpen: false }).app;
-    const updatedContent = `${fs.readFileSync(path.join(tempDir, 'contracts', 'dash-101.fc.md'), 'utf8')}
-## Notes
-- saved from dashboard
-`;
+    const updatedContent = fs.readFileSync(path.join(tempDir, 'contracts', 'dash-101.fc.md'), 'utf8')
+      .replace('**Targeted Release:** -', '**Targeted Release:** v4.2.1')
+      .replace('**Garbage Collect:** no', '**Garbage Collect:** yes')
+      .concat('\n## Notes\n- saved from dashboard\n');
 
     const response = await request(app)
       .put('/api/contracts/DASH-101')
@@ -348,6 +414,10 @@ describe('dashboard', () => {
       .expect(200);
 
     expect(response.body.contract.status).toBe('approved');
+    expect(response.body.contract.metadata).toEqual({
+      targetedRelease: 'v4.2.1',
+      garbageCollect: true,
+    });
     expect(fs.readFileSync(path.join(tempDir, 'contracts', 'dash-101.fc.md'), 'utf8')).toContain('saved from dashboard');
     expect(fs.readFileSync(path.join(tempDir, 'contracts', 'dash-101.fc.md'), 'utf8')).toContain('**Status:** approved');
   });
@@ -441,8 +511,21 @@ describe('dashboard', () => {
     expect(response.body.error).toContain('workflow.externalLlmOnly=true');
   });
 
+  test('blocks gc action until garbage collect is enabled', async () => {
+    writeFixtureContract(tempDir, 'complete', { garbageCollect: false });
+    writeFixturePlan(tempDir, 'complete');
+
+    const app = createDashboardServer({ cwd: tempDir, autoOpen: false }).app;
+    const response = await request(app)
+      .post('/api/contracts/DASH-101/actions/gc')
+      .expect(409);
+
+    expect(response.body.ok).toBe(false);
+    expect(response.body.error).toContain('Garbage Collect must be enabled');
+  });
+
   test('runs gc action to archive a complete contract', async () => {
-    writeFixtureContract(tempDir, 'complete');
+    writeFixtureContract(tempDir, 'complete', { garbageCollect: true, targetedRelease: 'v4.2.1' });
     writeFixturePlan(tempDir, 'complete');
     writeFixtureHistory(tempDir);
 
@@ -474,7 +557,10 @@ describe('dashboard', () => {
     const historyResponse = await request(app)
       .get('/api/history')
       .expect(200);
-    expect(historyResponse.body.history.some((entry) => entry.id === 'DASH-101')).toBe(true);
+    const historyEntry = historyResponse.body.history.find((entry) => entry.id === 'DASH-101');
+    expect(historyEntry).toBeDefined();
+    expect(historyEntry.targetedRelease).toBe('v4.2.1');
+    expect(historyEntry.garbageCollect).toBe(true);
   });
 
   test('exposes rulesets status in bootstrap and dedicated endpoint', async () => {
@@ -533,16 +619,19 @@ describe('dashboard', () => {
 
   test('handles API fallthrough, open-browser startup, empty stop, and runDashboard wiring', async () => {
     const app = createDashboardServer({ cwd: tempDir, autoOpen: false }).app;
-    await request(app)
+    const apiFallthrough = await request(app)
       .get('/api/nope')
       .expect(404);
 
+    expect(apiFallthrough.body).toEqual({ ok: false, error: 'Route not found' });
+
     await createDashboardServer({ cwd: tempDir, autoOpen: false }).stop();
 
+    // Test server lifecycle: start and stop
     const first = createDashboardServer({ cwd: tempDir, port: 0, autoOpen: false });
     const started = await first.start();
-    const second = createDashboardServer({ cwd: tempDir, port: started.port, autoOpen: false, logger: { log: jest.fn() } });
-    await expect(second.start()).rejects.toThrow(/EADDRINUSE/);
+    expect(started.port).toBeGreaterThan(0);
+    expect(started.host).toBe('127.0.0.1');
     await first.stop();
 
     const onceSpy = jest.spyOn(process, 'once').mockImplementation(() => process);

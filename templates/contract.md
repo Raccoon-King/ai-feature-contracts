@@ -1,5 +1,7 @@
 # FC: [NAME]
-**ID:** [ID] | **Status:** draft
+**ID:** [ID] | **Status:** draft | **Run Order:** 0
+**Targeted Release:** -
+**Garbage Collect:** no
 CONTRACT_TYPE: FEATURE_CONTRACT
 ARCH_VERSION: v1
 RULESET_VERSION: v1

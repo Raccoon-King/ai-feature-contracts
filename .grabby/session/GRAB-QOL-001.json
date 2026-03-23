@@ -1,0 +1,8 @@
+{
+  "ticketId": "GRAB-QOL-001",
+  "updatedAt": "2026-03-22T23:26:06.495Z",
+  "currentPhase": "contract_ready",
+  "lastInteractionPoint": "after-contract-draft",
+  "selectedRole": "analyst",
+  "approvedPlanHash": null
+}

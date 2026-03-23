@@ -96,6 +96,7 @@ grabby ui --port 3847
 ```
 
 The dashboard binds to `127.0.0.1`, opens in your browser, and exposes contract status, editing, workflow visualization, and lifecycle actions.
+If you want a repo-level default port, set `"dashboard": { "port": 3847 }` in `grabby.config.json`; `grabby ui --port <port>` still takes precedence for one-off runs.
 
 ## Canonical Artifacts
 
