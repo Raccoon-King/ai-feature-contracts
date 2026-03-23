@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [4.2.1] - 2026-03-23
+
+### Added
+- Patch release audit artifact for `v4.2.1` with docs and website release gate confirmations
+
+### Changed
+- Refreshed the dashboard to re-read live source data on navigation, auto-refresh intervals, and item selection
+- Added split-story contract flagging from the contracts validation workflow
+- Added expand controls for large dashboard text fields
+- Added history detail popout behavior for archived contract tiles
+
 ## [4.2.0] - 2026-03-23
 
 ### Added
