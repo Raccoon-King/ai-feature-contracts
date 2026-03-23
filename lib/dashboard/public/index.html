@@ -126,7 +126,10 @@
             <button class="editor-mode-button" data-editor-mode="raw" type="button">Raw</button>
           </div>
           <div id="structured-editor" class="structured-editor"></div>
-          <textarea id="contract-editor" spellcheck="false" placeholder="Select a contract to edit." disabled></textarea>
+          <div class="expandable-editor-shell">
+            <textarea id="contract-editor" spellcheck="false" placeholder="Select a contract to edit." disabled></textarea>
+            <button id="contract-editor-expand" class="expand-toggle field-expand-toggle" type="button" disabled>Expand</button>
+          </div>
           <div class="action-strip">
             <div id="action-buttons" class="action-buttons"></div>
           </div>
@@ -274,6 +277,7 @@
           </div>
           <div id="rules-editor-panel" class="rules-editor-panel">
             <textarea id="rules-editor-textarea" class="rules-editor-textarea" placeholder="Select a rule to edit, or use Generate to create a new draft." disabled></textarea>
+            <button id="rules-editor-expand" class="expand-toggle field-expand-toggle" type="button" disabled>Expand</button>
             <div id="rules-editor-preview" class="rules-editor-preview is-hidden">
               <div class="empty-state">Preview will appear here</div>
             </div>
@@ -336,5 +340,20 @@
       </section>
     </main>
   </div>
+
+  <div id="history-detail-backdrop" class="history-detail-backdrop" aria-hidden="true"></div>
+  <aside id="history-detail-modal" class="history-detail-modal panel" aria-hidden="true" aria-label="Archived contract details">
+    <div class="panel-header">
+      <div>
+        <p class="eyebrow">History Detail</p>
+        <h3 id="history-detail-title">Archived Contract</h3>
+      </div>
+      <button id="history-detail-close" class="ghost-button compact-button" type="button">Close</button>
+    </div>
+    <div id="history-detail-meta" class="hero-meta"></div>
+    <div id="history-detail-body" class="history-detail-body">
+      <div class="empty-state">Select a history tile to inspect the archived details.</div>
+    </div>
+  </aside>
 </body>
 </html>
