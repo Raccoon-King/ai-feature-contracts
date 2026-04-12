@@ -142,7 +142,7 @@ jobs:
           git push origin "$TAG"
 
       - name: Create GitHub Release
-        uses: actions/github-script@v8
+        uses: actions/github-script@v9
         with:
           script: |
             const tag = '${{ steps.version.outputs.tag }}';
