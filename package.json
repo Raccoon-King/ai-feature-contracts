@@ -86,7 +86,7 @@
     "jest": "^30.3.0",
     "nock": "14.0.x",
     "supertest": "7.2.x",
-    "wrangler": "^4.76.0"
+    "wrangler": "^4.81.1"
   },
   "jest": {
     "testEnvironment": "node",
