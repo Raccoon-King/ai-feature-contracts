@@ -76,7 +76,7 @@
     "express": "^5.2.1",
     "express-rate-limit": "8.3.x",
     "express-validator": "7.3.x",
-    "helmet": "8.1.x",
+    "helmet": "8.2.x",
     "swagger-jsdoc": "6.2.x",
     "swagger-ui-express": "5.0.x",
     "winston": "3.19.x",
